@@ -5508,7 +5508,9 @@ window.addEventListener('beforeunload',()=>{
   }
 });
 
-renderCards();
+// Initialize the default (Story Cards) view via showView so the floating add
+// button is shown and wired on first load — not just after switching tabs.
+showView('cards');
 
 // P5 #31: detect blocked / unavailable storage early, so the user knows nothing will persist.
 if(!storageAvailable()){
