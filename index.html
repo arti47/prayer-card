@@ -53,8 +53,8 @@
   /* Respect iPhone notch and home-indicator when running as installed PWA */
   header { padding-top: calc(16px + env(safe-area-inset-top)) !important; }
   nav { padding-bottom: env(safe-area-inset-bottom); }
-  .fab { bottom: calc(72px + env(safe-area-inset-bottom)); }
-  .toast { bottom: calc(82px + env(safe-area-inset-bottom)); }
+  .fab { bottom: calc(86px + env(safe-area-inset-bottom)); }
+  .toast { bottom: calc(96px + env(safe-area-inset-bottom)); }
 
   /* Header */
   header { background: var(--accent); color: #fff; padding: 16px 20px 14px; text-align: center; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 8px rgba(0,0,0,0.18); }
@@ -84,7 +84,7 @@
   .cat-personal{background:#fde8d8;color:#a0521a}.cat-family{background:#ddeeff;color:#1a5a8a}.cat-suffering{background:#ffe8e8;color:#8a1a1a}.cat-friend{background:#e8f5e8;color:#1a6b2f}.cat-church{background:#ede8ff;color:#4a1a8a}.cat-heart{background:#fff0e8;color:#8a4a1a}.cat-dream{background:#e8f0ff;color:#1a3a8a}.cat-other{background:#f0f0f0;color:#555}
 
   /* FAB */
-  .fab { position: fixed; bottom: 72px; right: 20px; width: 52px; height: 52px; border-radius: 50%; background: var(--accent); color: #fff; font-size: 1.6rem; border: none; cursor: pointer; box-shadow: var(--shadow-lg); display: none; align-items: center; justify-content: center; z-index: 99; transition: transform .12s; }
+  .fab { position: fixed; bottom: 86px; right: 20px; width: 52px; height: 52px; border-radius: 50%; background: var(--accent); color: #fff; font-size: 1.6rem; border: none; cursor: pointer; box-shadow: var(--shadow-lg); display: none; align-items: center; justify-content: center; z-index: 101; transition: transform .12s; }
   .fab:active { transform: scale(.93); }
 
   /* Modals */
@@ -2711,10 +2711,18 @@ function renderDPHome(){
   const draftPlan = draft ? DP_PLANS[draft.plan] : null;
   const draftStep = draft && draftPlan ? draftPlan.steps[draft.stepIndex||0] : null;
 
-  const recent = sessions.slice(0, 5);
-  const recentHTML = recent.length
-    ? recent.map(s => dpSessionEntryHTML(s)).join('')
-    : '';
+  // Two-view toggle only shows when there's at least one session to view
+  const toggleHTML = sessions.length ? `<div class="pl-view-toggle">
+    <button class="${_dpViewMode==='list'?'active':''}" onclick="setDPView('list')">📋 Recent</button>
+    <button class="${_dpViewMode==='calendar'?'active':''}" onclick="setDPView('calendar')">📅 Calendar</button>
+  </div>` : '';
+
+  const searchRowHTML = (sessions.length && _dpViewMode==='list') ? `<div class="pl-search-row">
+    <input type="text" class="pl-search-input" id="dp-search-input" placeholder="🔍 Search your sessions…" value="${esc(_dpSearchQuery)}" oninput="onDPSearchInput(event)">
+    ${_dpSearchQuery?`<button class="pl-search-clear" onclick="clearDPSearch()" aria-label="Clear">×</button>`:''}
+  </div>` : '';
+
+  const calendarHTML = (sessions.length && _dpViewMode==='calendar') ? `<div class="pl-calendar" id="dp-calendar"></div>` : '';
 
   el.innerHTML = `
     <div class="pl-banner">
@@ -2754,8 +2762,10 @@ function renderDPHome(){
       </div>
     </div>
 
-    ${sessions.length ? `<p class="section-title">Recent Daily Sessions</p>${recentHTML}` : ''}
-    ${sessions.length>5 ? `<p style="font-size:.8rem;color:var(--text3);text-align:center;margin-top:6px">Showing 5 most recent</p>` : ''}
+    ${toggleHTML}
+    ${searchRowHTML}
+    ${calendarHTML}
+    <div id="dp-search-results"></div>
 
     <div class="about-block" style="margin-top:18px">
       <h3>Why three plans?</h3>
@@ -2763,6 +2773,210 @@ function renderDPHome(){
       <p style="font-size:.82rem;margin-top:8px;font-style:italic;color:var(--text3)">For the deeper, once-a-week practice (Sundays recommended), use ✍️ <strong>Weekly Deep</strong> instead — that's where you map your heart and walk the Lord's Prayer slowly.</p>
     </div>
   `;
+
+  if(_dpViewMode==='calendar') renderDPCalendar();
+  renderDPSearchResults();
+
+  // Restore caret if there's an active query (e.g. switching tabs back)
+  if(_dpSearchQuery && _dpViewMode==='list'){
+    const input=document.getElementById('dp-search-input');
+    if(input){ input.focus(); input.setSelectionRange(input.value.length, input.value.length); }
+  }
+}
+
+// ══════════ DAILY PRAYER — Recent / Calendar / Search ══════════
+// Mirrors the Weekly Deep home (setPLView / renderPLCalendar / search). Daily sessions
+// carry the same dateISO/date fields, so the shared dateKey/sessionDateKey helpers work.
+let _dpViewMode = 'list';      // 'list' | 'calendar'
+let _dpCalMonth = null;        // Date set to first of viewed month; null = current
+let _dpCalSelectedDay = null;  // YYYY-MM-DD or null
+let _dpSearchQuery = '';
+
+function setDPView(mode){
+  _dpViewMode = mode;
+  _dpCalSelectedDay = null;
+  if(mode === 'calendar' && !_dpCalMonth) _dpCalMonth = startOfThisMonth();
+  renderDPHome();
+}
+
+function dpCalNavMonth(direction){
+  if(!_dpCalMonth) _dpCalMonth = startOfThisMonth();
+  _dpCalMonth = new Date(_dpCalMonth.getFullYear(), _dpCalMonth.getMonth() + direction, 1);
+  _dpCalSelectedDay = null;
+  renderDPCalendar();
+  renderDPSearchResults();
+}
+
+function dpSelectCalDay(yyyymmdd){
+  _dpCalSelectedDay = (_dpCalSelectedDay === yyyymmdd) ? null : yyyymmdd;
+  renderDPCalendar();
+  renderDPSearchResults();
+}
+
+function renderDPCalendar(){
+  const target = document.getElementById('dp-calendar');
+  if(!target) return;
+  if(!_dpCalMonth) _dpCalMonth = startOfThisMonth();
+
+  const month = _dpCalMonth;
+  const year = month.getFullYear();
+  const mIdx = month.getMonth();
+  const monthLabel = month.toLocaleString('default', { month: 'long', year: 'numeric' });
+  const firstDow = new Date(year, mIdx, 1).getDay();
+  const lastDay = new Date(year, mIdx + 1, 0).getDate();
+  const todayKey = dateKey(new Date());
+
+  const sessions = loadDailySessions();
+  const byDay = {};
+  sessions.forEach(s => { const k = sessionDateKey(s); (byDay[k] = byDay[k] || []).push(s); });
+
+  let html = '';
+  ['S','M','T','W','T','F','S'].forEach(d => { html += `<div class="pl-cal-dow">${d}</div>`; });
+  for(let i = 0; i < firstDow; i++) html += `<div class="pl-cal-day muted"></div>`;
+  for(let d = 1; d <= lastDay; d++){
+    const key = `${year}-${String(mIdx+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    const has = !!byDay[key];
+    const cls = ['pl-cal-day'];
+    if(key === todayKey) cls.push('today');
+    if(has) cls.push('has-sessions');
+    if(key === _dpCalSelectedDay) cls.push('selected');
+    const click = has ? `onclick="dpSelectCalDay('${key}')"` : '';
+    html += `<div class="${cls.join(' ')}" ${click}>${d}${has?'<div class="pl-cal-dot"></div>':''}</div>`;
+  }
+
+  const monthPrefix = `${year}-${String(mIdx+1).padStart(2,'0')}`;
+  const monthCount = sessions.filter(s => sessionDateKey(s).startsWith(monthPrefix)).length;
+  let summary;
+  if(_dpCalSelectedDay){
+    const daySessions = byDay[_dpCalSelectedDay] || [];
+    const niceDate = new Date(_dpCalSelectedDay + 'T00:00:00').toLocaleDateString('en-US', { weekday:'long', month:'short', day:'numeric' });
+    summary = `${daySessions.length} session${daySessions.length===1?'':'s'} on ${niceDate} <button class="pl-cal-clear" onclick="dpSelectCalDay('${_dpCalSelectedDay}')">Clear filter</button>`;
+  } else {
+    summary = `${monthCount} session${monthCount===1?'':'s'} this month` + (monthCount ? ` · <span style="color:var(--text2)">tap a day to filter</span>` : '');
+  }
+
+  target.innerHTML = `
+    <div class="pl-cal-header">
+      <button class="pl-cal-nav" onclick="dpCalNavMonth(-1)" aria-label="Previous month">‹</button>
+      <div class="pl-cal-month">${monthLabel}</div>
+      <button class="pl-cal-nav" onclick="dpCalNavMonth(1)" aria-label="Next month">›</button>
+    </div>
+    <div class="pl-cal-grid">${html}</div>
+    <div class="pl-cal-summary">${summary}</div>
+  `;
+}
+
+function dpMatchesQuery(s, q){
+  const lowerQ = q.toLowerCase();
+  const plan = DP_PLANS[s.plan];
+  if(!plan) return null;
+  // Walk every text field on the session in step order; return the first match with context.
+  for(const step of plan.steps){
+    const data = s.steps?.[step.key]; if(!data) continue;
+    if(step.passageField){
+      const val = data[step.passageField.key];
+      if(typeof val === 'string' && val.toLowerCase().includes(lowerQ))
+        return { snippet: makeSnippet(val, q), stepTitle: step.title, fieldLabel: step.passageField.label };
+    }
+    for(const f of (step.fields||[])){
+      const val = data[f.key];
+      if(typeof val === 'string' && val.toLowerCase().includes(lowerQ))
+        return { snippet: makeSnippet(val, q), stepTitle: step.title, fieldLabel: f.label };
+    }
+    if(step.questionsField){
+      for(const qq of [...MEDITATION_QUESTIONS.full, ...MEDITATION_QUESTIONS.simple]){
+        const val = data[qq.key];
+        if(typeof val === 'string' && val.toLowerCase().includes(lowerQ))
+          return { snippet: makeSnippet(val, q), stepTitle: step.title, fieldLabel: qq.label };
+      }
+    }
+  }
+  return null;
+}
+
+function onDPSearchInput(e){
+  _dpSearchQuery = e.target.value.trim();
+  renderDPSearchResults();
+  // Toggle clear button without re-rendering the input
+  const existing = document.querySelector('.pl-search-clear');
+  if(_dpSearchQuery && !existing){
+    document.querySelector('.pl-search-row')?.insertAdjacentHTML('beforeend', `<button class="pl-search-clear" onclick="clearDPSearch()" aria-label="Clear">×</button>`);
+  } else if(!_dpSearchQuery && existing){
+    existing.remove();
+  }
+}
+
+function clearDPSearch(){
+  _dpSearchQuery = '';
+  const input = document.getElementById('dp-search-input');
+  if(input){ input.value = ''; input.focus(); }
+  document.querySelector('.pl-search-clear')?.remove();
+  renderDPSearchResults();
+}
+
+function dpSearchResultHTML(s, match){
+  const plan = DP_PLANS[s.plan];
+  const planIcon = plan?.icon || '✦';
+  const planTitle = plan?.title || 'Daily Prayer';
+  return `<div class="history-entry" onclick="viewDailySession('${s.id}')">
+    <button class="he-delete" onclick="event.stopPropagation();deleteDailySession('${s.id}')" title="Delete">✕</button>
+    <div class="he-date">${planIcon} ${esc(planTitle)} · ${s.date}</div>
+    <div class="he-snippet">"${highlightMatch(match.snippet, _dpSearchQuery)}"
+      <span class="he-snippet-from">— ${esc(match.stepTitle)} · ${esc(match.fieldLabel)}</span>
+    </div>
+  </div>`;
+}
+
+function renderDPSearchResults(){
+  const target = document.getElementById('dp-search-results');
+  if(!target) return;
+  const sessions = loadDailySessions();
+
+  // ── Calendar view ──────────────────────
+  if(_dpViewMode === 'calendar'){
+    const month = _dpCalMonth || startOfThisMonth();
+    const prefix = `${month.getFullYear()}-${String(month.getMonth()+1).padStart(2,'0')}`;
+    let filtered, label;
+    if(_dpCalSelectedDay){
+      filtered = sessions.filter(s => sessionDateKey(s) === _dpCalSelectedDay);
+      const nice = new Date(_dpCalSelectedDay + 'T00:00:00').toLocaleDateString('en-US', { weekday:'long', month:'long', day:'numeric' });
+      label = `Sessions on ${nice}`;
+    } else {
+      filtered = sessions.filter(s => sessionDateKey(s).startsWith(prefix));
+      label = `${month.toLocaleString('default',{month:'long',year:'numeric'})}`;
+    }
+    if(!filtered.length){
+      target.innerHTML = `<div class="empty" style="padding:30px 10px"><div class="empty-icon" style="font-size:2.2rem">📅</div><p style="font-size:.85rem">No sessions ${_dpCalSelectedDay?'on this day':'in this month'}.</p></div>`;
+      return;
+    }
+    target.innerHTML = `<p class="section-title">${esc(label)}</p>` +
+      filtered.map(s => dpSessionEntryHTML(s)).join('');
+    return;
+  }
+
+  // ── List + search mode ─────────────────
+  if(_dpSearchQuery){
+    const matches = sessions
+      .map(s => ({ s, match: dpMatchesQuery(s, _dpSearchQuery) }))
+      .filter(x => x.match);
+    if(!matches.length){
+      target.innerHTML = `<p class="pl-search-count">No matches for "${esc(_dpSearchQuery)}"</p>
+        <div class="empty"><div class="empty-icon" style="font-size:2.4rem">🔍</div><p style="font-size:.85rem">Try a different word or phrase, or clear the search to see all sessions.</p></div>`;
+      return;
+    }
+    target.innerHTML = `<p class="pl-search-count">${matches.length} match${matches.length===1?'':'es'} for "${esc(_dpSearchQuery)}"</p>` +
+      matches.map(({s, match}) => dpSearchResultHTML(s, match)).join('');
+  } else {
+    const recent = sessions.slice(0, 5);
+    const recentHTML = recent.length
+      ? recent.map(s => dpSessionEntryHTML(s)).join('')
+      : `<div class="empty" style="padding:24px 10px"><div class="empty-icon" style="font-size:2rem">📖</div><p style="font-size:.85rem">No sessions yet.<br>Your completed prayers will appear here.</p></div>`;
+    target.innerHTML = `
+      ${sessions.length?`<p class="section-title">Recent Daily Sessions</p>`:''}
+      ${recentHTML}
+      ${sessions.length>5?`<p style="font-size:.8rem;color:var(--text3);text-align:center;margin-top:6px">Showing 5 most recent — switch to Calendar or use search to find older sessions</p>`:''}
+    `;
+  }
 }
 
 function dpSessionEntryHTML(s){
