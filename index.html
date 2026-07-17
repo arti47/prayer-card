@@ -2647,7 +2647,7 @@ function openFocusCompose(textareaId){
     ${ctx.heading ? `<div class="focus-compose-heading">${esc(ctx.heading)}</div>` : ''}
     ${ctx.prompt  ? `<div class="focus-compose-prompt">${esc(ctx.prompt)}</div>`   : ''}
     ${silenceHTML}
-    <textarea id="focus-compose-textarea" class="focus-compose-textarea" placeholder="${esc(ta.placeholder || '')}">${esc(ta.value)}</textarea>
+    <textarea id="focus-compose-textarea" class="focus-compose-textarea" placeholder="${esc(ta.placeholder || '')}">${escTa(ta.value)}</textarea>
     <div class="focus-compose-actions">
       <button class="btn btn-secondary" onclick="closeModal('modal-focus-compose')">Cancel</button>
       <button class="btn btn-primary" onclick="saveFocusCompose()">Save</button>
@@ -2885,6 +2885,10 @@ function isoToDisplayDate(iso){
 }
 function genId(){ return Date.now().toString(36)+Math.random().toString(36).slice(2); }
 function esc(s){ if(!s)return''; return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/\n/g,'<br>'); }
+// Escape for <textarea> content: HTML-safe but KEEP real newlines (a textarea shows
+// literal "<br>", not a line break). Also convert any legacy "<br>" that a prior
+// esc() baked into saved text back into real newlines, cleaning old drafts on load.
+function escTa(s){ if(!s)return''; return String(s).replace(/<br\s*\/?>/gi,'\n').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 function showToast(msg){ const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),2200); }
 
 // ── Safe localStorage helpers (P5 #31) ──
@@ -3671,7 +3675,7 @@ function renderDPStep(){
     const pf = step.passageField;
     passageHTML = `<div class="dp-field-row">
         <div class="pl-field-label" style="color:${step.color}">${esc(pf.label)}</div>
-        <textarea id="dp-passage" class="pl-textarea" placeholder="${esc(pf.placeholder)}" data-focus-prompt="The verse or passage you're meditating on — write or paste it here.">${esc(saved[pf.key]||'')}</textarea>
+        <textarea id="dp-passage" class="pl-textarea" placeholder="${esc(pf.placeholder)}" data-focus-prompt="The verse or passage you're meditating on — write or paste it here.">${escTa(saved[pf.key]||'')}</textarea>
         <button type="button" class="bb-field-btn" onclick="openBibleBrowser('dp-passage')">📖 Insert from Bible</button>
       </div>`;
   }
@@ -3699,7 +3703,7 @@ function renderDPStep(){
         ${qs.map(q => `<div class="dp-q-row">
           <div class="dp-q-label" style="color:${step.color}">${esc(q.label)}</div>
           <div class="dp-q-prompt">${esc(q.prompt)}</div>
-          <textarea id="dp-q-${q.key}" class="pl-textarea" placeholder="${esc(q.placeholder || 'Jot a few lines…')}">${esc(saved[q.key]||'')}</textarea>
+          <textarea id="dp-q-${q.key}" class="pl-textarea" placeholder="${esc(q.placeholder || 'Jot a few lines…')}">${escTa(saved[q.key]||'')}</textarea>
         </div>`).join('')}
       </div>
       <div class="dp-tech-links">
@@ -3736,7 +3740,7 @@ function renderDPStep(){
       const fpAttr = f.focusPrompt ? ` data-focus-prompt="${esc(f.focusPrompt)}"` : '';
       return `<div class="dp-field-row">
         <div class="pl-field-label" style="color:${step.color}">${esc(f.label)}</div>
-        <textarea id="dp-field-${f.key}" class="pl-textarea" placeholder="${esc(f.placeholder||'')}"${fpAttr}>${esc(saved[f.key]||'')}</textarea>
+        <textarea id="dp-field-${f.key}" class="pl-textarea" placeholder="${esc(f.placeholder||'')}"${fpAttr}>${escTa(saved[f.key]||'')}</textarea>
         ${starterChips}
         ${libBtn}
         ${cryOut}
@@ -4452,7 +4456,7 @@ function renderPLStep(el){
       ${scriptureBlock}
       ${prevListenHTML}
       <div class="pl-field-label" style="color:${step.sc}">✏️ ${step.prayLabel}</div>
-      <textarea id="pl-pray-area" class="pl-textarea" placeholder="Write your prayer here…">${saved.prayer||''}</textarea>
+      <textarea id="pl-pray-area" class="pl-textarea" placeholder="Write your prayer here…">${escTa(saved.prayer||'')}</textarea>
       ${(() => {
         // P8 #53: prayer library button on the 4 Weekly Deep Time prayer steps that
         // map cleanly to Henry's tables. Humble + Forgive deliberately skipped — no
@@ -4467,7 +4471,7 @@ function renderPLStep(el){
         <div class="pl-listen-instruction" style="color:var(--text2)">${step.listenInstruction}</div>
         <div class="silence-widget"></div>
         <div class="pl-field-label" style="color:${step.sc}">What do you sense Him saying?</div>
-        <textarea id="pl-listen-area" class="pl-textarea" placeholder="Jot down anything you hear, sense, or notice…">${saved.listen||''}</textarea>
+        <textarea id="pl-listen-area" class="pl-textarea" placeholder="Jot down anything you hear, sense, or notice…">${escTa(saved.listen||'')}</textarea>
         ${cryOutAffordance('pl-listen-area')}
       </div>
       <button class="pl-link-btn${linkedCards.length?' has-links':''}" onclick="openLinkCards()">${linkBtnLabel}</button>
@@ -4499,7 +4503,7 @@ function renderPrepareStep(el,step,dots,steps){
       ${sec.hasChart?`<button class="pl-chart-btn" onclick="openHeartChart()">📊 ${heartNeeds.length?'Edit your heart-need selections':'Open "Needs of the Heart" Chart — tap to choose'}</button>${selectedChipsHTML}`:''}
       ${sec.key==='feelings' ? emotionChipsAndLink(plEmotions, 'pl') : ''}
       ${sec.key==='mapping' ? forgetChipsBlock() : ''}
-      <textarea id="pl-prep-${sec.key}" class="pl-textarea" placeholder="Jot down what feels most relevant…">${saved[sec.key]||''}</textarea>
+      <textarea id="pl-prep-${sec.key}" class="pl-textarea" placeholder="Jot down what feels most relevant…">${escTa(saved[sec.key]||'')}</textarea>
     </div>
   `).join('');
 
