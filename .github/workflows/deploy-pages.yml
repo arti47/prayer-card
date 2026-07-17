@@ -24,6 +24,14 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+      - name: Stamp service worker version
+        # Rewrite CACHE_NAME with this commit's short SHA so every deploy ships a
+        # changed sw.js — that triggers the in-app "new version — tap to update"
+        # toast automatically, without hand-bumping the version. Build-time only;
+        # the committed sw.js is untouched.
+        run: |
+          sed -i "s/const CACHE_NAME = 'prayer-journal-[^']*';/const CACHE_NAME = 'prayer-journal-${GITHUB_SHA::7}';/" sw.js
+          grep "const CACHE_NAME" sw.js
       - name: Configure Pages
         uses: actions/configure-pages@v5
         with:
