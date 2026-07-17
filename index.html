@@ -3617,6 +3617,7 @@ function renderDPStep(){
     passageHTML = `<div class="dp-field-row">
         <div class="pl-field-label" style="color:${step.color}">${esc(pf.label)}</div>
         <textarea id="dp-passage" class="pl-textarea" placeholder="${esc(pf.placeholder)}" data-focus-prompt="The verse or passage you're meditating on — write or paste it here.">${esc(saved[pf.key]||'')}</textarea>
+        <button type="button" class="bb-field-btn" onclick="openBibleBrowser('dp-passage')">📖 Insert from Bible</button>
       </div>`;
   }
 
