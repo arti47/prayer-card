@@ -116,6 +116,13 @@
   .bb-filters { display: flex; gap: 8px; justify-content: space-between; align-items: center; margin-bottom: 10px; flex-wrap: wrap; }
   .bb-jump-btn { display: block; width: 100%; text-align: left; background: var(--accent-light); border: 1px solid var(--accent2); color: var(--accent); border-radius: var(--radius-sm); padding: 9px 12px; font-size: .85rem; cursor: pointer; font-family: inherit; margin-bottom: 8px; }
   .bb-empty { color: var(--text3); font-style: italic; font-size: .85rem; padding: 12px 4px; }
+  /* Bible browser anchors to the TOP of the screen so the search bar stays put
+     when the mobile keyboard opens (a bottom sheet would push it out of view). */
+  #modal-bible { align-items: flex-start; }
+  #modal-bible .modal { border-radius: 0 0 18px 18px; max-height: 94vh; padding-top: calc(14px + env(safe-area-inset-top)); animation: slideDown .22s ease; }
+  #modal-bible .modal-handle { display: none; }
+  @keyframes slideDown { from { transform: translateY(-100%); } to { transform: translateY(0); } }
+  .bb-sticky { position: sticky; top: 0; z-index: 2; background: var(--surface); padding-bottom: 8px; }
 
   /* Modals */
   .modal-bg { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 200; align-items: flex-end; }
@@ -1703,10 +1710,12 @@ function bbHead(crumb, backFn){
 }
 
 function bbBookListHTML(){
-  return bbHead('Choose a book','') +
-    `<input class="bb-search" id="bb-search" placeholder="Search books, or type a reference…" oninput="bbSearchInput()" autocomplete="off" value="${esc(_bbSearch)}">` +
-    `<div id="bb-jump">${bbJumpHTML(_bbSearch)}</div>` +
-    `<div class="bb-filters">${bbFilterToggleHTML()}${bbSortToggleHTML()}</div>` +
+  return `<div class="bb-sticky">` +
+      bbHead('Choose a book','') +
+      `<input class="bb-search" id="bb-search" placeholder="Search books, or type a reference…" oninput="bbSearchInput()" autocomplete="off" value="${esc(_bbSearch)}">` +
+      `<div id="bb-jump">${bbJumpHTML(_bbSearch)}</div>` +
+      `<div class="bb-filters">${bbFilterToggleHTML()}${bbSortToggleHTML()}</div>` +
+    `</div>` +
     `<div id="bb-book-results">${bbBookResultsHTML()}</div>` +
     `<button class="btn btn-secondary" onclick="closeModal('modal-bible')" style="margin-top:12px">Close</button>`;
 }
