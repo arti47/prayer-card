@@ -99,7 +99,7 @@
   .bb-item { padding: 10px 8px; text-align: center; background: var(--accent-light); border: 1px solid var(--border); border-radius: 10px; font-size: .82rem; color: var(--text); cursor: pointer; transition: background .1s; }
   .bb-item:active { background: var(--accent); color: #fff; }
   .bb-verses { max-height: 44vh; overflow-y: auto; margin: 2px -4px 8px; }
-  .bb-verse { display: flex; gap: 9px; padding: 7px 8px; border-radius: 8px; cursor: pointer; line-height: 1.55; font-size: .9rem; color: var(--text2); }
+  .bb-verse { display: flex; gap: 9px; padding: 7px 8px; border-radius: 8px; cursor: pointer; line-height: 1.55; font-size: .9rem; color: var(--text2); user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; }
   .bb-verse .n { color: var(--accent); font-weight: 600; font-size: .72rem; min-width: 1.4em; padding-top: 3px; text-align: right; }
   .bb-verse.sel { background: var(--accent-light); color: var(--text); }
   .bb-verse.sel .n { color: var(--accent2); }
@@ -1678,7 +1678,7 @@ document.addEventListener('focusin', e => {
 });
 
 let _bbBook=null, _bbBookName='', _bbMd='', _bbChapter=null, _bbChapCount=0,
-    _bbVerses=[], _bbSelA=null, _bbSelB=null, _bbTargetId=null, _bbMode='both',
+    _bbVerses=[], _bbSel=new Set(), _bbAnchor=null, _bbTargetId=null, _bbMode='both',
     _bbFilter='all', _bbSort='canon', _bbSearch='';
 const NT_START_INDEX = 39; // BIBLE_BOOKS_ORDERED[39] = Matthew
 const _bbFileToNameMap = Object.fromEntries(BIBLE_BOOKS_ORDERED.map(b => [b[1], b[0]]));
@@ -1693,7 +1693,7 @@ function activeBibleTarget(){
 
 function openBibleBrowser(targetId){
   _bbTargetId = targetId || null;
-  _bbBook=null; _bbBookName=''; _bbChapter=null; _bbVerses=[]; _bbSelA=_bbSelB=null;
+  _bbBook=null; _bbBookName=''; _bbChapter=null; _bbVerses=[]; bbClearSel();
   _bbSearch=''; _bbFilter='all'; _bbSort='canon';
   renderBibleBrowser();
   openModal('modal-bible');
@@ -1790,15 +1790,19 @@ async function bbJumpTo(file, chapter, vStart, vEnd){
   if(chapter && chapter>=1 && chapter<=_bbChapCount){
     _bbChapter=chapter; _bbVerses=bibleVerses(_bbMd, chapter);
     const maxV=_bbVerses.length ? _bbVerses[_bbVerses.length-1].n : 0;
-    if(vStart && vStart>=1 && vStart<=maxV){ _bbSelA=vStart; _bbSelB=(vEnd&&vEnd!==vStart&&vEnd<=maxV)?vEnd:null; }
-    else { _bbSelA=_bbSelB=null; }
-  } else { _bbChapter=null; _bbSelA=_bbSelB=null; }
+    bbClearSel();
+    if(vStart && vStart>=1 && vStart<=maxV){
+      const hi = (vEnd && vEnd<=maxV) ? vEnd : vStart;
+      for(let i=vStart;i<=hi;i++) _bbSel.add(i);
+      _bbAnchor = hi;
+    }
+  } else { _bbChapter=null; bbClearSel(); }
   renderBibleBrowser();
 }
 
 async function bbSelectBook(i){
   const [name,file] = BIBLE_BOOKS_ORDERED[i];
-  _bbBookName=name; _bbBook=file; _bbChapter=null; _bbSelA=_bbSelB=null;
+  _bbBookName=name; _bbBook=file; _bbChapter=null; bbClearSel();
   const c=document.getElementById('bible-content');
   c.innerHTML = bbHead(name,'bbBackToBooks()') + `<p class="bb-hint">Loading…</p>`;
   try {
@@ -1816,17 +1820,17 @@ function bbChapterListHTML(){
   for(let n=1;n<=_bbChapCount;n++) items += `<div class="bb-item" onclick="bbSelectChapter(${n})">${n}</div>`;
   return bbHead(_bbBookName,'bbBackToBooks()') + `<div class="bb-grid chapters">${items}</div>`;
 }
-function bbBackToBooks(){ _bbBook=null; _bbChapter=null; _bbSelA=_bbSelB=null; _bbSearch=''; renderBibleBrowser(); }
-function bbSelectChapter(n){ _bbChapter=n; _bbSelA=_bbSelB=null; _bbVerses=bibleVerses(_bbMd,n); renderBibleBrowser(); }
-function bbBackToChapters(){ _bbChapter=null; _bbSelA=_bbSelB=null; renderBibleBrowser(); }
+function bbBackToBooks(){ _bbBook=null; _bbChapter=null; bbClearSel(); _bbSearch=''; renderBibleBrowser(); }
+function bbSelectChapter(n){ _bbChapter=n; bbClearSel(); _bbVerses=bibleVerses(_bbMd,n); renderBibleBrowser(); }
+function bbBackToChapters(){ _bbChapter=null; bbClearSel(); renderBibleBrowser(); }
+function bbClearSel(){ _bbSel = new Set(); _bbAnchor = null; }
+function bbSelSorted(){ return [..._bbSel].sort((a,b)=>a-b); }
 
 function bbVerseViewHTML(){
-  const has = _bbSelA != null;
-  const lo = has ? Math.min(_bbSelA, _bbSelB ?? _bbSelA) : null;
-  const hi = has ? Math.max(_bbSelA, _bbSelB ?? _bbSelA) : null;
+  const has = _bbSel.size > 0;
   const rows = _bbVerses.map(v=>{
-    const sel = has && v.n>=lo && v.n<=hi ? ' sel' : '';
-    return `<div class="bb-verse${sel}" onclick="bbTapVerse(${v.n})"><span class="n">${v.n}</span><span>${esc(v.text)}</span></div>`;
+    const sel = _bbSel.has(v.n) ? ' sel' : '';
+    return `<div class="bb-verse${sel}" data-v="${v.n}"><span class="n">${v.n}</span><span>${esc(v.text)}</span></div>`;
   }).join('');
   const target = activeBibleTarget();
   const toggle = `<div class="bb-toggle">${['both','ref','text'].map(m=>
@@ -1834,7 +1838,7 @@ function bbVerseViewHTML(){
   const copyBtn = `<button class="btn btn-secondary" style="margin:0;padding:9px 14px;${has?'':'opacity:.45;pointer-events:none'}" onclick="bbCopy()">Copy</button>`;
   const canAdd = has && target;
   const addBtn = `<button class="btn btn-primary" style="margin:0;flex:1;${canAdd?'':'opacity:.45;pointer-events:none'}" onclick="bbAdd()">${target?'Add to journal':'Tap a field first'}</button>`;
-  const body = has ? bbPreviewHTML(lo,hi) : `<p class="bb-hint">Tap a verse to select it. Tap another to make a range.</p>`;
+  const body = has ? bbPreviewHTML() : `<p class="bb-hint">Tap verses to select. Long-press a second verse to fill the range between.</p>`;
   const bookIdx = BIBLE_BOOKS_ORDERED.findIndex(b=>b[1]===_bbBook);
   const atStart = bookIdx===0 && _bbChapter===1;
   const atEnd = bookIdx===BIBLE_BOOKS_ORDERED.length-1 && _bbChapter===_bbChapCount;
@@ -1855,7 +1859,7 @@ async function bbGoChapter(delta){
   const idx = BIBLE_BOOKS_ORDERED.findIndex(b=>b[1]===_bbBook);
   const target = _bbChapter + delta;
   if(target >= 1 && target <= _bbChapCount){
-    _bbChapter = target; _bbVerses = bibleVerses(_bbMd, target); _bbSelA=_bbSelB=null;
+    _bbChapter = target; _bbVerses = bibleVerses(_bbMd, target); bbClearSel();
     renderBibleBrowser(); return;
   }
   const newIdx = delta > 0 ? idx+1 : idx-1;
@@ -1865,7 +1869,7 @@ async function bbGoChapter(delta){
     const md = await fetchBibleFile(file);
     _bbBook=file; _bbBookName=name; _bbMd=md; _bbChapCount=bibleChapterCount(md);
     _bbChapter = delta > 0 ? 1 : _bbChapCount;
-    _bbVerses = bibleVerses(_bbMd, _bbChapter); _bbSelA=_bbSelB=null;
+    _bbVerses = bibleVerses(_bbMd, _bbChapter); bbClearSel();
     renderBibleBrowser();
   } catch(e){ showToast("Couldn't load that book"); }
 }
@@ -1880,26 +1884,44 @@ function bbRenderKeepScroll(){
   const vs2 = document.querySelector('.bb-verses');
   if(vs2) vs2.scrollTop = s;
 }
+// Short tap toggles one verse on/off (multi-select — v1 + v4 selects just those two).
 function bbTapVerse(n){
-  const has = _bbSelA != null;
-  const lo = has ? Math.min(_bbSelA, _bbSelB ?? _bbSelA) : null;
-  const hi = has ? Math.max(_bbSelA, _bbSelB ?? _bbSelA) : null;
-  if(has && n>=lo && n<=hi){ _bbSelA=null; _bbSelB=null; }        // tap any highlighted verse → clear the whole selection
-  else if(!has || _bbSelB!=null){ _bbSelA=n; _bbSelB=null; }      // start a new single selection
-  else { _bbSelB=n; }                                            // extend the single into a range
+  if(_bbSel.has(n)){ _bbSel.delete(n); if(_bbAnchor===n) _bbAnchor=null; }
+  else { _bbSel.add(n); _bbAnchor=n; }
+  bbRenderKeepScroll();
+}
+// Long-press fills the range from the last-tapped verse (anchor) to this one.
+function bbRangeFill(n){
+  if(_bbAnchor!=null){
+    const lo=Math.min(_bbAnchor,n), hi=Math.max(_bbAnchor,n);
+    for(let i=lo;i<=hi;i++) _bbSel.add(i);
+  } else { _bbSel.add(n); }
+  _bbAnchor=n;
   bbRenderKeepScroll();
 }
 function bbSetMode(m){ _bbMode=m; bbRenderKeepScroll(); }
 
-function bbRefString(lo,hi){ return `${_bbBookName} ${_bbChapter}:${lo}${hi>lo?'–'+hi:''}`; }
-function bbSelectedText(lo,hi){ return _bbVerses.filter(v=>v.n>=lo&&v.n<=hi).map(v=>v.text).join(' '); }
-function bbPreviewHTML(lo,hi){
-  return `<div class="bb-preview"><span class="ref">${esc(bbRefString(lo,hi))}</span>${esc(bbSelectedText(lo,hi))}</div>`;
+// Reference with contiguous runs collapsed to ranges: {1,2,3,6} → "1–3, 6".
+function bbRefString(){
+  const arr=bbSelSorted(); if(!arr.length) return '';
+  const parts=[]; let start=arr[0], prev=arr[0];
+  for(let i=1;i<arr.length;i++){
+    if(arr[i]===prev+1){ prev=arr[i]; continue; }
+    parts.push(start===prev?`${start}`:`${start}–${prev}`); start=prev=arr[i];
+  }
+  parts.push(start===prev?`${start}`:`${start}–${prev}`);
+  return `${_bbBookName} ${_bbChapter}:${parts.join(', ')}`;
+}
+function bbSelectedText(){
+  const byN = Object.fromEntries(_bbVerses.map(v=>[v.n, v.text]));
+  return bbSelSorted().map(n=>byN[n]).filter(Boolean).join(' ');
+}
+function bbPreviewHTML(){
+  return `<div class="bb-preview"><span class="ref">${esc(bbRefString())}</span>${esc(bbSelectedText())}</div>`;
 }
 function bbInsertString(){
-  if(_bbSelA==null) return '';
-  const lo=Math.min(_bbSelA,_bbSelB??_bbSelA), hi=Math.max(_bbSelA,_bbSelB??_bbSelA);
-  const ref=bbRefString(lo,hi), text=bbSelectedText(lo,hi);
+  if(_bbSel.size===0) return '';
+  const ref=bbRefString(), text=bbSelectedText();
   if(_bbMode==='ref') return ref;
   if(_bbMode==='text') return text;
   return `${ref} — ${text}`;
@@ -6015,6 +6037,35 @@ setupSwipeFor('dp-content', () => dpMode === 'session', dpNext, dpBack);
 setupSwipeFor('bible-content',
   () => _bbChapter != null && document.getElementById('modal-bible').classList.contains('open'),
   () => bbGoChapter(1), () => bbGoChapter(-1), '.bb-verse-view');
+
+// Verse selection gestures: short tap toggles a verse; long-press (450ms, no
+// movement) fills the range from the anchor to that verse. Delegated on the
+// stable #bible-content so it survives re-renders. Coexists with the swipe
+// handler (a swipe moves >60px → cancels the long-press timer and the tap).
+(function setupVerseGestures(){
+  const el = document.getElementById('bible-content');
+  if(!el) return;
+  let vnum=null, sx=0, sy=0, st=0, moved=false, longFired=false, timer=null;
+  const clearT = () => { if(timer){ clearTimeout(timer); timer=null; } };
+  el.addEventListener('pointerdown', e => {
+    const row = e.target.closest('.bb-verse');
+    if(!row || _bbChapter==null) return;
+    vnum = +row.dataset.v; sx=e.clientX; sy=e.clientY; st=Date.now(); moved=false; longFired=false;
+    clearT();
+    timer = setTimeout(() => { if(vnum!=null && !moved){ longFired=true; bbRangeFill(vnum); } }, 450);
+  });
+  el.addEventListener('pointermove', e => {
+    if(vnum==null) return;
+    if(Math.abs(e.clientX-sx) > 10 || Math.abs(e.clientY-sy) > 10){ moved=true; clearT(); }
+  });
+  el.addEventListener('pointerup', () => {
+    if(vnum==null) return;
+    clearT();
+    if(!longFired && !moved && Date.now()-st < 450) bbTapVerse(vnum);
+    vnum=null;
+  });
+  el.addEventListener('pointercancel', () => { clearT(); vnum=null; });
+})();
 
 // ══════════ MODAL SWIPE-DOWN-TO-DISMISS (sheet-style gesture) ══════════
 // All modals slide up from the bottom on open with a small handle at the top —
