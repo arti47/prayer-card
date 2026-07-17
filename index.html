@@ -1494,8 +1494,35 @@ const BIBLE_BOOK_FILES = {
 // Aliases → canonical key above.
 const BIBLE_BOOK_ALIASES = {
   'psalm':'psalms','song of songs':'song of solomon','canticles':'song of solomon',
-  'revelation':'revelation of john','revelations':'revelation of john',
-  'song':'song of solomon'
+  'revelation':'revelation of john','revelations':'revelation of john','song':'song of solomon',
+  // Common abbreviations (normalized: lowercase, no periods, numeral prefixes already → "1 "/"2 "/"3 ")
+  'gen':'genesis','ex':'exodus','exod':'exodus','lev':'leviticus','lv':'leviticus',
+  'num':'numbers','nm':'numbers','nb':'numbers','deut':'deuteronomy','dt':'deuteronomy','deu':'deuteronomy',
+  'josh':'joshua','jos':'joshua','jsh':'joshua','judg':'judges','jdg':'judges','jgs':'judges',
+  'ru':'ruth','rth':'ruth','1 sam':'1 samuel','1 sm':'1 samuel','2 sam':'2 samuel','2 sm':'2 samuel',
+  '1 kgs':'1 kings','1 ki':'1 kings','2 kgs':'2 kings','2 ki':'2 kings',
+  '1 chr':'1 chronicles','1 chron':'1 chronicles','2 chr':'2 chronicles','2 chron':'2 chronicles',
+  'ezr':'ezra','neh':'nehemiah','est':'esther','esth':'esther','jb':'job',
+  'ps':'psalms','psa':'psalms','pss':'psalms','prov':'proverbs','prv':'proverbs','pr':'proverbs',
+  'eccl':'ecclesiastes','ecc':'ecclesiastes','qoh':'ecclesiastes','sos':'song of solomon','cant':'song of solomon',
+  'isa':'isaiah','is':'isaiah','jer':'jeremiah','jr':'jeremiah','lam':'lamentations',
+  'ezek':'ezekiel','eze':'ezekiel','ezk':'ezekiel','dan':'daniel','dn':'daniel',
+  'hos':'hosea','jl':'joel','am':'amos','obad':'obadiah','ob':'obadiah','jon':'jonah','jnh':'jonah',
+  'mic':'micah','mc':'micah','nah':'nahum','na':'nahum','hab':'habakkuk','hb':'habakkuk',
+  'zeph':'zephaniah','zep':'zephaniah','zph':'zephaniah','hag':'haggai','hg':'haggai',
+  'zech':'zechariah','zec':'zechariah','zch':'zechariah','mal':'malachi','ml':'malachi',
+  'matt':'matthew','mt':'matthew','mk':'mark','mrk':'mark','lk':'luke',
+  'jn':'john','jhn':'john','ac':'acts','rom':'romans','rm':'romans',
+  '1 cor':'1 corinthians','1 co':'1 corinthians','2 cor':'2 corinthians','2 co':'2 corinthians',
+  'gal':'galatians','ga':'galatians','eph':'ephesians','phil':'philippians','php':'philippians','pp':'philippians',
+  'col':'colossians','1 thess':'1 thessalonians','1 thes':'1 thessalonians','1 th':'1 thessalonians',
+  '2 thess':'2 thessalonians','2 thes':'2 thessalonians','2 th':'2 thessalonians',
+  '1 tim':'1 timothy','1 tm':'1 timothy','2 tim':'2 timothy','2 tm':'2 timothy',
+  'tit':'titus','ti':'titus','philem':'philemon','phlm':'philemon','phm':'philemon',
+  'heb':'hebrews','jas':'james','jm':'james','1 pet':'1 peter','1 pt':'1 peter','1 pe':'1 peter',
+  '2 pet':'2 peter','2 pt':'2 peter','2 pe':'2 peter',
+  '1 jn':'1 john','1 jhn':'1 john','1 jo':'1 john','2 jn':'2 john','2 jo':'2 john','3 jn':'3 john','3 jo':'3 john',
+  'jude':'jude','jud':'jude','jd':'jude','rev':'revelation of john','rv':'revelation of john','apoc':'revelation of john'
 };
 function normBook(s){
   s = s.toLowerCase().replace(/\./g,'').trim().replace(/\s+/g,' ');
@@ -1694,7 +1721,15 @@ function bbBookResultsHTML(){
   let list=BIBLE_BOOKS_ORDERED.map((b,i)=>({name:b[0], file:b[1], idx:i}));
   if(_bbFilter==='ot') list=list.filter(b=>b.idx < NT_START_INDEX);
   else if(_bbFilter==='nt') list=list.filter(b=>b.idx >= NT_START_INDEX);
-  if(q) list=list.filter(b=>b.name.toLowerCase().includes(q));
+  if(q){
+    let filtered=list.filter(b=>b.name.toLowerCase().includes(q));
+    // Fall back to abbreviation resolution (e.g. "jn" → John, "1 cor" → 1 Corinthians)
+    if(!filtered.length){
+      const file=BIBLE_BOOK_FILES[normBook(_bbSearch.trim())];
+      if(file) filtered=list.filter(b=>b.file===file);
+    }
+    list=filtered;
+  }
   if(_bbSort==='az') list.sort((a,b)=>bbSortKey(a.name).localeCompare(bbSortKey(b.name)));
   if(!list.length) return `<p class="bb-empty">No books match. Try a reference like “John 3:16”.</p>`;
   return `<div class="bb-grid books">${list.map(b=>`<div class="bb-item" onclick="bbSelectBook(${b.idx})">${esc(b.name)}</div>`).join('')}</div>`;
