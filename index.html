@@ -2023,19 +2023,44 @@ function _isHeadingLike(s){
   const c = w.filter(x=>/^\p{Lu}/u.test(x)).length;
   return c/w.length >= 0.6;
 }
+// Editorial ESV section headings that are glued into a Psalm's verse 1 WITHOUT any
+// Hebrew superscription to signal them. There is no delimiter and they look like an
+// ordinary Title-Case verse opening, so they can only be removed safely by an EXACT
+// prefix match (case-sensitive) — never by shape (that would corrupt real verses, §5).
+// Every entry is verified to be an exact prefix of the bundled verse-1 text.
+const PSALM_SECTION_HEADINGS = [
+  'The Way of the Righteous and the Wicked', 'The Reign of the Lord ’s Anointed',
+  'Why Do You Hide Yourself?', 'The Steadfast Love of the Lord',
+  'Send Out Your Light and Your Truth', 'Forsake Me Not When My Strength Is Spent',
+  'My Refuge and My Fortress', 'The Lord Reigns', 'Let Us Sing Songs of Praise',
+  'The Lord Our God Is Holy', 'Give Thanks to the Lord, for He Is Good',
+  'Great Are the Lord ’s Works', 'The Righteous Will Never Be Moved',
+  'Who Is like the Lord Our God?', 'To Your Name Give Glory', 'I Love the Lord',
+  'His Steadfast Love Endures Forever', 'Your Word Is a Lamp to My Feet',
+  'How Shall We Sing the Lord ’s Song?', 'Put Not Your Trust in Princes',
+  'He Heals the Brokenhearted', 'Let Everything Praise the Lord'
+];
 function stripSuperscription(text){
+  // 1) Remove a known editorial section heading (exact, case-sensitive prefix).
+  for(const h of PSALM_SECTION_HEADINGS){
+    if(text.startsWith(h)){ const rest = text.slice(h.length).replace(/^\s+/, ''); if(rest) text = rest; break; }
+  }
+  // 2) Remove a heading+superscription block signalled by a known marker. Slice from
+  //    the END of the last superscription sentence, so it works even when verse 1 ends
+  //    mid-clause (no trailing period — e.g. Ps 7, 11, 24).
   if(!_hasSuper(text)) return text;
-  const sents=[]; const re=/[^.?!]*[.?!]+/gsu; let m;
-  while((m=re.exec(text))){ sents.push({s:m[0].trim(), start:m.index}); if(re.lastIndex===m.index) re.lastIndex++; }
-  if(sents.length < 2) return text;
-  let cut = -1;
-  for(let i=0; i<sents.length && i<5; i++){
-    if(_hasSuper(sents[i].s)){ cut = i; continue; }
+  const sents=[]; const re=/[^.?!]*[.?!]+\s*/gsu; let m;
+  while((m=re.exec(text))){ sents.push({ s:m[0].trim(), end:re.lastIndex }); if(re.lastIndex===m.index) re.lastIndex++; }
+  if(!sents.length) return text;
+  let verseStart = -1;
+  for(let i=0; i<sents.length && i<6; i++){
+    if(_hasSuper(sents[i].s)){ verseStart = sents[i].end; continue; }
     if(i < 2 && _isHeadingLike(sents[i].s) && sents.slice(i+1, i+3).some(x=>_hasSuper(x.s))) continue;
     break;
   }
-  if(cut < 0 || cut >= sents.length-1) return text;
-  return text.slice(sents[cut+1].start).trim();
+  if(verseStart <= 0) return text;
+  const rest = text.slice(verseStart).replace(/^\s+/, '');
+  return rest || text;
 }
 
 // ══════════ LORD'S PRAYER PETITION EXPLANATIONS ══════════
