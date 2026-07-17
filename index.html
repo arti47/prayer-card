@@ -1530,6 +1530,32 @@ function makeScriptureRefsClickable(refsString){
   ).join(' · ');
 }
 
+// Detect Scripture references inside free text (e.g. a card's Scripture anchor)
+// and wrap each valid one in a tappable .scripture-ref span. Validates every
+// candidate against parseScriptureRef (66-book map) so plain "2:30"-style
+// numbers or non-book capitalized words are left untouched. Input is escaped
+// first, so the returned string is HTML-safe.
+function linkifyScriptureRefs(text){
+  const escaped = esc(text);
+  return escaped.replace(
+    /((?:(?:[1-3]|I{1,3})\s+)?(?:[A-Z][a-zA-Z]+\.?\s+of\s+)?(?:[A-Z][a-zA-Z]+\.?\s+)*[A-Z][a-zA-Z]+\.?)\s+(\d+:\d+(?:\s*[–-]\s*\d+)?)/g,
+    (m, book, cv) => {
+      const words = book.trim().split(/\s+/);
+      const cvNorm = cv.replace(/\s+/g,'');
+      for(let i=0; i<words.length; i++){
+        const cand = words.slice(i).join(' ');
+        const ref = cand + ' ' + cvNorm;
+        if(parseScriptureRef(ref)){
+          const prefix = words.slice(0,i).join(' ');
+          const span = `<span class="scripture-ref" onclick="event.stopPropagation();lookupScripture('${ref}')">${cand} ${cv}</span>`;
+          return prefix ? prefix + ' ' + span : span;
+        }
+      }
+      return m;
+    }
+  );
+}
+
 // ══════════ LORD'S PRAYER PETITION EXPLANATIONS ══════════
 // Drawn from a summary of "the Prayer of Prayers" — what each petition is actually asking.
 // Surfaced via a tappable "📖 What this petition asks" link beneath each step quote.
@@ -2549,7 +2575,7 @@ function openDetail(id){
     ${c.answered?'<span class="answered-badge" style="float:right;margin-top:2px">Answered ✓</span>':''}
     <h2 style="font-size:1.2rem;color:var(--text);margin:6px 0 2px">${esc(c.person)}</h2>
     <p style="font-size:.72rem;color:var(--text3);font-family:sans-serif">Started ${c.dateStarted}${c.lastPrayed?` · Last prayed ${esc(relativeTimeAgo(c.lastPrayed))}`:''}</p>
-    ${c.scripture?`<div class="detail-section"><h3>Scripture Anchor</h3><p><em>${esc(c.scripture)}</em></p></div>`:''}
+    ${c.scripture?`<div class="detail-section"><h3>Scripture Anchor</h3><p><em>${linkifyScriptureRefs(c.scripture)}</em></p></div>`:''}
     ${c.askHeart?`<div class="detail-section"><h3>The Ask — Heart</h3><p>${esc(c.askHeart)}</p></div>`:''}
     ${c.askCirc?`<div class="detail-section"><h3>The Ask — Circumstance</h3><p>${esc(c.askCirc)}</p></div>`:''}
     ${(c.perspAttr||c.perspTrust)?`<div class="detail-section persp-block"><h3>Father's Perspective</h3><p>${persp}</p></div>`:''}
