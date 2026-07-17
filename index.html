@@ -1912,9 +1912,19 @@ function bbRefString(){
   parts.push(start===prev?`${start}`:`${start}–${prev}`);
   return `${_bbBookName} ${_bbChapter}:${parts.join(', ')}`;
 }
+// Join selected verse texts; contiguous verses run together, but a gap between
+// non-consecutive verses is marked with " … " so the jump is visible
+// (e.g. v1 + v4 → "…text of 1… … …text of 4…").
 function bbSelectedText(){
+  const arr = bbSelSorted(); if(!arr.length) return '';
   const byN = Object.fromEntries(_bbVerses.map(v=>[v.n, v.text]));
-  return bbSelSorted().map(n=>byN[n]).filter(Boolean).join(' ');
+  const runs=[]; let run=[arr[0]];
+  for(let i=1;i<arr.length;i++){
+    if(arr[i]===arr[i-1]+1) run.push(arr[i]);
+    else { runs.push(run); run=[arr[i]]; }
+  }
+  runs.push(run);
+  return runs.map(r => r.map(n=>byN[n]).filter(Boolean).join(' ')).join(' … ');
 }
 function bbPreviewHTML(){
   return `<div class="bb-preview"><span class="ref">${esc(bbRefString())}</span>${esc(bbSelectedText())}</div>`;
