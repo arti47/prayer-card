@@ -5345,7 +5345,7 @@ function renderAnsweredPrayers(){
       <div class="ap-card-name">✨ ${esc(card.person)}</div>
       <div class="ap-card-meta">${meta}</div>
       ${dt ? `<div class="ap-card-duration">${dt}</div>` : ''}
-      ${card.scripture ? `<div class="ap-card-scripture">${esc(card.scripture)}</div>` : ''}
+      ${card.scripture ? `<div class="ap-card-scripture">${linkifyScriptureRefs(card.scripture)}</div>` : ''}
     </div>`;
   }).join('');
 
@@ -5417,7 +5417,7 @@ function renderReview(){
       <span class="card-cat ${CAT_CLASS[c.category]||'cat-other'}" style="font-size:.58rem;padding:2px 7px;border-radius:99px;display:inline-block;margin-bottom:4px">${CAT_LABELS[c.category]||''}</span>
       ${c.answered?'<span class="answered-badge" style="float:right">Answered ✓</span>':''}
       <h3>${esc(c.person)}</h3>
-      ${c.scripture?`<div class="r-scripture">${esc(c.scripture)}</div>`:''}
+      ${c.scripture?`<div class="r-scripture">${linkifyScriptureRefs(c.scripture)}</div>`:''}
       ${lastNote?`<div class="note-entry" style="margin-top:8px"><div class="note-date">Last note · ${esc(lastNote.date)}</div><div class="note-text">${esc(lastNote.text)}</div></div>`:''}
       <div style="display:flex;gap:8px;margin-top:10px">
         <button onclick="openNote('${c.id}')" style="flex:1;padding:8px;border:1.5px solid var(--border);border-radius:8px;background:var(--surface);font-family:Georgia,serif;font-size:.82rem;cursor:pointer;color:var(--accent)">＋ Add Note</button>
