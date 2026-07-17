@@ -1870,12 +1870,22 @@ async function bbGoChapter(delta){
   } catch(e){ showToast("Couldn't load that book"); }
 }
 
+// Re-render the verse view but keep the verse list scrolled where it was
+// (selecting a verse shouldn't jump you back to the top). Navigation between
+// chapters still resets scroll, since those go through renderBibleBrowser directly.
+function bbRenderKeepScroll(){
+  const vs = document.querySelector('.bb-verses');
+  const s = vs ? vs.scrollTop : 0;
+  renderBibleBrowser();
+  const vs2 = document.querySelector('.bb-verses');
+  if(vs2) vs2.scrollTop = s;
+}
 function bbTapVerse(n){
   if(_bbSelA==null || _bbSelB!=null){ _bbSelA=n; _bbSelB=null; }
   else { _bbSelB=n; }
-  renderBibleBrowser();
+  bbRenderKeepScroll();
 }
-function bbSetMode(m){ _bbMode=m; renderBibleBrowser(); }
+function bbSetMode(m){ _bbMode=m; bbRenderKeepScroll(); }
 
 function bbRefString(lo,hi){ return `${_bbBookName} ${_bbChapter}:${lo}${hi>lo?'–'+hi:''}`; }
 function bbSelectedText(lo,hi){ return _bbVerses.filter(v=>v.n>=lo&&v.n<=hi).map(v=>v.text).join(' '); }
