@@ -131,5 +131,6 @@ The **spiritual and devotional content is not original** and is **not** covered 
 - **Paul Miller** — *A Praying Life*. The Prayer Story Cards practice (Scripture anchor, two-level ask, Father's Perspective) is built on his work.
 - **Tim Keller** — *Prayer: Experiencing Awe and Intimacy with God*. The Daily Prayer practice (the three plan options and the Approach → Meditation → Prayer → Contemplation shape) is drawn from Ch. 15, with several meditation and praise-deepening features from Chapters 10–12.
 - **Matthew Henry** — *A Way to Pray: A Biblical Method for Enriching Your Prayer Life*. The 📖 Prayer Library — roughly forty written prayers across Praise, Confession, Petition, Thanksgiving, and Concluding — is drawn from his method.
+- **English Standard Version (ESV)** — Scripture quotations, the 📖 Bible browser, and the Scripture-lookup text are from *The Holy Bible, English Standard Version® (ESV®)*, copyright © 2001 by Crossway, a publishing ministry of Good News Publishers. Used by permission. All rights reserved.
 
 This app is a personal tool, offered freely for personal prayer.
