@@ -3614,8 +3614,10 @@ function renderDPStep(){
   let passageHTML = '';
   if(step.passageField){
     const pf = step.passageField;
-    passageHTML = `<label style="margin-top:14px">${esc(pf.label)}</label>
-      <input type="text" id="dp-passage" placeholder="${esc(pf.placeholder)}" value="${esc(saved[pf.key]||'')}">`;
+    passageHTML = `<div class="dp-field-row">
+        <div class="pl-field-label" style="color:${step.color}">${esc(pf.label)}</div>
+        <textarea id="dp-passage" class="pl-textarea" placeholder="${esc(pf.placeholder)}" data-focus-prompt="The verse or passage you're meditating on — write or paste it here.">${esc(saved[pf.key]||'')}</textarea>
+      </div>`;
   }
 
   // Meditation questions block
