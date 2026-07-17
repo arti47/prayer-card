@@ -349,6 +349,10 @@
   /* Toast */
   .toast { position: fixed; bottom: 82px; left: 50%; transform: translateX(-50%); background: var(--text); color: #fff; padding: 10px 20px; border-radius: 99px; font-size: .85rem; font-family: sans-serif; pointer-events: none; opacity: 0; transition: opacity .25s; z-index: 999; white-space: nowrap; }
   .toast.show { opacity: 1; }
+  .update-toast { position: fixed; bottom: calc(150px + env(safe-area-inset-bottom)); left: 50%; transform: translateX(-50%); background: var(--accent); color: #fff; padding: 11px 18px; border-radius: 99px; font-size: .84rem; font-family: sans-serif; cursor: pointer; box-shadow: var(--shadow-lg); z-index: 1000; opacity: 0; pointer-events: none; transition: opacity .25s; white-space: nowrap; max-width: calc(100vw - 24px); }
+  .update-toast strong { font-weight: 700; text-decoration: underline; }
+  .update-toast.show { opacity: 1; pointer-events: auto; }
+  .update-toast:active { opacity: .82; }
 
   /* Calendar heatmap (P4 #19) */
   .heatmap-wrap { margin-top: 4px; }
@@ -1085,6 +1089,7 @@
 </div>
 
 <div class="toast" id="toast"></div>
+<div class="update-toast" id="update-toast" role="button" tabindex="0">↻ New version — <strong>tap to update</strong></div>
 
 <script>
 // ══════════ CONSTANTS ══════════
@@ -5791,11 +5796,49 @@ function renderReview(){
   el.innerHTML=html;
 }
 
-// ══════════ PWA: Service Worker registration ══════════
+// ══════════ PWA: Service Worker registration + update prompt ══════════
 // Note: service workers only register over HTTP(S) or localhost. On file:// they silently skip.
+// When a new version is deployed, the new SW parks in "waiting" and we show a
+// tappable "New version available — tap to update" toast. Tapping tells the
+// waiting SW to skipWaiting; once it takes control we reload to the fresh code.
+function showUpdateToast(worker){
+  const el = document.getElementById('update-toast');
+  if(!el || !worker) return;
+  el.classList.add('show');
+  const apply = () => { el.classList.remove('show'); worker.postMessage({ type: 'SKIP_WAITING' }); };
+  el.onclick = apply;
+  el.onkeydown = (e) => { if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); apply(); } };
+}
 if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost' || location.hostname === '127.0.0.1')) {
+  // Reload once the updated SW takes control — but not on the very first install
+  // (clients.claim() also fires controllerchange, and we don't want to reload then).
+  let _swRefreshing = false;
+  let _hadController = !!navigator.serviceWorker.controller;
+  navigator.serviceWorker.addEventListener('controllerchange', () => {
+    if(!_hadController){ _hadController = true; return; }   // first-install claim — ignore
+    if(_swRefreshing) return;
+    _swRefreshing = true;
+    window.location.reload();
+  });
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('./sw.js').catch(err => console.log('Service worker registration failed:', err));
+    navigator.serviceWorker.register('./sw.js').then(reg => {
+      // An update may already be waiting from a previous visit.
+      if(reg.waiting && navigator.serviceWorker.controller) showUpdateToast(reg.waiting);
+      // A new SW started installing — prompt once it's ready (and it's an update, not first install).
+      reg.addEventListener('updatefound', () => {
+        const nw = reg.installing;
+        if(!nw) return;
+        nw.addEventListener('statechange', () => {
+          if(nw.state === 'installed' && navigator.serviceWorker.controller) showUpdateToast(nw);
+        });
+      });
+      // Check for a new deploy on load, when the app regains focus, and hourly.
+      reg.update().catch(() => {});
+      document.addEventListener('visibilitychange', () => {
+        if(document.visibilityState === 'visible') reg.update().catch(() => {});
+      });
+      setInterval(() => reg.update().catch(() => {}), 60 * 60 * 1000);
+    }).catch(err => console.log('Service worker registration failed:', err));
   });
 }
 

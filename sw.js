@@ -4,7 +4,7 @@
 //   • Other static assets → cache-first.
 // Bump CACHE_NAME whenever you want all clients to refresh their cached app shell.
 
-const CACHE_NAME = 'prayer-journal-v2';
+const CACHE_NAME = 'prayer-journal-v3';
 const BIBLE_BOOKS = [
   'Bible_01_Genesis','Bible_02_Exodus','Bible_03_Leviticus','Bible_04_Numbers','Bible_05_Deuteronomy',
   'Bible_06_Joshua','Bible_07_Judges','Bible_08_Ruth','Bible_09_I_Samuel','Bible_10_II_Samuel',
@@ -34,7 +34,14 @@ self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME).then(cache => cache.addAll(APP_SHELL))
   );
-  self.skipWaiting();
+  // Do NOT skipWaiting here — a new SW parks in the "waiting" state so the page
+  // can surface a "new version — tap to update" toast. The page posts
+  // SKIP_WAITING (below) when the user opts in.
+});
+
+// The page asks us to take over immediately once the user taps "update".
+self.addEventListener('message', (event) => {
+  if (event.data && event.data.type === 'SKIP_WAITING') self.skipWaiting();
 });
 
 self.addEventListener('activate', (event) => {
