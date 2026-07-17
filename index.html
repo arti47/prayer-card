@@ -1881,7 +1881,8 @@ function bbRenderKeepScroll(){
   if(vs2) vs2.scrollTop = s;
 }
 function bbTapVerse(n){
-  if(_bbSelA==null || _bbSelB!=null){ _bbSelA=n; _bbSelB=null; }
+  if(_bbSelA===n && _bbSelB==null){ _bbSelA=null; _bbSelB=null; }  // tap the single selection again → unselect
+  else if(_bbSelA==null || _bbSelB!=null){ _bbSelA=n; _bbSelB=null; }
   else { _bbSelB=n; }
   bbRenderKeepScroll();
 }
