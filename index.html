@@ -1881,9 +1881,12 @@ function bbRenderKeepScroll(){
   if(vs2) vs2.scrollTop = s;
 }
 function bbTapVerse(n){
-  if(_bbSelA===n && _bbSelB==null){ _bbSelA=null; _bbSelB=null; }  // tap the single selection again → unselect
-  else if(_bbSelA==null || _bbSelB!=null){ _bbSelA=n; _bbSelB=null; }
-  else { _bbSelB=n; }
+  const has = _bbSelA != null;
+  const lo = has ? Math.min(_bbSelA, _bbSelB ?? _bbSelA) : null;
+  const hi = has ? Math.max(_bbSelA, _bbSelB ?? _bbSelA) : null;
+  if(has && n>=lo && n<=hi){ _bbSelA=null; _bbSelB=null; }        // tap any highlighted verse → clear the whole selection
+  else if(!has || _bbSelB!=null){ _bbSelA=n; _bbSelB=null; }      // start a new single selection
+  else { _bbSelB=n; }                                            // extend the single into a range
   bbRenderKeepScroll();
 }
 function bbSetMode(m){ _bbMode=m; bbRenderKeepScroll(); }
