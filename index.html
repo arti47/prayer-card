@@ -111,6 +111,11 @@
   .bb-toggle button { background: none; border: none; padding: 7px 11px; font-size: .72rem; color: var(--text2); cursor: pointer; font-family: inherit; }
   .bb-toggle button.on { background: var(--accent); color: #fff; }
   .bb-field-btn { background: var(--accent-light); border: 1px solid var(--border); color: var(--accent); border-radius: 8px; padding: 5px 10px; font-size: .74rem; cursor: pointer; font-family: inherit; margin: -4px 0 2px; }
+  .bb-search { width: 100%; padding: 9px 12px; border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--surface); color: var(--text); font-family: inherit; font-size: .88rem; margin-bottom: 8px; }
+  .bb-search:focus { outline: none; border-color: var(--accent2); }
+  .bb-filters { display: flex; gap: 8px; justify-content: space-between; align-items: center; margin-bottom: 10px; flex-wrap: wrap; }
+  .bb-jump-btn { display: block; width: 100%; text-align: left; background: var(--accent-light); border: 1px solid var(--accent2); color: var(--accent); border-radius: var(--radius-sm); padding: 9px 12px; font-size: .85rem; cursor: pointer; font-family: inherit; margin-bottom: 8px; }
+  .bb-empty { color: var(--text3); font-style: italic; font-size: .85rem; padding: 12px 4px; }
 
   /* Modals */
   .modal-bg { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 200; align-items: flex-end; }
@@ -1628,7 +1633,11 @@ document.addEventListener('focusin', e => {
 });
 
 let _bbBook=null, _bbBookName='', _bbMd='', _bbChapter=null, _bbChapCount=0,
-    _bbVerses=[], _bbSelA=null, _bbSelB=null, _bbTargetId=null, _bbMode='both';
+    _bbVerses=[], _bbSelA=null, _bbSelB=null, _bbTargetId=null, _bbMode='both',
+    _bbFilter='all', _bbSort='canon', _bbSearch='';
+const NT_START_INDEX = 39; // BIBLE_BOOKS_ORDERED[39] = Matthew
+const _bbFileToNameMap = Object.fromEntries(BIBLE_BOOKS_ORDERED.map(b => [b[1], b[0]]));
+function _bbFileToName(file){ return _bbFileToNameMap[file] || file; }
 
 function activeBibleTarget(){
   if(_bbTargetId){ const el=document.getElementById(_bbTargetId); if(el) return el; }
@@ -1640,6 +1649,7 @@ function activeBibleTarget(){
 function openBibleBrowser(targetId){
   _bbTargetId = targetId || null;
   _bbBook=null; _bbBookName=''; _bbChapter=null; _bbVerses=[]; _bbSelA=_bbSelB=null;
+  _bbSearch=''; _bbFilter='all'; _bbSort='canon';
   renderBibleBrowser();
   openModal('modal-bible');
 }
@@ -1660,10 +1670,75 @@ function bbHead(crumb, backFn){
 }
 
 function bbBookListHTML(){
-  const items = BIBLE_BOOKS_ORDERED.map((b,i)=>`<div class="bb-item" onclick="bbSelectBook(${i})">${esc(b[0])}</div>`).join('');
   return bbHead('Choose a book','') +
-    `<div class="bb-grid books">${items}</div>` +
+    `<input class="bb-search" id="bb-search" placeholder="Search books, or type a reference…" oninput="bbSearchInput()" autocomplete="off" value="${esc(_bbSearch)}">` +
+    `<div id="bb-jump">${bbJumpHTML(_bbSearch)}</div>` +
+    `<div class="bb-filters">${bbFilterToggleHTML()}${bbSortToggleHTML()}</div>` +
+    `<div id="bb-book-results">${bbBookResultsHTML()}</div>` +
     `<button class="btn btn-secondary" onclick="closeModal('modal-bible')" style="margin-top:12px">Close</button>`;
+}
+function bbFilterToggleHTML(){
+  const opts=[['all','All'],['ot','OT'],['nt','NT']];
+  return `<div class="bb-toggle">${opts.map(([k,l])=>`<button class="${_bbFilter===k?'on':''}" onclick="bbSetFilter('${k}')">${l}</button>`).join('')}</div>`;
+}
+function bbSortToggleHTML(){
+  const opts=[['canon','Order'],['az','A–Z']];
+  return `<div class="bb-toggle">${opts.map(([k,l])=>`<button class="${_bbSort===k?'on':''}" onclick="bbSetSort('${k}')">${l}</button>`).join('')}</div>`;
+}
+function bbSortKey(name){
+  const m=name.match(/^([123])\s+(.*)$/);
+  return m ? m[2].toLowerCase()+' '+m[1] : name.toLowerCase();
+}
+function bbBookResultsHTML(){
+  const q=_bbSearch.trim().toLowerCase();
+  let list=BIBLE_BOOKS_ORDERED.map((b,i)=>({name:b[0], file:b[1], idx:i}));
+  if(_bbFilter==='ot') list=list.filter(b=>b.idx < NT_START_INDEX);
+  else if(_bbFilter==='nt') list=list.filter(b=>b.idx >= NT_START_INDEX);
+  if(q) list=list.filter(b=>b.name.toLowerCase().includes(q));
+  if(_bbSort==='az') list.sort((a,b)=>bbSortKey(a.name).localeCompare(bbSortKey(b.name)));
+  if(!list.length) return `<p class="bb-empty">No books match. Try a reference like “John 3:16”.</p>`;
+  return `<div class="bb-grid books">${list.map(b=>`<div class="bb-item" onclick="bbSelectBook(${b.idx})">${esc(b.name)}</div>`).join('')}</div>`;
+}
+// Resolve a search string to a jump target: full ref (Book C:V[-V]) or Book+chapter.
+function bbResolveQuery(q){
+  q=(q||'').trim(); if(!q) return null;
+  const full=parseScriptureRef(q);
+  if(full) return {file:full.file, chapter:full.chapter, vStart:full.vStart, vEnd:full.vEnd};
+  const m=q.match(/^(.+?)\s+(\d+)$/);
+  if(m){ const file=BIBLE_BOOK_FILES[normBook(m[1])]; if(file) return {file, chapter:+m[2]}; }
+  return null;
+}
+function bbJumpHTML(q){
+  const r=bbResolveQuery(q); if(!r) return '';
+  let label=_bbFileToName(r.file);
+  if(r.chapter){ label+=' '+r.chapter; if(r.vStart){ label+=':'+r.vStart; if(r.vEnd&&r.vEnd!==r.vStart) label+='–'+r.vEnd; } }
+  return `<button class="bb-jump-btn" onclick="bbJumpTo('${r.file}',${r.chapter||'null'},${r.vStart||'null'},${r.vEnd||'null'})">Go to ${esc(label)} →</button>`;
+}
+function bbSearchInput(){
+  const el=document.getElementById('bb-search'); if(!el) return;
+  _bbSearch=el.value;
+  document.getElementById('bb-jump').innerHTML=bbJumpHTML(_bbSearch);
+  document.getElementById('bb-book-results').innerHTML=bbBookResultsHTML();
+}
+function bbSetFilter(f){ _bbFilter=f; bbRefreshBookControls(); }
+function bbSetSort(s){ _bbSort=s; bbRefreshBookControls(); }
+function bbRefreshBookControls(){
+  const fil=document.querySelector('.bb-filters'); if(fil) fil.innerHTML=bbFilterToggleHTML()+bbSortToggleHTML();
+  const res=document.getElementById('bb-book-results'); if(res) res.innerHTML=bbBookResultsHTML();
+}
+async function bbJumpTo(file, chapter, vStart, vEnd){
+  _bbBook=file; _bbBookName=_bbFileToName(file); _bbSearch='';
+  const c=document.getElementById('bible-content');
+  c.innerHTML = bbHead(_bbBookName,'bbBackToBooks()') + `<p class="bb-hint">Loading…</p>`;
+  try{ _bbMd=await fetchBibleFile(file); _bbChapCount=bibleChapterCount(_bbMd); }
+  catch(e){ c.innerHTML = bbHead(_bbBookName,'bbBackToBooks()') + `<p class="bb-hint">Couldn't load this book — check your connection and try again.</p>`; return; }
+  if(chapter && chapter>=1 && chapter<=_bbChapCount){
+    _bbChapter=chapter; _bbVerses=bibleVerses(_bbMd, chapter);
+    const maxV=_bbVerses.length ? _bbVerses[_bbVerses.length-1].n : 0;
+    if(vStart && vStart>=1 && vStart<=maxV){ _bbSelA=vStart; _bbSelB=(vEnd&&vEnd!==vStart&&vEnd<=maxV)?vEnd:null; }
+    else { _bbSelA=_bbSelB=null; }
+  } else { _bbChapter=null; _bbSelA=_bbSelB=null; }
+  renderBibleBrowser();
 }
 
 async function bbSelectBook(i){
@@ -1686,7 +1761,7 @@ function bbChapterListHTML(){
   for(let n=1;n<=_bbChapCount;n++) items += `<div class="bb-item" onclick="bbSelectChapter(${n})">${n}</div>`;
   return bbHead(_bbBookName,'bbBackToBooks()') + `<div class="bb-grid chapters">${items}</div>`;
 }
-function bbBackToBooks(){ _bbBook=null; _bbChapter=null; _bbSelA=_bbSelB=null; renderBibleBrowser(); }
+function bbBackToBooks(){ _bbBook=null; _bbChapter=null; _bbSelA=_bbSelB=null; _bbSearch=''; renderBibleBrowser(); }
 function bbSelectChapter(n){ _bbChapter=n; _bbSelA=_bbSelB=null; _bbVerses=bibleVerses(_bbMd,n); renderBibleBrowser(); }
 function bbBackToChapters(){ _bbChapter=null; _bbSelA=_bbSelB=null; renderBibleBrowser(); }
 
