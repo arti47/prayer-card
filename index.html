@@ -123,6 +123,11 @@
   #modal-bible .modal-handle { display: none; }
   @keyframes slideDown { from { transform: translateY(-100%); } to { transform: translateY(0); } }
   .bb-sticky { position: sticky; top: 0; z-index: 2; background: var(--surface); padding-bottom: 8px; }
+  .bb-chapnav { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin: 2px 0 10px; }
+  .bb-chapnav-btn { flex: 0 0 auto; background: var(--accent-light); border: 1px solid var(--border); color: var(--accent); border-radius: 99px; padding: 7px 15px; font-size: .8rem; cursor: pointer; font-family: inherit; }
+  .bb-chapnav-btn:disabled { opacity: .38; pointer-events: none; }
+  .bb-chapnav-btn:active { background: var(--accent); color: #fff; }
+  .bb-chapnav-label { font-family: Georgia, serif; font-size: .95rem; font-weight: 600; color: var(--text); }
 
   /* Modals */
   .modal-bg { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 200; align-items: flex-end; }
@@ -1830,9 +1835,39 @@ function bbVerseViewHTML(){
   const canAdd = has && target;
   const addBtn = `<button class="btn btn-primary" style="margin:0;flex:1;${canAdd?'':'opacity:.45;pointer-events:none'}" onclick="bbAdd()">${target?'Add to journal':'Tap a field first'}</button>`;
   const body = has ? bbPreviewHTML(lo,hi) : `<p class="bb-hint">Tap a verse to select it. Tap another to make a range.</p>`;
-  return bbHead(`${_bbBookName} ${_bbChapter}`,'bbBackToChapters()') +
+  const bookIdx = BIBLE_BOOKS_ORDERED.findIndex(b=>b[1]===_bbBook);
+  const atStart = bookIdx===0 && _bbChapter===1;
+  const atEnd = bookIdx===BIBLE_BOOKS_ORDERED.length-1 && _bbChapter===_bbChapCount;
+  const navRow = `<div class="bb-chapnav">
+    <button class="bb-chapnav-btn" ${atStart?'disabled':''} onclick="bbGoChapter(-1)">‹ Prev</button>
+    <span class="bb-chapnav-label">${esc(_bbBookName)} ${_bbChapter}</span>
+    <button class="bb-chapnav-btn" ${atEnd?'disabled':''} onclick="bbGoChapter(1)">Next ›</button>
+  </div>`;
+  return `<div class="bb-verse-view">` +
+    bbHead('','bbBackToChapters()') + navRow +
     `<div class="bb-verses">${rows}</div>` + body +
-    `<div class="bb-actions">${toggle}${copyBtn}${addBtn}</div>`;
+    `<div class="bb-actions">${toggle}${copyBtn}${addBtn}</div>` +
+    `</div>`;
+}
+// Move to the adjacent chapter, crossing into the neighbouring book at the edges
+// (disabled only at Genesis 1 / Revelation 22). Clears the current selection.
+async function bbGoChapter(delta){
+  const idx = BIBLE_BOOKS_ORDERED.findIndex(b=>b[1]===_bbBook);
+  const target = _bbChapter + delta;
+  if(target >= 1 && target <= _bbChapCount){
+    _bbChapter = target; _bbVerses = bibleVerses(_bbMd, target); _bbSelA=_bbSelB=null;
+    renderBibleBrowser(); return;
+  }
+  const newIdx = delta > 0 ? idx+1 : idx-1;
+  if(newIdx < 0 || newIdx >= BIBLE_BOOKS_ORDERED.length) return; // absolute ends
+  const [name,file] = BIBLE_BOOKS_ORDERED[newIdx];
+  try {
+    const md = await fetchBibleFile(file);
+    _bbBook=file; _bbBookName=name; _bbMd=md; _bbChapCount=bibleChapterCount(md);
+    _bbChapter = delta > 0 ? 1 : _bbChapCount;
+    _bbVerses = bibleVerses(_bbMd, _bbChapter); _bbSelA=_bbSelB=null;
+    renderBibleBrowser();
+  } catch(e){ showToast("Couldn't load that book"); }
 }
 
 function bbTapVerse(n){
@@ -5925,16 +5960,17 @@ document.getElementById('dp-content').addEventListener('input',(e)=>{
 // ══════════ SWIPE GESTURES (P4 #23) ══════════
 // Swipe left on a step card → Next, swipe right → Back. Both Weekly Deep Time and Daily Prayer.
 // Event delegation on each session-content container; works through re-renders.
-function setupSwipeFor(containerId, isActive, onNext, onBack){
+function setupSwipeFor(containerId, isActive, onNext, onBack, rootSel){
   const el = document.getElementById(containerId);
   if(!el) return;
+  rootSel = rootSel || '.pl-step-card';
   let startX = 0, startY = 0, startT = 0, tracking = false;
   // Selectors to ignore swipes on — interactive elements user is engaging with
   const ignoreSel = 'textarea, input, select, button, a, label, .pl-chip, .pl-forget-chip, .scripture-ref, .pl-need-chip, .pl-linked-chip, .dp-inv-option, .silence-pill, .silence-active, .pl-link-btn, .pl-chart-btn, .cry-out-link, .cry-out-phrase, .cry-out-close';
 
   el.addEventListener('pointerdown', (e) => {
     if(!isActive()) return;
-    if(!e.target.closest('.pl-step-card')) return;
+    if(!e.target.closest(rootSel)) return;
     if(e.target.closest(ignoreSel)) return;
     startX = e.clientX; startY = e.clientY; startT = Date.now();
     tracking = true;
@@ -5961,6 +5997,10 @@ function setupSwipeFor(containerId, isActive, onNext, onBack){
 
 setupSwipeFor('pl-content', () => plMode === 'session', plNext, plBack);
 setupSwipeFor('dp-content', () => dpMode === 'session', dpNext, dpBack);
+// Bible browser verse view: swipe left → next chapter, right → previous.
+setupSwipeFor('bible-content',
+  () => _bbChapter != null && document.getElementById('modal-bible').classList.contains('open'),
+  () => bbGoChapter(1), () => bbGoChapter(-1), '.bb-verse-view');
 
 // ══════════ MODAL SWIPE-DOWN-TO-DISMISS (sheet-style gesture) ══════════
 // All modals slide up from the bottom on open with a small handle at the top —
@@ -5979,6 +6019,9 @@ setupSwipeFor('dp-content', () => dpMode === 'session', dpNext, dpBack);
   const IGNORE_SEL = 'textarea, input, select, button, a';
 
   document.querySelectorAll('.modal-bg .modal').forEach(modalEl => {
+    // The Bible browser is top-anchored (swipe-down-to-dismiss makes no sense there)
+    // and uses horizontal swipe for chapter nav — skip dismiss so they don't conflict.
+    if(modalEl.closest('#modal-bible')) return;
     let startY = 0, startX = 0, lastY = 0, dragging = false, pointerId = null;
 
     modalEl.addEventListener('pointerdown', e => {
