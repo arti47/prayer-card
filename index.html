@@ -1424,16 +1424,104 @@ function getScriptureText(ref){
   return inv ? inv.text : null;
 }
 
-function lookupScripture(ref){
-  const text = getScriptureText(ref);
+// ══════════ FULL-BIBLE FALLBACK (bible/ folder, precached by the SW) ══════════
+// When a ref isn't in the curated SCRIPTURE_TEXTS / SCRIPTURAL_INVOCATIONS sets,
+// resolve it against the bundled ESV markdown in bible/. Files are lazy-fetched
+// (served from the SW cache, so fully offline after first load) and kept in memory.
+const BIBLE_BOOK_FILES = {
+  'genesis':'Bible_01_Genesis','exodus':'Bible_02_Exodus','leviticus':'Bible_03_Leviticus',
+  'numbers':'Bible_04_Numbers','deuteronomy':'Bible_05_Deuteronomy','joshua':'Bible_06_Joshua',
+  'judges':'Bible_07_Judges','ruth':'Bible_08_Ruth','1 samuel':'Bible_09_I_Samuel',
+  '2 samuel':'Bible_10_II_Samuel','1 kings':'Bible_11_I_Kings','2 kings':'Bible_12_II_Kings',
+  '1 chronicles':'Bible_13_I_Chronicles','2 chronicles':'Bible_14_II_Chronicles','ezra':'Bible_15_Ezra',
+  'nehemiah':'Bible_16_Nehemiah','esther':'Bible_17_Esther','job':'Bible_18_Job',
+  'psalms':'Bible_19_Psalms','proverbs':'Bible_20_Proverbs','ecclesiastes':'Bible_21_Ecclesiastes',
+  'song of solomon':'Bible_22_Song_of_Solomon','isaiah':'Bible_23_Isaiah','jeremiah':'Bible_24_Jeremiah',
+  'lamentations':'Bible_25_Lamentations','ezekiel':'Bible_26_Ezekiel','daniel':'Bible_27_Daniel',
+  'hosea':'Bible_28_Hosea','joel':'Bible_29_Joel','amos':'Bible_30_Amos','obadiah':'Bible_31_Obadiah',
+  'jonah':'Bible_32_Jonah','micah':'Bible_33_Micah','nahum':'Bible_34_Nahum','habakkuk':'Bible_35_Habakkuk',
+  'zephaniah':'Bible_36_Zephaniah','haggai':'Bible_37_Haggai','zechariah':'Bible_38_Zechariah',
+  'malachi':'Bible_39_Malachi','matthew':'Bible_40_Matthew','mark':'Bible_41_Mark','luke':'Bible_42_Luke',
+  'john':'Bible_43_John','acts':'Bible_44_Acts','romans':'Bible_45_Romans',
+  '1 corinthians':'Bible_46_I_Corinthians','2 corinthians':'Bible_47_II_Corinthians',
+  'galatians':'Bible_48_Galatians','ephesians':'Bible_49_Ephesians','philippians':'Bible_50_Philippians',
+  'colossians':'Bible_51_Colossians','1 thessalonians':'Bible_52_I_Thessalonians',
+  '2 thessalonians':'Bible_53_II_Thessalonians','1 timothy':'Bible_54_I_Timothy',
+  '2 timothy':'Bible_55_II_Timothy','titus':'Bible_56_Titus','philemon':'Bible_57_Philemon',
+  'hebrews':'Bible_58_Hebrews','james':'Bible_59_James','1 peter':'Bible_60_I_Peter',
+  '2 peter':'Bible_61_II_Peter','1 john':'Bible_62_I_John','2 john':'Bible_63_II_John',
+  '3 john':'Bible_64_III_John','jude':'Bible_65_Jude','revelation of john':'Bible_66_Revelation_of_John'
+};
+// Aliases → canonical key above.
+const BIBLE_BOOK_ALIASES = {
+  'psalm':'psalms','song of songs':'song of solomon','canticles':'song of solomon',
+  'revelation':'revelation of john','revelations':'revelation of john',
+  'song':'song of solomon'
+};
+function normBook(s){
+  s = s.toLowerCase().replace(/\./g,'').trim().replace(/\s+/g,' ');
+  s = s.replace(/^(1st|first|i)\s/,'1 ').replace(/^(2nd|second|ii)\s/,'2 ').replace(/^(3rd|third|iii)\s/,'3 ');
+  return BIBLE_BOOK_ALIASES[s] || s;
+}
+// Parse "Book C:V" / "Book C:V–V" (en-dash or hyphen). Returns {file, chapter, vStart, vEnd} or null.
+function parseScriptureRef(ref){
+  const m = String(ref).trim().match(/^(.+?)\s+(\d+):(\d+)(?:\s*[–-]\s*(\d+))?$/);
+  if(!m) return null;
+  const file = BIBLE_BOOK_FILES[normBook(m[1])];
+  if(!file) return null;
+  const vStart = +m[3], vEnd = m[4] ? +m[4] : vStart;
+  return { file, chapter:+m[2], vStart, vEnd:Math.max(vStart, vEnd) };
+}
+const _bibleCache = {};
+async function fetchBibleFile(file){
+  if(_bibleCache[file]) return _bibleCache[file];
+  const res = await fetch('bible/' + file + '.md');
+  if(!res.ok) throw new Error('fetch failed');
+  const txt = await res.text();
+  _bibleCache[file] = txt;
+  return txt;
+}
+// Extract verses vStart..vEnd from chapter N of a book's markdown.
+function extractVerses(md, chapter, vStart, vEnd){
+  const lines = md.split('\n');
+  let inChap = false, out = [];
+  for(const line of lines){
+    const ch = line.match(/^##\s+Chapter\s+(\d+)/i);
+    if(ch){ inChap = (+ch[1] === chapter); continue; }
+    if(!inChap) continue;
+    const v = line.match(/^(\d+)\.\s+(.*)$/);
+    if(v){ const n = +v[1]; if(n >= vStart && n <= vEnd) out.push(v[2].trim()); }
+  }
+  return out.length ? out.join(' ') : null;
+}
+async function lookupBibleRef(ref){
+  const p = parseScriptureRef(ref);
+  if(!p) return null;
+  try {
+    const md = await fetchBibleFile(p.file);
+    return extractVerses(md, p.chapter, p.vStart, p.vEnd);
+  } catch(e){ return null; }
+}
+
+function renderScriptureModal(ref, text, loading){
+  const missing = `<p style="font-size:.88rem;color:var(--text3);font-style:italic;line-height:1.6">This reference isn't bundled in the app. Open it in your Bible app or look it up online — the practice of reading slowly, in your own translation, is often more nourishing than a tooltip.</p>`;
+  const loadingHtml = `<p style="font-size:.88rem;color:var(--text3);font-style:italic">Looking it up…</p>`;
+  const found = t => `<p style="font-size:.95rem;line-height:1.75;font-style:italic;color:var(--text);padding:14px 16px;background:var(--accent-light);border-left:3px solid var(--accent2);border-radius:var(--radius-sm)">"${esc(t)}"</p>`;
   document.getElementById('scripture-content').innerHTML = `
     <h2 style="color:var(--accent);font-size:1.1rem;margin-bottom:12px">${esc(ref)}</h2>
-    ${text
-      ? `<p style="font-size:.95rem;line-height:1.75;font-style:italic;color:var(--text);padding:14px 16px;background:var(--accent-light);border-left:3px solid var(--accent2);border-radius:var(--radius-sm)">"${esc(text)}"</p>`
-      : `<p style="font-size:.88rem;color:var(--text3);font-style:italic;line-height:1.6">This reference isn't bundled in the app. Open it in your Bible app or look it up online — the practice of reading slowly, in your own translation, is often more nourishing than a tooltip.</p>`}
+    ${loading ? loadingHtml : (text ? found(text) : missing)}
     <button class="btn btn-secondary" onclick="closeModal('modal-scripture')" style="margin-top:14px">Close</button>
   `;
+}
+
+async function lookupScripture(ref){
+  const curated = getScriptureText(ref);
+  if(curated){ renderScriptureModal(ref, curated, false); openModal('modal-scripture'); return; }
+  // Fallback to the full-Bible markdown.
+  renderScriptureModal(ref, null, true);
   openModal('modal-scripture');
+  const text = await lookupBibleRef(ref);
+  renderScriptureModal(ref, text, false);
 }
 
 function makeScriptureRefsClickable(refsString){
