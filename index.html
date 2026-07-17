@@ -867,14 +867,6 @@
       <div id="install-block"></div>
     </div>
     <div class="about-block">
-      <h3>📖 Bible Button</h3>
-      <p>A floating 📖 button for quickly looking up and inserting Bible verses, shown on Story Cards, Daily Prayer, and Weekly Deep Time. The inline "Insert from Bible" buttons on verse fields stay either way.</p>
-      <label class="switch-row">
-        <span>Show floating Bible button</span>
-        <span class="switch"><input type="checkbox" id="bible-fab-toggle" onchange="setBibleFab(this.checked)"><span class="switch-knob"></span></span>
-      </label>
-    </div>
-    <div class="about-block">
       <h3>📜 Credits &amp; Source Material</h3>
       <p>This app is a personal tool. None of the spiritual content is original — it's drawn directly from a study guide and the books behind it.</p>
       <ul style="margin-top:8px">
@@ -947,6 +939,11 @@
         <button class="size-btn" data-size="medium" onclick="setTextSize('medium')">Medium</button>
         <button class="size-btn" data-size="large" onclick="setTextSize('large')" style="font-size:1.05rem">Large</button>
       </div>
+      <label class="switch-row">
+        <span>Floating 📖 Bible button</span>
+        <span class="switch"><input type="checkbox" id="bible-fab-toggle" onchange="setBibleFab(this.checked)"><span class="switch-knob"></span></span>
+      </label>
+      <p style="font-size:.8rem;color:var(--text3);margin-top:6px">Shown on Story Cards, Daily Prayer, and Weekly Deep Time for quick verse lookup. The inline "Insert from Bible" buttons on verse fields stay either way.</p>
     </div>
     <div class="about-block">
       <h3>📝 Markdown Export</h3>
@@ -2976,8 +2973,8 @@ function showView(name){
   if(name==='cards'){ fab.style.display='flex'; fab.onclick=openNewCard; renderCards(); }
   if(name==='daily') renderDailyPrayer();
   if(name==='pl') renderPL();
-  if(name==='reflect'){ _heatmapSelectedKey = null; renderStats(); renderCalendarHeatmap(); renderAnsweredPrayers(); renderHeartNeedFrequency(); renderWordFrequency(); renderReview(); applyTheme(); applyTextSize(); populateObsidianFields(); }
-  if(name==='guide'){ renderInstallBlock(); const t=document.getElementById('bible-fab-toggle'); if(t) t.checked=bibleFabEnabled(); }
+  if(name==='reflect'){ _heatmapSelectedKey = null; renderStats(); renderCalendarHeatmap(); renderAnsweredPrayers(); renderHeartNeedFrequency(); renderWordFrequency(); renderReview(); applyTheme(); applyTextSize(); populateObsidianFields(); const t=document.getElementById('bible-fab-toggle'); if(t) t.checked=bibleFabEnabled(); }
+  if(name==='guide'){ renderInstallBlock(); }
 }
 
 // ══════════ STORY CARDS ══════════
