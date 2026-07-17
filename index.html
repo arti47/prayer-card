@@ -54,6 +54,7 @@
   header { padding-top: calc(16px + env(safe-area-inset-top)) !important; }
   nav { padding-bottom: env(safe-area-inset-bottom); }
   .fab { bottom: calc(86px + env(safe-area-inset-bottom)); }
+  .bible-fab { bottom: calc(86px + env(safe-area-inset-bottom)); }
   .toast { bottom: calc(96px + env(safe-area-inset-bottom)); }
 
   /* Header */
@@ -86,6 +87,30 @@
   /* FAB */
   .fab { position: fixed; bottom: 86px; right: 20px; width: 52px; height: 52px; border-radius: 50%; background: var(--accent); color: #fff; font-size: 1.6rem; border: none; cursor: pointer; box-shadow: var(--shadow-lg); display: none; align-items: center; justify-content: center; z-index: 101; transition: transform .12s; }
   .fab:active { transform: scale(.93); }
+  .bible-fab { position: fixed; bottom: 86px; left: 20px; width: 52px; height: 52px; border-radius: 50%; background: var(--accent); color: #fff; font-size: 1.4rem; border: none; cursor: pointer; box-shadow: var(--shadow-lg); display: none; align-items: center; justify-content: center; z-index: 101; transition: transform .12s; }
+  .bible-fab:active { transform: scale(.93); }
+  .bb-head { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+  .bb-back { background: none; border: none; color: var(--accent); font-size: 1.2rem; cursor: pointer; padding: 0 4px; line-height: 1; }
+  .bb-title { font-size: 1.1rem; color: var(--accent); font-weight: 600; }
+  .bb-crumb { font-size: .82rem; color: var(--text3); margin-left: auto; font-style: italic; }
+  .bb-grid { display: grid; gap: 7px; margin-bottom: 4px; }
+  .bb-grid.books { grid-template-columns: repeat(2, 1fr); }
+  .bb-grid.chapters { grid-template-columns: repeat(5, 1fr); }
+  .bb-item { padding: 10px 8px; text-align: center; background: var(--accent-light); border: 1px solid var(--border); border-radius: 10px; font-size: .82rem; color: var(--text); cursor: pointer; transition: background .1s; }
+  .bb-item:active { background: var(--accent); color: #fff; }
+  .bb-verses { max-height: 44vh; overflow-y: auto; margin: 2px -4px 8px; }
+  .bb-verse { display: flex; gap: 9px; padding: 7px 8px; border-radius: 8px; cursor: pointer; line-height: 1.55; font-size: .9rem; color: var(--text2); }
+  .bb-verse .n { color: var(--accent); font-weight: 600; font-size: .72rem; min-width: 1.4em; padding-top: 3px; text-align: right; }
+  .bb-verse.sel { background: var(--accent-light); color: var(--text); }
+  .bb-verse.sel .n { color: var(--accent2); }
+  .bb-preview { background: var(--accent-light); border-left: 3px solid var(--accent2); border-radius: var(--radius-sm); padding: 12px 14px; font-style: italic; line-height: 1.7; font-size: .9rem; margin: 8px 0 12px; }
+  .bb-preview .ref { font-style: normal; font-weight: 600; color: var(--accent); display: block; margin-bottom: 5px; font-size: .82rem; }
+  .bb-hint { font-size: .78rem; color: var(--text3); font-style: italic; margin: 2px 0 8px; }
+  .bb-actions { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+  .bb-toggle { display: inline-flex; border: 1px solid var(--border); border-radius: var(--radius-sm); overflow: hidden; }
+  .bb-toggle button { background: none; border: none; padding: 7px 11px; font-size: .72rem; color: var(--text2); cursor: pointer; font-family: inherit; }
+  .bb-toggle button.on { background: var(--accent); color: #fff; }
+  .bb-field-btn { background: var(--accent-light); border: 1px solid var(--border); color: var(--accent); border-radius: 8px; padding: 5px 10px; font-size: .74rem; cursor: pointer; font-family: inherit; margin: -4px 0 2px; }
 
   /* Modals */
   .modal-bg { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 200; align-items: flex-end; }
@@ -925,6 +950,7 @@
 </nav>
 
 <button class="fab" id="fab-btn">＋</button>
+<button class="bible-fab" id="bible-fab-btn" aria-label="Open Bible" onclick="openBibleBrowser()">📖</button>
 
 <!-- Modals -->
 <div class="modal-bg" id="modal-new">
@@ -942,6 +968,7 @@
     </select>
     <label>Scripture Anchor</label>
     <textarea id="f-scripture" placeholder="e.g. Psalm 27:14 — Wait for the Lord…"></textarea>
+    <button type="button" class="bb-field-btn" onclick="openBibleBrowser('f-scripture')">📖 Insert from Bible</button>
     <label>The Ask — Heart Level</label>
     <textarea id="f-ask-heart" placeholder="What deeper heart change or trust are you asking for?"></textarea>
     <label>The Ask — Desired Circumstance</label>
@@ -990,6 +1017,13 @@
   <div class="modal" style="max-width:520px">
     <div class="modal-handle"></div>
     <div id="scripture-content"></div>
+  </div>
+</div>
+
+<div class="modal-bg" id="modal-bible">
+  <div class="modal" style="max-width:520px">
+    <div class="modal-handle"></div>
+    <div id="bible-content"></div>
   </div>
 </div>
 
@@ -1554,6 +1588,186 @@ function linkifyScriptureRefs(text){
       return m;
     }
   );
+}
+
+// ══════════ BIBLE BROWSER ══════════
+// A floating 📖 button (+ inline field buttons) opens a simple book → chapter →
+// verse navigator over the bundled bible/ markdown (offline via the SW cache).
+// Pick a verse or range, then Add it to the last-focused text field or Copy it.
+const BIBLE_BOOKS_ORDERED = [
+  ['Genesis','Bible_01_Genesis'],['Exodus','Bible_02_Exodus'],['Leviticus','Bible_03_Leviticus'],
+  ['Numbers','Bible_04_Numbers'],['Deuteronomy','Bible_05_Deuteronomy'],['Joshua','Bible_06_Joshua'],
+  ['Judges','Bible_07_Judges'],['Ruth','Bible_08_Ruth'],['1 Samuel','Bible_09_I_Samuel'],
+  ['2 Samuel','Bible_10_II_Samuel'],['1 Kings','Bible_11_I_Kings'],['2 Kings','Bible_12_II_Kings'],
+  ['1 Chronicles','Bible_13_I_Chronicles'],['2 Chronicles','Bible_14_II_Chronicles'],['Ezra','Bible_15_Ezra'],
+  ['Nehemiah','Bible_16_Nehemiah'],['Esther','Bible_17_Esther'],['Job','Bible_18_Job'],
+  ['Psalms','Bible_19_Psalms'],['Proverbs','Bible_20_Proverbs'],['Ecclesiastes','Bible_21_Ecclesiastes'],
+  ['Song of Solomon','Bible_22_Song_of_Solomon'],['Isaiah','Bible_23_Isaiah'],['Jeremiah','Bible_24_Jeremiah'],
+  ['Lamentations','Bible_25_Lamentations'],['Ezekiel','Bible_26_Ezekiel'],['Daniel','Bible_27_Daniel'],
+  ['Hosea','Bible_28_Hosea'],['Joel','Bible_29_Joel'],['Amos','Bible_30_Amos'],['Obadiah','Bible_31_Obadiah'],
+  ['Jonah','Bible_32_Jonah'],['Micah','Bible_33_Micah'],['Nahum','Bible_34_Nahum'],['Habakkuk','Bible_35_Habakkuk'],
+  ['Zephaniah','Bible_36_Zephaniah'],['Haggai','Bible_37_Haggai'],['Zechariah','Bible_38_Zechariah'],
+  ['Malachi','Bible_39_Malachi'],['Matthew','Bible_40_Matthew'],['Mark','Bible_41_Mark'],['Luke','Bible_42_Luke'],
+  ['John','Bible_43_John'],['Acts','Bible_44_Acts'],['Romans','Bible_45_Romans'],
+  ['1 Corinthians','Bible_46_I_Corinthians'],['2 Corinthians','Bible_47_II_Corinthians'],['Galatians','Bible_48_Galatians'],
+  ['Ephesians','Bible_49_Ephesians'],['Philippians','Bible_50_Philippians'],['Colossians','Bible_51_Colossians'],
+  ['1 Thessalonians','Bible_52_I_Thessalonians'],['2 Thessalonians','Bible_53_II_Thessalonians'],['1 Timothy','Bible_54_I_Timothy'],
+  ['2 Timothy','Bible_55_II_Timothy'],['Titus','Bible_56_Titus'],['Philemon','Bible_57_Philemon'],
+  ['Hebrews','Bible_58_Hebrews'],['James','Bible_59_James'],['1 Peter','Bible_60_I_Peter'],
+  ['2 Peter','Bible_61_II_Peter'],['1 John','Bible_62_I_John'],['2 John','Bible_63_II_John'],
+  ['3 John','Bible_64_III_John'],['Jude','Bible_65_Jude'],['Revelation','Bible_66_Revelation_of_John']
+];
+
+// Remember the last-focused editable so "Add to journal" has a target.
+let _lastEditable = null;
+document.addEventListener('focusin', e => {
+  const t = e.target;
+  if(t && (t.tagName === 'TEXTAREA' || (t.tagName === 'INPUT' && /^(text|search|)$/i.test(t.type || '')))){
+    if(!t.closest || !t.closest('#modal-bible')) _lastEditable = t;
+  }
+});
+
+let _bbBook=null, _bbBookName='', _bbMd='', _bbChapter=null, _bbChapCount=0,
+    _bbVerses=[], _bbSelA=null, _bbSelB=null, _bbTargetId=null, _bbMode='both';
+
+function activeBibleTarget(){
+  if(_bbTargetId){ const el=document.getElementById(_bbTargetId); if(el) return el; }
+  const el=_lastEditable;
+  if(el && document.contains(el) && el.offsetParent !== null) return el;
+  return null;
+}
+
+function openBibleBrowser(targetId){
+  _bbTargetId = targetId || null;
+  _bbBook=null; _bbBookName=''; _bbChapter=null; _bbVerses=[]; _bbSelA=_bbSelB=null;
+  renderBibleBrowser();
+  openModal('modal-bible');
+}
+
+function renderBibleBrowser(){
+  const c=document.getElementById('bible-content');
+  if(!_bbBook){ c.innerHTML = bbBookListHTML(); return; }
+  if(!_bbChapter){ c.innerHTML = bbChapterListHTML(); return; }
+  c.innerHTML = bbVerseViewHTML();
+}
+
+function bbHead(crumb, backFn){
+  return `<div class="bb-head">
+    ${backFn?`<button class="bb-back" onclick="${backFn}" aria-label="Back">‹</button>`:''}
+    <span class="bb-title">📖 Bible</span>
+    <span class="bb-crumb">${esc(crumb||'')}</span>
+  </div>`;
+}
+
+function bbBookListHTML(){
+  const items = BIBLE_BOOKS_ORDERED.map((b,i)=>`<div class="bb-item" onclick="bbSelectBook(${i})">${esc(b[0])}</div>`).join('');
+  return bbHead('Choose a book','') +
+    `<div class="bb-grid books">${items}</div>` +
+    `<button class="btn btn-secondary" onclick="closeModal('modal-bible')" style="margin-top:12px">Close</button>`;
+}
+
+async function bbSelectBook(i){
+  const [name,file] = BIBLE_BOOKS_ORDERED[i];
+  _bbBookName=name; _bbBook=file; _bbChapter=null; _bbSelA=_bbSelB=null;
+  const c=document.getElementById('bible-content');
+  c.innerHTML = bbHead(name,'bbBackToBooks()') + `<p class="bb-hint">Loading…</p>`;
+  try {
+    _bbMd = await fetchBibleFile(file);
+    _bbChapCount = bibleChapterCount(_bbMd);
+  } catch(e){
+    c.innerHTML = bbHead(name,'bbBackToBooks()') + `<p class="bb-hint">Couldn't load this book — check your connection and try again.</p>`;
+    return;
+  }
+  renderBibleBrowser();
+}
+
+function bbChapterListHTML(){
+  let items='';
+  for(let n=1;n<=_bbChapCount;n++) items += `<div class="bb-item" onclick="bbSelectChapter(${n})">${n}</div>`;
+  return bbHead(_bbBookName,'bbBackToBooks()') + `<div class="bb-grid chapters">${items}</div>`;
+}
+function bbBackToBooks(){ _bbBook=null; _bbChapter=null; _bbSelA=_bbSelB=null; renderBibleBrowser(); }
+function bbSelectChapter(n){ _bbChapter=n; _bbSelA=_bbSelB=null; _bbVerses=bibleVerses(_bbMd,n); renderBibleBrowser(); }
+function bbBackToChapters(){ _bbChapter=null; _bbSelA=_bbSelB=null; renderBibleBrowser(); }
+
+function bbVerseViewHTML(){
+  const has = _bbSelA != null;
+  const lo = has ? Math.min(_bbSelA, _bbSelB ?? _bbSelA) : null;
+  const hi = has ? Math.max(_bbSelA, _bbSelB ?? _bbSelA) : null;
+  const rows = _bbVerses.map(v=>{
+    const sel = has && v.n>=lo && v.n<=hi ? ' sel' : '';
+    return `<div class="bb-verse${sel}" onclick="bbTapVerse(${v.n})"><span class="n">${v.n}</span><span>${esc(v.text)}</span></div>`;
+  }).join('');
+  const target = activeBibleTarget();
+  const toggle = `<div class="bb-toggle">${['both','ref','text'].map(m=>
+    `<button class="${_bbMode===m?'on':''}" onclick="bbSetMode('${m}')">${m==='both'?'Both':m==='ref'?'Ref':'Text'}</button>`).join('')}</div>`;
+  const copyBtn = `<button class="btn btn-secondary" style="margin:0;padding:9px 14px;${has?'':'opacity:.45;pointer-events:none'}" onclick="bbCopy()">Copy</button>`;
+  const canAdd = has && target;
+  const addBtn = `<button class="btn btn-primary" style="margin:0;flex:1;${canAdd?'':'opacity:.45;pointer-events:none'}" onclick="bbAdd()">${target?'Add to journal':'Tap a field first'}</button>`;
+  const body = has ? bbPreviewHTML(lo,hi) : `<p class="bb-hint">Tap a verse to select it. Tap another to make a range.</p>`;
+  return bbHead(`${_bbBookName} ${_bbChapter}`,'bbBackToChapters()') +
+    `<div class="bb-verses">${rows}</div>` + body +
+    `<div class="bb-actions">${toggle}${copyBtn}${addBtn}</div>`;
+}
+
+function bbTapVerse(n){
+  if(_bbSelA==null || _bbSelB!=null){ _bbSelA=n; _bbSelB=null; }
+  else { _bbSelB=n; }
+  renderBibleBrowser();
+}
+function bbSetMode(m){ _bbMode=m; renderBibleBrowser(); }
+
+function bbRefString(lo,hi){ return `${_bbBookName} ${_bbChapter}:${lo}${hi>lo?'–'+hi:''}`; }
+function bbSelectedText(lo,hi){ return _bbVerses.filter(v=>v.n>=lo&&v.n<=hi).map(v=>v.text).join(' '); }
+function bbPreviewHTML(lo,hi){
+  return `<div class="bb-preview"><span class="ref">${esc(bbRefString(lo,hi))}</span>${esc(bbSelectedText(lo,hi))}</div>`;
+}
+function bbInsertString(){
+  if(_bbSelA==null) return '';
+  const lo=Math.min(_bbSelA,_bbSelB??_bbSelA), hi=Math.max(_bbSelA,_bbSelB??_bbSelA);
+  const ref=bbRefString(lo,hi), text=bbSelectedText(lo,hi);
+  if(_bbMode==='ref') return ref;
+  if(_bbMode==='text') return text;
+  return `${ref} — ${text}`;
+}
+function bbAdd(){
+  const s=bbInsertString(); if(!s) return;
+  const t=activeBibleTarget();
+  if(!t){ showToast('Tap a text field first, then reopen'); return; }
+  const cur=t.value||'';
+  t.value = cur.trim() ? cur.replace(/\s*$/,'') + '\n' + s : s;
+  t.dispatchEvent(new Event('input',{bubbles:true}));
+  closeModal('modal-bible');
+  showToast('✓ Added to your journal');
+  try{ t.focus(); t.setSelectionRange(t.value.length,t.value.length); }catch(e){}
+}
+function bbCopy(){
+  const s=bbInsertString(); if(!s) return;
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(s).then(()=>showToast('✓ Copied')).catch(()=>bbCopyFallback(s));
+  } else bbCopyFallback(s);
+}
+function bbCopyFallback(s){
+  const ta=document.createElement('textarea'); ta.value=s;
+  ta.style.position='fixed'; ta.style.opacity='0'; document.body.appendChild(ta); ta.select();
+  try{ document.execCommand('copy'); showToast('✓ Copied'); }catch(e){ showToast('Copy failed'); }
+  document.body.removeChild(ta);
+}
+function bibleChapterCount(md){
+  let max=0; const re=/^##\s+Chapter\s+(\d+)/gim; let m;
+  while((m=re.exec(md))) max=Math.max(max,+m[1]);
+  return max;
+}
+function bibleVerses(md, chapter){
+  const lines=md.split('\n'); let inC=false, out=[];
+  for(const ln of lines){
+    const ch=ln.match(/^##\s+Chapter\s+(\d+)/i);
+    if(ch){ inC=(+ch[1]===chapter); continue; }
+    if(!inC) continue;
+    const v=ln.match(/^(\d+)\.\s+(.*)$/);
+    if(v) out.push({n:+v[1], text:v[2].trim()});
+  }
+  return out;
 }
 
 // ══════════ LORD'S PRAYER PETITION EXPLANATIONS ══════════
@@ -2487,6 +2701,8 @@ function showView(name){
   document.getElementById('view-'+name).classList.add('active');
   document.getElementById('nav-'+name).classList.add('active');
   const fab=document.getElementById('fab-btn'); fab.style.display='none';
+  const bfab=document.getElementById('bible-fab-btn');
+  bfab.style.display = (name==='reflect'||name==='guide') ? 'none' : 'flex';
   if(name==='cards'){ fab.style.display='flex'; fab.onclick=openNewCard; renderCards(); }
   if(name==='daily') renderDailyPrayer();
   if(name==='pl') renderPL();
