@@ -128,6 +128,26 @@
   .bb-chapnav-btn:disabled { opacity: .38; pointer-events: none; }
   .bb-chapnav-btn:active { background: var(--accent); color: #fff; }
   .bb-chapnav-label { font-family: Georgia, serif; font-size: .95rem; font-weight: 600; color: var(--text); }
+  /* Bookmarks — star lives on the selection preview, list lives on the book screen */
+  .bb-preview { position: relative; padding-right: 44px; }
+  .bb-star { position: absolute; top: 8px; right: 8px; background: none; border: none; color: var(--text3); font-size: 1.15rem; line-height: 1; cursor: pointer; padding: 4px 6px; font-family: inherit; transition: color .15s; }
+  .bb-star.on { color: var(--accent); }
+  .bb-bm-block { border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--surface); margin-bottom: 10px; overflow: hidden; }
+  .bb-bm-block[open] { border-color: var(--accent2); }
+  .bb-bm-block summary { padding: 10px 13px; font-size: .82rem; color: var(--accent); cursor: pointer; list-style: none; font-family: inherit; }
+  .bb-bm-block summary::-webkit-details-marker { display: none; }
+  .bb-bm-block summary::before { content: '›'; display: inline-block; margin-right: 9px; color: var(--accent); transition: transform .2s; font-size: 1rem; line-height: 1; vertical-align: middle; min-width: 10px; }
+  .bb-bm-block[open] summary { background: var(--accent-light); border-bottom: 1px solid var(--border); }
+  .bb-bm-block[open] summary::before { transform: rotate(90deg); }
+  .bb-bm-list { padding: 6px; }
+  .bb-bm-row { display: flex; align-items: flex-start; gap: 8px; padding: 8px 9px; border-radius: 9px; cursor: pointer; }
+  .bb-bm-row:active { background: var(--accent-light); }
+  .bb-bm-main { flex: 1; min-width: 0; }
+  .bb-bm-ref { display: block; font-size: .82rem; font-weight: 600; color: var(--accent); margin-bottom: 3px; }
+  .bb-bm-snip { display: block; font-size: .78rem; color: var(--text3); font-style: italic; line-height: 1.5; }
+  .bb-bm-del { background: none; border: none; color: var(--text3); font-size: .8rem; cursor: pointer; padding: 2px 4px; opacity: .55; font-family: inherit; }
+  .bb-bm-del:hover { opacity: 1; }
+  .bb-bm-more { display: block; width: 100%; background: none; border: none; color: var(--accent); font-size: .78rem; font-style: italic; cursor: pointer; padding: 8px 4px 4px; font-family: inherit; text-align: left; }
 
   /* Modals */
   .modal-bg { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 200; align-items: flex-end; }
@@ -1691,7 +1711,8 @@ document.addEventListener('focusin', e => {
 
 let _bbBook=null, _bbBookName='', _bbMd='', _bbChapter=null, _bbChapCount=0,
     _bbVerses=[], _bbSel=new Set(), _bbAnchor=null, _bbTargetId=null, _bbMode='both',
-    _bbFilter='all', _bbSort='canon', _bbSearch='';
+    _bbFilter='all', _bbSort='canon', _bbSearch='',
+    _bbBmOpen=false, _bbBmAll=false;
 const NT_START_INDEX = 39; // BIBLE_BOOKS_ORDERED[39] = Matthew
 const _bbFileToNameMap = Object.fromEntries(BIBLE_BOOKS_ORDERED.map(b => [b[1], b[0]]));
 function _bbFileToName(file){ return _bbFileToNameMap[file] || file; }
@@ -1720,9 +1741,93 @@ function setBibleFab(on){
 function openBibleBrowser(targetId){
   _bbTargetId = targetId || null;
   _bbBook=null; _bbBookName=''; _bbChapter=null; _bbVerses=[]; bbClearSel();
-  _bbSearch=''; _bbFilter='all'; _bbSort='canon';
+  _bbSearch=''; _bbFilter='all'; _bbSort='canon'; _bbBmAll=false;
   renderBibleBrowser();
   openModal('modal-bible');
+}
+
+// ══════════ BIBLE BOOKMARKS ══════════
+// A bookmark saves the current verse selection (book · chapter · verse set) plus
+// a snippet, so the list renders offline without re-fetching the book file.
+function loadBookmarks(){
+  try { return JSON.parse(localStorage.getItem('bible_bookmarks')||'[]'); } catch(e){ return []; }
+}
+function saveBookmarks(list){ safeSetItem('bible_bookmarks', JSON.stringify(list)); }
+// Identity of a passage — used to dedupe and to light the star.
+function bbSelKey(file, chapter, verses){ return `${file}|${chapter}|${verses.join(',')}`; }
+function bbCurrentKey(){ return _bbSel.size ? bbSelKey(_bbBook, _bbChapter, bbSelSorted()) : null; }
+function bbIsBookmarked(){ const k=bbCurrentKey(); return !!k && loadBookmarks().some(b=>b.key===k); }
+
+function bbToggleBookmark(){
+  const key=bbCurrentKey(); if(!key) return;
+  const list=loadBookmarks();
+  const i=list.findIndex(b=>b.key===key);
+  if(i>=0){ list.splice(i,1); saveBookmarks(list); showToast('Bookmark removed'); }
+  else {
+    const txt=bbSelectedText();
+    list.unshift({
+      id: Date.now()+'-'+Math.floor(Math.random()*10000),
+      key, file:_bbBook, book:_bbBookName, chapter:_bbChapter,
+      verses: bbSelSorted(), ref: bbRefString(),
+      snippet: txt.length>90 ? txt.slice(0,90).replace(/\s+\S*$/,'')+'…' : txt,
+      savedAt: new Date().toISOString()
+    });
+    saveBookmarks(list); showToast('★ Bookmarked');
+  }
+  bbRenderKeepScroll();
+}
+
+function bbBookmarksHTML(){
+  if(_bbSearch.trim()) return '';           // stay out of the way while searching
+  const list=loadBookmarks(); if(!list.length) return '';
+  const shown=_bbBmAll ? list : list.slice(0,5);
+  const rows=shown.map(b=>`<div class="bb-bm-row" onclick="bbOpenBookmark('${b.id}')">
+      <div class="bb-bm-main"><span class="bb-bm-ref">${esc(b.ref||'')}</span>${
+        b.snippet?`<span class="bb-bm-snip">${esc(b.snippet)}</span>`:''}</div>
+      <button class="bb-bm-del" aria-label="Remove bookmark" onclick="event.stopPropagation();bbDeleteBookmark('${b.id}')">✕</button>
+    </div>`).join('');
+  const more = (!_bbBmAll && list.length>5)
+    ? `<button class="bb-bm-more" onclick="bbShowAllBookmarks()">Show all ${list.length} →</button>` : '';
+  return `<details class="bb-bm-block"${_bbBmOpen?' open':''} ontoggle="bbBmSetOpen(this)">
+      <summary>★ Bookmarks (${list.length})</summary>
+      <div class="bb-bm-list">${rows}${more}</div>
+    </details>`;
+}
+function bbBmSetOpen(el){ _bbBmOpen = el.open; }
+function bbRefreshBookmarks(){
+  const el=document.getElementById('bb-bookmarks'); if(el) el.innerHTML=bbBookmarksHTML();
+}
+function bbShowAllBookmarks(){ _bbBmAll=true; bbRefreshBookmarks(); }
+function bbDeleteBookmark(id){
+  saveBookmarks(loadBookmarks().filter(b=>b.id!==id));
+  bbRefreshBookmarks();
+  showToast('Bookmark removed');
+}
+// Open a bookmark: load its book, jump to the chapter, re-select the saved verses
+// (skipping any that no longer exist, so a bad record can't break the view).
+async function bbOpenBookmark(id){
+  const bm=loadBookmarks().find(b=>b.id===id); if(!bm) return;
+  _bbBook=bm.file; _bbBookName=bm.book || _bbFileToName(bm.file); _bbSearch='';
+  const c=document.getElementById('bible-content');
+  c.innerHTML = bbHead(_bbBookName,'bbBackToBooks()') + `<p class="bb-hint">Loading…</p>`;
+  try { _bbMd=await fetchBibleFile(bm.file); _bbChapCount=bibleChapterCount(_bbMd); }
+  catch(e){ c.innerHTML = bbHead(_bbBookName,'bbBackToBooks()') + `<p class="bb-hint">Couldn't load this book — check your connection and try again.</p>`; return; }
+  _bbChapter = Math.min(Math.max(bm.chapter||1, 1), _bbChapCount);
+  _bbVerses = bibleVerses(_bbMd, _bbChapter);
+  const maxV = _bbVerses.length ? _bbVerses[_bbVerses.length-1].n : 0;
+  bbClearSel();
+  (bm.verses||[]).forEach(n=>{ if(n>=1 && n<=maxV) _bbSel.add(n); });
+  const sel=bbSelSorted(); _bbAnchor = sel.length ? sel[sel.length-1] : null;
+  renderBibleBrowser();
+  bbScrollToFirstSelected();
+}
+// Bring the first bookmarked verse into view — otherwise a bookmark deep in a
+// long chapter opens at verse 1 with nothing visibly selected.
+function bbScrollToFirstSelected(){
+  const sel=bbSelSorted(); if(!sel.length) return;
+  const row=document.querySelector(`.bb-verse[data-v="${sel[0]}"]`);
+  const box=document.querySelector('.bb-verses');
+  if(row && box) box.scrollTop = Math.max(0, row.offsetTop - box.offsetTop - 8);
 }
 
 function renderBibleBrowser(){
@@ -1747,6 +1852,7 @@ function bbBookListHTML(){
       `<div id="bb-jump">${bbJumpHTML(_bbSearch)}</div>` +
       `<div class="bb-filters">${bbFilterToggleHTML()}${bbSortToggleHTML()}</div>` +
     `</div>` +
+    `<div id="bb-bookmarks">${bbBookmarksHTML()}</div>` +
     `<div id="bb-book-results">${bbBookResultsHTML()}</div>` +
     `<button class="btn btn-secondary" onclick="closeModal('modal-bible')" style="margin-top:12px">Close</button>`;
 }
@@ -1799,6 +1905,7 @@ function bbSearchInput(){
   const el=document.getElementById('bb-search'); if(!el) return;
   _bbSearch=el.value;
   document.getElementById('bb-jump').innerHTML=bbJumpHTML(_bbSearch);
+  bbRefreshBookmarks();
   document.getElementById('bb-book-results').innerHTML=bbBookResultsHTML();
 }
 function bbSetFilter(f){ _bbFilter=f; bbRefreshBookControls(); }
@@ -1953,7 +2060,11 @@ function bbSelectedText(){
   return runs.map(r => r.map(n=>byN[n]).filter(Boolean).join(' ')).join(' … ');
 }
 function bbPreviewHTML(){
-  return `<div class="bb-preview"><span class="ref">${esc(bbRefString())}</span>${esc(bbSelectedText())}</div>`;
+  const on=bbIsBookmarked();
+  const label=on?'Remove bookmark':'Bookmark this passage';
+  return `<div class="bb-preview">` +
+    `<button class="bb-star${on?' on':''}" onclick="bbToggleBookmark()" aria-label="${label}" title="${label}">${on?'★':'☆'}</button>` +
+    `<span class="ref">${esc(bbRefString())}</span>${esc(bbSelectedText())}</div>`;
 }
 function bbInsertString(){
   if(_bbSel.size===0) return '';
@@ -5375,6 +5486,7 @@ function exportBackup(){
       pl_sessions:loadSessions(),
       pl_draft:loadDraft(),
       streak_days:JSON.parse(localStorage.getItem('streak_days')||'[]'),
+      bible_bookmarks:loadBookmarks(),
       daily
     }
   };
@@ -5445,6 +5557,17 @@ function mergeBackup(data){
     const set=new Set([...JSON.parse(localStorage.getItem('streak_days')||'[]'), ...data.streak_days]);
     safeSetItem('streak_days',JSON.stringify([...set]));
   }
+  // Bible bookmarks — dedup by id then by passage key, backup wins, newest first
+  if(Array.isArray(data.bible_bookmarks)){
+    const map=new Map();
+    loadBookmarks().forEach(b=>map.set(b.id,b));
+    data.bible_bookmarks.forEach(b=>map.set(b.id,b));
+    const seen=new Set();
+    const merged=[...map.values()]
+      .sort((a,b)=>(b.savedAt||'').localeCompare(a.savedAt||''))
+      .filter(b=>{ if(!b.key) return true; if(seen.has(b.key)) return false; seen.add(b.key); return true; });
+    saveBookmarks(merged);
+  }
   // Daily progress — backup wins per day
   if(data.daily && typeof data.daily==='object'){
     Object.entries(data.daily).forEach(([d,val])=>{
@@ -5455,10 +5578,10 @@ function mergeBackup(data){
 }
 
 function resetAllData(){
-  if(!confirm('⚠️ This will permanently delete ALL your prayer cards, Pray & Listen sessions, story notes, heart-need history, and streaks. This cannot be undone.\n\nDownload a backup first if you want to keep anything.\n\nReally reset?'))return;
+  if(!confirm('⚠️ This will permanently delete ALL your prayer cards, Pray & Listen sessions, story notes, heart-need history, Bible bookmarks, and streaks. This cannot be undone.\n\nDownload a backup first if you want to keep anything.\n\nReally reset?'))return;
   if(!confirm('Are you absolutely sure? Type-confirm by clicking OK one more time.'))return;
   // Wipe only our keys, leave anything else alone
-  const ours=['prayer_cards','pl_sessions','pl_draft','streak_days'];
+  const ours=['prayer_cards','pl_sessions','pl_draft','streak_days','bible_bookmarks'];
   ours.forEach(k=>safeRemoveItem(k));
   for(let i=localStorage.length-1;i>=0;i--){
     const k=localStorage.key(i);
