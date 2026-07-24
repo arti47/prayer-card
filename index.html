@@ -799,6 +799,20 @@
   .focus-compose-textarea:focus { border-color: var(--accent2); }
   .focus-compose-actions { display: flex; gap: 10px; margin-top: 14px; }
   .focus-compose-actions button { flex: 1; margin-top: 0; }
+  /* Read-only passage carried into focus mode — sticks to the top of the sheet
+     so it stays in view while you compose, collapsible to a peek when the
+     keyboard is up and you want the composer back. */
+  .focus-passage { position: sticky; top: 0; z-index: 3; background: var(--surface); margin: -2px -2px 12px; padding: 2px 2px 8px; }
+  .focus-passage-inner { background: var(--accent-light); border-left: 3px solid var(--accent2); border-radius: var(--radius-sm); padding: 10px 13px; }
+  .focus-passage-head { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+  .focus-passage-label { font-size: .7rem; letter-spacing: .08em; text-transform: uppercase; color: var(--accent); font-family: system-ui, sans-serif; }
+  .focus-passage-toggle { margin-left: auto; background: none; border: none; color: var(--accent); font-size: .95rem; line-height: 1; cursor: pointer; padding: 2px 4px; font-family: inherit; }
+  .focus-passage-body { max-height: 30vh; overflow-y: auto; -webkit-overflow-scrolling: touch; font-size: .92rem; line-height: 1.7; color: var(--text); white-space: pre-wrap; }
+  /* Peek state — fade the clipped edge so the cut reads as deliberate. */
+  .focus-passage.collapsed .focus-passage-body { max-height: 3.4em; overflow: hidden;
+    -webkit-mask-image: linear-gradient(to bottom, #000 50%, transparent 100%);
+    mask-image: linear-gradient(to bottom, #000 50%, transparent 100%); }
+  .focus-passage-verse { font-style: italic; margin-top: 7px; padding-top: 7px; border-top: 1px solid var(--border); }
 
   /* Prayer library (P8 #53) — collapsible list of Matthew Henry's written prayers,
      keyed to each prayer field/step. Native <details> + <summary> for accordion;
@@ -2745,16 +2759,66 @@ function getTextareaContext(ta){
   return { heading: 'Focus mode', prompt: '' };
 }
 
+// ── Passage carried into focus mode (Daily Prayer) ──
+// The passage you're meditating on stays in view while you write about it, in
+// any Daily Prayer field. Reads the live textarea when you're on the passage
+// step (unsaved edits included), otherwise the saved session value.
+let _focusPassageOpen = true;
+function dpActivePassage(){
+  if(dpMode !== 'session' || !dpSession) return null;
+  const plan = DP_PLANS[dpSession.plan]; if(!plan) return null;
+  const step = plan.steps.find(s => s.passageField); if(!step) return null;
+  const pf = step.passageField;
+  const live = document.getElementById('dp-passage');
+  const text = (live ? live.value : (dpSession.steps?.[step.key]?.[pf.key] || '')).trim();
+  return text ? { label: pf.label, text } : null;
+}
+function focusPassageHTML(p){
+  return `<div class="focus-passage${_focusPassageOpen ? '' : ' collapsed'}" id="focus-passage">
+      <div class="focus-passage-inner">
+        <div class="focus-passage-head">
+          <span class="focus-passage-label">📖 ${esc(p.label)}</span>
+          <button class="focus-passage-toggle" onclick="toggleFocusPassage()"
+            aria-label="${_focusPassageOpen ? 'Collapse passage' : 'Expand passage'}">${_focusPassageOpen ? '⌃' : '⌄'}</button>
+        </div>
+        <div class="focus-passage-body">${esc(p.text)}<div class="focus-passage-verse" id="focus-passage-verse" style="display:none"></div></div>
+      </div>
+    </div>`;
+}
+function toggleFocusPassage(){
+  _focusPassageOpen = !_focusPassageOpen;
+  const el = document.getElementById('focus-passage'); if(!el) return;
+  el.classList.toggle('collapsed', !_focusPassageOpen);
+  const btn = el.querySelector('.focus-passage-toggle');
+  if(btn){ btn.textContent = _focusPassageOpen ? '⌃' : '⌄';
+    btn.setAttribute('aria-label', _focusPassageOpen ? 'Collapse passage' : 'Expand passage'); }
+}
+// If the whole entry is a reference rather than pasted text, resolve it to the
+// verse text (curated dictionary first, then the bundled ESV — offline-capable).
+async function resolveFocusPassage(raw){
+  const ref = raw.trim();
+  let verse = getScriptureText(ref);
+  if(!verse && parseScriptureRef(ref)) verse = await lookupBibleRef(ref);
+  if(!verse) return;
+  const el = document.getElementById('focus-passage-verse');
+  if(el){ el.textContent = verse; el.style.display = ''; }
+}
+
 function openFocusCompose(textareaId){
   const ta = document.getElementById(textareaId);
   if(!ta) return;
   _focusComposeTargetId = textareaId;
   const ctx = getTextareaContext(ta);
+  // The passage rides along for every Daily Prayer field except the passage
+  // field itself (which would just be a read-only copy of what you're editing).
+  const passage = (textareaId !== 'dp-passage' && ta.closest('#dp-content')) ? dpActivePassage() : null;
+  const passageHTML = passage ? focusPassageHTML(passage) : '';
   // If a silence timer is running, carry it into focus mode so the user can keep
   // waiting (and extend it) without leaving the composer. The shared .silence-widget
   // class means refreshSilenceWidgets() updates it on the same 1s tick automatically.
   const silenceHTML = _silenceEnd ? `<div class="silence-widget" style="margin-bottom:12px"></div>` : '';
   document.getElementById('focus-compose-content').innerHTML = `
+    ${passageHTML}
     ${ctx.heading ? `<div class="focus-compose-heading">${esc(ctx.heading)}</div>` : ''}
     ${ctx.prompt  ? `<div class="focus-compose-prompt">${esc(ctx.prompt)}</div>`   : ''}
     ${silenceHTML}
@@ -2765,6 +2829,7 @@ function openFocusCompose(textareaId){
     </div>
   `;
   if(_silenceEnd) refreshSilenceWidgets();  // populate the freshly-rendered widget
+  if(passage) resolveFocusPassage(passage.text);
   openModal('modal-focus-compose');
   // Focus the textarea after the modal slide-up animation settles
   setTimeout(() => {
@@ -6276,7 +6341,9 @@ setupSwipeFor('bible-content',
 (function setupModalSwipeDismiss(){
   const HANDLE_REGION_PX = 80;
   const DISMISS_THRESHOLD = 100;
-  const IGNORE_SEL = 'textarea, input, select, button, a';
+  // .focus-passage scrolls internally and sits inside the top drag region — a
+  // downward drag there must scroll the passage, not dismiss the sheet.
+  const IGNORE_SEL = 'textarea, input, select, button, a, .focus-passage';
 
   document.querySelectorAll('.modal-bg .modal').forEach(modalEl => {
     // The Bible browser is top-anchored (swipe-down-to-dismiss makes no sense there)
