@@ -802,7 +802,11 @@
   /* Read-only passage carried into focus mode — sticks to the top of the sheet
      so it stays in view while you compose, collapsible to a peek when the
      keyboard is up and you want the composer back. */
-  .focus-passage { position: sticky; top: 0; z-index: 3; background: var(--surface); margin: -2px -2px 12px; padding: 2px 2px 8px; }
+  /* Both read-only blocks ride in one sticky wrapper, so they pin as a unit
+     instead of two `top:0` elements overlapping each other on scroll. */
+  .focus-pinned { position: sticky; top: 0; z-index: 3; background: var(--surface); margin: -2px -2px 12px; padding: 2px 2px 8px; }
+  .focus-passage { margin-bottom: 8px; }
+  .focus-passage:last-child { margin-bottom: 0; }
   .focus-passage-inner { background: var(--accent-light); border-left: 3px solid var(--accent2); border-radius: var(--radius-sm); padding: 10px 13px; }
   .focus-passage-head { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
   .focus-passage-label { font-size: .7rem; letter-spacing: .08em; text-transform: uppercase; color: var(--accent); font-family: system-ui, sans-serif; }
@@ -813,6 +817,23 @@
     -webkit-mask-image: linear-gradient(to bottom, #000 50%, transparent 100%);
     mask-image: linear-gradient(to bottom, #000 50%, transparent 100%); }
   .focus-passage-verse { font-style: italic; margin-top: 7px; padding-top: 7px; border-top: 1px solid var(--border); }
+  /* What you already wrote earlier in the session, carried into the prayer field
+     it feeds. Read-only, same anatomy as the passage block. */
+  .focus-carry-inner { background: var(--accent-light); border-left: 3px solid var(--accent); border-radius: var(--radius-sm); padding: 10px 13px; }
+  .focus-carry-body { max-height: 18vh; overflow-y: auto; -webkit-overflow-scrolling: touch; font-size: .92rem; line-height: 1.7; color: var(--text); white-space: pre-wrap; }
+  .focus-carry.collapsed .focus-carry-body { max-height: 3.4em; overflow: hidden;
+    -webkit-mask-image: linear-gradient(to bottom, #000 50%, transparent 100%);
+    mask-image: linear-gradient(to bottom, #000 50%, transparent 100%); }
+  .focus-carry-sub { display: block; font-size: .66rem; letter-spacing: .07em; text-transform: uppercase; color: var(--accent); opacity: .85; margin-bottom: 2px; font-family: system-ui, sans-serif; }
+  .focus-carry-item + .focus-carry-item { margin-top: 9px; padding-top: 9px; border-top: 1px solid var(--border); }
+  /* Fade the bottom edge while there's more to scroll, so a capped block reads
+     as scrollable rather than as a hard clip. Cleared once scrolled to the end. */
+  .focus-passage-body.has-more, .focus-carry-body.has-more {
+    -webkit-mask-image: linear-gradient(to bottom, #000 calc(100% - 26px), transparent 100%);
+    mask-image: linear-gradient(to bottom, #000 calc(100% - 26px), transparent 100%); }
+  /* Two blocks share the top, so each gives up height (and the composer some too). */
+  .has-carry .focus-passage-body { max-height: 18vh; }
+  .has-carry .focus-compose-textarea { min-height: 26vh; }
 
   /* Prayer library (P8 #53) — collapsible list of Matthew Henry's written prayers,
      keyed to each prayer field/step. Native <details> + <summary> for accordion;
@@ -2802,6 +2823,92 @@ async function resolveFocusPassage(raw){
   if(!verse) return;
   const el = document.getElementById('focus-passage-verse');
   if(el){ el.textContent = verse; el.style.display = ''; }
+  refreshFocusFades();   // the verse just changed how much is below the fold
+}
+
+// ── Earlier answers carried into the prayer field they feed ──
+// Each plan maps `${stepKey}.${fieldKey}` → where its material came from, using
+// each plan's own wording: Morning's meditation answers feed the matching part
+// of the Lord's-Prayer-shaped prayer step; Starter's Word Prayer step says
+// "turn the answers to your three questions into a prayer", so it gets all
+// three; Evening has no question set, so its Psalm response feeds the prayer
+// that turns the Psalm back to God. Thanksgiving has no source by design —
+// thanksgiving is a distinct move from praise.
+const DP_CARRY = {
+  morning: {
+    'prayer.adoration':  { title:'From your meditation', med:{ simple:['q_praise'],  full:['q_god'],  soliloquy:['soliloquy'] } },
+    'prayer.confession': { title:'From your meditation', med:{ simple:['q_confess'], full:['q_sin'],  soliloquy:['soliloquy'] } },
+    'prayer.petition':   { title:'From your meditation', med:{ simple:['q_ask'],     full:['q_need'], soliloquy:['soliloquy'] } }
+  },
+  starter: {
+    'wordprayer.text': { title:'From your meditation', med:{ simple:['q_praise','q_confess','q_ask'] } }
+  },
+  evening: {
+    'prayer.psalmprayer': { title:'From your reading', field:{ step:'psalm', key:'response', label:'What stirred you?' } }
+  }
+};
+let _focusCarryOpen = true;
+// Answers to show above a prayer field, as [{label, text}]. Empty when the
+// field has no mapping or nothing was written.
+function dpCarriedAnswers(textareaId){
+  if(dpMode !== 'session' || !dpSession) return [];
+  if(!textareaId.startsWith('dp-field-')) return [];
+  const plan = DP_PLANS[dpSession.plan]; if(!plan) return [];
+  const step = plan.steps[dpStepIdx]; if(!step) return [];
+  const spec = (DP_CARRY[plan.key] || {})[`${step.key}.${textareaId.slice(9)}`];
+  if(!spec) return [];
+  const out = [];
+  if(spec.med){
+    const medStep = plan.steps.find(s => s.questionsField);
+    const mode = MEDITATION_QUESTIONS[dpSession.meditationMode] ? dpSession.meditationMode : 'simple';
+    const keys = spec.med[mode] || [];
+    const data = (medStep && dpSession.steps?.[medStep.key]) || {};
+    keys.forEach(k => {
+      const text = (data[k] || '').trim();
+      if(!text) return;
+      const q = MEDITATION_QUESTIONS[mode].find(x => x.key === k);
+      out.push({ label: q ? q.label : '', text });
+    });
+  }
+  if(spec.field){
+    const text = (dpSession.steps?.[spec.field.step]?.[spec.field.key] || '').trim();
+    if(text) out.push({ label: spec.field.label, text });
+  }
+  return out;
+}
+function focusCarryHTML(items, title){
+  const rows = items.map(it => `<div class="focus-carry-item">${
+    it.label ? `<span class="focus-carry-sub">${esc(it.label)}</span>` : ''}${esc(it.text)}</div>`).join('');
+  return `<div class="focus-carry${_focusCarryOpen ? '' : ' collapsed'}" id="focus-carry">
+      <div class="focus-carry-inner">
+        <div class="focus-passage-head">
+          <span class="focus-passage-label">✍️ ${esc(title)}</span>
+          <button class="focus-passage-toggle" onclick="toggleFocusCarry()"
+            aria-label="${_focusCarryOpen ? 'Collapse' : 'Expand'}">${_focusCarryOpen ? '⌃' : '⌄'}</button>
+        </div>
+        <div class="focus-carry-body">${rows}</div>
+      </div>
+    </div>`;
+}
+// Show a bottom fade while a capped block still has content below the fold.
+function markScrollFade(el){
+  if(!el || el.dataset.fadeBound) return;
+  el.dataset.fadeBound = '1';
+  const upd = () => el.classList.toggle('has-more', el.scrollHeight - el.clientHeight - el.scrollTop > 4);
+  el.addEventListener('scroll', upd);
+  upd();
+}
+function refreshFocusFades(){
+  markScrollFade(document.querySelector('.focus-passage-body'));
+  markScrollFade(document.querySelector('.focus-carry-body'));
+}
+function toggleFocusCarry(){
+  _focusCarryOpen = !_focusCarryOpen;
+  const el = document.getElementById('focus-carry'); if(!el) return;
+  el.classList.toggle('collapsed', !_focusCarryOpen);
+  const btn = el.querySelector('.focus-passage-toggle');
+  if(btn){ btn.textContent = _focusCarryOpen ? '⌃' : '⌄';
+    btn.setAttribute('aria-label', _focusCarryOpen ? 'Collapse' : 'Expand'); }
 }
 
 function openFocusCompose(textareaId){
@@ -2811,14 +2918,24 @@ function openFocusCompose(textareaId){
   const ctx = getTextareaContext(ta);
   // The passage rides along for every Daily Prayer field except the passage
   // field itself (which would just be a read-only copy of what you're editing).
-  const passage = (textareaId !== 'dp-passage' && ta.closest('#dp-content')) ? dpActivePassage() : null;
-  const passageHTML = passage ? focusPassageHTML(passage) : '';
+  const inDP = !!ta.closest('#dp-content');
+  const passage = (textareaId !== 'dp-passage' && inDP) ? dpActivePassage() : null;
+  const carried = inDP ? dpCarriedAnswers(textareaId) : [];
+  const carrySpec = carried.length
+    ? (DP_CARRY[dpSession.plan] || {})[`${DP_PLANS[dpSession.plan].steps[dpStepIdx].key}.${textareaId.slice(9)}`]
+    : null;
+  const pinnedHTML = (passage || carried.length)
+    ? `<div class="focus-pinned">${passage ? focusPassageHTML(passage) : ''}${
+        carried.length ? focusCarryHTML(carried, carrySpec?.title || 'From your meditation') : ''}</div>`
+    : '';
   // If a silence timer is running, carry it into focus mode so the user can keep
   // waiting (and extend it) without leaving the composer. The shared .silence-widget
   // class means refreshSilenceWidgets() updates it on the same 1s tick automatically.
   const silenceHTML = _silenceEnd ? `<div class="silence-widget" style="margin-bottom:12px"></div>` : '';
-  document.getElementById('focus-compose-content').innerHTML = `
-    ${passageHTML}
+  const content = document.getElementById('focus-compose-content');
+  content.classList.toggle('has-carry', carried.length > 0 && !!passage);
+  content.innerHTML = `
+    ${pinnedHTML}
     ${ctx.heading ? `<div class="focus-compose-heading">${esc(ctx.heading)}</div>` : ''}
     ${ctx.prompt  ? `<div class="focus-compose-prompt">${esc(ctx.prompt)}</div>`   : ''}
     ${silenceHTML}
@@ -2831,6 +2948,7 @@ function openFocusCompose(textareaId){
   if(_silenceEnd) refreshSilenceWidgets();  // populate the freshly-rendered widget
   if(passage) resolveFocusPassage(passage.text);
   openModal('modal-focus-compose');
+  refreshFocusFades();   // after open — a hidden modal measures as zero-height
   // Focus the textarea after the modal slide-up animation settles
   setTimeout(() => {
     const el = document.getElementById('focus-compose-textarea');
@@ -3437,9 +3555,10 @@ function dpSaveCurrentStep(){
     const el=document.getElementById('dp-field-'+f.key);
     if(el) data[f.key] = el.value;
   });
-  // Meditation questions (both modes saved)
+  // Meditation questions — every mode's keys, so switching modes never drops
+  // what you wrote (and so a new mode can't be added without being saved).
   if(step.questionsField){
-    [...MEDITATION_QUESTIONS.full, ...MEDITATION_QUESTIONS.simple].forEach(q => {
+    Object.values(MEDITATION_QUESTIONS).flat().forEach(q => {
       const el=document.getElementById('dp-q-'+q.key);
       if(el) data[q.key] = el.value;
     });
@@ -6341,9 +6460,9 @@ setupSwipeFor('bible-content',
 (function setupModalSwipeDismiss(){
   const HANDLE_REGION_PX = 80;
   const DISMISS_THRESHOLD = 100;
-  // .focus-passage scrolls internally and sits inside the top drag region — a
-  // downward drag there must scroll the passage, not dismiss the sheet.
-  const IGNORE_SEL = 'textarea, input, select, button, a, .focus-passage';
+  // The pinned focus-mode blocks scroll internally and sit inside the top drag
+  // region — a downward drag there must scroll them, not dismiss the sheet.
+  const IGNORE_SEL = 'textarea, input, select, button, a, .focus-pinned';
 
   document.querySelectorAll('.modal-bg .modal').forEach(modalEl => {
     // The Bible browser is top-anchored (swipe-down-to-dismiss makes no sense there)
