@@ -3202,6 +3202,8 @@ function esc(s){ if(!s)return''; return s.replace(/&/g,'&amp;').replace(/</g,'&l
 // esc() baked into saved text back into real newlines, cleaning old drafts on load.
 function escTa(s){ if(!s)return''; return String(s).replace(/<br\s*\/?>/gi,'\n').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 function showToast(msg){ const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),2200); }
+// Subtle haptic feedback on meaningful commit moments (mobile; no-op on desktop).
+function haptic(ms){ try{ if(navigator.vibrate) navigator.vibrate(ms||12); }catch(_){} }
 // One-time discoverability nudge for the (hidden) swipe-between-steps gesture.
 function maybeSwipeHint(){ if(localStorage.getItem('swipe_hint_seen'))return; safeSetItem('swipe_hint_seen','1'); setTimeout(()=>showToast('Tip: swipe left or right to move between steps'),700); }
 
@@ -3435,6 +3437,7 @@ function toggleAnswered(id){
   c.answered=!c.answered;
   if(c.answered){ c.notes=c.notes||[]; c.notes.push({date:today(),text:'🎉 Prayer answered!'}); }
   saveCards(cards); closeModal('modal-detail'); renderCards();
+  if(c.answered) haptic(20);
   showToast(c.answered?'Marked as answered 🎉':'Moved back to active');
 }
 // In-app confirm/alert modal (styled, keeps the contemplative tone; replaces the
@@ -3461,7 +3464,7 @@ function showUndoToast(msg, undoFn){
   el.querySelector('.undo-msg').textContent=msg; el.classList.add('show');
   _undoTimer=setTimeout(()=>{ el.classList.remove('show'); _undoFn=null; }, 5000);
 }
-function doUndo(){ const fn=_undoFn; _undoFn=null; clearTimeout(_undoTimer); document.getElementById('undo-toast').classList.remove('show'); if(fn) fn(); }
+function doUndo(){ const fn=_undoFn; _undoFn=null; clearTimeout(_undoTimer); document.getElementById('undo-toast').classList.remove('show'); if(fn){ haptic(); fn(); } }
 function deleteCard(id){
   const before=loadCards(); if(!before.some(c=>c.id===id)) return;
   saveCards(before.filter(c=>c.id!==id)); closeModal('modal-detail'); renderCards();
@@ -4229,6 +4232,7 @@ function dailyNav(newIdx){
 function dailyFinish(){
   const todayKey='daily_'+new Date().toDateString();
   safeSetItem(todayKey,JSON.stringify({idx:0,done:true}));
+  haptic(25);
   recordStreak();
   document.getElementById('daily-content').innerHTML=`
     <div class="empty" style="padding-top:50px">
