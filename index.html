@@ -385,6 +385,9 @@
   .update-toast strong { font-weight: 700; text-decoration: underline; }
   .update-toast.show { opacity: 1; pointer-events: auto; }
   .update-toast:active { opacity: .82; }
+  .undo-toast { position: fixed; bottom: calc(96px + env(safe-area-inset-bottom)); left: 50%; transform: translateX(-50%); background: var(--text); color: #fff; padding: 9px 12px 9px 18px; border-radius: 99px; font-size: .85rem; font-family: sans-serif; box-shadow: var(--shadow-lg); z-index: 1000; opacity: 0; pointer-events: none; transition: opacity .2s; white-space: nowrap; display: flex; align-items: center; gap: 12px; max-width: calc(100vw - 24px); }
+  .undo-toast.show { opacity: 1; pointer-events: auto; }
+  .undo-toast button { background: none; border: none; color: var(--accent); font-weight: 700; font-family: sans-serif; font-size: .85rem; cursor: pointer; padding: 4px 10px; }
 
   /* Calendar heatmap (P4 #19) */
   .heatmap-wrap { margin-top: 4px; }
@@ -1116,6 +1119,13 @@
   </div>
 </div>
 
+<div class="modal-bg" id="modal-confirm">
+  <div class="modal" style="max-width:420px">
+    <div class="modal-handle"></div>
+    <div id="confirm-content"></div>
+  </div>
+</div>
+
 <div class="modal-bg" id="modal-petition">
   <div class="modal" style="max-width:520px">
     <div class="modal-handle"></div>
@@ -1169,6 +1179,7 @@
 
 <div class="toast" id="toast"></div>
 <div class="update-toast" id="update-toast" role="button" tabindex="0">↻ New version — <strong>tap to update</strong></div>
+<div class="undo-toast" id="undo-toast"><span class="undo-msg"></span><button type="button" onclick="doUndo()">Undo</button></div>
 
 <script>
 // ══════════ CONSTANTS ══════════
@@ -3421,7 +3432,36 @@ function toggleAnswered(id){
   saveCards(cards); closeModal('modal-detail'); renderCards();
   showToast(c.answered?'Marked as answered 🎉':'Moved back to active');
 }
-function deleteCard(id){ if(!confirm('Delete this prayer card?'))return; saveCards(loadCards().filter(c=>c.id!==id)); closeModal('modal-detail'); renderCards(); showToast('Card deleted'); }
+// In-app confirm/alert modal (styled, keeps the contemplative tone; replaces the
+// jarring native confirm()/alert()). Promise-based so callers `await` it.
+let _confirmResolve=null;
+function uiConfirm(msg, opts={}){
+  return new Promise(res=>{
+    _confirmResolve=res;
+    const c=document.getElementById('confirm-content');
+    c.innerHTML=`<p style="font-size:.95rem;line-height:1.65;white-space:pre-line;color:var(--text);margin-bottom:16px">${escTa(msg)}</p>
+      <button class="btn ${opts.danger?'btn-danger':'btn-primary'}" onclick="_resolveConfirm(true)">${escTa(opts.okText||'OK')}</button>
+      ${opts.alert?'':`<button class="btn btn-secondary" onclick="_resolveConfirm(false)" style="margin-top:8px">${escTa(opts.cancelText||'Cancel')}</button>`}`;
+    openModal('modal-confirm');
+  });
+}
+function _resolveConfirm(v){ closeModal('modal-confirm'); const r=_confirmResolve; _confirmResolve=null; if(r) r(v); }
+function uiAlert(msg){ return uiConfirm(msg,{alert:true}); }
+
+// Optimistic delete + 5s "Undo" toast (friendlier than a blocking confirm).
+let _undoTimer=null, _undoFn=null;
+function showUndoToast(msg, undoFn){
+  clearTimeout(_undoTimer); _undoFn=undoFn;
+  const el=document.getElementById('undo-toast');
+  el.querySelector('.undo-msg').textContent=msg; el.classList.add('show');
+  _undoTimer=setTimeout(()=>{ el.classList.remove('show'); _undoFn=null; }, 5000);
+}
+function doUndo(){ const fn=_undoFn; _undoFn=null; clearTimeout(_undoTimer); document.getElementById('undo-toast').classList.remove('show'); if(fn) fn(); }
+function deleteCard(id){
+  const before=loadCards(); if(!before.some(c=>c.id===id)) return;
+  saveCards(before.filter(c=>c.id!==id)); closeModal('modal-detail'); renderCards();
+  showUndoToast('Card deleted', ()=>{ saveCards(before); renderCards(); });
+}
 
 let noteTargetId=null;
 let noteEditIndex=null;  // null = add mode; integer = index in the card's notes array (edit mode)
@@ -3474,15 +3514,19 @@ function saveNote(){
 }
 
 function deleteNote(cardId, noteIndex){
-  if(!confirm('Delete this story note? This cannot be undone.')) return;
   const cards = loadCards();
   const c = cards.find(x => x.id === cardId);
   if(!c || !c.notes || !c.notes[noteIndex]) return;
+  const note = c.notes[noteIndex];
   c.notes.splice(noteIndex, 1);
   saveCards(cards);
   if(document.getElementById('modal-detail').classList.contains('open')) openDetail(cardId);
   renderCards();
-  showToast('Note deleted');
+  showUndoToast('Note deleted', ()=>{
+    const cur=loadCards(); const cc=cur.find(x=>x.id===cardId);
+    if(cc){ cc.notes=cc.notes||[]; cc.notes.splice(noteIndex,0,note); saveCards(cur);
+      if(document.getElementById('modal-detail').classList.contains('open')) openDetail(cardId); renderCards(); }
+  });
 }
 
 // ══════════ DAILY PRAYER ══════════
@@ -3512,9 +3556,9 @@ function dpEmptyStepData(step){
   return data;
 }
 
-function dpStart(planKey){
+async function dpStart(planKey){
   const plan=DP_PLANS[planKey]; if(!plan)return;
-  if(loadDailyDraft() && !confirm('You have a daily prayer draft in progress. Discard it and start fresh?')) return;
+  if(loadDailyDraft() && !(await uiConfirm('You have a daily prayer draft in progress. Discard it and start fresh?', {danger:true, okText:'Discard & start'}))) return;
   const steps={};
   plan.steps.forEach(s => steps[s.key]=dpEmptyStepData(s));
   dpSession={
@@ -3539,9 +3583,9 @@ function dpContinue(){
   window.scrollTo(0,0);
 }
 
-function dpDiscardDraft(){
+async function dpDiscardDraft(){
   if(!loadDailyDraft()) return;
-  if(!confirm('Discard this Daily Prayer draft? Anything unsaved in it will be lost.')) return;
+  if(!(await uiConfirm('Discard this Daily Prayer draft? Anything unsaved in it will be lost.', {danger:true, okText:'Discard'}))) return;
   clearDailyDraft();
   if(dpMode==='session'){ dpSession=null; dpMode='home'; }
   renderDailyPrayer();
@@ -4251,10 +4295,10 @@ function plStartQuick(){
   plStepIdx=0; plMode='session'; _plAnimDir='next'; saveDraft(plSession); renderPL(); window.scrollTo(0,0);
 }
 
-function plRepray(sessionId){
+async function plRepray(sessionId){
   const prev=loadSessions().find(s=>s.id===sessionId);
   if(!prev){ showToast('Session not found'); return; }
-  if(loadDraft() && !confirm('You have a draft session in progress. Discard it and start praying this one again?')) return;
+  if(loadDraft() && !(await uiConfirm('You have a draft session in progress. Discard it and start praying this one again?', {danger:true, okText:'Discard & start'}))) return;
   const steps={};
   PL_STEPS.forEach(s=>steps[s.key]=emptyStepData(s));
   plSession={
@@ -4285,9 +4329,9 @@ function plContinue(){
   renderPL(); window.scrollTo(0,0);
 }
 
-function plDiscardDraft(){
+async function plDiscardDraft(){
   if(!loadDraft()) return;
-  if(!confirm('Discard this Weekly Deep Time draft? Anything unsaved in it will be lost.')) return;
+  if(!(await uiConfirm('Discard this Weekly Deep Time draft? Anything unsaved in it will be lost.', {danger:true, okText:'Discard'}))) return;
   clearDraft();
   if(plMode==='session'){ plSession=null; plMode='home'; }
   renderPL();
@@ -4963,10 +5007,9 @@ function getSessionsLinkedToCard(cardId){
 }
 
 function deleteDailySession(id){
-  if(!confirm('Delete this Daily Prayer session? This cannot be undone.')) return;
-  saveDailySessions(loadDailySessions().filter(s=>s.id!==id));
-  renderDailyPrayer();
-  showToast('Session deleted');
+  const before=loadDailySessions(); if(!before.some(s=>s.id===id)) return;
+  saveDailySessions(before.filter(s=>s.id!==id)); renderDailyPrayer();
+  showUndoToast('Session deleted', ()=>{ saveDailySessions(before); renderDailyPrayer(); });
 }
 
 function viewDailySession(id){
@@ -5019,10 +5062,9 @@ function viewDailySession(id){
 
 // ══════════ VIEW PAST SESSION ══════════
 function deleteSession(id){
-  if(!confirm('Delete this Pray & Listen session? This cannot be undone.'))return;
-  saveSessions(loadSessions().filter(s=>s.id!==id));
-  renderPL();
-  showToast('Session deleted');
+  const before=loadSessions(); if(!before.some(s=>s.id===id)) return;
+  saveSessions(before.filter(s=>s.id!==id)); renderPL();
+  showUndoToast('Session deleted', ()=>{ saveSessions(before); renderPL(); });
 }
 
 function viewSession(id){
@@ -5694,27 +5736,28 @@ function exportBackup(){
   showToast('Backup downloaded ✓');
 }
 
-function importBackup(event){
+async function importBackup(event){
   const file=event.target.files?.[0];
   event.target.value='';  // reset so the same file can be picked again
   if(!file)return;
   const reader=new FileReader();
-  reader.onload=(e)=>{
+  reader.onload=async(e)=>{
     let backup;
     try { backup=JSON.parse(e.target.result); }
-    catch(err){ alert('Could not read backup file: '+err.message); return; }
+    catch(err){ await uiAlert('Could not read backup file: '+err.message); return; }
     if(backup.app!=='prayer-journal' || !backup.data){
-      alert('This file does not look like a Prayer Journal backup.');
+      await uiAlert('This file does not look like a Prayer Journal backup.');
       return;
     }
     const cardsCount=backup.data.prayer_cards?.length||0;
     const sessionsCount=backup.data.pl_sessions?.length||0;
     const exportedDate=backup.exportedAt?new Date(backup.exportedAt).toLocaleString():'unknown date';
-    const ok=confirm(
+    const ok=await uiConfirm(
       'Restore from backup?\n\n'+
       'From: '+exportedDate+'\n'+
       'Contains: '+cardsCount+' prayer card'+(cardsCount===1?'':'s')+', '+sessionsCount+' Pray & Listen session'+(sessionsCount===1?'':'s')+'\n\n'+
-      'This will MERGE with your current data. Items with the same ID will be replaced by the backup version. Your current draft session (if any) is left untouched.\n\nContinue?'
+      'This will MERGE with your current data. Items with the same ID will be replaced by the backup version. Your current draft (if any) is left untouched.',
+      {okText:'Restore'}
     );
     if(!ok)return;
     mergeBackup(backup.data);
@@ -5768,9 +5811,9 @@ function mergeBackup(data){
   // Note: pl_draft intentionally NOT imported — too risky if user has work in progress.
 }
 
-function resetAllData(){
-  if(!confirm('⚠️ This will permanently delete ALL your prayer cards, Pray & Listen sessions, story notes, heart-need history, Bible bookmarks, and streaks. This cannot be undone.\n\nDownload a backup first if you want to keep anything.\n\nReally reset?'))return;
-  if(!confirm('Are you absolutely sure? Type-confirm by clicking OK one more time.'))return;
+async function resetAllData(){
+  if(!(await uiConfirm('This will permanently delete ALL your prayer cards, sessions, story notes, heart-need history, Bible bookmarks, and streaks. This cannot be undone.\n\nDownload a backup first if you want to keep anything.', {danger:true, okText:'Reset everything'})))return;
+  if(!(await uiConfirm('Are you absolutely sure? This erases everything on this device.', {danger:true, okText:'Yes, erase all'})))return;
   // Wipe only our keys, leave anything else alone
   const ours=['prayer_cards','pl_sessions','pl_draft','streak_days','bible_bookmarks'];
   ours.forEach(k=>safeRemoveItem(k));
