@@ -237,7 +237,7 @@
   .pl-recommendation { background: var(--accent-light); border-left: 3px solid var(--accent2); padding: 12px 14px; border-radius: 0 var(--radius-sm) var(--radius-sm) 0; font-style: italic; font-size: .85rem; color: var(--text2); line-height: 1.6; margin-bottom: 14px; }
   .pl-scripture-feature { border-radius: var(--radius-sm); padding: 14px 16px; margin-bottom: 14px; line-height: 1.75; }
   .pl-field-label { font-size: .66rem; font-family: sans-serif; text-transform: uppercase; letter-spacing: .1em; font-weight: bold; margin-bottom: 7px; }
-  .pl-textarea { width: 100%; padding: 12px; border-radius: var(--radius-sm); border: 1.5px solid var(--border); font-family: 'Georgia', serif; font-size: .9rem; background: var(--surface); color: var(--text); resize: vertical; min-height: 90px; outline: none; line-height: 1.65; transition: border-color .15s; }
+  .pl-textarea { width: 100%; padding: 12px; border-radius: var(--radius-sm); border: 1.5px solid var(--border); font-family: 'Georgia', serif; font-size: .9rem; background: var(--surface); color: var(--text); resize: none; overflow: hidden; min-height: 90px; outline: none; line-height: 1.65; transition: border-color .15s; }
   .pl-textarea:focus { border-color: var(--accent2); }
 
   .pl-listen-block { border-radius: var(--radius-sm); padding: 14px; margin-top: 16px; margin-bottom: 4px; border: 1.5px solid; }
@@ -1038,7 +1038,7 @@
   <button onclick="showView('guide')" id="nav-guide"><span class="icon">✦</span>Guide</button>
 </nav>
 
-<button class="fab" id="fab-btn">＋</button>
+<button class="fab" id="fab-btn" aria-label="Add prayer card">＋</button>
 <button class="bible-fab" id="bible-fab-btn" aria-label="Open Bible" onclick="openBibleBrowser()">📖</button>
 
 <!-- Modals -->
@@ -1737,10 +1737,16 @@ const BIBLE_BOOKS_ORDERED = [
 
 // Remember the last-focused editable so "Add to journal" has a target.
 let _lastEditable = null;
+const _isTouch = matchMedia('(pointer:coarse)').matches;
+// Auto-grow a textarea to fit its content (no inner scrollbar, no manual resize).
+function autoGrow(el){ if(!el || el.tagName!=='TEXTAREA') return; el.style.height='auto'; el.style.height = Math.max(el.scrollHeight, 90) + 'px'; }
+function growAllTextareas(root){ (root||document).querySelectorAll('textarea.pl-textarea').forEach(autoGrow); }
 document.addEventListener('focusin', e => {
   const t = e.target;
   if(t && (t.tagName === 'TEXTAREA' || (t.tagName === 'INPUT' && /^(text|search|)$/i.test(t.type || '')))){
     if(!t.closest || !t.closest('#modal-bible')) _lastEditable = t;
+    // On touch devices, keep the focused field visible above the on-screen keyboard.
+    if(_isTouch && t.tagName === 'TEXTAREA') setTimeout(() => { try { t.scrollIntoView({block:'center', behavior:'smooth'}); } catch(_){} }, 300);
   }
 });
 
@@ -2975,6 +2981,7 @@ function saveFocusCompose(){
 function injectExpandButtons(){
   document.querySelectorAll('textarea.pl-textarea').forEach(ta => {
     if(!ta.id) return;
+    autoGrow(ta); // size restored content to fit
     if(ta.classList.contains('focus-compose-textarea')) return;
     if(ta.dataset.expandInjected === '1') return;
     // Don't add if the next sibling is already an expand link (defensive)
@@ -3374,7 +3381,7 @@ function openDetail(id){
     return `<div class="note-entry">
       <div class="note-actions">
         <button class="note-action-btn" title="Edit" onclick="openNote('${c.id}', ${actualIdx})">✏</button>
-        <button class="note-action-btn delete" title="Delete" onclick="deleteNote('${c.id}', ${actualIdx})">✕</button>
+        <button class="note-action-btn delete" title="Delete" aria-label="Delete note" onclick="deleteNote('${c.id}', ${actualIdx})">✕</button>
       </div>
       <div class="note-date">${esc(n.date)}</div>
       <div class="note-text">${esc(n.text)}</div>
@@ -3847,7 +3854,7 @@ function dpSearchResultHTML(s, match){
   const planIcon = plan?.icon || '✦';
   const planTitle = plan?.title || 'Daily Prayer';
   return `<div class="history-entry" onclick="viewDailySession('${s.id}')">
-    <button class="he-delete" onclick="event.stopPropagation();deleteDailySession('${s.id}')" title="Delete">✕</button>
+    <button class="he-delete" onclick="event.stopPropagation();deleteDailySession('${s.id}')" title="Delete" aria-label="Delete session">✕</button>
     <div class="he-date">${planIcon} ${esc(planTitle)} · ${s.date}</div>
     <div class="he-snippet">"${highlightMatch(match.snippet, _dpSearchQuery)}"
       <span class="he-snippet-from">— ${esc(match.stepTitle)} · ${esc(match.fieldLabel)}</span>
@@ -3921,7 +3928,7 @@ function dpSessionEntryHTML(s){
   });
   const snippet = best ? '"' + esc(best.slice(0, 90)) + (best.length>90?'…':'') + '"' : '<em>Brief session</em>';
   return `<div class="history-entry" onclick="viewDailySession('${s.id}')">
-    <button class="he-delete" onclick="event.stopPropagation();deleteDailySession('${s.id}')" title="Delete">✕</button>
+    <button class="he-delete" onclick="event.stopPropagation();deleteDailySession('${s.id}')" title="Delete" aria-label="Delete session">✕</button>
     <div class="he-date">${planIcon} ${esc(planTitle)} · ${s.date}</div>
     <div class="he-snippet">${snippet}</div>
   </div>`;
@@ -4676,7 +4683,7 @@ function renderPLSearchResults(){
 function normalSessionEntryHTML(s){
   const summary = summarizeSession(s);
   return `<div class="history-entry" onclick="viewSession('${s.id}')">
-    <button class="he-delete" onclick="event.stopPropagation();deleteSession('${s.id}')" title="Delete session">✕</button>
+    <button class="he-delete" onclick="event.stopPropagation();deleteSession('${s.id}')" title="Delete session" aria-label="Delete session">✕</button>
     <div class="he-date">${s.date}</div>
     <div class="he-stats">${summary.stats}</div>
     ${summary.snippet?`<div class="he-snippet">${summary.snippet}</div>`:''}
@@ -4688,7 +4695,7 @@ function normalSessionEntryHTML(s){
 
 function searchResultHTML(s, match){
   return `<div class="history-entry" onclick="viewSession('${s.id}')">
-    <button class="he-delete" onclick="event.stopPropagation();deleteSession('${s.id}')" title="Delete session">✕</button>
+    <button class="he-delete" onclick="event.stopPropagation();deleteSession('${s.id}')" title="Delete session" aria-label="Delete session">✕</button>
     <div class="he-date">${s.date}</div>
     <div class="he-snippet">"${highlightMatch(match.snippet, _plSearchQuery)}"
       <span class="he-snippet-from">— ${esc(match.stepTitle)} · ${esc(match.fieldLabel)}</span>
@@ -5138,7 +5145,7 @@ function renderSilenceWidget(el){
       <span class="silence-countdown">${mins}:${String(secs).padStart(2,'0')}</span>
       <button class="silence-extend" onclick="extendSilence(1)" title="Add a minute">+1</button>
       <button class="silence-extend" onclick="extendSilence(3)" title="Add three minutes">+3</button>
-      <button class="silence-cancel" onclick="cancelSilence()" title="Cancel">×</button>
+      <button class="silence-cancel" onclick="cancelSilence()" title="Cancel" aria-label="Cancel timer">×</button>
     </div>`;
   } else {
     el.innerHTML=`<div class="silence-pills">
@@ -6344,6 +6351,9 @@ async function triggerInstallPrompt(){
   if (outcome === 'accepted') showToast('Installed ✓');
   renderInstallBlock();
 }
+
+// Auto-grow any prayer textarea as it's typed in (all views + modals).
+document.addEventListener('input', e => { if(e.target.classList && e.target.classList.contains('pl-textarea')) autoGrow(e.target); });
 
 // Auto-save delegation — fires whenever any Weekly Deep textarea is typed in.
 document.getElementById('pl-content').addEventListener('input',(e)=>{
