@@ -3202,6 +3202,8 @@ function esc(s){ if(!s)return''; return s.replace(/&/g,'&amp;').replace(/</g,'&l
 // esc() baked into saved text back into real newlines, cleaning old drafts on load.
 function escTa(s){ if(!s)return''; return String(s).replace(/<br\s*\/?>/gi,'\n').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 function showToast(msg){ const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),2200); }
+// One-time discoverability nudge for the (hidden) swipe-between-steps gesture.
+function maybeSwipeHint(){ if(localStorage.getItem('swipe_hint_seen'))return; safeSetItem('swipe_hint_seen','1'); setTimeout(()=>showToast('Tip: swipe left or right to move between steps'),700); }
 
 // ── Safe localStorage helpers (P5 #31) ──
 // Wraps setItem/removeItem in try/catch. Distinguishes quota vs security errors
@@ -3306,9 +3308,11 @@ document.querySelectorAll('.modal-bg').forEach(bg => {
 
 // ══════════ NAV ══════════
 let currentView='cards';
+const _viewScroll={};
 function showView(name){
   if(currentView==='pl' && plMode==='session') plSaveCurrentStep();
   if(currentView==='daily' && dpMode==='session') dpSaveCurrentStep();
+  if(currentView) _viewScroll[currentView]=window.scrollY; // remember where each tab was scrolled
   currentView=name;
   document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
   document.querySelectorAll('nav button').forEach(b=>b.classList.remove('active'));
@@ -3321,12 +3325,13 @@ function showView(name){
   if(name==='pl') renderPL();
   if(name==='reflect'){ _heatmapSelectedKey = null; renderStats(); renderCalendarHeatmap(); renderAnsweredPrayers(); renderHeartNeedFrequency(); renderWordFrequency(); renderReview(); applyTheme(); applyTextSize(); populateObsidianFields(); const t=document.getElementById('bible-fab-toggle'); if(t) t.checked=bibleFabEnabled(); }
   if(name==='guide'){ renderInstallBlock(); }
+  requestAnimationFrame(()=>window.scrollTo(0, _viewScroll[name]||0)); // restore this tab's scroll
 }
 
 // ══════════ STORY CARDS ══════════
 function renderCards(){
   const cards=loadCards(); const el=document.getElementById('cards-list');
-  if(!cards.length){ el.innerHTML=`<div class="empty"><div class="empty-icon">🕊️</div><h3>No prayer cards yet</h3><p>Tap <strong>＋</strong> to create your first card.<br>Aim for 8–12 cards covering different people &amp; situations.</p></div>`; return; }
+  if(!cards.length){ el.innerHTML=`<div class="empty"><div class="empty-icon">🕊️</div><h3>No prayer cards yet</h3><p>Track a person or situation as an ongoing prayer story.<br>Aim for 8–12 over time.</p><button class="btn btn-primary" style="max-width:260px;margin:16px auto 0" onclick="openNewCard()">＋ Create your first card</button></div>`; return; }
   const active=cards.filter(c=>!c.answered), answered=cards.filter(c=>c.answered);
   let html='';
   if(active.length){
@@ -3979,6 +3984,7 @@ function dpSessionEntryHTML(s){
 }
 
 function renderDPStep(){
+  maybeSwipeHint();
   const el = document.getElementById('dp-content');
   const plan = dpCurrentPlan();
   const step = dpCurrentStep();
@@ -4748,6 +4754,7 @@ function searchResultHTML(s, match){
 }
 
 function renderPLStep(el){
+  maybeSwipeHint();
   const step=currentStep();
   const steps=getActiveSteps();
   const dots=steps.map((_,i)=>`<div class="pl-dot${i<plStepIdx?' done':i===plStepIdx?' active':''}"></div>`).join('');
