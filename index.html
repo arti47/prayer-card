@@ -301,9 +301,9 @@
   .pl-nav button { flex: 1; padding: 12px; border-radius: var(--radius-sm); border: 1.5px solid var(--border); background: var(--surface); color: var(--text2); font-family: 'Georgia', serif; font-size: .9rem; cursor: pointer; transition: opacity .15s; }
   .pl-nav button:active { opacity: .8; }
   .pl-nav-next { background: var(--accent) !important; color: #fff !important; border-color: var(--accent) !important; }
-  .pl-save-exit { text-align: center; margin-top: 10px; }
+  .pl-save-exit { position: relative; display: flex; justify-content: center; align-items: center; margin-top: 10px; }
   .pl-save-exit button { background: none; border: none; font-family: sans-serif; font-size: .75rem; color: var(--text3); cursor: pointer; text-decoration: underline; padding: 6px; }
-  .pl-autosave-hint { display: inline-block; font-family: sans-serif; font-size: .68rem; color: var(--text3); padding: 6px; opacity: 0; transition: opacity .35s; letter-spacing: .04em; }
+  .pl-autosave-hint { position: absolute; left: 50%; margin-left: 52px; font-family: sans-serif; font-size: .68rem; color: var(--text3); padding: 6px; opacity: 0; transition: opacity .35s; letter-spacing: .04em; pointer-events: none; white-space: nowrap; }
   .pl-autosave-hint.show { opacity: 1; }
 
   /* Done */
