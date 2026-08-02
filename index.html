@@ -4915,10 +4915,10 @@ function renderPrepareStep(el,step,dots,steps){
       <div class="pl-instruction">${step.instruction}</div>
       ${sectionsHTML}
       ${returnLinkHTML}
-      <div class="pl-nav">
+      ${returnStep ? '' : `<div class="pl-nav">
         ${plStepIdx>0?`<button onclick="plBack()">← Back</button>`:'<button style="opacity:.3" disabled>← Back</button>'}
         <button class="pl-nav-next" onclick="plNext()">${isLast?'Complete ✓':'Continue to Prayer →'}</button>
-      </div>
+      </div>`}
       <div class="pl-save-exit"><button onclick="plSaveAndExit()">Save &amp; Exit</button><span id="pl-autosave-hint" class="pl-autosave-hint">· Saved</span></div>
     </div>`;
 }
@@ -6508,7 +6508,9 @@ function setupSwipeFor(containerId, isActive, onNext, onBack, rootSel){
   el.addEventListener('pointercancel', () => { tracking = false; });
 }
 
-setupSwipeFor('pl-content', () => plMode === 'session', plNext, plBack);
+// Swipe is disabled while Prepare is open via the Ask/Follow jump — that view is a
+// round-trip, so the only way out is the return pill (or Save & Exit).
+setupSwipeFor('pl-content', () => plMode === 'session' && !_plReturnTo, plNext, plBack);
 setupSwipeFor('dp-content', () => dpMode === 'session', dpNext, dpBack);
 // Bible browser verse view: swipe left → next chapter, right → previous.
 setupSwipeFor('bible-content',
