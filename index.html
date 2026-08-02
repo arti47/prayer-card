@@ -443,6 +443,8 @@
   /* Lord's Prayer petition explanations */
   .petition-link { display: block; margin: -6px 0 14px; font-size: .75rem; color: var(--accent); font-family: sans-serif; cursor: pointer; letter-spacing: .03em; padding: 4px 0; user-select: none; }
   .petition-link:hover, .petition-link:active { text-decoration: underline; }
+  .pl-return-link { display: block; margin: 10px 0 14px; padding: 9px 14px; background: var(--accent-light); border: 1px solid var(--accent2); border-radius: 99px; text-align: center; font-size: .78rem; font-family: sans-serif; color: var(--accent); cursor: pointer; letter-spacing: .03em; user-select: none; }
+  .pl-return-link:active { background: var(--accent); color: #fff; }
   .petition-row { background: var(--accent-light); border-left: 3px solid var(--accent2); padding: 12px 14px; border-radius: 0 var(--radius-sm) var(--radius-sm) 0; margin-bottom: 10px; }
   .petition-phrase { font-style: italic; color: var(--accent); font-weight: bold; font-size: .9rem; margin-bottom: 6px; letter-spacing: .01em; }
   .petition-text { font-size: .9rem; line-height: 1.7; color: var(--text2); }
@@ -4348,8 +4350,34 @@ async function plDiscardDraft(){
   showToast('Draft discarded');
 }
 
+// Jump between a prayer step (Ask / Follow) and the Prepare step, and back again.
+// _plReturnTo remembers which step you left so Prepare can offer a contextual
+// "Back to Ask/Follow" button; normal Next/Back navigation clears it.
+let _plReturnTo=null;
+function plJumpToPrepare(){
+  if(!plSession || plSession.includesPrep===false) return;
+  plSaveCurrentStep();
+  const steps=getActiveSteps();
+  _plReturnTo = steps[plStepIdx] ? steps[plStepIdx].key : null;
+  const i = steps.findIndex(s=>s.isPrep);
+  if(i<0) return;
+  plStepIdx=i; plSession.stepIndex=plStepIdx; saveDraft(plSession);
+  _plAnimDir='back'; renderPL(); window.scrollTo(0,0);
+}
+function plReturnFromPrepare(){
+  if(!_plReturnTo) return;
+  plSaveCurrentStep();
+  const steps=getActiveSteps();
+  const i=steps.findIndex(s=>s.key===_plReturnTo);
+  _plReturnTo=null;
+  if(i<0) return;
+  plStepIdx=i; plSession.stepIndex=plStepIdx; saveDraft(plSession);
+  _plAnimDir='next'; renderPL(); window.scrollTo(0,0);
+}
+
 function plNext(){
   plSaveCurrentStep();
+  _plReturnTo=null;
   const steps=getActiveSteps();
   if(plStepIdx>=steps.length-1){
     const sessions=loadSessions();
@@ -4363,7 +4391,7 @@ function plNext(){
 
 function plBack(){
   if(plStepIdx<=0)return;
-  plSaveCurrentStep(); plStepIdx--; plSession.stepIndex=plStepIdx; saveDraft(plSession);
+  plSaveCurrentStep(); _plReturnTo=null; plStepIdx--; plSession.stepIndex=plStepIdx; saveDraft(plSession);
   _plAnimDir='back';
   renderPL(); window.scrollTo(0,0);
 }
@@ -4808,6 +4836,7 @@ function renderPLStep(el){
       </div>
       <span class="pl-quote" style="background:${step.sbg};border-color:${step.sborder};color:${step.sc}">${step.quote}</span>
       ${PETITION_EXPLANATIONS[step.key] ? `<a class="petition-link" onclick="showPetitionExplanation('${step.key}')">📖 What this petition asks →</a>` : ''}
+      ${(step.key==='ask'||step.key==='follow') && plSession.includesPrep!==false ? `<a class="petition-link" onclick="plJumpToPrepare()">✦ Review what you mapped in Prepare →</a>` : ''}
       ${linkedBannerHTML}
       <div class="pl-instruction">${step.instruction}</div>
       ${scriptureBlock}
@@ -4865,6 +4894,9 @@ function renderPrepareStep(el,step,dots,steps){
   `).join('');
 
   const reprayIndicatorHTML=plSession.previousSessionId?`<div class="pl-repray-indicator">🔄 Praying again — fresh reflection, last week's words ahead</div>`:'';
+  // Contextual return button — only when you jumped here from Ask / Follow.
+  const returnStep = _plReturnTo ? PL_STEPS.find(s=>s.key===_plReturnTo) : null;
+  const returnLinkHTML = returnStep ? `<a class="pl-return-link" onclick="plReturnFromPrepare()">← Back to ${esc(returnStep.title)}</a>` : '';
   const animClass = _plAnimDir==='back' ? ' pl-anim-back' : (_plAnimDir==='next' ? ' pl-anim-next' : '');
   _plAnimDir = null;
   el.innerHTML=`
@@ -4878,9 +4910,11 @@ function renderPrepareStep(el,step,dots,steps){
         </div>
         <div class="pl-step-subtitle">${step.subtitle}</div>
       </div>
+      ${returnLinkHTML}
       <div class="pl-recommendation">${step.recommendation}</div>
       <div class="pl-instruction">${step.instruction}</div>
       ${sectionsHTML}
+      ${returnLinkHTML}
       <div class="pl-nav">
         ${plStepIdx>0?`<button onclick="plBack()">← Back</button>`:'<button style="opacity:.3" disabled>← Back</button>'}
         <button class="pl-nav-next" onclick="plNext()">${isLast?'Complete ✓':'Continue to Prayer →'}</button>
