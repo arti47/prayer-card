@@ -934,6 +934,7 @@
         <li><strong>Paul Miller</strong> — <em>A Praying Life</em>. The Prayer Story Cards practice — Scripture anchor, two-level ask, Father's Perspective — is built on his work.</li>
         <li><strong>Tim Keller</strong> — <em>Prayer: Experiencing Awe and Intimacy with God</em>. The Daily Prayer practice (the three plan options, with the Approach → Meditation → Prayer → Contemplation shape) is drawn from Ch. 15. Many of the meditation and praise-deepening features across the app — the cry-out affordance, soliloquy mode, Christ-anchor close on Done screens, alternate meditation techniques, and the praise / thanksgiving starter chips — draw from Chapters 10–12.</li>
         <li><strong>Matthew Henry</strong> — <em>A Way to Pray: A Biblical Method for Enriching Your Prayer Life</em>. The 📖 Prayer Library — roughly forty Scripture-saturated written prayers across Praise, Confession, Petition, Thanksgiving, and Concluding — is faithfully drawn from his method.</li>
+        <li><strong>Brené Brown</strong> — <em>The Gifts of Imperfection</em>. Two evening prompts take their shape from her daily practice: giving thanks for ordinary, particular moments rather than blessings in general, and naming what we reach for to take the edge off a hard day.</li>
         <li><strong>English Standard Version (ESV)</strong> — Scripture quotations, the 📖 Bible browser, and the Scripture-lookup text are from <em>The Holy Bible, English Standard Version® (ESV®)</em>, copyright © 2001 by Crossway, a publishing ministry of Good News Publishers. Used by permission. All rights reserved.</li>
       </ul>
       <p style="margin-top:10px;font-size:.82rem;color:var(--text3);font-style:italic">If you'd like to share this app or use the content beyond personal practice, please seek permission from Redemption Hill Church and credit the authors above.</p>
@@ -2706,11 +2707,26 @@ const THANKS_PROMPTS = [
   "Thank you for walking with me through hardship…"
 ];
 
-// Render a praise/thanks chip block targeted at a specific textarea id.
-// `kind` is 'praise' or 'thanks' — picks the prompt set + label.
+// Evening "Confess the day" starters — the ways we take the edge off rather
+// than bring the day to Him. Named plainly, because a numbing habit that stays
+// unnamed rarely gets confessed.
+const NUMB_PROMPTS = [
+  "Today I reached for my phone when…",
+  "I ate to quiet something…",
+  "I stayed busy so I wouldn't have to…",
+  "I worked past the point of…",
+  "I filled the silence with…",
+  "I took the edge off by…"
+];
+
+// Render a starter-chip block targeted at a specific textarea id.
+// `kind` is 'praise', 'thanks' or 'numb' — picks the prompt set + label.
 function praiseChipsBlock(textareaId, kind){
-  const prompts = kind === 'thanks' ? THANKS_PROMPTS : PRAISE_PROMPTS;
+  const prompts = kind === 'thanks' ? THANKS_PROMPTS
+                : kind === 'numb'   ? NUMB_PROMPTS
+                                    : PRAISE_PROMPTS;
   const label   = kind === 'thanks' ? '✦ Starters · what He has done'
+                : kind === 'numb'   ? '✦ Starters · what did I reach for today?'
                                     : '✦ Starters · who He is';
   const chips = prompts.map(p =>
     `<button class="pl-forget-chip" data-text="${esc(p)}" onclick="praiseChipInsert(this)">${esc(p)}</button>`
@@ -3088,6 +3104,10 @@ const DP_PLANS = {
         instruction:'Read a passage three or four times. Note what it says about God, about yourself, examples to follow, commands to obey, promises to claim. Choose the most striking verse and meditate.',
         passageField:{ key:'passage', label:'Passage', placeholder:'e.g. John 15:1–8 or Psalm 23' },
         questionsField:true,
+        // Renders after the questions — one line chosen out of the text you just
+        // worked, short enough to hold in mind through the day.
+        fields:[{ key:'carry', label:'Carry this with you', placeholder:'One line to hold onto…',
+          focusPrompt:"Choose one phrase from the passage — short enough to hold in mind. Write it as you'd say it to yourself. Return to it through the day." }],
         color:'#3a6b4a', cbg:'#e8f5ec', cborder:'#70b090' },
       { key:'prayer', n:3, title:'Prayer', subtitle:'Adoration, confession, petition, thanksgiving',
         instruction:'Pray through your meditation — adoration, confession, petition, and thanksgiving for Jesus and His salvation. Pray for your needs and pressing concerns.',
@@ -3136,7 +3156,14 @@ const DP_PLANS = {
           { key:'peopleprayed',  label:'Pray for people today',     placeholder:'Who came to mind?', showCardsButton:true,
             focusPrompt:'Who did you meet today? Who weighs on your heart tonight? Bring them before Him by name.' },
           { key:'heartneeds',    label:'Urgent needs',              placeholder:"What's on your heart…",
-            focusPrompt:'What is most pressing on your heart right now? Bring it to Him — honest, concrete, in your own words.' }
+            focusPrompt:'What is most pressing on your heart right now? Bring it to Him — honest, concrete, in your own words.' },
+          // Closes the evening on thanks rather than on what's pressing — and asks
+          // for the small and particular, which is what an ordinary day is made of.
+          // Deliberately keyed 'mercies', not 'thanksgiving': the generic
+          // "what He has done" chips and the prayer-library button are keyed off
+          // that name and would pull this field back toward the general.
+          { key:'mercies',       label:'Ordinary mercies',          placeholder:'Three small things from today…',
+            focusPrompt:"Name three particular things from today — a meal, a walk, a message, a quiet minute in the car. Not blessings in general; today's ordinary ones. Thank Him for each by name." }
         ],
         color:'#2e6da4', cbg:'#e8f0fb', cborder:'#7aabdf' }
     ]
@@ -3154,6 +3181,8 @@ const DP_PLANS = {
         instruction:'Read a Scripture passage. Discern one or two truths you learn there. Choose the one that most impresses you and write it in a sentence.',
         passageField:{ key:'passage', label:'Passage', placeholder:'e.g. John 15:1–8 or Psalm 23' },
         questionsField:'simple-only',
+        fields:[{ key:'carry', label:'Carry this with you', placeholder:'One line to hold onto…',
+          focusPrompt:"Choose one phrase from the passage — short enough to hold in mind. Write it as you'd say it to yourself. Return to it through the day." }],
         color:'#3a6b4a', cbg:'#e8f5ec', cborder:'#70b090' },
       { key:'wordprayer', n:3, title:'Word Prayer', subtitle:'Adoration, petition, supplication',
         instruction:'Turn the answers to your three questions into a prayer — adoration, petition, and supplication.',
@@ -4085,8 +4114,9 @@ function renderDPStep(){
       // Same chip pattern as P6 #46 "When I forget…" — drawn from Keller Ch. 12's
       // adaptation of Matthew Henry's adoration/thanksgiving headings.
       let starterChips = '';
-      if(f.key === 'adoration')         starterChips = praiseChipsBlock(`dp-field-${f.key}`, 'praise');
-      else if(f.key === 'thanksgiving') starterChips = praiseChipsBlock(`dp-field-${f.key}`, 'thanks');
+      if(f.key === 'adoration')          starterChips = praiseChipsBlock(`dp-field-${f.key}`, 'praise');
+      else if(f.key === 'thanksgiving')  starterChips = praiseChipsBlock(`dp-field-${f.key}`, 'thanks');
+      else if(f.key === 'dayconfession') starterChips = praiseChipsBlock(`dp-field-${f.key}`, 'numb');
       // P8 #53: prayer library button on the 4 Morning prayer-step fields.
       const PRAYER_LIB_MAP = { adoration:'praise', confession:'confession', petition:'petition', thanksgiving:'thanksgiving' };
       const libCat = PRAYER_LIB_MAP[f.key];
