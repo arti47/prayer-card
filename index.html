@@ -56,13 +56,14 @@
     /* --text3 carries information (dates, section titles, inactive nav) so it has to
        clear 4.5:1 on surface, page and tinted blocks alike. --text-quiet is for
        decorative asides only, where the old softness is still the right note. */
-    --text3: #7d6555;
+    --text3: #7a6252;
     --text-quiet: #9c8474;
     --rule: rgba(122,92,62,.10);   /* ruled-paper hairline inside textareas */
+    --on-accent: #fff;   /* text on an accent fill — flips dark in dark mode, where the accent is light */
     --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.86' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23g)' opacity='.5'/%3E%3C/svg%3E");   /* fine paper grain, shared by the header and banners */
     /* Heatmap shades — four steps from a faint wash up to the full accent */
     --heat1: #c7b190; --heat2: #ab8d68; --heat3: #91714c; --heat4: #7a5c3e;
-    --answered: #4a7c59;
+    --answered: #3f6e4b;   /* was #4a7c59 — 4.29:1 on its own tint; now 5.0:1 */
     --answered-bg: #eaf3ec;
     --red: #c0392b;
     /* Two-part shadows: a tight contact edge so a card sits on the page, and a
@@ -135,7 +136,10 @@
 
   /* Views */
   .view { display: none; padding: 16px; max-width: 520px; margin: 0 auto; }
-  .view.active { display: block; }
+  .view.active { display: block; animation: viewIn .16s ease-out; }
+  /* A short cross-fade between tabs, so a switch settles rather than cuts. */
+  @keyframes viewIn { from { opacity: 0; } to { opacity: 1; } }
+  @media (prefers-reduced-motion: reduce) { .view.active { animation: none; } }
   .section-title { font-size: .68rem; font-family: var(--sans); text-transform: uppercase; letter-spacing: .06em; color: var(--text3); margin: 20px 0 8px; }
 
   /* Story Cards */
@@ -145,6 +149,9 @@
   .card-cat { display: inline-flex; align-items: center; font-size: .6rem; font-family: var(--sans); text-transform: uppercase; letter-spacing: .05em; padding: 2px 8px; border-radius: 99px; margin-bottom: 6px; }
   .card-title { font-size: 1.05rem; font-weight: bold; }
   .card-scripture { font-size: .8rem; color: var(--text2); margin-top: 4px; font-style: italic; }
+  /* On the list a long anchor is a glimpse, not the whole passage — two lines,
+     the full text in the card itself. */
+  .card .card-scripture { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
   .card-meta { font-size: .7rem; color: var(--text3); font-family: var(--sans); margin-top: 8px; display: flex; gap: 10px; flex-wrap: wrap; }
   .answered-badge { background: var(--answered-bg); color: var(--answered); font-size: .65rem; padding: 2px 8px; border-radius: 99px; font-family: var(--sans); font-weight: bold; }
   .cat-personal{background:#f0eae5;color:#72543b}.cat-family{background:#e5edf0;color:#3b6872}.cat-suffering{background:#f0e7e5;color:#72433b}.cat-friend{background:#e8f0e5;color:#3b723c}.cat-church{background:#eae5f0;color:#603b72}.cat-heart{background:#f1ece9;color:#7e5944}.cat-dream{background:#e5e7f0;color:#3b3e72}.cat-other{background:#ebebeb;color:#575757}
@@ -152,7 +159,7 @@
   /* FAB */
   /* ＋ is the primary action and stays solid; the Bible is a secondary tool and
      sits on a surface fill, so the two stop reading as identical twins. */
-  .fab { position: fixed; bottom: 86px; right: 20px; width: 52px; height: 52px; border-radius: 50%; background: var(--accent); color: #fff; font-size: 1.6rem; border: none; cursor: pointer; box-shadow: var(--shadow-lg); display: none; align-items: center; justify-content: center; z-index: 101; transition: transform .12s, box-shadow .12s; }
+  .fab { position: fixed; bottom: 86px; right: 20px; width: 52px; height: 52px; border-radius: 50%; background: var(--accent); color: var(--on-accent); font-size: 1.6rem; border: none; cursor: pointer; box-shadow: var(--shadow-lg); display: none; align-items: center; justify-content: center; z-index: 101; transition: transform .12s, box-shadow .12s; }
   .fab:active { transform: scale(.93); }
   .bible-fab { position: fixed; bottom: 86px; left: 20px; width: 46px; height: 46px; border-radius: 50%; background: var(--surface); color: var(--accent); border: 1.5px solid var(--border); cursor: pointer; box-shadow: var(--shadow); display: none; align-items: center; justify-content: center; z-index: 101; transition: transform .12s, border-color .12s; }
   /* The floating buttons step back while you scroll down through content and come
@@ -161,6 +168,12 @@
      Recent / Calendar toggle, so they never take a tap meant for something else. */
   .fab, .bible-fab { transition: transform .12s, box-shadow .12s, border-color .12s, opacity .25s ease; }
   body.fab-hide .fab, body.fab-hide .bible-fab, .fab.fab-yield, .bible-fab.fab-yield { opacity: .14; pointer-events: none; }
+  /* On wide screens the content is a centred 520px column; the floating buttons
+     follow its edges instead of drifting to the far corners of the screen. */
+  @media (min-width: 600px) {
+    .fab { right: calc((100vw - 520px) / 2 + 16px); }
+    .bible-fab { left: calc((100vw - 520px) / 2 + 16px); }
+  }
   .bible-fab .ico { width: 1.32rem; height: 1.32rem; }
   .bible-fab:active { transform: scale(.93); border-color: var(--accent2); }
   .bb-head { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
@@ -181,7 +194,7 @@
   .bb-grid.books { grid-template-columns: repeat(2, 1fr); }
   .bb-grid.chapters { grid-template-columns: repeat(5, 1fr); }
   .bb-item { padding: 10px 8px; text-align: center; background: var(--accent-light); border: 1px solid var(--border); border-radius: 10px; font-size: .82rem; color: var(--text); cursor: pointer; transition: background .1s; }
-  .bb-item:active { background: var(--accent); color: #fff; }
+  .bb-item:active { background: var(--accent); color: var(--on-accent); }
   .bb-verses { max-height: 44vh; overflow-y: auto; margin: 2px -4px 8px; }
   .bb-verse { display: flex; gap: 9px; padding: 7px 8px; border-radius: 8px; cursor: pointer; line-height: 1.55; font-size: .9rem; color: var(--text2); user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; }
   .bb-verse .n { color: var(--accent); font-weight: 600; font-size: .72rem; min-width: 1.4em; padding-top: 3px; text-align: right; }
@@ -206,7 +219,7 @@
   .bb-dock .bb-hint { margin: 0 0 10px; }
   .bb-toggle { display: inline-flex; border: 1px solid var(--border); border-radius: var(--radius-sm); overflow: hidden; }
   .bb-toggle button { background: none; border: none; padding: 7px 11px; font-size: .72rem; color: var(--text2); cursor: pointer; font-family: inherit; }
-  .bb-toggle button.on { background: var(--accent); color: #fff; }
+  .bb-toggle button.on { background: var(--accent); color: var(--on-accent); }
   .bb-field-btn { background: var(--accent-light); border: 1px solid var(--border); color: var(--accent); border-radius: 8px; padding: 5px 10px; font-size: .74rem; cursor: pointer; font-family: inherit; margin: -4px 0 2px; }
   .bb-search { width: 100%; padding: 9px 12px; border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--surface); color: var(--text); font-family: inherit; font-size: .88rem; margin-bottom: 8px; }
   .bb-search:focus { outline: none; border-color: var(--accent2); }
@@ -223,7 +236,7 @@
   .bb-chapnav { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin: 2px 0 10px; }
   .bb-chapnav-btn { flex: 0 0 auto; background: var(--accent-light); border: 1px solid var(--border); color: var(--accent); border-radius: 99px; padding: 7px 15px; font-size: .8rem; cursor: pointer; font-family: inherit; }
   .bb-chapnav-btn:disabled { opacity: .38; pointer-events: none; }
-  .bb-chapnav-btn:active { background: var(--accent); color: #fff; }
+  .bb-chapnav-btn:active { background: var(--accent); color: var(--on-accent); }
   .bb-chapnav-label { font-family: var(--serif); font-size: .95rem; font-weight: 600; color: var(--text); }
   /* Bookmarks — star lives on the selection preview, list lives on the book screen */
   .bb-preview { position: relative; padding-right: 44px; }
@@ -267,7 +280,7 @@
   /* Buttons */
   .btn { display: block; width: 100%; padding: 13px; border: none; border-radius: var(--radius-sm); font-size: .95rem; cursor: pointer; font-family: var(--serif); margin-top: 12px; transition: opacity .15s; }
   .btn:active { opacity: .8; }
-  .btn-primary{background:var(--accent);color:#fff}.btn-secondary{background:var(--surface2);color:var(--text2);border:1px solid var(--border)}.btn-danger{background:#fdecea;color:var(--red);border:1px solid #f5c6c2}.btn-answered{background:var(--answered-bg);color:var(--answered);border:1px solid #b8d9c0}
+  .btn-primary{background:var(--accent);color:var(--on-accent)}.btn-secondary{background:var(--surface2);color:var(--text2);border:1px solid var(--border)}.btn-danger{background:#fdecea;color:var(--red);border:1px solid #f5c6c2}.btn-answered{background:var(--answered-bg);color:var(--answered);border:1px solid #b8d9c0}
 
   /* Card Detail */
   .detail-section { background: var(--accent-light); border-radius: var(--radius-sm); padding: 12px 14px; margin-top: 10px; }
@@ -313,7 +326,7 @@
   .prayer-flow .flow-hint { font-size: .74rem; color: var(--text-quiet); font-style: italic; margin: -2px 0 10px; }
   .prayer-nav { display: flex; gap: 10px; margin-top: 14px; }
   .prayer-nav button { flex: 1; padding: 11px; border-radius: var(--radius-sm); border: 1.5px solid var(--border); background: var(--surface); color: var(--text2); font-family: var(--serif); font-size: .9rem; cursor: pointer; }
-  .prayer-nav button.next-btn { background: var(--accent); color: #fff; border-color: var(--accent); }
+  .prayer-nav button.next-btn { background: var(--accent); color: var(--on-accent); border-color: var(--accent); }
   .progress-bar { background: var(--border-soft); border: 1px solid var(--border); border-radius: 99px; height: 6px; margin: 10px 0 0; overflow: hidden; }
   .progress-fill { background: var(--accent); height: 100%; border-radius: 99px; transition: width .3s ease; }
 
@@ -379,10 +392,10 @@
      meditation mode — same theological move (heart-speaking-to-itself, Psalm 103). */
   .pl-forget-block { margin: 14px 0 12px; padding: 12px 14px; background: var(--accent-light); border-radius: var(--radius-sm); border-left: 3px solid var(--accent2); }
   .pl-forget-label { font-size: .72rem; font-family: var(--sans); text-transform: uppercase; letter-spacing: .055em; color: var(--accent); font-weight: 600; margin-bottom: 5px; }
-  .pl-forget-hint { font-size: .8rem; color: var(--text-quiet); line-height: 1.55; margin-bottom: 10px; font-style: italic; }
+  .pl-forget-hint { font-size: .8rem; color: var(--text3); line-height: 1.55; margin-bottom: 10px; font-style: italic; }
   .pl-forget-chips { display: flex; flex-wrap: wrap; gap: 6px; }
   .pl-forget-chip { background: var(--surface); border: 1px solid var(--accent2); color: var(--accent); padding: 11px 14px; border-radius: 99px; font-size: .78rem; font-family: var(--serif); font-style: italic; cursor: pointer; line-height: 1.45; transition: background .15s, color .15s, transform .12s; }
-  .pl-forget-chip:hover, .pl-forget-chip:active { background: var(--accent); color: #fff; }
+  .pl-forget-chip:hover, .pl-forget-chip:active { background: var(--accent); color: var(--on-accent); }
   .pl-forget-chip:active { transform: scale(.97); }
   [data-theme="dark"] .pl-forget-chip:hover, [data-theme="dark"] .pl-forget-chip:active { color: #1a1410; }
   .pl-chart-btn { display: block; width: 100%; padding: 11px; background: var(--accent-light); border: 1.5px solid var(--accent2); border-radius: var(--radius-sm); color: var(--accent); font-family: var(--serif); font-size: .88rem; cursor: pointer; margin: 8px 0 10px; transition: background .15s; }
@@ -419,7 +432,7 @@
   .pl-nav { display: flex; gap: 10px; margin-top: 18px; }
   .pl-nav button { flex: 1; padding: 12px; border-radius: var(--radius-sm); border: 1.5px solid var(--border); background: var(--surface); color: var(--text2); font-family: var(--serif); font-size: .9rem; cursor: pointer; transition: opacity .15s; }
   .pl-nav button:active { opacity: .8; }
-  .pl-nav-next { background: var(--accent) !important; color: #fff !important; border-color: var(--accent) !important; }
+  .pl-nav-next { background: var(--accent) !important; color: var(--on-accent) !important; border-color: var(--accent) !important; }
   .pl-save-exit { position: relative; display: flex; justify-content: center; align-items: center; margin-top: 10px; }
   .pl-save-exit button { background: none; border: none; font-family: var(--sans); font-size: .75rem; color: var(--text3); cursor: pointer; text-decoration: underline; padding: 13px 16px; margin: -7px 0; }
   .pl-autosave-hint { position: absolute; left: 50%; margin-left: 52px; font-family: var(--sans); font-size: .68rem; color: var(--text-quiet); padding: 6px; opacity: 0; transition: opacity .35s; letter-spacing: .04em; pointer-events: none; white-space: nowrap; }
@@ -486,6 +499,10 @@
   .hn-row { margin-top: 9px; }
   .hn-row .hn-label { font-size: .62rem; font-family: var(--sans); text-transform: uppercase; letter-spacing: .055em; color: var(--text3); margin-bottom: 3px; font-weight: 600; }
   .hn-row .hn-text { font-size: .85rem; color: var(--text2); line-height: 1.55; }
+  /* The long sub-labels ("Common emotions when threatened or unmet") read as quiet
+     captions, not shouted headings — sentence case, italic, lighter than the text
+     they introduce. Selector outranks the card-colour label rule below. */
+  .modal .hn-card .hn-row .hn-label, .hn-row .hn-label.hn-label { text-transform: none; font-family: var(--serif); font-style: italic; font-weight: normal; font-size: .8rem; letter-spacing: 0; color: var(--text3); margin-bottom: 2px; }
   .hn-scripture { font-style: italic; font-size: .78rem; color: var(--text3); margin-top: 4px; }
 
   /* Guide */
@@ -535,7 +552,7 @@
   /* --text flips to cream in dark mode, so the toast's text must flip with it. */
   [data-theme="dark"] .toast, [data-theme="dark"] .undo-toast, [data-theme="dark"] .update-toast { color: var(--bg); }
   [data-theme="dark"] .undo-toast button { color: #7a5c3e; }   /* light-mode accent: 5.4:1 on the cream toast */
-  .update-toast { position: fixed; bottom: calc(150px + env(safe-area-inset-bottom)); left: 50%; transform: translateX(-50%); background: var(--accent); color: #fff; padding: 11px 18px; border-radius: 99px; font-size: .84rem; font-family: var(--sans); cursor: pointer; box-shadow: var(--shadow-lg); z-index: 1000; opacity: 0; pointer-events: none; transition: opacity .25s; white-space: nowrap; max-width: calc(100vw - 24px); }
+  .update-toast { position: fixed; bottom: calc(150px + env(safe-area-inset-bottom)); left: 50%; transform: translateX(-50%); background: var(--accent); color: var(--on-accent); padding: 11px 18px; border-radius: 99px; font-size: .84rem; font-family: var(--sans); cursor: pointer; box-shadow: var(--shadow-lg); z-index: 1000; opacity: 0; pointer-events: none; transition: opacity .25s; white-space: nowrap; max-width: calc(100vw - 24px); }
   .update-toast strong { font-weight: 700; text-decoration: underline; }
   .update-toast.show { opacity: 1; pointer-events: auto; }
   .update-toast:active { opacity: .82; }
@@ -616,7 +633,7 @@
   .petition-link { display: block; margin: -11px 0 9px; padding-top: 9px !important; padding-bottom: 9px !important; font-size: .75rem; color: var(--accent); font-family: var(--sans); cursor: pointer; letter-spacing: .03em; padding: 4px 0; user-select: none; }
   .petition-link:hover, .petition-link:active { text-decoration: underline; }
   .pl-return-link { display: block; margin: 10px 0 14px; padding: 9px 14px; background: var(--accent-light); border: 1px solid var(--accent2); border-radius: 99px; text-align: center; font-size: .78rem; font-family: var(--sans); color: var(--accent); cursor: pointer; letter-spacing: .03em; user-select: none; }
-  .pl-return-link:active { background: var(--accent); color: #fff; }
+  .pl-return-link:active { background: var(--accent); color: var(--on-accent); }
   .petition-row { background: var(--accent-light); border-left: 3px solid var(--accent2); padding: 12px 14px; border-radius: 0 var(--radius-sm) var(--radius-sm) 0; margin-bottom: 10px; }
   .petition-phrase { font-style: italic; color: var(--accent); font-weight: bold; font-size: .9rem; margin-bottom: 6px; letter-spacing: .01em; }
   .petition-text { font-size: .9rem; line-height: 1.7; color: var(--text2); }
@@ -660,7 +677,7 @@
   .ap-rule { height: 2px; border-radius: 2px; background: linear-gradient(90deg, color-mix(in srgb, var(--answered) 35%, transparent), var(--answered)); }
   .ap-when { grid-row: 2; grid-column: 1 / 3; justify-self: start; font-size: .72rem; line-height: 1.3; color: var(--text3); font-family: var(--sans); letter-spacing: .02em; }
   .ap-when.end { grid-column: 2 / 4; justify-self: end; text-align: right; }
-  .ap-lbl { display: block; font-size: .6rem; text-transform: uppercase; letter-spacing: .06em; color: var(--text-quiet); }
+  .ap-lbl { display: block; font-size: .6rem; text-transform: uppercase; letter-spacing: .06em; color: var(--text3); }
   .ap-card-duration { font-size: .76rem; color: var(--answered); font-family: var(--sans); margin-top: 6px; font-weight: bold; letter-spacing: .02em; }
   .ap-card-scripture { font-size: .82rem; font-style: italic; color: var(--text2); margin-top: 8px; line-height: 1.55; }
   .ap-intro { font-size: .85rem; color: var(--text2); line-height: 1.65; margin-bottom: 12px; font-style: italic; }
@@ -686,7 +703,7 @@
   /* Calendar view (P3 #13) */
   .pl-view-toggle { display: flex; gap: 6px; margin-bottom: 14px; background: var(--surface2); border-radius: 99px; padding: 4px; border: 1px solid var(--border); }
   .pl-view-toggle button { flex: 1; padding: 8px 10px; border: none; background: transparent; color: var(--text3); font-family: var(--serif); font-size: .85rem; cursor: pointer; border-radius: 99px; transition: all .15s; letter-spacing: .02em; }
-  .pl-view-toggle button.active { background: var(--accent); color: #fff; box-shadow: 0 1px 3px rgba(100,70,40,0.18); }
+  .pl-view-toggle button.active { background: var(--accent); color: var(--on-accent); box-shadow: 0 1px 3px rgba(100,70,40,0.18); }
   [data-theme="dark"] .pl-view-toggle button.active { color: #1a1410; }
 
   .pl-calendar { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px 16px 16px; margin-bottom: 14px; box-shadow: var(--shadow); }
@@ -701,7 +718,7 @@
   .pl-cal-day.has-sessions { cursor: pointer; color: var(--text); font-weight: bold; }
   .pl-cal-day.has-sessions:hover, .pl-cal-day.has-sessions:active { background: var(--surface2); }
   .pl-cal-day.today { box-shadow: inset 0 0 0 1.5px var(--accent2); color: var(--accent); font-weight: bold; }
-  .pl-cal-day.selected { background: var(--accent); color: #fff !important; box-shadow: none; }
+  .pl-cal-day.selected { background: var(--accent); color: var(--on-accent) !important; box-shadow: none; }
   [data-theme="dark"] .pl-cal-day.selected { color: #1a1410 !important; }
   .pl-cal-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--accent2); margin-top: 2px; }
   .pl-cal-day.selected .pl-cal-dot { background: currentColor; opacity: .85; }
@@ -776,6 +793,13 @@
   .tut-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--border); transition: all .25s ease; }
   .tut-dot.active { background: var(--accent); width: 22px; border-radius: 99px; }
   .tut-icon { font-size: 2.4rem; margin-bottom: 10px; line-height: 1; }
+  .cf-head { display: flex; gap: 12px; align-items: flex-start; margin: 2px 0 18px; }
+  .cf-mark { flex: none; width: 34px; height: 34px; border-radius: 50%; background: var(--accent-light); color: var(--accent); display: flex; align-items: center; justify-content: center; }
+  .cf-mark .ico { width: 18px; height: 18px; }
+  .cf-mark.danger { background: color-mix(in srgb, var(--red) 12%, var(--surface)); color: var(--red); }
+  .cf-msg { font-family: var(--serif); font-size: 1.02rem; line-height: 1.5; color: var(--text); white-space: pre-line; padding-top: 5px; }
+  .cf-actions { display: flex; gap: 10px; }
+  .cf-actions .btn { margin-top: 0; flex: 1; }
   .cat-select-wrap { position: relative; }
   .cat-select-wrap select { padding-left: 44px; }
   /* Borrows the category chip's colour pair, drawn as a small round badge. */
@@ -796,7 +820,7 @@
   .tut-nav { display: flex; gap: 10px; margin-top: 22px; align-items: center; }
   .tut-btn-back, .tut-btn-next { padding: 10px 16px; border: 1.5px solid var(--border); background: var(--surface); border-radius: var(--radius-sm); font-family: var(--serif); font-size: .88rem; cursor: pointer; color: var(--text2); }
   .tut-btn-back:active, .tut-btn-next:active { opacity: .8; }
-  .tut-btn-next { background: var(--accent); color: #fff; border-color: var(--accent); margin-left: auto; }
+  .tut-btn-next { background: var(--accent); color: var(--on-accent); border-color: var(--accent); margin-left: auto; }
   [data-theme="dark"] .tut-btn-next { color: #1a1410; }
   .tut-btn-skip { background: transparent; border: none; flex: 1; color: var(--text3); font-size: .8rem; text-decoration: underline; font-family: var(--sans); cursor: pointer; padding: 6px; }
   .tut-nav-final { margin-top: 22px; display: flex; flex-direction: column; gap: 10px; }
@@ -823,7 +847,7 @@
 
   .dp-q-toggle { display: inline-flex; gap: 4px; background: var(--surface2); border-radius: 99px; padding: 3px; border: 1px solid var(--border); margin: 14px 0 12px; }
   .dp-q-toggle button { padding: 6px 14px; border: none; background: transparent; color: var(--text2); font-family: var(--serif); font-size: .8rem; cursor: pointer; border-radius: 99px; }
-  .dp-q-toggle button.active { background: var(--accent); color: #fff; }
+  .dp-q-toggle button.active { background: var(--accent); color: var(--on-accent); }
   [data-theme="dark"] .dp-q-toggle button.active { color: #1a1410; }
   .dp-questions { margin-top: 6px; }
   .dp-q-row { margin-bottom: 14px; }
@@ -904,7 +928,7 @@
   .silence-active .silence-extend { background: var(--surface); border: 1px solid var(--accent2); color: var(--accent); font-family: var(--sans); font-size: .72rem; font-weight: bold; cursor: pointer; padding: 3px 9px; border-radius: 99px; line-height: 1; transition: background .15s, color .15s; position: relative; }
   /* 44px hit regions without changing the drawn size. */
   .silence-active .silence-extend::after, .silence-active .silence-cancel::after { content: ''; position: absolute; inset: -11px -4px; }
-  .silence-active .silence-extend:hover, .silence-active .silence-extend:active { background: var(--accent); color: #fff; }
+  .silence-active .silence-extend:hover, .silence-active .silence-extend:active { background: var(--accent); color: var(--on-accent); }
   [data-theme="dark"] .silence-active .silence-extend:hover, [data-theme="dark"] .silence-active .silence-extend:active { color: #1a1410; }
   .silence-active .silence-cancel { background: none; border: none; color: var(--text3); cursor: pointer; padding: 2px; line-height: 1; position: relative; display: flex; }
   .silence-active .silence-cancel .ico { width: 17px; height: 17px; }
@@ -937,7 +961,7 @@
   .theme-row { display: flex; gap: 7px; margin-top: 10px; }
   .theme-btn, .size-btn { flex: 1; padding: 9px; border: 1.5px solid var(--border); border-radius: var(--radius-sm); background: var(--surface); color: var(--text2); font-family: var(--serif); font-size: .82rem; cursor: pointer; transition: background .15s, color .15s, border-color .15s; }
   .theme-btn:active, .size-btn:active { opacity: .8; }
-  .theme-btn.active, .size-btn.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+  .theme-btn.active, .size-btn.active { background: var(--accent); color: var(--on-accent); border-color: var(--accent); }
   .switch-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 28px !important; font-family: var(--serif); font-size: .85rem; color: var(--text2); text-transform: none; letter-spacing: normal; font-weight: normal; cursor: pointer; }
   .switch { position: relative; display: inline-block; width: 46px; height: 26px; flex: 0 0 auto; }
   .switch input { opacity: 0; width: 0; height: 0; }
@@ -1208,6 +1232,7 @@
     --text3: #a89684;
     --text-quiet: #8a7868;
     --rule: rgba(212,168,114,.09);
+    --on-accent: #1a1410;
     --heat1: #6b5334; --heat2: #92724a; --heat3: #b68f5e; --heat4: #d4a872;
     --answered: #80c89a;
     --answered-bg: #1f3a28;
@@ -1361,7 +1386,7 @@
   .prayer-lib-text { padding: 14px 16px 12px 24px; font-family: var(--serif); font-size: .92rem; line-height: 1.75; color: var(--text2); }
 
   /* "Use this prayer →" button — sits below each expanded prayer text. */
-  .prayer-lib-use-btn { display: block; width: calc(100% - 32px); margin: 4px 16px 14px 16px; padding: 9px 12px; background: var(--accent); color: #fff; border: none; border-radius: var(--radius-sm); font-family: var(--serif); font-size: .85rem; cursor: pointer; transition: background .15s, transform .12s; letter-spacing: .01em; }
+  .prayer-lib-use-btn { display: block; width: calc(100% - 32px); margin: 4px 16px 14px 16px; padding: 9px 12px; background: var(--accent); color: var(--on-accent); border: none; border-radius: var(--radius-sm); font-family: var(--serif); font-size: .85rem; cursor: pointer; transition: background .15s, transform .12s; letter-spacing: .01em; }
   .prayer-lib-use-btn:hover { background: var(--text); }
   .prayer-lib-use-btn:active { transform: scale(.98); }
   [data-theme="dark"] .prayer-lib-use-btn { color: #1a1410; }
@@ -1373,7 +1398,7 @@
   .prayer-lib-action-q { font-size: .82rem; color: var(--text2); font-style: italic; margin-bottom: 10px; line-height: 1.5; }
   .prayer-lib-action-buttons { display: flex; gap: 6px; flex-wrap: wrap; }
   .prayer-lib-action-btn { flex: 1; min-width: 90px; padding: 8px 10px; background: var(--surface); border: 1px solid var(--accent2); border-radius: var(--radius-sm); color: var(--accent); font-family: var(--serif); font-size: .82rem; cursor: pointer; transition: background .15s, color .15s; }
-  .prayer-lib-action-btn:hover, .prayer-lib-action-btn:active { background: var(--accent); color: #fff; }
+  .prayer-lib-action-btn:hover, .prayer-lib-action-btn:active { background: var(--accent); color: var(--on-accent); }
   [data-theme="dark"] .prayer-lib-action-btn:hover, [data-theme="dark"] .prayer-lib-action-btn:active { color: #1a1410; }
   .prayer-lib-action-btn.cancel { color: var(--text3); border-color: var(--border); }
   .prayer-lib-action-btn.cancel:hover, .prayer-lib-action-btn.cancel:active { background: var(--surface2); color: var(--text2); border-color: var(--text3); }
@@ -1714,7 +1739,8 @@ const ICON = {
   moon:     _svg('<path d="M20.2 14.6A8.6 8.6 0 0 1 9.4 3.8a8.6 8.6 0 1 0 10.8 10.8z"/>'),
   sparkle:  _svg('<path d="M12 3l1.9 6.1L20 11l-6.1 1.9L12 19l-1.9-6.1L4 11l6.1-1.9z"/>'),
   // controls
-  pray:     _svg('<path d="M11.2 20.8H8a2.2 2.2 0 0 1-2.2-2.2v-5.3c0-.8.4-1.6 1.1-2l1.9-1.2c.5-.3.8-.9.8-1.5V4.9a1.3 1.3 0 0 1 2.6 0v15.9z"/><path d="M12.8 20.8H16a2.2 2.2 0 0 0 2.2-2.2v-5.3c0-.8-.4-1.6-1.1-2l-1.9-1.2a1.8 1.8 0 0 1-.8-1.5V4.9a1.3 1.3 0 0 0-2.6 0v15.9z"/>'),
+  // Folded hands: two palms meeting at the fingertips, thumbs crossing at the heel.
+  pray:     _svg('<path d="M12 3.6c-1 0-1.6.8-1.8 1.7l-1.5 6.2c-.2.8-.7 1.5-1.4 2l-2.2 1.7c-.5.4-.6 1.1-.2 1.6l2.5 3.3c.3.4.9.5 1.3.2l2.6-1.8c.5-.4.7-1 .7-1.6z"/><path d="M12 3.6c1 0 1.6.8 1.8 1.7l1.5 6.2c.2.8.7 1.5 1.4 2l2.2 1.7c.5.4.6 1.1.2 1.6l-2.5 3.3c-.3.4-.9.5-1.3.2l-2.6-1.8c-.5-.4-.7-1-.7-1.6z"/><path d="M9.3 13.6c1 .3 1.9 1.1 2.3 2.1M14.7 13.6c-1 .3-1.9 1.1-2.3 2.1" opacity=".8"/>'),
   book:     _svg('<path d="M12 6.8C10.4 5.5 8.3 4.9 5.2 5a1 1 0 0 0-1 1v11.3a1 1 0 0 0 1 1c3-.1 5.2.5 6.8 1.7 1.6-1.2 3.8-1.8 6.8-1.7a1 1 0 0 0 1-1V6a1 1 0 0 0-1-1c-3.1-.1-5.2.5-6.8 1.8z"/><path d="M12 6.8v13.2"/>'),
   calendar: _svg('<rect x="3.5" y="5.5" width="17" height="15" rx="2"/><path d="M3.5 10h17M8 3.5v4M16 3.5v4"/><circle cx="8.5" cy="14" r=".9" fill="currentColor" stroke="none"/><circle cx="12" cy="14" r=".9" fill="currentColor" stroke="none"/><circle cx="15.5" cy="14" r=".9" fill="currentColor" stroke="none"/>'),
   list:     _svg('<path d="M9 7h11M9 12h11M9 17h11"/><circle cx="4.6" cy="7" r="1.1" fill="currentColor" stroke="none"/><circle cx="4.6" cy="12" r="1.1" fill="currentColor" stroke="none"/><circle cx="4.6" cy="17" r="1.1" fill="currentColor" stroke="none"/>'),
@@ -4252,9 +4278,14 @@ function uiConfirm(msg, opts={}){
   return new Promise(res=>{
     _confirmResolve=res;
     const c=document.getElementById('confirm-content');
-    c.innerHTML=`<p style="font-size:.95rem;line-height:1.65;white-space:pre-line;color:var(--text);margin-bottom:16px">${escTa(msg)}</p>
-      <button class="btn ${opts.danger?'btn-danger':'btn-primary'}" onclick="_resolveConfirm(true)">${escTa(opts.okText||'OK')}</button>
-      ${opts.alert?'':`<button class="btn btn-secondary" onclick="_resolveConfirm(false)" style="margin-top:8px">${escTa(opts.cancelText||'Cancel')}</button>`}`;
+    // A small mark, the message as the dialog's title line, then Cancel and the
+    // action side by side with the action on the right (an alert has just OK).
+    c.innerHTML=`<div class="cf-head"><span class="cf-mark${opts.danger?' danger':''}">${opts.danger?ICON.warn:ICON.sparkle}</span>
+        <p class="cf-msg">${escTa(msg)}</p></div>
+      <div class="cf-actions">
+        ${opts.alert?'':`<button class="btn btn-secondary" onclick="_resolveConfirm(false)">${escTa(opts.cancelText||'Cancel')}</button>`}
+        <button class="btn ${opts.danger?'btn-danger':'btn-primary'}" onclick="_resolveConfirm(true)">${escTa(opts.okText||'OK')}</button>
+      </div>`;
     openModal('modal-confirm');
   });
 }
@@ -6078,7 +6109,7 @@ function viewDailySession(id){
   }).join('');
 
   document.getElementById('session-view-content').innerHTML = `
-    <h2 style="color:var(--accent);margin-bottom:4px">${plan?.icon||'✦'} ${esc(plan?.title||'Daily Prayer')} Session</h2>
+    <h2 style="color:var(--accent);margin-bottom:4px">${ICON[plan?.icon] || ICON.sparkle} ${esc(plan?.title||'Daily Prayer')} Session</h2>
     <p style="font-size:.72rem;color:var(--text3);font-family: var(--sans);margin-bottom:14px">${s.date}</p>
     ${stepsHTML}
     <button class="btn btn-danger" style="margin-top:18px" onclick="closeModal('modal-session');deleteDailySession('${s.id}')">Delete Session</button>
@@ -6669,7 +6700,9 @@ function dailySessionToMarkdown(s){
   lines.push(`tags: [prayer, daily-prayer, ${s.plan}]`);
   lines.push('---');
   lines.push('');
-  lines.push(`# ${plan?.icon||'✦'} Daily Prayer — ${plan?.title||s.plan} · ${s.date}`);
+  // Plans carry icon *keys* for the drawn glyphs; Markdown gets the plain-text marks.
+  const PLAN_MARK = { sun:'☀️', moon:'🌙', sparkle:'✦' };
+  lines.push(`# ${PLAN_MARK[plan?.icon]||'✦'} Daily Prayer — ${plan?.title||s.plan} · ${s.date}`);
   lines.push('');
 
   (plan?.steps||[]).forEach(step => {
