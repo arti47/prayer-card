@@ -1127,6 +1127,14 @@
   /* Text size scaling — root font-size cascades through every rem value */
   html { font-size: 16px; }
   html[data-text-size="small"]  { font-size: 16px; }
+  /* iOS Safari zooms the whole page when you tap into a field whose text is under
+     16px, and stays zoomed. At Small text the fields came out at 14.4px, so every
+     tap into a journal field zoomed in. Fields never go below 16px. */
+  html[data-text-size="small"] input, html[data-text-size="small"] textarea, html[data-text-size="small"] select { font-size: 16px !important; }
+  /* Two quick taps (Next, Next; +1, +1; tapping verses) were read as a double-tap
+     zoom. "manipulation" turns that off but keeps pinch-to-zoom for anyone who
+     needs larger text. */
+  html { touch-action: manipulation; }
   html[data-text-size="medium"] { font-size: 19px; }
   html[data-text-size="large"]  { font-size: 22px; }
 
