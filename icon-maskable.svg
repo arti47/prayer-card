@@ -1,13 +1,24 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- Full-bleed for launcher masks; the mark is scaled into the central safe zone. -->
   <defs>
-    <radialGradient id="bg" cx="50%" cy="38%" r="80%">
-      <stop offset="0%" stop-color="#a08260"/>
-      <stop offset="55%" stop-color="#7a5c3e"/>
-      <stop offset="100%" stop-color="#3a2818"/>
+    <radialGradient id="bg" cx="50%" cy="36%" r="82%">
+      <stop offset="0%" stop-color="#a38563"/>
+      <stop offset="52%" stop-color="#7a5c3e"/>
+      <stop offset="100%" stop-color="#3b2918"/>
+    </radialGradient>
+    <radialGradient id="glow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#f7ecd9" stop-opacity=".22"/>
+      <stop offset="100%" stop-color="#f7ecd9" stop-opacity="0"/>
     </radialGradient>
   </defs>
   <rect width="512" height="512" fill="url(#bg)"/>
-  <g transform="translate(256, 256)">
-    <path d="M 0,-128 L 22,-22 L 128,0 L 22,22 L 0,128 L -22,22 L -128,0 L -22,-22 Z" fill="#f2e8de"/>
+  <g transform="translate(256 262) scale(.7) translate(-256 -262)">
+    <circle cx="256" cy="262" r="150" fill="url(#glow)"/>
+    <g fill="none" stroke="#f2e8de" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M150 396V236a106 106 0 0 1 212 0v160" stroke-width="15"/>
+      <path d="M116 396h280" stroke-width="15"/>
+    </g>
+    <path transform="translate(256 262) scale(11.4) translate(-12 -10.95)" fill="#f2e8de"
+          d="M12 3.6l1.75 5.6 5.6 1.75-5.6 1.75L12 18.3l-1.75-5.6-5.6-1.75 5.6-1.75z"/>
   </g>
 </svg>
