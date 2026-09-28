@@ -59,6 +59,7 @@
     --text3: #7a6252;
     --text-quiet: #9c8474;
     --rule: rgba(122,92,62,.10);   /* ruled-paper hairline inside textareas */
+    --margin-rule: rgba(176,110,82,.30);   /* notebook margin line */
     --on-accent: #fff;   /* text on an accent fill — flips dark in dark mode, where the accent is light */
     --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.86' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23g)' opacity='.5'/%3E%3C/svg%3E");   /* fine paper grain, shared by the header and banners */
     /* Heatmap shades — four steps from a faint wash up to the full accent */
@@ -127,7 +128,7 @@
 
   /* Nav — every tab reserves two label lines so all five icons share a baseline.
      Previously "Story Cards" wrapped alone and sat higher than its neighbours. */
-  nav { position: fixed; bottom: 0; left: 0; right: 0; background: var(--surface); border-top: 1px solid var(--border); display: flex; z-index: 100; box-shadow: 0 -1px 10px rgba(100,70,40,0.07); }
+  nav { position: fixed; bottom: 0; left: 0; right: 0; --nav-x: -100px; background: var(--surface); border-top: 1px solid var(--border); display: flex; z-index: 100; box-shadow: 0 -1px 10px rgba(100,70,40,0.07); }
   nav button { flex: 1; min-width: 0; background: none; border: none; padding: 9px 2px 10px; cursor: pointer; font-size: .62rem; line-height: 1.22; color: var(--text3); font-family: var(--sans); letter-spacing: .015em; text-transform: uppercase; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 5px; -webkit-tap-highlight-color: transparent; }
   nav button .icon { display: flex; align-items: center; justify-content: center; height: 1.42rem; }
   nav button .nav-label { display: flex; align-items: flex-start; justify-content: center; min-height: 2.44em; hyphens: none; }
@@ -140,12 +141,32 @@
   /* A short cross-fade between tabs, so a switch settles rather than cuts. */
   @keyframes viewIn { from { opacity: 0; } to { opacity: 1; } }
   @media (prefers-reduced-motion: reduce) { .view.active { animation: none; } }
-  .section-title { font-size: .68rem; font-family: var(--sans); text-transform: uppercase; letter-spacing: .06em; color: var(--text3); margin: 20px 0 8px; }
+  .section-title { font-size: .68rem; font-family: var(--sans); text-transform: uppercase; letter-spacing: .06em; color: var(--text3); margin: 20px 0 8px; display: flex; align-items: center; gap: 10px; }
+  /* The heading trails a hairline to the column's edge, like a running rule. */
+  /* A small ✦ rides above the active tab and glides between tabs. */
+  .nav-mark { position: absolute; top: -6px; left: 0; width: 11px; height: 11px; padding: 1px; border-radius: 50%; background: var(--surface); color: var(--accent); transform: translateX(var(--nav-x)); transition: transform .32s cubic-bezier(.3,.7,.2,1); pointer-events: none; }
+  .nav-mark svg { width: 100%; height: 100%; display: block; }
+  @media (prefers-reduced-motion: reduce) { .nav-mark { transition: none; } }
+  .lookup-loading { display: flex; align-items: center; gap: 9px; font-size: .88rem; color: var(--text3); font-style: italic; }
+  .lookup-mark { width: 15px; height: 15px; color: var(--accent2); animation: lookupTurn 2.4s linear infinite; display: flex; }
+  .lookup-mark svg { width: 100%; height: 100%; }
+  @keyframes lookupTurn { to { transform: rotate(360deg); } }
+  @media (prefers-reduced-motion: reduce) { .lookup-mark { animation: none; } }
+  .section-title::after { content: ''; flex: 1; height: 1px; background: linear-gradient(90deg, var(--border), transparent); }
 
   /* Story Cards */
   .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; margin-bottom: 12px; box-shadow: var(--shadow); cursor: pointer; transition: transform .12s; }
   .card:active { transform: scale(.98); }
   .card.answered { border-left: 4px solid var(--answered); }
+  .card { position: relative; overflow: hidden; }
+  .card:not(.answered) { border-left: 4px solid color-mix(in srgb, var(--cat, var(--accent2)) 62%, transparent); }
+  [data-theme="dark"] .card:not(.answered) { border-left-color: color-mix(in srgb, var(--cat, var(--accent2)) 45%, #e8d8c4); }
+  .card-watermark { position: absolute; right: -14px; bottom: -18px; width: 92px; height: 92px; color: var(--cat, var(--accent)); opacity: .07; pointer-events: none; }
+  .card.answered .card-watermark { color: var(--answered); opacity: .12; }
+  .card-watermark .ico { width: 100%; height: 100%; stroke-width: 1.1; }
+  [data-theme="dark"] .card-watermark { color: color-mix(in srgb, var(--cat, var(--accent)) 45%, #e8d8c4); opacity: .08; }
+  /* The answered badge carries the olive sprig. */
+  .answered-badge .ico { width: 1.15em; height: 1.15em; vertical-align: -.22em; margin-right: 3px; }
   .card-cat { display: inline-flex; align-items: center; font-size: .6rem; font-family: var(--sans); text-transform: uppercase; letter-spacing: .05em; padding: 2px 8px; border-radius: 99px; margin-bottom: 6px; }
   .card-title { font-size: 1.05rem; font-weight: bold; }
   .card-scripture { font-size: .8rem; color: var(--text2); margin-top: 4px; font-style: italic; }
@@ -203,6 +224,16 @@
   .bb-preview { background: var(--accent-light); border-left: 3px solid var(--accent2); border-radius: var(--radius-sm); padding: 12px 14px; font-style: italic; line-height: 1.7; font-size: .9rem; margin: 8px 0 12px; }
   .bb-preview .ref { font-style: normal; font-weight: 600; color: var(--accent); display: block; margin-bottom: 5px; font-size: .82rem; }
   .bb-hint { font-size: .78rem; color: var(--text-quiet); font-style: italic; margin: 2px 0 8px; }
+
+  /* Book grid sections: a colour tab along each tile's top edge, and in canonical
+     order a small heading where each section begins. */
+  .bb-grid.books .bb-item { border-top: 3px solid color-mix(in srgb, var(--sec, var(--accent2)) 70%, transparent); }
+  [data-theme="dark"] .bb-grid.books .bb-item { border-top-color: color-mix(in srgb, var(--sec, var(--accent2)) 55%, #e8d8c4); }
+  .bb-sec-h { grid-column: 1 / -1; display: flex; align-items: center; gap: 8px; margin: 10px 2px 0; font-family: var(--sans); font-size: .66rem; text-transform: uppercase; letter-spacing: .07em; font-weight: 600; color: color-mix(in srgb, var(--sec) 80%, var(--text)); }
+  .bb-sec-h::before { content: ''; width: 8px; height: 8px; border-radius: 2px; background: var(--sec); flex: none; }
+  .bb-sec-h::after { content: ''; flex: 1; height: 1px; background: var(--border-soft); }
+  .bb-sec-h:first-child { margin-top: 0; }
+  [data-theme="dark"] .bb-sec-h { color: color-mix(in srgb, var(--sec) 50%, #e8d8c4); }
   .bb-actions { display: flex; gap: 8px; align-items: center; flex-wrap: nowrap; }
   .bb-actions .btn { width: auto; flex: 0 0 auto; padding: 10px 12px !important; font-size: .88rem; line-height: 1.25; }
   /* The primary label may take two lines rather than be cut off ("Tap a field first"). */
@@ -287,8 +318,8 @@
   /* Each part of a card speaks in its own voice rather than four identical slabs:
      the Scripture anchor on open parchment with the quotation watermark, the two
      asks sharing one block divided by a hairline, Father's Perspective in its green. */
-  .detail-section.ds-scripture { background: var(--surface); border: 1px solid var(--border); position: relative; overflow: hidden; }
-  .detail-section.ds-scripture::before { content: '\201C'; position: absolute; top: .02em; right: .12em; font-family: var(--serif); font-size: 4.2rem; line-height: .8; color: var(--accent2); opacity: .12; pointer-events: none; }
+  .detail-section.ds-scripture { background: var(--surface); border: none; position: relative; overflow: hidden; }
+  .detail-section.ds-scripture::before { content: '\201C'; position: absolute; top: .02em; right: .12em; font-family: var(--serif); font-size: 4.2rem; line-height: .8; color: color-mix(in srgb, var(--accent2) 12%, transparent); pointer-events: none; }
   .ds-asks { padding-top: 4px; padding-bottom: 4px; }
   .ds-asks .ds-row { padding: 8px 0; }
   .ds-asks .ds-row + .ds-row { border-top: 1px solid color-mix(in srgb, var(--accent2) 30%, transparent); }
@@ -356,13 +387,22 @@
   .pl-progress-dots::before { content: ''; position: absolute; left: 13.5px; right: 13.5px; top: 50%; height: 1px; background: var(--border); }
   .pl-dot { position: relative; width: 9px; height: 9px; border-radius: 50%; background: var(--bg); box-shadow: 0 0 0 1.5px var(--border) inset, 0 0 0 4px var(--bg); margin: 0 9px; transition: background .25s, box-shadow .25s, transform .22s; }
   .pl-dot.done { background: var(--accent2); box-shadow: 0 0 0 1.5px var(--accent2) inset, 0 0 0 4px var(--bg); }
-  .pl-dot.active { background: var(--accent); box-shadow: 0 0 0 1.5px var(--accent) inset, 0 0 0 4px var(--bg), 0 0 0 6.5px var(--accent-light); transform: scale(1.22); }
+  .pl-dot.active { width: 24px; height: 24px; margin: 0 5px; display: flex; align-items: center; justify-content: center; color: var(--on-accent); background: var(--accent); box-shadow: 0 0 0 4px var(--bg), 0 0 0 6px var(--accent-light); }
+  /* The active dot carries the current step's mark. */
+  .pl-dot.active .ico { width: 14px; height: 14px; }
 
   .pl-step-header { margin-bottom: 14px; }
   .pl-step-num-row { display: flex; align-items: center; gap: 9px; margin-bottom: 4px; }
-  .pl-step-num { min-width: 28px; height: 28px; padding: 0 8px; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: .78rem; font-family: var(--sans); font-weight: bold; color: #fff; flex-shrink: 0; }
+  /* Illuminated step badge: serif numeral inside a fine double ring in the step's
+     colour on a faint tint of it, the step's mark alongside. */
+  .pl-step-num { --sc: var(--accent); --scx: var(--sc); height: 30px; padding: 0 10px 0 4px; border-radius: 15px; display: inline-flex; align-items: center; gap: 6px; flex-shrink: 0; color: var(--scx);
+    background: color-mix(in srgb, var(--scx) 9%, var(--surface)); border: 1px solid color-mix(in srgb, var(--scx) 55%, transparent); }
+  .pl-step-num .sn-n { width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: var(--serif); font-size: .92rem; font-weight: bold; line-height: 1;
+    border: 1.5px solid var(--scx); box-shadow: inset 0 0 0 2px var(--surface), inset 0 0 0 2.6px color-mix(in srgb, var(--scx) 45%, transparent); }
+  .pl-step-num .ico { width: 17px; height: 17px; }
+  [data-theme="dark"] .pl-step-num { --scx: color-mix(in srgb, var(--sc) 50%, #e8d8c4); }
   .pl-step-title { font-size: 1.15rem; font-weight: bold; }
-  .pl-step-subtitle { font-size: .84rem; color: var(--text3); font-family: var(--sans); padding-left: 38px; }
+  .pl-step-subtitle { font-size: .84rem; color: var(--text3); font-family: var(--sans); padding-left: 2px; margin-top: 2px; }
 
   .pl-quote { display: inline-block; padding: 5px 14px; border-radius: 99px; font-style: italic; font-size: .88rem; margin: 10px 0 12px; border: 1.5px solid; }
   .pl-instruction { font-size: .9rem; color: var(--text2); line-height: 1.68; margin-bottom: 14px; white-space: pre-wrap; }
@@ -1062,7 +1102,7 @@
   .substep-label span { opacity: .72; letter-spacing: .03em; }
 
   /* The passage, recalled on the screens where it is no longer being typed into. */
-  .dp-recall { background: var(--accent-light); border-left: 3px solid var(--accent2); border-radius: var(--radius-sm); padding: 9px 12px; margin-bottom: 14px; }
+  .dp-recall { background: var(--accent-light); border-radius: var(--radius-sm); padding: 11px 14px; margin-bottom: 14px; position: relative; }
   .dp-recall-label { display: flex; align-items: center; gap: .4em; font-family: var(--sans); font-size: .6rem; text-transform: uppercase; letter-spacing: .05em; color: var(--accent); margin-bottom: 4px; }
   .dp-recall-body { font-size: .86rem; line-height: 1.66; color: var(--text); white-space: pre-wrap; max-height: 8.4em; overflow-y: auto; }
 
@@ -1077,11 +1117,39 @@
   .pl-listen-block::before, .pl-scripture-feature::before, .pl-done-verse::before {
     content: '\201C'; position: absolute; top: .02em; right: .1em;
     font-family: var(--serif); font-size: 4.6rem; line-height: .8;
-    color: var(--accent2); opacity: .1; pointer-events: none; user-select: none;
+    color: color-mix(in srgb, var(--accent2) 10%, transparent); pointer-events: none; user-select: none;
   }
   [data-theme="dark"] .pl-listen-block::before,
   [data-theme="dark"] .pl-scripture-feature::before,
-  [data-theme="dark"] .pl-done-verse::before { opacity: .12; }
+  [data-theme="dark"] .pl-done-verse::before { color: color-mix(in srgb, var(--accent2) 12%, transparent); }
+  /* Scripture framed as on a manuscript page: four drawn corner brackets in the
+     block's colour, instead of a bar down one side. Drawn with gradients on ::after
+     so each block's own background and watermark are untouched. */
+  .pl-scripture-feature, .pl-done-verse, .dp-recall, .detail-section.ds-scripture { --bk: var(--accent2); position: relative; }
+  .pl-scripture-feature::after, .pl-done-verse::after, .dp-recall::after, .detail-section.ds-scripture::after {
+    content: ''; position: absolute; inset: 5px; pointer-events: none; opacity: .8;
+    --bl: 15px; --bw: 1.5px;
+    background:
+      linear-gradient(var(--bk),var(--bk)) left top / var(--bl) var(--bw) no-repeat,
+      linear-gradient(var(--bk),var(--bk)) left top / var(--bw) var(--bl) no-repeat,
+      linear-gradient(var(--bk),var(--bk)) right top / var(--bl) var(--bw) no-repeat,
+      linear-gradient(var(--bk),var(--bk)) right top / var(--bw) var(--bl) no-repeat,
+      linear-gradient(var(--bk),var(--bk)) left bottom / var(--bl) var(--bw) no-repeat,
+      linear-gradient(var(--bk),var(--bk)) left bottom / var(--bw) var(--bl) no-repeat,
+      linear-gradient(var(--bk),var(--bk)) right bottom / var(--bl) var(--bw) no-repeat,
+      linear-gradient(var(--bk),var(--bk)) right bottom / var(--bw) var(--bl) no-repeat;
+  }
+  .dp-recall::after { --bl: 11px; inset: 4px; }
+  [data-theme="dark"] .pl-scripture-feature::after, [data-theme="dark"] .pl-done-verse::after,
+  [data-theme="dark"] .dp-recall::after, [data-theme="dark"] .detail-section.ds-scripture::after { opacity: .55; }
+  /* Inside the dark card sheet the glyph interrupts the blended grain as a faint box;
+     the brackets frame this short block on their own. */
+  [data-theme="dark"] .detail-section.ds-scripture::before { display: none; }
+  /* The quotation watermark moves to the foot as a closing mark, clear of the
+     peek toggle and the top brackets. */
+  .pl-scripture-feature::before, .pl-done-verse::before, .detail-section.ds-scripture::before {
+    content: '\201D'; top: auto; bottom: -.36em; right: .95em; }
+
   /* The quote pill is a small inline chip — it gets neither treatment. */
   .pl-quote { overflow: visible; }
   .orn-divider { position: relative; display: flex; align-items: center; justify-content: center; height: 22px; color: var(--accent2); margin: 22px 0; }
@@ -1095,6 +1163,10 @@
   /* Empty states: a drawn motif standing inside an open arch. */
   .empty-art { position: relative; width: 150px; height: 136px; margin: 4px auto 16px; }
   .empty-art .orn-frame { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .empty-art.with-rays { overflow: visible; }
+  .empty-art .orn-rays { position: absolute; left: 50%; top: -26%; width: 230%; transform: translateX(-50%); color: var(--accent2); opacity: .32;
+    -webkit-mask-image: radial-gradient(closest-side, #000 55%, transparent); mask-image: radial-gradient(closest-side, #000 55%, transparent); }
+  [data-theme="dark"] .empty-art .orn-rays { color: var(--accent); opacity: .24; }
   .empty-art .motif { position: absolute; left: 50%; top: 56%; transform: translate(-50%,-50%); width: 64px; height: 64px; color: var(--accent); opacity: .9; display: flex; }
   .empty-art .motif .ico { width: 100%; height: 100%; stroke-width: 1.35; }
   .empty-icon { display: none; }   /* the emoji these replace */
@@ -1108,6 +1180,17 @@
   .pl-banner::before { content: ''; position: absolute; inset: 0; z-index: -1; background-image: var(--grain); background-size: 180px; mix-blend-mode: soft-light; opacity: .9; pointer-events: none; }
   .banner-watermark { position: absolute; right: -26px; top: -18px; width: 150px; height: 150px; color: #fff; opacity: .07; pointer-events: none; z-index: -1; }
   .banner-watermark .ico { width: 100%; height: 100%; stroke-width: 1; }
+  /* The Daily banner's light follows the hour: a low rose-gold at dawn, the usual
+     warm brown by day, amber at dusk, deep brown-indigo at night. The mark rises
+     and sets with it. */
+  .pl-banner.tod-dawn  { background: linear-gradient(160deg, #5a3a2e 0%, #9a6a4e 55%, #c4946a 100%); }
+  .pl-banner.tod-dusk  { background: linear-gradient(160deg, #4a2c1e 0%, #86542e 58%, #b27a3e 100%); }
+  .pl-banner.tod-night { background: linear-gradient(160deg, #1f1a24 0%, #3a2e30 55%, #5a4632 100%); }
+  .pl-banner.tod-dawn .banner-watermark, .pl-banner.tod-dusk .banner-watermark { top: auto; bottom: -58px; opacity: .1; }
+  .pl-banner.tod-night .banner-watermark { opacity: .1; }
+  [data-theme="dark"] .pl-banner.tod-dawn  { background: linear-gradient(160deg, #2a1c16 0%, #43302a 60%, #5a4232 100%); }
+  [data-theme="dark"] .pl-banner.tod-dusk  { background: linear-gradient(160deg, #2a1a10 0%, #45301c 60%, #5a4024 100%); }
+  [data-theme="dark"] .pl-banner.tod-night { background: linear-gradient(160deg, #141218 0%, #221c20 60%, #332820 100%); }
   [data-theme="dark"] .banner-watermark { color: var(--accent); opacity: .08; }
   .dp-plan-card .plan-watermark { position: absolute; right: -18px; top: 50%; transform: translateY(-50%); width: 104px; height: 104px; color: var(--accent); opacity: .055; pointer-events: none; }
   [data-theme="dark"] .dp-plan-card .plan-watermark { opacity: .085; }
@@ -1207,15 +1290,21 @@
   .pl-listen-block .pl-textarea, .pl-textarea { line-height: 1.68; }
   /* Ruled paper. The pitch is 1.68em — the same line-height — so writing lands on
      the rule at Small, Medium and Large alike; no pixel values to re-tune. */
+  /* Ruled lines plus a notebook margin: a thin warm rule down the left, with the
+     writing starting just past it. */
   .pl-textarea, .focus-compose-textarea {
-    background-image: repeating-linear-gradient(to bottom,
+    background-image:
+      linear-gradient(to right, transparent 14px, var(--margin-rule) 14px, var(--margin-rule) 15px, transparent 15px),
+      repeating-linear-gradient(to bottom,
       transparent 0, transparent calc(1.68em - 1px),
       var(--rule) calc(1.68em - 1px), var(--rule) 1.68em);
-    background-attachment: local;
-    background-position: 0 calc(12px + .34em);
-    background-repeat: repeat;
+    background-attachment: local, local;
+    background-position: 0 0, 0 calc(12px + .34em);
+    background-repeat: no-repeat, repeat;
+    background-size: 100% 100%, auto;
+    padding-left: 24px !important;
   }
-  .focus-compose-textarea { background-position: 0 calc(14px + .35em); background-image: repeating-linear-gradient(to bottom, transparent 0, transparent calc(1.7em - 1px), var(--rule) calc(1.7em - 1px), var(--rule) 1.7em); }
+  .focus-compose-textarea { background-position: 0 0, 0 calc(14px + .35em); background-image: linear-gradient(to right, transparent 14px, var(--margin-rule) 14px, var(--margin-rule) 15px, transparent 15px), repeating-linear-gradient(to bottom, transparent 0, transparent calc(1.7em - 1px), var(--rule) calc(1.7em - 1px), var(--rule) 1.7em); }
 
   /* ════════ DARK THEME ════════ */
   [data-theme="dark"] {
@@ -1232,6 +1321,7 @@
     --text3: #a89684;
     --text-quiet: #8a7868;
     --rule: rgba(212,168,114,.09);
+    --margin-rule: rgba(212,140,114,.22);
     --on-accent: #1a1410;
     --heat1: #6b5334; --heat2: #92724a; --heat3: #b68f5e; --heat4: #d4a872;
     --answered: #80c89a;
@@ -1571,6 +1661,7 @@
 
 <!-- NAV -->
 <nav>
+  <span class="nav-mark" id="nav-mark" aria-hidden="true"></span>
   <button class="active" onclick="showView('cards')" id="nav-cards"><span class="icon" data-ico="cards"></span><span class="nav-label">Story Cards</span></button>
   <button onclick="showView('daily')" id="nav-daily"><span class="icon" data-ico="sun"></span><span class="nav-label">Daily Prayer</span></button>
   <button onclick="showView('pl')" id="nav-pl"><span class="icon" data-ico="pen"></span><span class="nav-label">Weekly Deep</span></button>
@@ -1764,6 +1855,19 @@ const ICON = {
   pin:      _svg('<path d="M12 21.2s6.4-6.1 6.4-10.6a6.4 6.4 0 1 0-12.8 0C5.6 15.1 12 21.2 12 21.2z"/><circle cx="12" cy="10.4" r="2.4"/>'),
   dove:     _svg('<path d="M3.4 13.8c3.2.6 5.6-.4 7.4-2.4 1.8-2 2.6-4.4 5.2-5.3 2-.7 3.8-.1 4.6 1.4.7 1.4.3 3-1 3.8"/><path d="M19.6 11.3c.5 3.2-1 6-3.8 7.6-2.9 1.6-6.4 1.4-9-.6"/><path d="M10.8 11.4c1.9.9 3 2.7 3.1 5.1"/><circle cx="18.2" cy="7.9" r=".75" fill="currentColor" stroke="none"/><path d="M20.8 8.2l1.9-.7"/>'),
   lamp:     _svg('<path d="M9 3.4h6M12 3.4v3"/><path d="M12 6.4a5.4 5.4 0 0 1 5.4 5.4c0 2.6-1.7 4.2-3 5.2-.9.7-1.4 1.3-1.4 2.2v.6h-2v-.6c0-.9-.5-1.5-1.4-2.2-1.3-1-3-2.6-3-5.2A5.4 5.4 0 0 1 12 6.4z"/><path d="M10.4 20.6h3.2"/>'),
+  // Step marks — one per movement of prayer, shown in the step badge and active dot.
+  compass:  _svg('<circle cx="12" cy="12" r="8.4"/><path d="M12 6.4l2.2 5.6-2.2 5.6-2.2-5.6z"/><path d="M12 6.4l2.2 5.6h-4.4z" fill="currentColor" stroke="none"/>'),
+  door:     _svg('<path d="M5.6 20.4V4.2h12.8v16.2"/><path d="M5.6 4.2l6.2 2v14.2l-6.2 .8"/><circle cx="10.1" cy="13.4" r=".75" fill="currentColor" stroke="none"/><path d="M3.4 20.8h17.2"/>'),
+  crown:    _svg('<path d="M4.6 17.4L3.7 8.6l4.6 3.5L12 5.4l3.7 6.7 4.6-3.5-.9 8.8z"/><path d="M4.8 20.2h14.4"/>'),
+  bread:    _svg('<path d="M3.8 13.2c0-4 3.7-6.6 8.2-6.6s8.2 2.6 8.2 6.6c0 1.4-.9 2.2-2 2.4V19a1.4 1.4 0 0 1-1.4 1.4H7.2A1.4 1.4 0 0 1 5.8 19v-3.4c-1.1-.2-2-1-2-2.4z"/><path d="M9 9.6l1.3 2.2M12.4 9.1l1.3 2.2M15.8 10l1 1.7"/>'),
+  turn:     _svg('<path d="M9.4 5L5 9.4l4.4 4.4"/><path d="M5 9.4h9.4a4.8 4.8 0 0 1 0 9.6H10.6"/>'),
+  chain:    _svg('<path d="M10.2 15.1l-2.6 2.6a3.3 3.3 0 0 1-4.7-4.7l2.6-2.6a3.3 3.3 0 0 1 4.3-.3"/><path d="M13.8 8.9l2.6-2.6a3.3 3.3 0 0 1 4.7 4.7l-2.6 2.6a3.3 3.3 0 0 1-4.3.3"/><path d="M11.6 6.9l-.7-2.2M12.4 17.1l.7 2.2M6.9 11.6l-2.2-.7M17.1 12.4l2.2.7" opacity=".75"/>'),
+  steps:    _svg('<path d="M7.6 15.4c-1.5 0-2.4-1.7-2.4-4.1s1-4.5 2.6-4.5 2.3 2.2 2.1 4.6c-.2 2.4-.8 4-2.3 4z"/><path d="M6.7 17.6c0 1.1.5 2 1.2 2s1.2-.8 1.1-2"/><path d="M16.2 12.6c-1.5 0-2.4-1.7-2.4-4.1s1-4.5 2.6-4.5 2.3 2.2 2.1 4.6c-.2 2.4-.8 4-2.3 4z"/><path d="M15.3 14.8c0 1.1.5 2 1.2 2s1.2-.8 1.1-2"/>'),
+  threshold:_svg('<path d="M6.4 20V11.2a5.6 5.6 0 0 1 11.2 0V20"/><path d="M4 20h16"/><path d="M12 10.6l.7 1.7 1.7.7-1.7.7-.7 1.7-.7-1.7-1.7-.7 1.7-.7z" fill="currentColor" stroke="none"/>'),
+  lyre:     _svg('<path d="M7 4.6c-2 1.8-2.4 5.8-.6 8.6 1 1.6 2.8 2.8 5.6 2.8s4.6-1.2 5.6-2.8c1.8-2.8 1.4-6.8-.6-8.6"/><path d="M9.2 15.6v4.6h5.6v-4.6"/><path d="M7.4 6.4h9.2"/><path d="M10 6.4v9.2M12 6.4v9.6M14 6.4v9.2" opacity=".8"/>'),
+  candle:   _svg('<path d="M9.6 11.4h4.8V21H9.6z"/><path d="M8 21h8"/><path d="M12 3.6c1.5 1.9 2.2 3.1 2.2 4.3a2.2 2.2 0 0 1-4.4 0c0-1.2.7-2.4 2.2-4.3z"/>'),
+  speech:   _svg('<path d="M6.8 4.5h10.4a2.3 2.3 0 0 1 2.3 2.3v7a2.3 2.3 0 0 1-2.3 2.3h-6.6l-4.1 3.4v-3.4a2.3 2.3 0 0 1-2-2.3v-7a2.3 2.3 0 0 1 2.3-2.3z"/><path d="M8.4 9h7.2M8.4 12h4.6"/>'),
+  olive:    _svg('<path d="M4.2 20.2L19.4 4"/><path d="M8.76 15.34Q11.12 16.80 13.36 15.17Q11.00 13.71 8.76 15.34z"/><path d="M11.04 12.91Q12.53 10.57 10.92 8.31Q9.43 10.65 11.04 12.91z"/><path d="M13.32 10.48Q15.68 11.94 17.92 10.31Q15.56 8.85 13.32 10.48z"/><path d="M15.60 8.05Q17.09 5.71 15.48 3.45Q13.99 5.79 15.60 8.05z"/><path d="M17.88 5.62Q20.24 7.08 22.48 5.45Q20.12 3.99 17.88 5.62z"/><circle cx="8.6" cy="18.4" r="1.35"/>'),
   close:    _svg('<path d="M6.5 6.5l11 11M17.5 6.5l-11 11"/>'),
   breath:   _svg('<path d="M3.5 9.5h10.2a2.8 2.8 0 1 0-2.8-2.8"/><path d="M3.5 13.5h14.2a2.8 2.8 0 1 1-2.8 2.8"/><path d="M3.5 17.5h5"/>'),
   swirl:    _svg('<path d="M12 12.2a1.6 1.6 0 1 1 1.6-1.6 3.4 3.4 0 0 1-3.4 3.4 5 5 0 0 1-5-5 6.6 6.6 0 0 1 6.6-6.6 8.2 8.2 0 0 1 8.2 8.2 9.8 9.8 0 0 1-9.8 9.8"/>'),
@@ -1772,11 +1876,22 @@ const ICON = {
   save:     _svg('<path d="M12 3.6v11.2M7.6 10.4l4.4 4.4 4.4-4.4"/><path d="M4.4 15.6v3a1.8 1.8 0 0 0 1.8 1.8h11.6a1.8 1.8 0 0 0 1.8-1.8v-3"/>')
 };
 
+const STEP_ICON = { prepare:'compass', come:'door', humble:'crown', ask:'bread', confess:'turn', forgive:'chain', follow:'steps',
+  approach:'threshold', meditation:'book', psalm:'lyre', prayer:'pray', contemplation:'candle', wordprayer:'speech', freeprayer:'dove' };
+const stepGlyph = key => ICON[STEP_ICON[key]] || '';
+// The step badge as an illuminated initial: numeral in a fine double ring in the
+// step's colour, with the step's mark beside it.
+function stepBadge(step, color){
+  return `<div class="pl-step-num" style="--sc:${color}"><span class="sn-n">${step.n}</span>${stepGlyph(step.key)}</div>`;
+}
+
 // ── Manuscript ornament ──
 // The palette and the serif have always been reaching for a devotional book;
 // these are the page furniture that goes with it. Same line weight as the icon
 // family, same currentColor, drawn on a wide viewBox so a rule can span a column.
 const ORN = {
+  // Faint light spreading up and out from behind the arch on the Done screens.
+  rays: `<svg class="orn-rays" viewBox="0 0 200 120" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" aria-hidden="true"><path d="M66.0 86.0L8.0 86.0M66.5 80.1L23.2 72.5M68.1 74.4L13.5 54.5M70.6 69.0L32.5 47.0M74.0 64.1L29.5 26.9M78.1 60.0L49.9 26.2M83.0 56.6L54.0 6.3M88.4 54.1L73.3 12.7M94.1 52.5L84.0 -4.6M100.0 52.0L100.0 8.0M105.9 52.5L116.0 -4.6M111.6 54.1L126.7 12.7M117.0 56.6L146.0 6.3M121.9 60.0L150.1 26.2M126.0 64.1L170.5 26.9M129.4 69.0L167.5 47.0M131.9 74.4L186.5 54.5M133.5 80.1L176.8 72.5M134.0 86.0L192.0 86.0"/></svg>`,
   // A hairline rule with a centred ✦ — the divider between sections and above a
   // heading. Scales to whatever width it is given.
   rule: `<svg class="orn-rule" viewBox="0 0 200 12" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" preserveAspectRatio="none" aria-hidden="true">
@@ -1799,9 +1914,9 @@ const ORN = {
 function nestQuotes(t){
   return String(t||'').replace(/"/g, (m, i, str) => /[A-Za-z\u2026]/.test(str[i+1]||'') ? '\u2018' : '\u2019');
 }
-function emptyArt(iconKey){
+function emptyArt(iconKey, rays){
   const g = ICON[iconKey] || ICON.sparkle;
-  return `<div class="empty-art" aria-hidden="true">${ORN.frame}<span class="motif">${g}</span></div>`;
+  return `<div class="empty-art${rays?' with-rays':''}" aria-hidden="true">${rays?ORN.rays:''}${ORN.frame}<span class="motif">${g}</span></div>`;
 }
 // A rule with its mark centred, for use between sections.
 function ornDivider(cls){
@@ -1826,6 +1941,7 @@ function catChip(cat, cls, style){
   const key = CAT_LABELS[cat] ? cat : 'other';
   return `<span class="card-cat ${cls||CAT_CLASS[key]||'cat-other'}"${style?` style="${style}"`:''}>${ICON[CAT_ICON[key]]}${esc(CAT_LABELS[key])}</span>`;
 }
+const CAT_COLOR = { personal:'#72543b', family:'#3b6872', suffering:'#72433b', friend:'#3b723c', church:'#603b72', heart:'#7e5944', dream:'#3b3e72', other:'#575757' };
 const CAT_CLASS  = { personal:'cat-personal', family:'cat-family', suffering:'cat-suffering', friend:'cat-friend', church:'cat-church', heart:'cat-heart', dream:'cat-dream', other:'cat-other' };
 
 const PL_STEPS = [
@@ -1848,7 +1964,7 @@ const PL_STEPS = [
   },
   {
     key:'come', n:1, title:'Come', subtitle:'Looking to Our Father',
-    quote:'"Our Father, hallowed be your name…"',
+    quote:'“Our Father, hallowed be your name…”',
     sc:'#816437', sbg:'#f0ece5', sborder:'#d3c6b1', lbg:'#f6f3ee', lborder:'#d3c9b1',
     instruction:'In your own words, talk to God as your heavenly Father who is delighted as you draw near, full of mercy and steadfast love. Meditating on His character, praise Him and allow trust and faith to rise in your heart.\n\nRead Exodus 34:5–7 if you would like a Scripture to help.',
     scripture:{ ref:'Exodus 34:5–7', text:'The Lord descended in the cloud and stood with him there, and proclaimed the name of the Lord. The Lord passed before him and proclaimed, "The Lord, the Lord, a God merciful and gracious, slow to anger, and abounding in steadfast love and faithfulness, keeping steadfast love for thousands, forgiving iniquity and transgression and sin…"' },
@@ -1857,7 +1973,7 @@ const PL_STEPS = [
   },
   {
     key:'humble', n:2, title:'Humble', subtitle:'Trust and Submission',
-    quote:'"Your kingdom come, Your will be done…"',
+    quote:'“Your kingdom come, Your will be done…”',
     sc:'#634077', sbg:'#ece5f0', sborder:'#cab1d3', lbg:'#f3eff5', lborder:'#c7b1d3',
     instruction:"This is where you humble and open your heart to Him. It's a prayer of trust and submission. You are surrendering your own rule and pledging allegiance to our King.",
     prayLabel:'Surrender & Submit',
@@ -1865,7 +1981,7 @@ const PL_STEPS = [
   },
   {
     key:'ask', n:3, title:'Ask', subtitle:'Bringing Our Needs',
-    quote:'"Give us each day our daily bread…"',
+    quote:'“Give us each day our daily bread…”',
     sc:'#406b77', sbg:'#e5ecf0', sborder:'#b1c9d3', lbg:'#eff0f5', lborder:'#b1ccd3',
     instruction:"Using your notes from Prepare above, talk to God about the needs of your heart. Tell Him about what's going on, how you feel, and what you need. Ask Him to supply that need.",
     prayLabel:'Bring Your Needs',
@@ -1873,7 +1989,7 @@ const PL_STEPS = [
   },
   {
     key:'confess', n:4, title:'Repent', subtitle:'Confession and Renewal',
-    quote:'"…and forgive us our sins…"',
+    quote:'“…and forgive us our sins…”',
     sc:'#774f40', sbg:'#f0e8e5', sborder:'#d3bab1', lbg:'#f5f1ef', lborder:'#d3bbb1',
     instruction:'Confess the ways you are either tempted to, or have already sought to, meet these needs in your own strength, taking things into your own hands or serving your own kingdom.',
     prayLabel:'Confession',
@@ -1881,7 +1997,7 @@ const PL_STEPS = [
   },
   {
     key:'forgive', n:5, title:'Forgive', subtitle:'Releasing Others',
-    quote:'"…for we ourselves forgive everyone who is indebted to us…"',
+    quote:'“…for we ourselves forgive everyone who is indebted to us…”',
     sc:'#417746', sbg:'#e5f0e6', sborder:'#b1d3ba', lbg:'#eff5f0', lborder:'#b1d3b7',
     instruction:"Receiving forgiveness also softens our hearts toward others. Often our anger toward others is because they haven't given us what we want from them, or they have tried to get something from us and sinned and hurt us in the process. Seeing we do the same, and receiving God's forgiveness, is transformative. As God reorders our hearts, we begin to forgive as we've been forgiven.\n\nConsider if there is any debt you are holding toward someone and entrust that too into God's hands.",
     prayLabel:'Forgive Others',
@@ -1889,7 +2005,7 @@ const PL_STEPS = [
   },
   {
     key:'follow', n:6, title:'Follow', subtitle:'Dependent Obedience',
-    quote:'"Lead us not into temptation, Deliver us from evil, For Thine is the kingdom, the power, and the glory forever…"',
+    quote:'“Lead us not into temptation, Deliver us from evil, For Thine is the kingdom, the power, and the glory forever…”',
     sc:'#404377', sbg:'#e5e5f0', sborder:'#b2b1d3', lbg:'#f0eff5', lborder:'#b4b1d3',
     instruction:"Now that you've named your heart's desires and seen where you're tempted to meet them apart from God, you can pray:\n\n\"Lord, lead me not into temptation. Help me resist false comforts and self-reliance. Teach me to respond in faith, in love, in Your ways.\"\n\nWrite a few lines, naming the temptation you are turning from, the ways you need God's supply this week, and for His empowering presence as you go into the week.",
     prayLabel:'Commit to Obedience',
@@ -2310,7 +2426,7 @@ async function lookupBibleRef(ref){
 
 function renderScriptureModal(ref, text, loading){
   const missing = `<p style="font-size:.88rem;color:var(--text3);font-style:italic;line-height:1.6">This reference isn't bundled in the app. Open it in your Bible app or look it up online — the practice of reading slowly, in your own translation, is often more nourishing than a tooltip.</p>`;
-  const loadingHtml = `<p style="font-size:.88rem;color:var(--text3);font-style:italic">Looking it up…</p>`;
+  const loadingHtml = `<p class="lookup-loading"><span class="lookup-mark">${ORN.mark}</span>Looking it up…</p>`;
   const found = t => `<p style="font-size:.95rem;line-height:1.75;font-style:italic;color:var(--text);padding:14px 16px;background:var(--accent-light);border-left:3px solid var(--accent2);border-radius:var(--radius-sm)">“${esc(nestQuotes(t))}”</p>`;
   document.getElementById('scripture-content').innerHTML = `
     <h2 style="color:var(--accent);font-size:1.1rem;margin-bottom:12px">${esc(ref)}</h2>
@@ -2459,6 +2575,16 @@ function updateBibleFabVisibility(){
   syncFabPadding();
 }
 // Content must clear whichever floating buttons are on screen, not just the nav.
+// Dawn / day / dusk / night, from the device clock — tints the Daily banner.
+function timeOfDay(){ const h = new Date().getHours(); return h>=5&&h<8 ? 'dawn' : h>=8&&h<17 ? 'day' : h>=17&&h<20 ? 'dusk' : 'night'; }
+function placeNavMark(){
+  const nav = document.querySelector('nav'), mark = document.getElementById('nav-mark');
+  const b = nav && nav.querySelector('button.active'); if(!b || !mark) return;
+  if(!mark.firstChild) mark.innerHTML = ORN.mark;
+  const x = b.offsetLeft + b.offsetWidth/2 - 5.5;
+  nav.style.setProperty('--nav-x', x + 'px');
+}
+window.addEventListener('resize', () => requestAnimationFrame(placeNavMark));
 function syncHeaderMode(){
   const inS = (currentView === 'daily' && dpMode === 'session') || (currentView === 'pl' && plMode === 'session');
   document.body.classList.toggle('in-session', !!inS);
@@ -2643,8 +2769,28 @@ function bbBookResultsHTML(){
   }
   if(_bbSort==='az') list.sort((a,b)=>bbSortKey(a.name).localeCompare(bbSortKey(b.name)));
   if(!list.length) return `<p class="bb-empty">No books match. Try a reference like “John 3:16”.</p>`;
-  return `<div class="bb-grid books">${list.map(b=>`<div class="bb-item" onclick="bbSelectBook(${b.idx})">${esc(b.name)}</div>`).join('')}</div>`;
+  // In canonical order with no search, the grid is divided into its sections
+  // with a small heading each; every tile carries its section's colour tab.
+  const grouped = _bbSort !== 'az' && !q;
+  let last = null, html = '';
+  list.forEach(b => {
+    const sec = bbSection(b.idx);
+    if(grouped && sec !== last){ html += `<div class="bb-sec-h" style="--sec:${sec.color}">${esc(sec.name)}</div>`; last = sec; }
+    html += `<div class="bb-item" style="--sec:${sec.color}" onclick="bbSelectBook(${b.idx})">${esc(b.name)}</div>`;
+  });
+  return `<div class="bb-grid books">${html}</div>`;
 }
+// Canonical sections of the 66 books (indices into BIBLE_BOOKS_ORDERED).
+const BIBLE_SECTIONS = [
+  { name:'Law',            to:4,  color:'#8a5a3a' },
+  { name:'History',        to:16, color:'#6f6a3a' },
+  { name:'Wisdom',         to:21, color:'#3f6e6a' },
+  { name:'Prophets',       to:38, color:'#7a4a5f' },
+  { name:'Gospels & Acts', to:43, color:'#9a6a2a' },
+  { name:'Letters',        to:64, color:'#4a5f7a' },
+  { name:'Revelation',     to:65, color:'#7a3f3f' }
+];
+function bbSection(idx){ return BIBLE_SECTIONS.find(s => idx <= s.to) || BIBLE_SECTIONS[BIBLE_SECTIONS.length-1]; }
 // Resolve a search string to a jump target: full ref (Book C:V[-V]) or Book+chapter.
 function bbResolveQuery(q){
   q=(q||'').trim(); if(!q) return null;
@@ -4148,6 +4294,7 @@ function showView(name){
   if(name==='guide'){ renderInstallBlock(); }
   syncFabPadding();   // after both buttons have settled for this view
   syncHeaderMode();
+  placeNavMark();
   requestAnimationFrame(fabSettle);
   requestAnimationFrame(()=>window.scrollTo(0, _viewScroll[name]||0)); // restore this tab's scroll
 }
@@ -4168,9 +4315,13 @@ function renderCards(){
 }
 function cardHTML(c){
   const notes=c.notes?c.notes.length:0;
-  return `<div class="card${c.answered?' answered':''}" onclick="openDetail('${c.id}')">
+  const ck = CAT_ICON[c.category] ? c.category : 'other';
+  // A spine in the category's colour down the left edge, and the category's mark
+  // (the olive sprig once answered) drawn faintly in the corner.
+  return `<div class="card${c.answered?' answered':''}" style="--cat:${CAT_COLOR[ck]}" onclick="openDetail('${c.id}')">
+    <span class="card-watermark" aria-hidden="true">${c.answered ? ICON.olive : ICON[CAT_ICON[ck]]}</span>
     ${catChip(c.category)}
-    ${c.answered?'<span class="answered-badge" style="float:right">Answered ✓</span>':''}
+    ${c.answered?`<span class="answered-badge" style="float:right">${ICON.olive}Answered ✓</span>`:''}
     <div class="card-title">${esc(c.person)}</div>
     ${c.scripture?`<div class="card-scripture">${esc(c.scripture)}</div>`:''}
     <div class="card-meta"><span>Started ${c.dateStarted}</span>${notes?`<span class="cm-notes">${ICON.note}${notes} note${notes>1?'s':''}</span>`:''}</div>
@@ -4602,7 +4753,7 @@ function renderDPHome(){
   const calendarHTML = (sessions.length && _dpViewMode==='calendar') ? `<div class="pl-calendar" id="dp-calendar"></div>` : '';
 
   el.innerHTML = `
-    <div class="pl-banner"><span class="banner-watermark" aria-hidden="true">${ICON.sun}</span>
+    <div class="pl-banner tod-${timeOfDay()}"><span class="banner-watermark" aria-hidden="true">${/^(dusk|night)$/.test(timeOfDay()) ? ICON.moon : ICON.sun}</span>
       <div class="pl-date">${today()}</div>
       <h2>Daily Prayer</h2>
       <p>A daily rhythm — meeting God in His Word and bringing your heart honestly to Him. Choose the shape that fits today.</p>
@@ -4905,8 +5056,8 @@ function renderDPStep(){
   const isLast = dpStepIdx === plan.steps.length - 1 && dpSubIdx === units.length - 1;
 
   // Progress dots
-  const dots = plan.steps.map((_,i) =>
-    `<div class="pl-dot${i<dpStepIdx?' done':i===dpStepIdx?' active':''}"></div>`
+  const dots = plan.steps.map((st,i) =>
+    `<div class="pl-dot${i<dpStepIdx?' done':i===dpStepIdx?' active':''}">${i===dpStepIdx?stepGlyph(st.key):''}</div>`
   ).join('');
   // …and, inside a split step, a segmented rule showing the move within it.
   const subRule = split ? `<div class="substep-rule" role="group" aria-label="${esc(unit.label||'')} — ${dpSubIdx+1} of ${units.length}">
@@ -5062,7 +5213,7 @@ function renderDPStep(){
     <div class="pl-step-card${animClass}" style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow)">
       <div class="pl-step-header">
         <div class="pl-step-num-row">
-          <div class="pl-step-num" style="background:${step.color}">${step.n}</div>
+          ${stepBadge(step, step.color)}
           <div class="pl-step-title">${esc(step.title)}</div>
         </div>
         <div class="pl-step-subtitle">${esc(step.subtitle)}</div>
@@ -5091,7 +5242,7 @@ function renderDPDone(){
   const el = document.getElementById('dp-content');
   el.innerHTML = `
     <div class="pl-done-wrap">
-      ${emptyArt('dove')}
+      ${emptyArt('dove', true)}
       <h2>Prayer Complete</h2>
       <p>You met with the Father today.<br>That is enough.</p>
       <div class="pl-done-verse">“Come to Me, all who labor and are heavy laden, and I will give you rest. Take My yoke upon you, and learn from Me, for I am gentle and lowly in heart, and you will find rest for your souls.” — Matthew 11:28–29</div>
@@ -5182,7 +5333,7 @@ function dailyFinish(){
   recordStreak();
   document.getElementById('daily-content').innerHTML=`
     <div class="empty" style="padding-top:50px">
-      ${emptyArt('lamp')}<h3>Well done!</h3>
+      ${emptyArt('lamp', true)}<h3>Well done!</h3>
       <p>You've prayed through all your cards today.<br><em>“Your prayers are part of a story God is telling.”</em></p>
       ${christAnchorBlock()}
       <button class="btn btn-primary" style="max-width:220px;display:inline-block;margin-top:18px" onclick="dailyNav(0)">Pray Again</button>
@@ -5775,7 +5926,7 @@ function renderPLStep(el){
   maybeSwipeHint();
   const step=currentStep();
   const steps=getActiveSteps();
-  const dots=steps.map((_,i)=>`<div class="pl-dot${i<plStepIdx?' done':i===plStepIdx?' active':''}"></div>`).join('');
+  const dots=steps.map((st,i)=>`<div class="pl-dot${i<plStepIdx?' done':i===plStepIdx?' active':''}">${i===plStepIdx?stepGlyph(st.key):''}</div>`).join('');
   if(step.isPrep) return renderPrepareStep(el,step,dots,steps);
 
   const saved=plSession.steps[step.key]||{prayer:'',listen:''};
@@ -5789,7 +5940,7 @@ function renderPLStep(el){
     </div>
     <div class="substep-label"><span>Step ${plSubIdx+1} of ${units.length}</span></div>`;
   const scriptureBlock=step.scripture?`
-    <div class="pl-scripture-feature${_plScriptureOpen?'':' peek'}" id="pl-scripture-feature" style="background:${step.sbg};border-left:3px solid ${step.sborder}">
+    <div class="pl-scripture-feature${_plScriptureOpen?'':' peek'}" id="pl-scripture-feature" style="background:${step.sbg};--bk:${step.sborder}">
       <div class="psf-head">
         <div style="font-size:.66rem;font-family: var(--sans);text-transform:uppercase;letter-spacing:.09em;color:${step.sc}">${step.scripture.ref}</div>
         <button type="button" class="psf-toggle" onclick="togglePLScripture()" aria-expanded="${_plScriptureOpen}"
@@ -5827,7 +5978,7 @@ function renderPLStep(el){
     <div class="pl-step-card${animClass}" style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow)">
       <div class="pl-step-header">
         <div class="pl-step-num-row">
-          <div class="pl-step-num" style="background:${step.sc}">${step.n}</div>
+          ${stepBadge(step, step.sc)}
           <div class="pl-step-title">${step.title}</div>
         </div>
         <div class="pl-step-subtitle">${step.subtitle}</div>
@@ -5912,7 +6063,7 @@ function renderPrepareStep(el,step,dots,steps){
     <div class="pl-step-card${animClass}" style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow)">
       <div class="pl-step-header">
         <div class="pl-step-num-row">
-          <div class="pl-step-num" style="background:${step.sc}">${step.n}</div>
+          ${stepBadge(step, step.sc)}
           <div class="pl-step-title">${step.title}</div>
         </div>
         <div class="pl-step-subtitle">${step.subtitle}</div>
@@ -5933,7 +6084,7 @@ function renderPrepareStep(el,step,dots,steps){
 function renderPLDone(el){
   el.innerHTML=`
     <div class="pl-done-wrap">
-      ${emptyArt('dove')}
+      ${emptyArt('dove', true)}
       <h2>Session Complete</h2>
       <p>You have prepared your heart, drawn near, humbled yourself, asked, repented, forgiven, and committed to follow.<br><br>That is a faithful act of prayer.</p>
       <div class="pl-done-verse">“The Lord is my strength and my shield; in him my heart trusts, and I am helped; my heart exults, and with my song I give thanks to him.” — Psalm 28:7</div>
@@ -6039,7 +6190,7 @@ function linkRowHTML(c,linked){
   return `<div class="link-card-row${sel?' selected':''}" onclick="toggleLinkCard('${c.id}')">
     <div class="link-card-check">${sel?'✓':''}</div>
     ${catChip(c.category)}
-    ${c.answered?'<span class="answered-badge" style="float:right">Answered ✓</span>':''}
+    ${c.answered?`<span class="answered-badge" style="float:right">${ICON.olive}Answered ✓</span>`:''}
     <div class="link-card-title">${esc(c.person)}</div>
     ${c.scripture?`<div class="link-card-sub">${esc(c.scripture)}</div>`:''}
   </div>`;
@@ -7352,7 +7503,7 @@ function renderAnsweredPrayers(){
         </div>`
       : `Started ${esc(card.dateStarted||'')}`;
     return `<div class="ap-card" onclick="openDetail('${card.id}')">
-      <div class="ap-card-name">${ICON.star} ${esc(card.person)}</div>
+      <div class="ap-card-name">${ICON.olive} ${esc(card.person)}</div>
       <div class="ap-card-meta">${meta}</div>
       ${dt ? `<div class="ap-card-duration">${dt}</div>` : ''}
       ${card.scripture ? `<div class="ap-card-scripture">${linkifyScriptureRefs(card.scripture)}</div>` : ''}
@@ -7432,7 +7583,7 @@ function renderReview(){
     html+=`<div class="rv-row" onclick="openDetail('${c.id}')">
       <div class="rv-main">
         <div class="rv-top">${catChip(c.category, null, 'font-size:.58rem;padding:2px 7px;border-radius:99px;display:inline-flex')}
-          ${c.answered?'<span class="answered-badge">Answered ✓</span>':''}</div>
+          ${c.answered?`<span class="answered-badge">${ICON.olive}Answered ✓</span>`:''}</div>
         <div class="rv-name">${esc(c.person)}</div>
         <div class="rv-meta">${c.scripture?`<span class="rv-scripture">${linkifyScriptureRefs(c.scripture)}</span>`:''}${lastNote?`<span class="rv-when">Last note · ${esc(lastNote.date)}</span>`:''}</div>
         ${lastNote?`<div class="rv-excerpt">${esc(lastNote.text)}</div>`:''}

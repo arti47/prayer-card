@@ -169,6 +169,19 @@ To unlock full PWA: deploy the folder to GitHub Pages / Netlify / Vercel (free) 
 - ✅ **Confirm dialog** — a small mark (✦, or ⚠ for destructive), the message as its title line, Cancel and the action side by side.
 - ✅ **Tabs cross-fade** in 160ms (`viewIn`), off under reduced motion.
 
+### 🎨 Graphics pass 2 (P14, 2026-09-28)
+- ✅ **Step marks** — a drawn glyph per movement (`STEP_ICON` → compass, door, crown, bread, turn, chain, steps; threshold, book, lyre, pray, candle, speech, dove). Shown in the step badge and inside the active progress dot (`stepGlyph`).
+- ✅ **Illuminated step badge** (`stepBadge`) — serif numeral in a fine double ring in the step colour, the mark alongside.
+- ✅ **Scripture corner brackets** — Weekly featured Scripture, Done verses, the Daily passage recall and the card's Scripture anchor are framed by four drawn corner brackets (`::after` gradients, `--bk` colour) instead of a left bar; the quotation watermark moved to the foot as a closing mark.
+- ✅ **Bible book grid sections** — Law · History · Wisdom · Prophets · Gospels & Acts · Letters · Revelation (`BIBLE_SECTIONS`, `bbSection`): a colour tab on every tile, section headings in canonical order with no search.
+- ✅ **Story card spine + watermark** — left edge in the category colour (`CAT_COLOR`), faint category mark in the corner; answered cards show an olive sprig instead.
+- ✅ **Olive sprig** (`ICON.olive`) on the Answered badge and Answered Prayers titles.
+- ✅ **Section headings** trail a fading hairline; **nav ✦** (`#nav-mark`, `placeNavMark`) rides the nav's top rule over the active tab.
+- ✅ **Done screens** — faint light rays behind the arch (`ORN.rays`, `emptyArt(key, true)`).
+- ✅ **Notebook margin** — a thin warm rule (`--margin-rule`) down the left of every writing field.
+- ✅ **Daily banner by time of day** (`timeOfDay()` → `tod-dawn|day|dusk|night`) — tint and sun/moon mark follow the device clock.
+- ✅ **Lookup loader** — a slowly turning ✦ while a Scripture reference is fetched; still under reduced motion.
+
 ### 🛠️ Infrastructure
 - ✅ localStorage persistence (`prayer_cards`, `pl_sessions`, `pl_draft`, `streak_days`, `daily_<date>`)
 - ✅ Storage failure handling — all writes go through `safeSetItem()` / `safeRemoveItem()` wrappers. Distinguishes `QuotaExceededError` (storage full) from `SecurityError` (private mode, Brave shields, etc.) and shows a specific toast for each. Toasts are rate-limited to once per 5 seconds so auto-save during a typing burst doesn't flood the user. On app start, `storageAvailable()` does a probe write/remove — if it fails, surfaces a "⚠ Your browser is blocking local storage" warning toast after 800ms.
@@ -550,6 +563,13 @@ A full audit of every screen in both themes at 390px, with contrast, tap-target 
 
 **Two contrast pairs still fail as measured, and both are non-text:** `--border` on `--surface` at 1.73:1 is a decorative card edge (raising it to 3:1 makes the app look wireframed), and `--accent2` on `--accent-light` at 2.94:1 is only ever a border colour now — its one text use, the selected verse number, was moved to `--accent` at 5.07:1.
 
+### P14 — Graphics pass 2 (added 2026-09-28)
+
+| # | Feature | Status | Notes |
+|---|---|---|---|
+| 84 | Defects | **done** | Straight quotes in the six Lord's Prayer step phrases → curly. The Scripture watermark sat under the peek toggle → moved to the foot. |
+| 85 | Step marks, illuminated badge, corner brackets, Bible sections, card spines, olive sprig, section rules, nav ✦, Done rays, notebook margin, time-of-day banner, lookup loader | **done** | See §3 P14. Section names in the Bible grid are the only new words — navigation labels, not app content. |
+
 ### P13 — Fourth UX / UI audit (added 2026-09-28)
 
 States not covered before: 768px tablet, very long card content, Evening and Starter end to end, confirm / undo / update toasts, walkthrough finish, prayer-library replace prompt, heart-chart selection, Weekly Done, past-session view, keyboard focus. Contrast measured on every visible text node; every button checked for an accessible name. **Content unchanged.**
@@ -624,6 +644,7 @@ If you're starting a new chat and the user asks for "what's next," check §6 —
 
 Newest first. Format: `YYYY-MM-DD — what changed`.
 
+- **2026-09-28** — **P14: graphics pass 2** (§6 #84–85). Drawn marks for every prayer step in the badge and active dot; illuminated step badge; Scripture framed by corner brackets; Bible grid grouped into seven colour-tabbed sections; category spines and watermarks on story cards; olive sprig for answered prayers; trailing section rules; a ✦ riding the nav rule; light rays on Done screens; notebook margin on writing fields; Daily banner tinted by time of day; turning ✦ while Scripture loads. Regression suite 50 → 58 checks, all passing.
 - **2026-09-28** — **P13: fourth UX / UI audit pass** (§6 #82–83). Fixed dark-mode primary buttons (white on light tan, 2.18:1 — every Next/Save/Pray Again), icon keys printed as text in the past Daily session title and the Markdown export heading, and four sub-AA text colours. Floating buttons follow the content column on wide screens; long Scripture anchors clamp to two lines on the card list; heart-chart sub-labels calmed; the pray glyph redrawn as folded hands; confirm dialog restyled; tabs cross-fade. Regression suite 46 → 50 checks, all passing.
 - **2026-09-28** — **P12: third UX / UI audit pass** (§6 #77–81). Measured across themes, text sizes and widths; fixed sideways scrolling on Story Cards at Large text, the heatmap day list printing "sun", squashed Reflect buttons/inputs, the wrapping silence timer, small tap targets, and the last interface emoji and straight quotes. Weekly history rows use a 7-colour strip and lose the ✕; the Bible reader's actions dock at the sheet foot; Weekly Review becomes compact rows; answered prayers get a two-point timeline; banners get grain and a watermark; the "Before you begin" card opens as a preview. Regression suite 39 → 46 checks, all passing.
 - **2026-09-28** — **P11: second UX / UI audit pass** (§6 #69–76). Also finished the P10 Reflect graphics: heatmap shaded in four steps by that day's entry count (`buildDayCountMap`, `--heat1..4`, no numbers shown), heart-need bars with rounded caps, inner highlight and the count at the bar end, and the seven streak marks drawn as filled ✦ / hollow ring above the weekday letter. Then: single-field composers fill the screen; FABs fade on scroll-down and yield over controls; featured Scripture opens as a three-line peek; helper links carry glyphs; the invocation picker, and the whole Guide tab, collapse behind summaries; card detail and walkthrough blocks differentiated; feelings/heart-need chips tinted; session header compacts; icons, PNG touch icons, iPhone splash screens and tutorial art added. Ten defects fixed (see #69), including a literal `${ICON.book}` shipped on the card form in P10 and unreadable dark-mode toasts. Regression suite extended 28 → 39 checks, all passing, no page errors; both themes screenshotted.
