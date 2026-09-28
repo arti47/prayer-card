@@ -182,6 +182,19 @@ To unlock full PWA: deploy the folder to GitHub Pages / Netlify / Vercel (free) 
 - ✅ **Daily banner by time of day** (`timeOfDay()` → `tod-dawn|day|dusk|night`) — tint and sun/moon mark follow the device clock.
 - ✅ **Lookup loader** — a slowly turning ✦ while a Scripture reference is fetched; still under reduced motion.
 
+### 🎨 Graphics pass 3 (P15, 2026-09-28)
+- ✅ **Eph 3 sheet** — drawn four-direction figure (`EPH_FIGURE`) and a direction arrow on each dimension heading (`dimWide/Long/Deep/High`); example block framed by corner brackets.
+- ✅ **`smartQuotes()`** — technique and petition sheets render typographic quotes (text outside tags only; handles `&quot;`).
+- ✅ **Emotion wheel** — decorative 7-segment wheel above the picker (`emotionWheelSVG`), the chosen core lit.
+- ✅ **Heart-need icons** (`NEED_ICON`, `needGlyph`) on the chart cards and Reflect frequency labels: heart, shield, compass, medal, moon, bond, key, eye, scales.
+- ✅ **Story notes thread** (`.note-thread`, `.note-knot`) — dot per note, olive sprig on the answered note.
+- ✅ **Bible chapter numeral** — verse 1 opens with the chapter number as a large serif initial (`.bb-chap`); verse numbers smaller.
+- ✅ **Calendars** mark prayed days with a tiny ✦; today double-ringed.
+- ✅ **Walkthrough card** carries the category spine and watermark.
+- ✅ **Header band** — thin diamond headband along the header's foot (`header::after`).
+- ✅ **Year at a Glance** — stepped month boundaries (`.mstart`) and a ✦ beneath today's week (`.heatmap-today-mark`).
+- ✅ **Your Stats** as serif figures over labels (`.stat-figs`); **prayer library** opens with a framed vignette per category.
+
 ### 🛠️ Infrastructure
 - ✅ localStorage persistence (`prayer_cards`, `pl_sessions`, `pl_draft`, `streak_days`, `daily_<date>`)
 - ✅ Storage failure handling — all writes go through `safeSetItem()` / `safeRemoveItem()` wrappers. Distinguishes `QuotaExceededError` (storage full) from `SecurityError` (private mode, Brave shields, etc.) and shows a specific toast for each. Toasts are rate-limited to once per 5 seconds so auto-save during a typing burst doesn't flood the user. On app start, `storageAvailable()` does a probe write/remove — if it fails, surfaces a "⚠ Your browser is blocking local storage" warning toast after 800ms.
@@ -563,6 +576,13 @@ A full audit of every screen in both themes at 390px, with contrast, tap-target 
 
 **Two contrast pairs still fail as measured, and both are non-text:** `--border` on `--surface` at 1.73:1 is a decorative card edge (raising it to 3:1 makes the app look wireframed), and `--accent2` on `--accent-light` at 2.94:1 is only ever a border colour now — its one text use, the selected verse number, was moved to `--accent` at 5.07:1.
 
+### P15 — Graphics pass 3 (added 2026-09-28)
+
+| # | Feature | Status | Notes |
+|---|---|---|---|
+| 86 | Defects | **done** | Straight quotes in the meditation-technique and petition sheets and the Reflect heart-needs intro → curly. ✍️ in "Why three plans?" and 🙏 on card-detail session rows → drawn glyphs. |
+| 87 | Eph 3 figure, emotion wheel, heart-need icons, notes thread, chapter numeral, calendar ✦, walkthrough spine, header band, year marks, stat figures, library vignettes | **done** | See §3 P15. |
+
 ### P14 — Graphics pass 2 (added 2026-09-28)
 
 | # | Feature | Status | Notes |
@@ -644,6 +664,7 @@ If you're starting a new chat and the user asks for "what's next," check §6 —
 
 Newest first. Format: `YYYY-MM-DD — what changed`.
 
+- **2026-09-28** — **P15: graphics pass 3** (§6 #86–87). Eph 3 four-direction figure and heading arrows; decorative emotion wheel; an icon for each heart need; story notes on a thread; chapter numeral opening each Bible chapter; ✦ on prayed calendar days; category spine on the walkthrough card; diamond headband on the header; month boundaries and a today mark in Year at a Glance; Your Stats as figures; framed vignettes in the prayer library. Curly quotes throughout the technique and petition sheets. Regression suite 58 → 65 checks, all passing.
 - **2026-09-28** — **P14: graphics pass 2** (§6 #84–85). Drawn marks for every prayer step in the badge and active dot; illuminated step badge; Scripture framed by corner brackets; Bible grid grouped into seven colour-tabbed sections; category spines and watermarks on story cards; olive sprig for answered prayers; trailing section rules; a ✦ riding the nav rule; light rays on Done screens; notebook margin on writing fields; Daily banner tinted by time of day; turning ✦ while Scripture loads. Regression suite 50 → 58 checks, all passing.
 - **2026-09-28** — **P13: fourth UX / UI audit pass** (§6 #82–83). Fixed dark-mode primary buttons (white on light tan, 2.18:1 — every Next/Save/Pray Again), icon keys printed as text in the past Daily session title and the Markdown export heading, and four sub-AA text colours. Floating buttons follow the content column on wide screens; long Scripture anchors clamp to two lines on the card list; heart-chart sub-labels calmed; the pray glyph redrawn as folded hands; confirm dialog restyled; tabs cross-fade. Regression suite 46 → 50 checks, all passing.
 - **2026-09-28** — **P12: third UX / UI audit pass** (§6 #77–81). Measured across themes, text sizes and widths; fixed sideways scrolling on Story Cards at Large text, the heatmap day list printing "sun", squashed Reflect buttons/inputs, the wrapping silence timer, small tap targets, and the last interface emoji and straight quotes. Weekly history rows use a 7-colour strip and lose the ✕; the Bible reader's actions dock at the sheet foot; Weekly Review becomes compact rows; answered prayers get a two-point timeline; banners get grain and a watermark; the "Before you begin" card opens as a preview. Regression suite 39 → 46 checks, all passing.

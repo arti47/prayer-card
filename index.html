@@ -122,6 +122,10 @@
   /* Inside a Daily or Weekly session the header steps back to a thin bar — the
      screen belongs to the prayer. The tab homes keep the full title. */
   body.in-session header { padding-top: 8px; padding-bottom: 8px; }
+  /* A thin headband along the header's foot: tiny diamonds strung on a hairline. */
+  header::after { content: ''; position: absolute; left: 0; right: 0; bottom: 3px; height: 6px; pointer-events: none; opacity: .5;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='6'%3E%3Cpath d='M7 .8L9.2 3 7 5.2 4.8 3z' fill='%23f2e3cf'/%3E%3Cpath d='M0 3h4M10 3h4' stroke='%23f2e3cf' stroke-width='.7'/%3E%3C/svg%3E") repeat-x center / 14px 6px; }
+  [data-theme="dark"] header::after { opacity: .28; }
   body.in-session header h1 { font-size: 1.02rem; }
   body.in-session header p { font-size: 0; opacity: 0; margin-top: 0; }
   @supports (padding: env(safe-area-inset-top)) { body.in-session header { padding-top: calc(8px + env(safe-area-inset-top)) !important; } }
@@ -218,7 +222,9 @@
   .bb-item:active { background: var(--accent); color: var(--on-accent); }
   .bb-verses { max-height: 44vh; overflow-y: auto; margin: 2px -4px 8px; }
   .bb-verse { display: flex; gap: 9px; padding: 7px 8px; border-radius: 8px; cursor: pointer; line-height: 1.55; font-size: .9rem; color: var(--text2); user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; }
-  .bb-verse .n { color: var(--accent); font-weight: 600; font-size: .72rem; min-width: 1.4em; padding-top: 3px; text-align: right; }
+  .bb-verse .n { color: var(--accent2); font-weight: 600; font-size: .62rem; min-width: 1.4em; padding-top: 1px; text-align: right; font-family: var(--sans); }
+  .bb-v1 .n { display: none; }
+  .bb-chap { float: left; font-family: var(--serif); font-size: 2.9em; line-height: .8; font-weight: bold; color: var(--accent); margin: 5px 10px 0 2px; }
   .bb-verse.sel { background: var(--accent-light); color: var(--text); }
   .bb-verse.sel .n { color: var(--accent); }   /* accent2 on accent-light is only 2.94:1 */
   .bb-preview { background: var(--accent-light); border-left: 3px solid var(--accent2); border-radius: var(--radius-sm); padding: 12px 14px; font-style: italic; line-height: 1.7; font-size: .9rem; margin: 8px 0 12px; }
@@ -326,6 +332,15 @@
   .detail-section h3 { font-size: .68rem; font-family: var(--sans); text-transform: uppercase; letter-spacing: .055em; color: var(--accent); margin-bottom: 5px; }
   .detail-section p { font-size: .9rem; line-height: 1.55; }
   .note-entry { position: relative; border-left: 3px solid var(--border); padding: 8px 50px 8px 12px; margin-bottom: 8px; background: var(--surface2); border-radius: 0 var(--radius-sm) var(--radius-sm) 0; }
+  /* Story notes hang on one thread: a line down the left joining a dot per note,
+     the olive sprig marking the answered moment. */
+  .note-thread { position: relative; padding-left: 20px; }
+  .note-thread::before { content: ''; position: absolute; left: 6px; top: 14px; bottom: 14px; width: 1.5px; background: linear-gradient(var(--accent2), color-mix(in srgb, var(--accent2) 25%, transparent)); border-radius: 1px; }
+  .note-thread .note-entry { border-left: none; border-radius: var(--radius-sm); }
+  .note-knot { position: absolute; left: -19px; top: 13px; width: 11px; height: 11px; border-radius: 50%; background: var(--surface); border: 2px solid var(--accent2); }
+  .note-knot.answered { width: 18px; height: 18px; left: -22.5px; top: 9px; border: none; background: var(--surface); color: var(--answered); display: flex; align-items: center; justify-content: center; }
+  .note-knot.answered .ico { width: 16px; height: 16px; }
+  .note-entry .note-date .ico { width: 1.1em; height: 1.1em; vertical-align: -.2em; color: var(--accent2); }
   .note-entry .note-date { font-size: .68rem; font-family: var(--sans); color: var(--text3); margin-bottom: 3px; }
   .note-entry .note-text { font-size: .88rem; line-height: 1.5; white-space: pre-wrap; }
   .note-actions { position: absolute; top: 6px; right: 6px; display: flex; gap: 2px; }
@@ -339,7 +354,9 @@
   .daily-header { text-align: center; padding: 14px 0 6px; }
   .daily-header h2 { font-size: 1.1rem; color: var(--accent); }
   .daily-header p { font-size: .8rem; color: var(--text3); font-family: var(--sans); margin-top: 3px; }
-  .prayer-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; box-shadow: var(--shadow-lg); margin: 10px 0; }
+  .prayer-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; box-shadow: var(--shadow-lg); margin: 10px 0; position: relative; overflow: hidden;
+    border-left: 4px solid color-mix(in srgb, var(--cat, var(--accent2)) 62%, transparent); }
+  [data-theme="dark"] .prayer-card { border-left-color: color-mix(in srgb, var(--cat, var(--accent2)) 45%, #e8d8c4); }
   .prayer-card .p-cat { font-size: .62rem; font-family: var(--sans); text-transform: uppercase; letter-spacing: .05em; margin-bottom: 5px; display: inline-flex; align-items: center; padding: 2px 8px; border-radius: 99px; }
   .prayer-card .p-title { font-size: 1.15rem; font-weight: bold; }
   .prayer-card .p-scripture { font-style: italic; color: var(--text2); font-size: .9rem; margin-top: 5px; }
@@ -558,6 +575,12 @@
   /* Seven days, drawn in the same glyph family as the rest of the app: a filled ✦
      for a day of prayer, a hollow ring for a day without. The weekday letter stays
      below the mark so you can still read which day is which. */
+  /* Your Stats as set figures: a serif numeral over its label. */
+  .stat-figs { display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; margin: 2px 0 6px; }
+  .stat-fig { grid-column: span 2; background: var(--surface2); border-radius: var(--radius-sm); padding: 10px 6px 9px; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 2px; }
+  .stat-fig.wide { grid-column: span 3; }
+  .stat-fig b { font-family: var(--serif); font-size: 1.7rem; line-height: 1; color: var(--accent); font-weight: bold; font-variant-numeric: oldstyle-nums; }
+  .stat-fig span { font-size: .72rem; color: var(--text3); font-family: var(--sans); line-height: 1.25; }
   .streak-bar { display: flex; gap: 10px; margin-top: 10px; flex-wrap: wrap; }
   .streak-day { display: flex; flex-direction: column; align-items: center; gap: 3px; width: 26px; }
   .streak-mark { width: 22px; height: 22px; display: flex; align-items: center; justify-content: center; color: var(--border); }
@@ -620,6 +643,11 @@
   .heatmap-cell.done.lv4 { background: var(--heat4); border-color: var(--heat4); }
   .heatmap-cell.today { box-shadow: 0 0 0 1.5px var(--accent2); }
   .heatmap-cell.future { background: transparent; border: none; }
+  .heatmap-cell.mstart { box-shadow: -2px 0 0 -0.5px color-mix(in srgb, var(--accent2) 55%, transparent); }
+  .heatmap-cell.mstart.today { box-shadow: -2px 0 0 -0.5px color-mix(in srgb, var(--accent2) 55%, transparent), 0 0 0 1.5px var(--accent2); }
+  /* A small ✦ beneath this week's column. */
+  .heatmap-today-mark { width: 9px; height: 9px; color: var(--accent); margin: 3px 0 0 calc(24px + var(--col) * 15px + 2px); }
+  .heatmap-today-mark svg { width: 100%; height: 100%; display: block; }
   /* Filled cells are tappable — slight hover scale + ring on selection */
   .heatmap-cell.done { cursor: pointer; }
   .heatmap-cell.done:hover { transform: scale(1.25); position: relative; z-index: 2; }
@@ -653,6 +681,8 @@
   .emo-link:hover, .emo-link:active { background: var(--accent-light); border-color: var(--accent2); border-style: solid; color: var(--accent); }
   .emo-chips-row { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0 10px; }
   .emo-chip { display: inline-flex; align-items: center; gap: 7px; padding: 4px 4px 4px 11px; border-radius: 99px; color: #fff; font-family: var(--serif); font-size: .8rem; font-style: italic; }
+  .emo-wheel { width: 92px; height: 92px; margin: 4px auto 12px; }
+  .emo-wheel svg { width: 100%; height: 100%; display: block; }
   .emo-chip-x { background: rgba(255,255,255,0.22); border: none; color: #fff; width: 18px; height: 18px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; font-size: .68rem; line-height: 1; padding: 0; }
   .emo-chip-x:hover, .emo-chip-x:active { background: rgba(255,255,255,0.4); }
   /* Chosen feelings and heart needs: a pale tint of the identity colour with the
@@ -725,7 +755,11 @@
 
   /* Heart-need frequency (P4 #14) */
   .hn-freq-row { margin-bottom: 11px; }
-  .hn-freq-label { font-size: .85rem; color: var(--text); margin-bottom: 5px; }
+  .hn-freq-label { font-size: .85rem; color: var(--text); margin-bottom: 5px; display: flex; align-items: center; gap: 7px; }
+  .hn-freq-label .ico { width: 16px; height: 16px; flex: none; }
+  .hn-freq-label span { color: var(--text); }
+  .hn-title { display: flex; align-items: center; gap: 8px; }
+  .hn-title .ico { width: 20px; height: 20px; flex: none; }
   /* The track keeps its own hairline; the bar sits inside it with rounded caps and a
      soft inner highlight along the top edge so it reads as a filled ribbon rather
      than a flat block. The count rides at the bar's end instead of the track's. */
@@ -757,11 +791,13 @@
   .pl-cal-day.muted { color: var(--text3); opacity: .35; }
   .pl-cal-day.has-sessions { cursor: pointer; color: var(--text); font-weight: bold; }
   .pl-cal-day.has-sessions:hover, .pl-cal-day.has-sessions:active { background: var(--surface2); }
-  .pl-cal-day.today { box-shadow: inset 0 0 0 1.5px var(--accent2); color: var(--accent); font-weight: bold; }
+  .pl-cal-day.today { box-shadow: inset 0 0 0 1.5px var(--accent2), inset 0 0 0 3.5px var(--surface), inset 0 0 0 4.5px color-mix(in srgb, var(--accent2) 45%, transparent); color: var(--accent); font-weight: bold; }
   .pl-cal-day.selected { background: var(--accent); color: var(--on-accent) !important; box-shadow: none; }
   [data-theme="dark"] .pl-cal-day.selected { color: #1a1410 !important; }
-  .pl-cal-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--accent2); margin-top: 2px; }
-  .pl-cal-day.selected .pl-cal-dot { background: currentColor; opacity: .85; }
+  /* Prayed days carry a tiny ✦ rather than a dot; today sits in a fine double ring. */
+  .pl-cal-dot { width: 8px; height: 8px; color: var(--accent2); margin-top: 1px; display: flex; }
+  .pl-cal-dot svg { width: 100%; height: 100%; }
+  .pl-cal-day.selected .pl-cal-dot { color: currentColor; opacity: .9; }
   .pl-cal-summary { margin-top: 12px; padding-top: 11px; border-top: 1px solid var(--border); font-size: .76rem; color: var(--text3); font-family: var(--sans); text-align: center; letter-spacing: .03em; display: flex; align-items: center; justify-content: center; gap: 10px; flex-wrap: wrap; }
   .pl-cal-clear { background: none; border: none; color: var(--accent); font-family: var(--sans); font-size: .74rem; cursor: pointer; text-decoration: underline; padding: 2px 4px; }
 
@@ -846,6 +882,8 @@
   .cat-select-ico { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; pointer-events: none; }
   .cat-select-ico .ico { width: 15px; height: 15px; }
   .tut-art .empty-art { width: 112px; height: 102px; margin: 0 auto 8px; }
+  .lib-vignette .empty-art { width: 88px; height: 80px; margin: 0 auto 6px; }
+  .lib-vignette .empty-art .motif { width: 34px; height: 34px; }
   .tut-art .empty-art .motif { width: 46px; height: 46px; }
   .tut-title { font-size: 1.35rem; font-weight: bold; color: var(--text); margin-bottom: 14px; font-family: var(--serif); letter-spacing: .01em; }
   .tut-body { font-size: .92rem; color: var(--text2); line-height: 1.7; text-align: left; padding: 0 4px; }
@@ -905,7 +943,7 @@
   .dp-tech-link { background: none; border: none; padding: 6px 0; text-align: left; font-family: var(--serif); font-size: .82rem; font-style: italic; color: var(--text3); cursor: pointer; letter-spacing: .01em; transition: color .15s; }
   .dp-tech-link:hover, .dp-tech-link:active { color: var(--accent); }
   .tech-lead { font-size: .92rem; color: var(--text); line-height: 1.65; margin-bottom: 12px; }
-  .tech-example { background: var(--accent-light); border-left: 3px solid var(--accent2); border-radius: 0 var(--radius-sm) var(--radius-sm) 0; padding: 12px 14px; margin: 12px 0; font-size: .88rem; line-height: 1.7; color: var(--text2); }
+  .tech-example { background: var(--accent-light); border-radius: var(--radius-sm); position: relative; padding: 12px 14px; margin: 12px 0; font-size: .88rem; line-height: 1.7; color: var(--text2); }
   .tech-example strong { color: var(--accent); font-weight: bold; font-style: normal; }
   .tech-example-ref { font-size: .68rem; font-family: var(--sans); color: var(--text3); letter-spacing: .04em; text-transform: uppercase; margin-bottom: 8px; }
   .tech-closer { font-size: .88rem; color: var(--text2); line-height: 1.65; margin-top: 12px; font-style: italic; }
@@ -915,7 +953,10 @@
      mini-card inside the .tech-example container, separated by a soft accent border. */
   .tech-dim { padding: 10px 0; border-top: 1px solid var(--accent2); }
   .tech-dim:first-child { padding-top: 0; border-top: none; }
-  .tech-dim-label { font-size: .72rem; font-family: var(--sans); font-weight: bold; color: var(--accent); letter-spacing: .14em; }
+  .tech-dim-label { font-size: .72rem; font-family: var(--sans); font-weight: bold; color: var(--accent); letter-spacing: .14em; display: flex; align-items: center; gap: 7px; }
+  .tech-dim-label .ico { width: 16px; height: 16px; }
+  .eph-fig { width: 160px; margin: 2px auto 8px; color: var(--accent); }
+  .eph-fig svg { width: 100%; height: auto; display: block; }
   .tech-dim-anchor { font-size: .66rem; font-family: var(--sans); color: var(--text3); margin-top: 2px; letter-spacing: .04em; font-style: italic; }
   .tech-dim-text { font-size: .87rem; line-height: 1.65; color: var(--text2); margin-top: 6px; }
 
@@ -1125,8 +1166,8 @@
   /* Scripture framed as on a manuscript page: four drawn corner brackets in the
      block's colour, instead of a bar down one side. Drawn with gradients on ::after
      so each block's own background and watermark are untouched. */
-  .pl-scripture-feature, .pl-done-verse, .dp-recall, .detail-section.ds-scripture { --bk: var(--accent2); position: relative; }
-  .pl-scripture-feature::after, .pl-done-verse::after, .dp-recall::after, .detail-section.ds-scripture::after {
+  .pl-scripture-feature, .pl-done-verse, .dp-recall, .detail-section.ds-scripture, .tech-example { --bk: var(--accent2); position: relative; }
+  .pl-scripture-feature::after, .pl-done-verse::after, .dp-recall::after, .detail-section.ds-scripture::after, .tech-example::after {
     content: ''; position: absolute; inset: 5px; pointer-events: none; opacity: .8;
     --bl: 15px; --bw: 1.5px;
     background:
@@ -1868,6 +1909,15 @@ const ICON = {
   candle:   _svg('<path d="M9.6 11.4h4.8V21H9.6z"/><path d="M8 21h8"/><path d="M12 3.6c1.5 1.9 2.2 3.1 2.2 4.3a2.2 2.2 0 0 1-4.4 0c0-1.2.7-2.4 2.2-4.3z"/>'),
   speech:   _svg('<path d="M6.8 4.5h10.4a2.3 2.3 0 0 1 2.3 2.3v7a2.3 2.3 0 0 1-2.3 2.3h-6.6l-4.1 3.4v-3.4a2.3 2.3 0 0 1-2-2.3v-7a2.3 2.3 0 0 1 2.3-2.3z"/><path d="M8.4 9h7.2M8.4 12h4.6"/>'),
   olive:    _svg('<path d="M4.2 20.2L19.4 4"/><path d="M8.76 15.34Q11.12 16.80 13.36 15.17Q11.00 13.71 8.76 15.34z"/><path d="M11.04 12.91Q12.53 10.57 10.92 8.31Q9.43 10.65 11.04 12.91z"/><path d="M13.32 10.48Q15.68 11.94 17.92 10.31Q15.56 8.85 13.32 10.48z"/><path d="M15.60 8.05Q17.09 5.71 15.48 3.45Q13.99 5.79 15.60 8.05z"/><path d="M17.88 5.62Q20.24 7.08 22.48 5.45Q20.12 3.99 17.88 5.62z"/><circle cx="8.6" cy="18.4" r="1.35"/>'),
+  shield:   _svg('<path d="M12 3.4l7 2.6v5.4c0 4.6-3 8.1-7 9.4-4-1.3-7-4.8-7-9.4V6z"/><path d="M12 7.6v8.8M8.6 11h6.8" opacity=".75"/>'),
+  medal:    _svg('<circle cx="12" cy="14.4" r="5.2"/><path d="M8.6 3.6l2.6 5.8M15.4 3.6l-2.6 5.8"/><path d="M12 12.2l.8 1.6 1.7.3-1.2 1.2.3 1.7-1.6-.8-1.6.8.3-1.7-1.2-1.2 1.7-.3z" fill="currentColor" stroke="none"/>'),
+  key:      _svg('<circle cx="7.8" cy="12" r="3.6"/><path d="M11.4 12h9M17.6 12v3.2M20.4 12v2.4"/>'),
+  eye:      _svg('<path d="M2.8 12s3.4-6 9.2-6 9.2 6 9.2 6-3.4 6-9.2 6-9.2-6-9.2-6z"/><circle cx="12" cy="12" r="2.6"/>'),
+  scales:   _svg('<path d="M12 4v16M7.6 20h8.8M5.2 7.4h13.6"/><path d="M5.2 7.4l-2.4 5.6a2.4 2.4 0 0 0 4.8 0zM18.8 7.4l-2.4 5.6a2.4 2.4 0 0 0 4.8 0z"/>'),
+  dimWide:  _svg('<path d="M3.4 12h17.2M6.4 9l-3 3 3 3M17.6 9l3 3-3 3"/>'),
+  dimLong:  _svg('<path d="M4 18.6L19.4 5.4M13.6 5.2h5.8v5.8"/>'),
+  dimDeep:  _svg('<path d="M12 3.4v17.2M8.8 17.4l3.2 3.2 3.2-3.2"/>'),
+  dimHigh:  _svg('<path d="M12 20.6V3.4M8.8 6.6L12 3.4l3.2 3.2"/>'),
   close:    _svg('<path d="M6.5 6.5l11 11M17.5 6.5l-11 11"/>'),
   breath:   _svg('<path d="M3.5 9.5h10.2a2.8 2.8 0 1 0-2.8-2.8"/><path d="M3.5 13.5h14.2a2.8 2.8 0 1 1-2.8 2.8"/><path d="M3.5 17.5h5"/>'),
   swirl:    _svg('<path d="M12 12.2a1.6 1.6 0 1 1 1.6-1.6 3.4 3.4 0 0 1-3.4 3.4 5 5 0 0 1-5-5 6.6 6.6 0 0 1 6.6-6.6 8.2 8.2 0 0 1 8.2 8.2 9.8 9.8 0 0 1-9.8 9.8"/>'),
@@ -1911,6 +1961,18 @@ const ORN = {
 // A motif standing inside the open arch — the empty-state illustration.
 // Quoted passages that already contain quotation get the inner marks nested as single
 // curly quotes, so "…sin…"" becomes “…sin…’” — typography only, the words are untouched.
+// Straight double quotes in prose (outside tags) become typographic quotes:
+// opening after a space, bracket or dash, closing everywhere else.
+const EPH_FIGURE = `<div class="eph-fig" aria-hidden="true"><svg viewBox="0 0 160 150" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+    <g stroke-width="1.3" opacity=".55"><path d="M80 75H22M80 75h58M80 75V16M80 75v58M80 75l40-34"/></g>
+    <g stroke-width="1.6"><path d="M28 69l-6 6 6 6M132 69l6 6-6 6M74 22l6-6 6 6M74 127l6 6 6-6M112 41h8v8"/></g>
+    <path d="M80 62v26M71 70.6h18" stroke-width="2.2"/>
+    <g font-family="var(--sans)" font-size="8.5" letter-spacing="1.4" fill="currentColor" stroke="none" opacity=".75">
+      <text x="22" y="92">WIDE</text><text x="120" y="36">LONG</text><text x="88" y="146">DEEP</text><text x="88" y="16">HIGH</text></g></svg></div>`;
+function smartQuotes(html){
+  return String(html).split(/(<[^>]+>)/).map(part => part.startsWith('<') ? part :
+    part.replace(/&quot;|"/g, (m, i, str) => (i === 0 || /[\s(\[\u2014\u2013-]/.test(str[i-1])) ? '\u201c' : '\u201d')).join('');
+}
 function nestQuotes(t){
   return String(t||'').replace(/"/g, (m, i, str) => /[A-Za-z\u2026]/.test(str[i+1]||'') ? '\u2018' : '\u2019');
 }
@@ -2020,6 +2082,9 @@ const PL_STEPS = [
 const DARK_TWIN = {"#774044":"#c99c9f","#406f77":"#9cc3c9","#644077":"#ba9cc9","#775940":"#c9b09c","#40774f":"#9cc9a8","#6f4866":"#c3a2bb","#404877":"#9ca2c9","#794c3e":"#cba69a","#687740":"#bdc99c","#776140":"#c9b79c","#77405e":"#c99cb5","#655d53":"#bab3ab","#5b4077":"#b29cc9","#774e40":"#c9a79c","#657444":"#bac69f"};
 // Inline style that carries both, for use with `color: var(--idc)`.
 const idc = c => `--idc:${c};--idc-dark:${DARK_TWIN[c]||c}`;
+const NEED_ICON = { 'loved-accepted':'heart', 'secure-safe':'shield', 'meaning-purpose':'compass', 'competent-respected':'medal',
+  'rest-relief':'moon', 'belong-connected':'bond', 'control-predictability':'key', 'known-understood':'eye', 'righteous-okay':'scales' };
+const needGlyph = key => ICON[NEED_ICON[key]] || '';
 const HEART_NEEDS = [
   { key:"loved-accepted", title:"To be loved & accepted", color:"#774044", emotions:"Anxiety, insecurity, shame, loneliness, jealousy", temptations:"People-pleasing, over-performing, image management, co-dependency, avoiding hard conversations", god:"You are loved because God set His love on you, not because you earned it. He adopts you.", scriptures:"Romans 5:8 · 1 John 3:1 · Ephesians 1:4–5" },
   { key:"secure-safe", title:"To be secure & safe", color:"#406f77", emotions:"Fear, worry, panic, irritability", temptations:"Control, hyper-vigilance, over-planning, hoarding money, refusing vulnerability, distrust", god:"God is your refuge and steady presence, even in threat and uncertainty.", scriptures:"Psalm 46:1–2 · Isaiah 41:10 · Matthew 6:31–34" },
@@ -2143,6 +2208,19 @@ function openEmotionPicker(type){
   openModal('modal-emotion');
 }
 
+// A small drawn wheel of the seven core feelings in their colours. Decorative: the
+// chosen core's segment stays lit as you go deeper, the others step back.
+function emotionWheelSVG(){
+  const cores = Object.keys(EMOTION_WHEEL), n = cores.length, R = 44, r = 17, cx = 50, cy = 50;
+  const pt = (a, rad) => [cx + Math.cos(a) * rad, cy + Math.sin(a) * rad].map(v => v.toFixed(2)).join(' ');
+  const segs = cores.map((name, i) => {
+    const a0 = -Math.PI/2 + i * 2*Math.PI/n + .025, a1 = -Math.PI/2 + (i+1) * 2*Math.PI/n - .025;
+    const d = `M${pt(a0,r)}L${pt(a0,R)}A${R} ${R} 0 0 1 ${pt(a1,R)}L${pt(a1,r)}A${r} ${r} 0 0 0 ${pt(a0,r)}z`;
+    const on = !_emoCore || _emoCore === name;
+    return `<path d="${d}" fill="${EMOTION_WHEEL[name].color}" opacity="${on ? (_emoCore ? 1 : .82) : .22}"/>`;
+  }).join('');
+  return `<div class="emo-wheel" aria-hidden="true"><svg viewBox="0 0 100 100">${segs}<circle cx="50" cy="50" r="5" fill="var(--accent2)" opacity=".5"/></svg></div>`;
+}
 function renderEmotionPicker(){
   const el = document.getElementById('emotion-content');
   let bodyHTML = '';
@@ -2194,6 +2272,7 @@ function renderEmotionPicker(){
   el.innerHTML = `
     <h2 style="color:var(--accent);font-size:1.05rem;margin-bottom:8px">${ICON.swirl} Name what you're feeling</h2>
     <p class="emo-intro">Naming a feeling specifically tends to reduce its intensity and clarify what is needed.</p>
+    ${emotionWheelSVG()}
     ${breadcrumbHTML}
     ${bodyHTML}
     ${navHTML}
@@ -2868,6 +2947,8 @@ function bbVerseViewHTML(){
   const has = _bbSel.size > 0;
   const rows = _bbVerses.map(v=>{
     const sel = _bbSel.has(v.n) ? ' sel' : '';
+    // Verse 1 opens with the chapter number as a large initial, as in a printed Bible.
+    if(v.n === 1) return `<div class="bb-verse bb-v1${sel}" data-v="${v.n}"><span class="n">${v.n}</span><span><span class="bb-chap" aria-hidden="true">${_bbChapter}</span>${esc(v.text)}</span></div>`;
     return `<div class="bb-verse${sel}" data-v="${v.n}"><span class="n">${v.n}</span><span>${esc(v.text)}</span></div>`;
   }).join('');
   const target = activeBibleTarget();
@@ -3150,12 +3231,12 @@ function showPetitionExplanation(stepKey){
       <div class="petition-phrase">“${esc(b.phrase)}…”</div>
       <div class="petition-text">${esc(b.text)}</div>
     </div>`).join('');
-  document.getElementById('petition-content').innerHTML = `
+  document.getElementById('petition-content').innerHTML = smartQuotes(`
     <h2 style="color:var(--accent);font-size:1.05rem;margin-bottom:8px">${ICON.book} What this petition asks</h2>
     <p style="font-size:.72rem;color:var(--text3);font-family: var(--sans);letter-spacing:.06em;text-transform:uppercase;margin-bottom:14px">${esc(p.title)}</p>
     ${bodyHTML}
     <button class="btn btn-secondary" onclick="closeModal('modal-petition')" style="margin-top:14px">Close</button>
-  `;
+  `);
   openModal('modal-petition');
 }
 
@@ -3313,14 +3394,22 @@ function showMeditationTechnique(key){
       ${t.exampleRef ? `<div class="tech-example-ref">${esc(t.exampleRef)}</div>` : ''}
       ${t.exampleHTML}
     </div>` : '';
-  document.getElementById('technique-content').innerHTML = `
+  // The four dimensions of Eph 3:18 drawn as directions out from the cross — and
+  // each dimension's heading carries its direction.
+  const DIM = { WIDE:'dimWide', LONG:'dimLong', DEEP:'dimDeep', HIGH:'dimHigh' };
+  const example = key === 'love'
+    ? exampleBlock.replace(/<div class="tech-dim-label">(WIDE|LONG|DEEP|HIGH)<\/div>/g, (m, d) => `<div class="tech-dim-label">${ICON[DIM[d]]}${d}</div>`)
+    : exampleBlock;
+  const figure = key === 'love' ? EPH_FIGURE : '';
+  document.getElementById('technique-content').innerHTML = smartQuotes(`
     <h2 style="color:var(--accent);font-size:1.05rem;margin-bottom:14px">${({wordstress:ICON.book, paraphrase:ICON.note, love:ICON.heart})[key] || ''} ${esc(t.title)}</h2>
     <p class="tech-lead">${esc(t.lead)}</p>
-    ${exampleBlock}
+    ${figure}
+    ${example}
     ${t.closer ? `<p class="tech-closer">${esc(t.closer)}</p>` : ''}
     <div class="tech-action">${esc(t.action)}</div>
     <button class="btn btn-secondary" onclick="closeModal('modal-technique')" style="margin-top:14px">Close</button>
-  `;
+  `);
   openModal('modal-technique');
 }
 
@@ -3515,8 +3604,9 @@ function openPrayerLibrary(category, targetId){
     </details>
   `).join('');
   document.getElementById('prayer-library-content').innerHTML = `
-    <h2 style="color:var(--accent);font-size:1.05rem;margin-bottom:6px">${ICON.book} ${esc(lib.title)}</h2>
-    <p style="font-size:.82rem;color:var(--text2);font-style:italic;margin-bottom:14px;line-height:1.6">${esc(lib.intro)}</p>
+    <div class="lib-vignette">${emptyArt(({praise:'sun', thanksgiving:'olive', confession:'turn', petition:'pray', concluding:'sparkle'})[category] || 'book')}</div>
+    <h2 style="color:var(--accent);font-size:1.05rem;margin-bottom:6px;text-align:center">${esc(lib.title)}</h2>
+    <p style="font-size:.82rem;color:var(--text2);font-style:italic;margin-bottom:14px;line-height:1.6;text-align:center">${esc(lib.intro)}</p>
     <div class="prayer-lib-list">${prayersHTML}</div>
     <button class="btn btn-secondary" onclick="closeModal('modal-prayer-library')" style="margin-top:14px">Close</button>
   `;
@@ -4381,6 +4471,7 @@ function openDetail(id){
         <button class="note-action-btn" title="Edit" aria-label="Edit note" onclick="openNote('${c.id}', ${actualIdx})">${ICON.pen}</button>
         <button class="note-action-btn delete" title="Delete" aria-label="Delete note" onclick="deleteNote('${c.id}', ${actualIdx})">${ICON.close}</button>
       </div>
+      <span class="note-knot${(n.text||'').trim()==='🎉 Prayer answered!'?' answered':''}" aria-hidden="true">${(n.text||'').trim()==='🎉 Prayer answered!'?ICON.olive:''}</span>
       <div class="note-date">${esc(n.date)}</div>
       <div class="note-text">${esc(n.text)}</div>
     </div>`;
@@ -4397,13 +4488,13 @@ function openDetail(id){
       ${c.askCirc?`<div class="ds-row"><h3>The Ask — Circumstance</h3><p>${esc(c.askCirc)}</p></div>`:''}
     </div>`:''}
     ${(c.perspAttr||c.perspTrust)?`<div class="detail-section persp-block"><h3>Father's Perspective</h3><p>${persp}</p></div>`:''}
-    <p class="section-title" style="margin-top:16px">Story Notes</p><div>${notesHTML}</div>
+    <p class="section-title" style="margin-top:16px">Story Notes</p><div class="note-thread">${notesHTML}</div>
     <button class="btn btn-secondary" style="margin-top:10px" onclick="openNote('${c.id}')">＋ Add Story Note</button>
     ${(()=>{
       const linkedSessions=getSessionsLinkedToCard(c.id);
       if(!linkedSessions.length) return '';
       const items=linkedSessions.map(s=>`<div class="note-entry" style="cursor:pointer;border-left-color:var(--accent2)" onclick="closeModal('modal-detail');setTimeout(()=>viewSession('${s.id}'),250)">
-        <div class="note-date">🙏 Pray &amp; Listen · ${esc(s.date)}</div>
+        <div class="note-date">${ICON.pen} Pray &amp; Listen · ${esc(s.date)}</div>
         <div class="note-text" style="font-size:.82rem;color:var(--text3);font-style:italic">Tap to view session</div>
       </div>`).join('');
       return `<p class="section-title" style="margin-top:16px">Weekly Deep Time Sessions (${linkedSessions.length})</p><div>${items}</div>`;
@@ -4801,7 +4892,7 @@ function renderDPHome(){
     <div class="about-block" style="margin-top:18px">
       <h3>Why three plans?</h3>
       <p style="font-size:.85rem;line-height:1.65">Daily prayer can take different shapes depending on the day. Morning is fuller and Bible-led. Evening is shorter and Psalm-led. The Starter Plan is a gentler entry point if daily prayer is new.</p>
-      <p style="font-size:.82rem;margin-top:8px;font-style:italic;color:var(--text3)">For the deeper, once-a-week practice (Sundays recommended), use ✍️ <strong>Weekly Deep</strong> instead — that's where you map your heart and walk the Lord's Prayer slowly.</p>
+      <p style="font-size:.82rem;margin-top:8px;font-style:italic;color:var(--text3)">For the deeper, once-a-week practice (Sundays recommended), use ${ICON.pen} <strong>Weekly Deep</strong> instead — that's where you map your heart and walk the Lord's Prayer slowly.</p>
     </div>
   `;
 
@@ -4872,7 +4963,7 @@ function renderDPCalendar(){
     if(has) cls.push('has-sessions');
     if(key === _dpCalSelectedDay) cls.push('selected');
     const click = has ? `onclick="dpSelectCalDay('${key}')"` : '';
-    html += `<div class="${cls.join(' ')}" ${click}>${d}${has?'<div class="pl-cal-dot"></div>':''}</div>`;
+    html += `<div class="${cls.join(' ')}" ${click}>${d}${has?`<div class="pl-cal-dot">${ORN.mark}</div>`:''}</div>`;
   }
 
   const monthPrefix = `${year}-${String(mIdx+1).padStart(2,'0')}`;
@@ -5303,7 +5394,8 @@ function renderDailyCard(cards,idx,todayKey){
   document.getElementById('daily-content').innerHTML=`
     <div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div>
     <p style="font-size:.7rem;font-family: var(--sans);color:var(--text3);text-align:right;margin-top:4px">Card ${idx+1} of ${total}</p>
-    <div class="prayer-card">
+    <div class="prayer-card" style="--cat:${CAT_COLOR[CAT_ICON[c.category]?c.category:'other']}">
+      <span class="card-watermark" aria-hidden="true">${ICON[CAT_ICON[CAT_ICON[c.category]?c.category:'other']]}</span>
       ${catChip(c.category, (CAT_CLASS[c.category]||'cat-other')+' p-cat')}
       <div class="p-title">${esc(c.person)}</div>
       ${c.scripture?`<div class="p-scripture">${esc(c.scripture)}</div>`:''}
@@ -5602,7 +5694,7 @@ function renderPLCalendar(){
     if(has) cls.push('has-sessions');
     if(key === _plCalSelectedDay) cls.push('selected');
     const click = has ? `onclick="selectCalDay('${key}')"` : '';
-    html += `<div class="${cls.join(' ')}" ${click}>${d}${has?'<div class="pl-cal-dot"></div>':''}</div>`;
+    html += `<div class="${cls.join(' ')}" ${click}>${d}${has?`<div class="pl-cal-dot">${ORN.mark}</div>`:''}</div>`;
   }
 
   // Footer
@@ -6112,7 +6204,7 @@ function openHeartChart(){
     // tap. In selection mode the card itself still toggles; the disclosure doesn't.
     return `<div class="${cls}" ${click} style="border-left-color:${n.color};${tint}">
       ${inSession?`<div class="hn-check" style="background:${isSel?n.color:'transparent'};border-color:${n.color}">${isSel?'✓':''}</div>`:''}
-      <h3 class="idc" style="${idc(n.color)}">${esc(n.title)}</h3>
+      <h3 class="idc hn-title" style="${idc(n.color)}">${needGlyph(n.key)}${esc(n.title)}</h3>
       <div class="hn-row"><div class="hn-label">Common emotions when threatened or unmet</div><div class="hn-text">${n.emotions}</div></div>
       <details class="hn-more" onclick="event.stopPropagation()">
         <summary class="idc" style="${idc(n.color)}">More on this need</summary>
@@ -7147,11 +7239,14 @@ function renderCalendarHeatmap(){
     `<div class="heatmap-month-label" style="width:13px">${name}</div>`
   ).join('');
 
-  const cellsHTML = cells.map(c => {
+  const todayIdx = cells.findIndex(c => c.isToday);
+  const cellsHTML = cells.map((c, i) => {
     // Out-of-year bookend cells (late prior year or early next year shown only to
     // complete the week columns) render as transparent placeholders.
     if(c.isOutOfYear || c.isFuture) return `<div class="heatmap-cell future"></div>`;
     const cls = ['heatmap-cell'];
+    // First cell of a new month in its row — draws the stepped month boundary.
+    if(i >= 7 && cells[i-7] && cells[i-7].date.getMonth() !== c.date.getMonth()) cls.push('mstart');
     const dayKey0 = dayKeyForDate(c.date);
     if(c.done){
       cls.push('done');
@@ -7204,6 +7299,7 @@ function renderCalendarHeatmap(){
           <div class="heatmap-dow">${dowHTML}</div>
           <div class="heatmap-grid">${cellsHTML}</div>
         </div>
+        ${todayIdx >= 0 ? `<div class="heatmap-today-mark" style="--col:${Math.floor(todayIdx/7)}" aria-hidden="true">${ORN.mark}</div>` : ''}
       </div>
     </div>
     ${dayListHTML}
@@ -7544,7 +7640,7 @@ function renderHeartNeedFrequency(){
     const inside = pct >= 18;
     const pos = inside ? `left:calc(${pct}% - 24px)` : `left:calc(${pct}% + 9px)`;
     return `<div class="hn-freq-row">
-      <div class="hn-freq-label">${esc(n.title)}</div>
+      <div class="hn-freq-label idc" style="${idc(n.color)}">${needGlyph(n.key)}<span>${esc(n.title)}</span></div>
       <div class="hn-freq-bar-wrap">
         <div class="hn-freq-bar idc-bg" style="width:${pct}%;${idc(n.color)}"></div>
         <span class="hn-freq-count${inside?' inside':''}" style="${pos}">${n.count}</span>
@@ -7554,7 +7650,7 @@ function renderHeartNeedFrequency(){
 
   const top = entries[0];
   const noun = sessionsWithNeeds === 1 ? 'session' : 'sessions';
-  target.innerHTML = `<p class="hn-freq-intro">Across ${sessionsWithNeeds} ${noun} where you named heart needs, "${esc(top.title)}" has surfaced most often. Notice what's there. Notice what's <em>not</em>.</p>${rows}`;
+  target.innerHTML = `<p class="hn-freq-intro">Across ${sessionsWithNeeds} ${noun} where you named heart needs, “${esc(top.title)}” has surfaced most often. Notice what's there. Notice what's <em>not</em>.</p>${rows}`;
 }
 
 // ══════════ GUIDE ══════════
@@ -7564,10 +7660,13 @@ function renderStats(){
   const days=[];
   for(let i=6;i>=0;i--){ const d=new Date(); d.setDate(d.getDate()-i); days.push({label:d.toLocaleDateString('en-US',{weekday:'narrow'}),done:streaks.includes(d.toDateString())}); }
   document.getElementById('stats-block').innerHTML=`
-    <p style="font-size:.88rem;color:var(--text2);line-height:1.7">
-      <strong>${cards.length}</strong> prayer cards · <strong>${cards.filter(c=>c.answered).length}</strong> answered · <strong>${cards.reduce((a,c)=>a+(c.notes?c.notes.length:0),0)}</strong> story notes
-      <br><strong>${daily.length}</strong> daily prayer session${daily.length===1?'':'s'} · <strong>${sessions.length}</strong> weekly deep time session${sessions.length===1?'':'s'}
-    </p>
+    <div class="stat-figs">
+      <div class="stat-fig"><b>${cards.length}</b><span>prayer cards</span></div>
+      <div class="stat-fig"><b>${cards.filter(c=>c.answered).length}</b><span>answered</span></div>
+      <div class="stat-fig"><b>${cards.reduce((a,c)=>a+(c.notes?c.notes.length:0),0)}</b><span>story notes</span></div>
+      <div class="stat-fig wide"><b>${daily.length}</b><span>daily prayer session${daily.length===1?'':'s'}</span></div>
+      <div class="stat-fig wide"><b>${sessions.length}</b><span>weekly deep time session${sessions.length===1?'':'s'}</span></div>
+    </div>
     <p style="font-size:.7rem;color:var(--text3);font-family: var(--sans);margin-top:10px;margin-bottom:6px;text-transform:uppercase;letter-spacing:.08em">Last 7 Days</p>
     <div class="streak-bar">${days.map(d=>`<div class="streak-day${d.done?' done':''}"><span class="streak-mark">${d.done?ORN.mark:'<span class="streak-ring"></span>'}</span><span class="streak-letter">${d.label}</span></div>`).join('')}</div>`;
 }
