@@ -59,6 +59,7 @@
     --text3: #7d6555;
     --text-quiet: #9c8474;
     --rule: rgba(122,92,62,.10);   /* ruled-paper hairline inside textareas */
+    --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.86' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23g)' opacity='.5'/%3E%3C/svg%3E");   /* fine paper grain, shared by the header and banners */
     /* Heatmap shades — four steps from a faint wash up to the full accent */
     --heat1: #c7b190; --heat2: #ab8d68; --heat3: #91714c; --heat4: #7a5c3e;
     --answered: #4a7c59;
@@ -114,7 +115,7 @@
   header p { font-size: .66rem; opacity: .62; margin-top: 3px; font-family: var(--sans); letter-spacing: .05em; text-transform: uppercase; }
   /* The same paper grain as the page, lightened onto the brown so the header reads
      as the book's cover rather than a flat bar. */
-  header { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.86' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23g)' opacity='.5'/%3E%3C/svg%3E"); background-blend-mode: soft-light; background-size: 180px; transition: padding .22s ease; }
+  header { background-image: var(--grain); background-blend-mode: soft-light; background-size: 180px; transition: padding .22s ease; }
   header h1, header p { transition: font-size .22s ease, opacity .18s ease, margin .22s ease; }
   /* Inside a Daily or Weekly session the header steps back to a thin bar — the
      screen belongs to the prayer. The tab homes keep the full title. */
@@ -164,6 +165,16 @@
   .bible-fab:active { transform: scale(.93); border-color: var(--accent2); }
   .bb-head { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
   .bb-back { background: none; border: none; color: var(--accent); font-size: 1.2rem; cursor: pointer; padding: 0 4px; line-height: 1; }
+  /* Hit regions for small controls — an invisible ::after pads each out to about
+     44px without moving or resizing what is drawn. */
+  .bb-back, .focus-passage-toggle, .note-action-btn, .pl-cal-nav, .heatmap-day-clear, .tut-btn-skip, .bb-star, .psf-toggle { position: relative; }
+  .bb-back::after { content: ''; position: absolute; inset: -10px -14px; }
+  .focus-passage-toggle::after, .psf-toggle::after { content: ''; position: absolute; inset: -11px -12px; }
+  .note-action-btn::after { content: ''; position: absolute; inset: -8px -3px; }
+  .pl-cal-nav::after { content: ''; position: absolute; inset: -7px; border-radius: 50%; }
+  .heatmap-day-clear::after { content: ''; position: absolute; inset: -12px -8px; }
+  .tut-btn-skip::after { content: ''; position: absolute; inset: -7px 0; }
+  .bb-star::after { content: ''; position: absolute; inset: -6px; }
   .bb-title { font-size: 1.1rem; color: var(--accent); font-weight: 600; }
   .bb-crumb { font-size: .82rem; color: var(--text-quiet); margin-left: auto; font-style: italic; }
   .bb-grid { display: grid; gap: 7px; margin-bottom: 4px; }
@@ -179,7 +190,20 @@
   .bb-preview { background: var(--accent-light); border-left: 3px solid var(--accent2); border-radius: var(--radius-sm); padding: 12px 14px; font-style: italic; line-height: 1.7; font-size: .9rem; margin: 8px 0 12px; }
   .bb-preview .ref { font-style: normal; font-weight: 600; color: var(--accent); display: block; margin-bottom: 5px; font-size: .82rem; }
   .bb-hint { font-size: .78rem; color: var(--text-quiet); font-style: italic; margin: 2px 0 8px; }
-  .bb-actions { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+  .bb-actions { display: flex; gap: 8px; align-items: center; flex-wrap: nowrap; }
+  .bb-actions .btn { width: auto; flex: 0 0 auto; padding: 10px 12px !important; font-size: .88rem; line-height: 1.25; }
+  /* The primary label may take two lines rather than be cut off ("Tap a field first"). */
+  .bb-actions .btn-primary { flex: 1 1 auto; min-width: 0; white-space: normal; }
+  .bb-actions .bb-toggle button { padding: 7px 9px; }
+  /* Verse view as a column: head and chapter nav on top, verses taking the rest,
+     the dock pinned at the bottom of the sheet. */
+  .bb-verse-view { display: flex; flex-direction: column; height: calc(94vh - 54px - env(safe-area-inset-top)); }
+  .bb-verse-view .bb-verses { flex: 1 1 auto; min-height: 0; max-height: none; }
+  .bb-dock { flex: none; border-top: 1px solid var(--border-soft); padding-top: 10px; background: var(--surface); }
+  .bb-dock .bb-preview { margin: 0 0 10px; padding-top: 9px; padding-bottom: 9px; }
+  .bb-dock .bb-preview .ref { margin-bottom: 2px; }
+  .bb-dock .bb-preview-text { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .bb-dock .bb-hint { margin: 0 0 10px; }
   .bb-toggle { display: inline-flex; border: 1px solid var(--border); border-radius: var(--radius-sm); overflow: hidden; }
   .bb-toggle button { background: none; border: none; padding: 7px 11px; font-size: .72rem; color: var(--text2); cursor: pointer; font-family: inherit; }
   .bb-toggle button.on { background: var(--accent); color: #fff; }
@@ -427,6 +451,12 @@
   .history-entry .he-snippet { font-size: .85rem; color: var(--text2); font-style: italic; line-height: 1.5; padding-right: 30px; margin-bottom: 2px; }
   .history-entry .he-snippet-from { font-style: normal; font-family: var(--sans); font-size: .68rem; color: var(--text3); display: block; margin-top: 3px; letter-spacing: .03em; }
   .history-entry .he-chips { display: flex; gap: 4px; margin-top: 8px; flex-wrap: wrap; }
+  /* One thin strip in the seven step colours instead of seven chips on every row:
+     the identity stays, the row loses a wrapped line. Untouched steps are hairlines. */
+  .he-strip { display: flex; gap: 3px; margin-top: 10px; }
+  .he-seg { flex: 1; height: 1px; margin: 1.5px 0; background: var(--border); border-radius: 2px; }
+  .he-seg.on { height: 4px; margin: 0; background: var(--idc); }
+  [data-theme="dark"] .he-seg.on { background: color-mix(in srgb, var(--idc) 55%, #e8d8c4); }   /* step colours have no dark twins; lift them toward cream */
   .he-chip { font-size: .58rem; font-family: var(--sans); text-transform: uppercase; letter-spacing: .035em; padding: 2px 7px; border-radius: 99px; color: #fff; }
   .he-delete { position: absolute; top: 10px; right: 10px; background: none; border: none; color: var(--text-quiet); opacity: .55; font-size: 1.1rem; cursor: pointer; padding: 4px 8px; border-radius: 6px; transition: background .15s, color .15s, opacity .15s; line-height: 1; }
   /* Deleting is rare; the row's content should be the loudest thing on it. */
@@ -482,6 +512,21 @@
 
   .review-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px 16px; margin-bottom: 10px; box-shadow: var(--shadow); }
   .review-card h3 { font-size: .95rem; font-weight: bold; }
+  .rv-row { display: flex; align-items: center; gap: 10px; padding: 12px 2px; border-top: 1px solid var(--border-soft); cursor: pointer; }
+  .rv-row:last-child { border-bottom: 1px solid var(--border-soft); }
+  .rv-row:active { background: var(--surface2); }
+  .rv-main { flex: 1; min-width: 0; }
+  .rv-top { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+  .rv-top .answered-badge { font-size: .62rem; }
+  .rv-name { font-weight: bold; font-size: .95rem; margin-top: 3px; color: var(--text); }
+  .rv-meta { display: flex; flex-wrap: wrap; gap: 2px 10px; font-size: .74rem; color: var(--text3); margin-top: 2px; }
+  .rv-scripture { font-style: italic; font-family: var(--serif); font-size: .8rem; }
+  .rv-when { font-family: var(--sans); }
+  .rv-excerpt { font-style: italic; font-size: .82rem; color: var(--text2); margin-top: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .rv-actions { display: flex; align-items: center; gap: 6px; flex: none; }
+  .rv-note { background: var(--surface); border: 1px solid var(--border); color: var(--accent); border-radius: 99px; padding: 6px 11px; font-family: var(--serif); font-size: .78rem; cursor: pointer; position: relative; white-space: nowrap; }
+  .rv-note::after { content: ''; position: absolute; inset: -7px -3px; }
+  .rv-chev { color: var(--accent2); font-size: 1.2rem; line-height: 1; }
   .review-card .r-scripture { font-style: italic; font-size: .82rem; color: var(--text2); margin: 4px 0 8px; }
 
   /* Toast */
@@ -568,7 +613,7 @@
   .emo-chips-label { font-size: .65rem; font-family: var(--sans); text-transform: uppercase; letter-spacing: .055em; color: var(--text3); margin-bottom: 6px; font-weight: 600; }
 
   /* Lord's Prayer petition explanations */
-  .petition-link { display: block; margin: -6px 0 14px; font-size: .75rem; color: var(--accent); font-family: var(--sans); cursor: pointer; letter-spacing: .03em; padding: 4px 0; user-select: none; }
+  .petition-link { display: block; margin: -11px 0 9px; padding-top: 9px !important; padding-bottom: 9px !important; font-size: .75rem; color: var(--accent); font-family: var(--sans); cursor: pointer; letter-spacing: .03em; padding: 4px 0; user-select: none; }
   .petition-link:hover, .petition-link:active { text-decoration: underline; }
   .pl-return-link { display: block; margin: 10px 0 14px; padding: 9px 14px; background: var(--accent-light); border: 1px solid var(--accent2); border-radius: 99px; text-align: center; font-size: .78rem; font-family: var(--sans); color: var(--accent); cursor: pointer; letter-spacing: .03em; user-select: none; }
   .pl-return-link:active { background: var(--accent); color: #fff; }
@@ -597,6 +642,7 @@
   .timeline-entry.type-note     { border-left: 3px solid #7a5c3e; }
   .timeline-entry.type-answered { border-left: 3px solid var(--answered); }
   .timeline-icon { font-size: 1.25rem; line-height: 1.2; flex-shrink: 0; align-self: flex-start; }
+  .timeline-icon .ico { width: 20px; height: 20px; color: var(--accent); display: block; margin-top: 2px; }
   .timeline-body { flex: 1; min-width: 0; }
   .timeline-title { font-size: .92rem; font-weight: bold; color: var(--text); margin-bottom: 2px; line-height: 1.4; }
   .timeline-snippet { font-size: .82rem; color: var(--text2); font-style: italic; line-height: 1.55; word-break: break-word; }
@@ -606,7 +652,15 @@
   .ap-card:active { transform: scale(.99); }
   .ap-card:hover { box-shadow: var(--shadow); }
   .ap-card-name { font-size: 1rem; font-weight: bold; color: var(--text); }
+  .ap-card-name .ico { color: var(--answered); width: 1em; height: 1em; vertical-align: -.12em; }
   .ap-card-meta { font-size: .7rem; font-family: var(--sans); color: var(--text3); margin-top: 4px; letter-spacing: .03em; }
+  .ap-line { display: grid; grid-template-columns: auto 1fr auto; align-items: center; column-gap: 6px; row-gap: 4px; margin: 10px 2px 2px; }
+  .ap-dot { width: 9px; height: 9px; border-radius: 50%; border: 1.5px solid var(--answered); background: var(--surface); }
+  .ap-dot.end { background: var(--answered); }
+  .ap-rule { height: 2px; border-radius: 2px; background: linear-gradient(90deg, color-mix(in srgb, var(--answered) 35%, transparent), var(--answered)); }
+  .ap-when { grid-row: 2; grid-column: 1 / 3; justify-self: start; font-size: .72rem; line-height: 1.3; color: var(--text3); font-family: var(--sans); letter-spacing: .02em; }
+  .ap-when.end { grid-column: 2 / 4; justify-self: end; text-align: right; }
+  .ap-lbl { display: block; font-size: .6rem; text-transform: uppercase; letter-spacing: .06em; color: var(--text-quiet); }
   .ap-card-duration { font-size: .76rem; color: var(--answered); font-family: var(--sans); margin-top: 6px; font-weight: bold; letter-spacing: .02em; }
   .ap-card-scripture { font-size: .82rem; font-style: italic; color: var(--text2); margin-top: 8px; line-height: 1.55; }
   .ap-intro { font-size: .85rem; color: var(--text2); line-height: 1.65; margin-bottom: 12px; font-style: italic; }
@@ -802,11 +856,11 @@
   .tech-dim-text { font-size: .87rem; line-height: 1.65; color: var(--text2); margin-top: 6px; }
 
   /* "Pray these now" button on Story Cards tab */
-  .btn-pray-now { display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; padding: 14px 16px; background: linear-gradient(135deg, #7a5c3e 0%, #9a7a52 100%); color: #fff; border: none; border-radius: var(--radius); font-family: var(--serif); font-size: 1.02rem; font-weight: bold; cursor: pointer; box-shadow: var(--shadow); margin-bottom: 18px; transition: transform .12s; }
+  .btn-pray-now { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 2px 10px; text-align: center; width: 100%; padding: 14px 16px; background: linear-gradient(135deg, #7a5c3e 0%, #9a7a52 100%); color: #fff; border: none; border-radius: var(--radius); font-family: var(--serif); font-size: 1.02rem; font-weight: bold; cursor: pointer; box-shadow: var(--shadow); margin-bottom: 18px; transition: transform .12s; }
   .btn-pray-now:active { transform: scale(.99); }
   /* Label holds one line at any supported text size; the count yields space first. */
   .btn-pray-now .bpn-label { white-space: nowrap; flex: 0 0 auto; }
-  .btn-pray-now .bpn-meta { font-size: .66rem; white-space: nowrap; font-weight: normal; font-family: var(--sans); opacity: .85; letter-spacing: .04em; min-width: 0; text-align: right; }
+  .btn-pray-now .bpn-meta { font-size: .66rem; white-space: normal; font-weight: normal; font-family: var(--sans); opacity: .85; letter-spacing: .04em; min-width: 0; text-align: right; }
 
   /* Daily Prayer plan choice cards */
   .dp-plan-card { display: flex; align-items: center; gap: 14px; background: var(--surface); border: 1px solid var(--border); border-left: 4px solid var(--accent2); border-radius: var(--radius); padding: 16px 18px; margin-bottom: 11px; box-shadow: var(--shadow); cursor: pointer; transition: transform .12s, border-color .15s; }
@@ -822,7 +876,10 @@
   /* Reflection from last session (P2 #6) */
   .pl-reflection-card { background: var(--surface); border: 1px solid var(--border); border-left: 4px solid var(--accent2); border-radius: var(--radius); padding: 16px 18px; margin-bottom: 18px; box-shadow: var(--shadow); cursor: pointer; transition: transform .12s; }
   .pl-reflection-card:active { transform: scale(.99); }
-  .pl-reflection-label { font-size: .68rem; font-family: var(--sans); text-transform: uppercase; letter-spacing: .06em; color: var(--accent); font-weight: 600; margin-bottom: 10px; }
+  .pl-reflection-label { font-size: .68rem; font-family: var(--sans); text-transform: uppercase; letter-spacing: .06em; color: var(--accent); font-weight: 600; margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
+  .pl-refl-toggle { margin-left: auto; background: none; border: none; color: var(--accent); font-size: .95rem; line-height: 1; cursor: pointer; padding: 10px 12px; margin: -10px -12px -10px auto; font-family: inherit; }
+  /* Peek: the first remembered section only; the rest behind the toggle. */
+  .pl-reflection-card.peek .pl-reflection-section ~ .pl-reflection-section { display: none; }
   .pl-reflection-quiet { font-size: .82rem; color: var(--text3); font-style: italic; line-height: 1.55; margin-bottom: 12px; }
   .pl-reflection-section { margin-bottom: 11px; }
   .pl-reflection-section:last-of-type { margin-bottom: 0; }
@@ -837,14 +894,20 @@
   .silence-label { font-size: .68rem; font-family: var(--sans); color: var(--text3); letter-spacing: .04em; text-transform: uppercase; font-weight: 600; }
   .silence-pill { background: var(--surface); border: 1.5px solid var(--border); border-radius: 99px; color: var(--text2); padding: 5px 14px; font-family: var(--serif); font-size: .82rem; cursor: pointer; transition: all .15s; }
   .silence-pill:hover, .silence-pill:active { background: var(--accent-light); color: var(--accent); border-color: var(--accent2); }
-  .silence-active { display: flex; align-items: center; gap: 9px; padding: 10px 14px; background: var(--accent-light); border: 1px solid var(--accent2); border-radius: 99px; flex-wrap: wrap; }
+  .silence-active { display: flex; align-items: center; gap: 9px; padding: 10px 14px; background: var(--accent-light); border: 1px solid var(--accent2); border-radius: 22px; flex-wrap: wrap; row-gap: 6px; }
+  /* The controls travel together: if the row is too narrow they drop to a second
+     line as one group, instead of the ✕ alone making a lopsided pill. */
+  .silence-actions { display: inline-flex; align-items: center; gap: 8px; margin-left: auto; }
   .silence-active .silence-icon { font-size: 1.05rem; opacity: .8; }
   .silence-active .silence-active-label { font-size: .68rem; font-family: var(--sans); text-transform: uppercase; letter-spacing: .05em; color: var(--accent); font-weight: 600; }
   .silence-active .silence-countdown { font-family: var(--serif); font-size: 1.1rem; color: var(--accent); font-weight: bold; font-variant-numeric: tabular-nums; }
-  .silence-active .silence-extend { background: var(--surface); border: 1px solid var(--accent2); color: var(--accent); font-family: var(--sans); font-size: .72rem; font-weight: bold; cursor: pointer; padding: 3px 9px; border-radius: 99px; line-height: 1; transition: background .15s, color .15s; }
+  .silence-active .silence-extend { background: var(--surface); border: 1px solid var(--accent2); color: var(--accent); font-family: var(--sans); font-size: .72rem; font-weight: bold; cursor: pointer; padding: 3px 9px; border-radius: 99px; line-height: 1; transition: background .15s, color .15s; position: relative; }
+  /* 44px hit regions without changing the drawn size. */
+  .silence-active .silence-extend::after, .silence-active .silence-cancel::after { content: ''; position: absolute; inset: -11px -4px; }
   .silence-active .silence-extend:hover, .silence-active .silence-extend:active { background: var(--accent); color: #fff; }
   [data-theme="dark"] .silence-active .silence-extend:hover, [data-theme="dark"] .silence-active .silence-extend:active { color: #1a1410; }
-  .silence-active .silence-cancel { background: none; border: none; color: var(--text3); font-size: 1.3rem; cursor: pointer; padding: 0 4px; margin-left: auto; line-height: 1; }
+  .silence-active .silence-cancel { background: none; border: none; color: var(--text3); cursor: pointer; padding: 2px; line-height: 1; position: relative; display: flex; }
+  .silence-active .silence-cancel .ico { width: 17px; height: 17px; }
   .silence-active .silence-cancel:hover { color: var(--red); }
 
   /* Cry-out affordance (P6 #45) — Owen's Stage 3 "cry out" pole.
@@ -897,7 +960,7 @@
   .idc-bg { background-color: var(--idc); }
   [data-theme="dark"] .idc-bg { background-color: var(--idc-dark); }
   .hn-more { margin-top: 8px; }
-  .hn-more > summary { list-style: none; cursor: pointer; font-family: var(--sans); font-size: .64rem; text-transform: uppercase; letter-spacing: .05em; padding: 9px 0 3px; opacity: .85; }
+  .hn-more > summary { list-style: none; cursor: pointer; font-family: var(--sans); font-size: .64rem; text-transform: uppercase; letter-spacing: .05em; padding: 12px 0 10px; margin-bottom: -6px; opacity: .85; }
   .hn-more > summary::-webkit-details-marker { display: none; }
   .hn-more > summary::before { content: '›'; display: inline-block; margin-right: 7px; transition: transform .2s ease; }
   .hn-more[open] > summary::before { transform: rotate(90deg); }
@@ -927,6 +990,15 @@
   .reflect-block[open] > summary { border-bottom: 1px solid var(--border-soft); }
   .reflect-block > *:not(summary) { padding: 0 16px; }
   .reflect-block > *:not(summary):last-child { padding-bottom: 16px; }
+  /* Controls placed directly in a block keep their own padding and are inset by
+     margin instead — the text rule above was squashing buttons and inputs flat
+     and stretching them edge to edge. */
+  .reflect-block > .btn, .reflect-block > input, .reflect-block > select, .reflect-block > textarea {
+    margin-left: 16px; margin-right: 16px; width: calc(100% - 32px); }
+  .reflect-block > .btn { padding: 13px; }
+  .reflect-block > input, .reflect-block > select { padding: 10px 12px; }
+  .reflect-block > .btn:last-child, .reflect-block > input:last-child { padding-bottom: 13px; margin-bottom: 16px; }
+  .reflect-block > label { padding-left: 16px; padding-right: 16px; }
   .reflect-block[open] > *:not(summary):first-of-type { padding-top: 14px; }
 
   /* ════════ FIELD HELPERS ════════ */
@@ -1006,6 +1078,13 @@
   /* Plan cards carry a large, very faint mark of their own hour, bled off the
      right edge — character without another colour or another line of text. */
   .dp-plan-card { position: relative; overflow: hidden; }
+  /* Home banners: the same grain as the header, and a faint watermark of the
+     practice's own mark, so they read as a printed plate rather than a flat block. */
+  .pl-banner { position: relative; overflow: hidden; isolation: isolate; }
+  .pl-banner::before { content: ''; position: absolute; inset: 0; z-index: -1; background-image: var(--grain); background-size: 180px; mix-blend-mode: soft-light; opacity: .9; pointer-events: none; }
+  .banner-watermark { position: absolute; right: -26px; top: -18px; width: 150px; height: 150px; color: #fff; opacity: .07; pointer-events: none; z-index: -1; }
+  .banner-watermark .ico { width: 100%; height: 100%; stroke-width: 1; }
+  [data-theme="dark"] .banner-watermark { color: var(--accent); opacity: .08; }
   .dp-plan-card .plan-watermark { position: absolute; right: -18px; top: 50%; transform: translateY(-50%); width: 104px; height: 104px; color: var(--accent); opacity: .055; pointer-events: none; }
   [data-theme="dark"] .dp-plan-card .plan-watermark { opacity: .085; }
   .dp-plan-card .plan-watermark .ico { width: 100%; height: 100%; stroke-width: 1.1; }
@@ -1431,20 +1510,20 @@
         <button class="size-btn" data-size="large" onclick="setTextSize('large')" style="font-size:1.05rem">Large</button>
       </div>
       <label class="switch-row">
-        <span>Floating 📖 Bible button</span>
+        <span>Floating <span data-ico="book"></span>&#8202;Bible button</span>
         <span class="switch"><input type="checkbox" id="bible-fab-toggle" onchange="setBibleFab(this.checked)"><span class="switch-knob"></span></span>
       </label>
-      <p style="font-size:.8rem;color:var(--text3);margin-top:6px">Shown on Story Cards, Daily Prayer, and Weekly Deep Time for quick verse lookup. The inline "Insert from Bible" buttons on verse fields stay either way.</p>
+      <p style="font-size:.8rem;color:var(--text3);margin-top:6px">Shown on Story Cards, Daily Prayer, and Weekly Deep Time for quick verse lookup. The inline “Insert from Bible” buttons on verse fields stay either way.</p>
     </details>
     <details class="about-block reflect-block">
       <summary><h3><span data-ico="note"></span>Markdown Export</h3></summary>
       <p>Export your prayer cards and sessions as Markdown — drop the files into Obsidian, Logseq, Bear, or any markdown editor. Each export uses YAML frontmatter, structured headings, and <code>[[wikilinks]]</code> so notes connect properly in Obsidian's graph view.</p>
 
       <p class="section-title" style="margin-top:18px">Bulk export</p>
-      <button class="btn btn-secondary" onclick="exportAllCardsMarkdown()">📤 Download all Story Cards (.md)</button>
-      <button class="btn btn-secondary" onclick="exportAllWeeklyMarkdown()">📤 Download all Weekly Deep Time sessions (.md)</button>
-      <button class="btn btn-secondary" onclick="exportAllDailyMarkdown()">📤 Download all Daily Prayer sessions (.md)</button>
-      <p class="hint" style="margin-top:8px">Each download is a single combined <code>.md</code> file with <code>---</code> dividers between entries. Use Obsidian's "Note Composer" plugin (or split manually) to break it into one note per item.</p>
+      <button class="btn btn-secondary" onclick="exportAllCardsMarkdown()"><span data-ico="save"></span> Download all Story Cards (.md)</button>
+      <button class="btn btn-secondary" onclick="exportAllWeeklyMarkdown()"><span data-ico="save"></span> Download all Weekly Deep Time sessions (.md)</button>
+      <button class="btn btn-secondary" onclick="exportAllDailyMarkdown()"><span data-ico="save"></span> Download all Daily Prayer sessions (.md)</button>
+      <p class="hint" style="margin-top:8px">Each download is a single combined <code>.md</code> file with <code>---</code> dividers between entries. Use Obsidian’s “Note Composer” plugin (or split manually) to break it into one note per item.</p>
 
       <p class="section-title" style="margin-top:22px">Obsidian vault (optional)</p>
       <p style="font-size:.82rem;color:var(--text2);line-height:1.6">If you set your vault name here, future per-item Obsidian export buttons would route into your vault directly. Currently used only for the filename hint in exports.</p>
@@ -1457,10 +1536,10 @@
     <details class="about-block reflect-block">
       <summary><h3><span data-ico="archive"></span>Backup &amp; Restore</h3></summary>
       <p>Your data lives in this browser only. Back it up regularly so you can restore on another device or after clearing cache. Backups include all prayer cards, Pray &amp; Listen sessions, story notes, heart-need selections, linked cards, and streak history.</p>
-      <button class="btn btn-secondary" onclick="exportBackup()" style="margin-top:10px">📤 Download Backup (.json)</button>
+      <button class="btn btn-secondary" onclick="exportBackup()" style="margin-top:10px"><span data-ico="save"></span> Download Backup (.json)</button>
       <input type="file" id="import-file-input" accept="application/json,.json" style="display:none" onchange="importBackup(event)">
-      <button class="btn btn-secondary" onclick="document.getElementById('import-file-input').click()">📥 Restore from Backup…</button>
-      <button class="btn btn-danger" onclick="resetAllData()" style="margin-top:14px">⚠️ Reset All Data</button>
+      <button class="btn btn-secondary" onclick="document.getElementById('import-file-input').click()"><span data-ico="restore"></span> Restore from Backup…</button>
+      <button class="btn btn-danger" onclick="resetAllData()" style="margin-top:14px"><span data-ico="warn"></span> Reset All Data</button>
     </details>
   </div>
 </div>
@@ -1662,6 +1741,8 @@ const ICON = {
   close:    _svg('<path d="M6.5 6.5l11 11M17.5 6.5l-11 11"/>'),
   breath:   _svg('<path d="M3.5 9.5h10.2a2.8 2.8 0 1 0-2.8-2.8"/><path d="M3.5 13.5h14.2a2.8 2.8 0 1 1-2.8 2.8"/><path d="M3.5 17.5h5"/>'),
   swirl:    _svg('<path d="M12 12.2a1.6 1.6 0 1 1 1.6-1.6 3.4 3.4 0 0 1-3.4 3.4 5 5 0 0 1-5-5 6.6 6.6 0 0 1 6.6-6.6 8.2 8.2 0 0 1 8.2 8.2 9.8 9.8 0 0 1-9.8 9.8"/>'),
+  restore:  _svg('<path d="M12 14.8V3.6M7.6 8l4.4-4.4L16.4 8"/><path d="M4.4 15.6v3a1.8 1.8 0 0 0 1.8 1.8h11.6a1.8 1.8 0 0 0 1.8-1.8v-3"/>'),
+  warn:     _svg('<path d="M12 4.2L21 19.4H3z"/><path d="M12 10v4.2"/><circle cx="12" cy="16.9" r=".7" fill="currentColor" stroke="none"/>'),
   save:     _svg('<path d="M12 3.6v11.2M7.6 10.4l4.4 4.4 4.4-4.4"/><path d="M4.4 15.6v3a1.8 1.8 0 0 0 1.8 1.8h11.6a1.8 1.8 0 0 0 1.8-1.8v-3"/>')
 };
 
@@ -1950,10 +2031,10 @@ function renderEmotionPicker(){
     const opts = Object.keys(c.children).map(name => {
       return `<button class="emo-option" style="background:${c.color}" onclick="pickEmotionSecondary('${name.replace(/'/g, '&#39;')}')">${esc(name)}</button>`;
     }).join('');
-    bodyHTML = `<div class="emo-stage-label">Inside "${esc(_emoCore)}" — go deeper</div><div class="emo-grid">${opts}</div>`;
+    bodyHTML = `<div class="emo-stage-label">Inside “${esc(_emoCore)}” — go deeper</div><div class="emo-grid">${opts}</div>`;
     navHTML = `<div class="emo-modal-nav">
       <button onclick="emotionBack()">← Back</button>
-      <button class="commit" onclick="commitEmotion()">Use just "${esc(_emoCore)}"</button>
+      <button class="commit" onclick="commitEmotion()">Use just “${esc(_emoCore)}”</button>
     </div>`;
   } else if(_emoStage === 'tertiary'){
     const c = EMOTION_WHEEL[_emoCore];
@@ -1961,10 +2042,10 @@ function renderEmotionPicker(){
     const opts = tertiaries.map(name => {
       return `<button class="emo-option" style="background:${c.color}" onclick="pickEmotionTertiary('${name.replace(/'/g, '&#39;')}')">${esc(name)}</button>`;
     }).join('');
-    bodyHTML = `<div class="emo-stage-label">Inside "${esc(_emoSecondary)}" — most precise</div><div class="emo-grid">${opts}</div>`;
+    bodyHTML = `<div class="emo-stage-label">Inside “${esc(_emoSecondary)}” — most precise</div><div class="emo-grid">${opts}</div>`;
     navHTML = `<div class="emo-modal-nav">
       <button onclick="emotionBack()">← Back</button>
-      <button class="commit" onclick="commitEmotion()">Use just "${esc(_emoSecondary)}"</button>
+      <button class="commit" onclick="commitEmotion()">Use just “${esc(_emoSecondary)}”</button>
     </div>`;
   }
 
@@ -2204,7 +2285,7 @@ async function lookupBibleRef(ref){
 function renderScriptureModal(ref, text, loading){
   const missing = `<p style="font-size:.88rem;color:var(--text3);font-style:italic;line-height:1.6">This reference isn't bundled in the app. Open it in your Bible app or look it up online — the practice of reading slowly, in your own translation, is often more nourishing than a tooltip.</p>`;
   const loadingHtml = `<p style="font-size:.88rem;color:var(--text3);font-style:italic">Looking it up…</p>`;
-  const found = t => `<p style="font-size:.95rem;line-height:1.75;font-style:italic;color:var(--text);padding:14px 16px;background:var(--accent-light);border-left:3px solid var(--accent2);border-radius:var(--radius-sm)">"${esc(t)}"</p>`;
+  const found = t => `<p style="font-size:.95rem;line-height:1.75;font-style:italic;color:var(--text);padding:14px 16px;background:var(--accent-light);border-left:3px solid var(--accent2);border-radius:var(--radius-sm)">“${esc(nestQuotes(t))}”</p>`;
   document.getElementById('scripture-content').innerHTML = `
     <h2 style="color:var(--accent);font-size:1.1rem;margin-bottom:12px">${esc(ref)}</h2>
     ${loading ? loadingHtml : (text ? found(text) : missing)}
@@ -2634,8 +2715,10 @@ function bbVerseViewHTML(){
   </div>`;
   return `<div class="bb-verse-view">` +
     bbHead('','bbBackToChapters()') + navRow +
-    `<div class="bb-verses">${rows}</div>` + body +
-    `<div class="bb-actions">${toggle}${copyBtn}${addBtn}</div>` +
+    `<div class="bb-verses">${rows}</div>` +
+    // Preview and actions ride in a dock pinned to the sheet's foot, so the verse
+    // list keeps most of the height and the actions never scroll away.
+    `<div class="bb-dock">${body}<div class="bb-actions">${toggle}${copyBtn}${addBtn}</div></div>` +
     `</div>`;
 }
 // Move to the adjacent chapter, crossing into the neighbouring book at the edges
@@ -2892,7 +2975,7 @@ function showPetitionExplanation(stepKey){
   if(!p) return;
   const bodyHTML = p.body.map(b => `
     <div class="petition-row">
-      <div class="petition-phrase">"${esc(b.phrase)}…"</div>
+      <div class="petition-phrase">“${esc(b.phrase)}…”</div>
       <div class="petition-text">${esc(b.text)}</div>
     </div>`).join('');
   document.getElementById('petition-content').innerHTML = `
@@ -3059,7 +3142,7 @@ function showMeditationTechnique(key){
       ${t.exampleHTML}
     </div>` : '';
   document.getElementById('technique-content').innerHTML = `
-    <h2 style="color:var(--accent);font-size:1.05rem;margin-bottom:14px">${t.icon} ${esc(t.title)}</h2>
+    <h2 style="color:var(--accent);font-size:1.05rem;margin-bottom:14px">${({wordstress:ICON.book, paraphrase:ICON.note, love:ICON.heart})[key] || ''} ${esc(t.title)}</h2>
     <p class="tech-lead">${esc(t.lead)}</p>
     ${exampleBlock}
     ${t.closer ? `<p class="tech-closer">${esc(t.closer)}</p>` : ''}
@@ -3586,7 +3669,7 @@ function focusCarryHTML(items, title){
   return `<div class="focus-carry${_focusCarryOpen ? '' : ' collapsed'}" id="focus-carry">
       <div class="focus-carry-inner">
         <div class="focus-passage-head">
-          <span class="focus-passage-label">✍️ ${esc(title)}</span>
+          <span class="focus-passage-label">${ICON.pen} ${esc(title)}</span>
           <button class="focus-passage-toggle" onclick="toggleFocusCarry()"
             aria-label="${_focusCarryOpen ? 'Collapse' : 'Expand'}">${_focusCarryOpen ? '⌃' : '⌄'}</button>
         </div>
@@ -4488,7 +4571,7 @@ function renderDPHome(){
   const calendarHTML = (sessions.length && _dpViewMode==='calendar') ? `<div class="pl-calendar" id="dp-calendar"></div>` : '';
 
   el.innerHTML = `
-    <div class="pl-banner">
+    <div class="pl-banner"><span class="banner-watermark" aria-hidden="true">${ICON.sun}</span>
       <div class="pl-date">${today()}</div>
       <h2>Daily Prayer</h2>
       <p>A daily rhythm — meeting God in His Word and bringing your heart honestly to Him. Choose the shape that fits today.</p>
@@ -4685,9 +4768,8 @@ function dpSearchResultHTML(s, match){
   const planIcon = ICON[plan?.icon] || ICON.sparkle;
   const planTitle = plan?.title || 'Daily Prayer';
   return `<div class="history-entry" onclick="viewDailySession('${s.id}')">
-    <button class="he-delete" onclick="event.stopPropagation();deleteDailySession('${s.id}')" title="Delete" aria-label="Delete session">✕</button>
     <div class="he-date">${planIcon}${esc(planTitle)} · ${s.date}</div>
-    <div class="he-snippet">"${highlightMatch(match.snippet, _dpSearchQuery)}"
+    <div class="he-snippet">“${highlightMatch(match.snippet, _dpSearchQuery)}”
       <span class="he-snippet-from">— ${esc(match.stepTitle)} · ${esc(match.fieldLabel)}</span>
     </div>
   </div>`;
@@ -4757,9 +4839,8 @@ function dpSessionEntryHTML(s){
       if(typeof v === 'string' && v.trim().length > best.length) best = v.trim();
     });
   });
-  const snippet = best ? '"' + esc(best.slice(0, 90)) + (best.length>90?'…':'') + '"' : '<em>Brief session</em>';
+  const snippet = best ? '“' + esc(best.slice(0, 90)) + (best.length>90?'…':'') + '”' : '<em>Brief session</em>';
   return `<div class="history-entry" onclick="viewDailySession('${s.id}')">
-    <button class="he-delete" onclick="event.stopPropagation();deleteDailySession('${s.id}')" title="Delete" aria-label="Delete session">✕</button>
     <div class="he-date">${planIcon}${esc(planTitle)} · ${s.date}</div>
     <div class="he-snippet">${snippet}</div>
   </div>`;
@@ -5462,12 +5543,17 @@ function renderReflectionCard(s){
     const n=findHeartNeed(k); return n?`<span class="pl-need-chip tint-chip" style="${idc(n.color)}">${esc(n.title)}</span>`:'';
   }).join(''):'';
 
-  return `<div class="pl-reflection-card" onclick="viewSession('${s.id}')">
-    <div class="pl-reflection-label">✦ Before you begin — ${esc(s.date)}</div>
+  // Opens as a short preview — the heart last time — with the rest a tap away;
+  // the toggle stops propagation so it doesn't open the session.
+  const sectionCount = [mapping, heartChipsHTML, bestListen].filter(Boolean).length;
+  const toggle = sectionCount > 1
+    ? `<button type="button" class="pl-refl-toggle" onclick="event.stopPropagation();togglePLReflection(this)" aria-expanded="${_plReflOpen}" aria-label="${_plReflOpen?'Show less':'Show more'}">${_plReflOpen?'⌃':'⌄'}</button>` : '';
+  return `<div class="pl-reflection-card${_plReflOpen || sectionCount < 2 ? '' : ' peek'}" onclick="viewSession('${s.id}')">
+    <div class="pl-reflection-label"><span>✦ Before you begin — ${esc(s.date)}</span>${toggle}</div>
     <div class="pl-reflection-quiet">A moment to remember what last time held. Has anything changed? Did anything you sensed prove true?</div>
     ${mapping?`<div class="pl-reflection-section">
       <div class="pl-reflection-section-label">Your heart last time</div>
-      <div class="pl-reflection-text">"${esc(truncate(mapping,160))}"</div>
+      <div class="pl-reflection-text">“${esc(truncate(mapping,160))}”</div>
     </div>`:''}
     ${heartChipsHTML?`<div class="pl-reflection-section">
       <div class="pl-reflection-section-label">Heart needs that resonated</div>
@@ -5475,11 +5561,21 @@ function renderReflectionCard(s){
     </div>`:''}
     ${bestListen?`<div class="pl-reflection-section">
       <div class="pl-reflection-section-label">You sensed Him saying</div>
-      <div class="pl-reflection-text">"${esc(truncate(bestListen.text,160))}"</div>
+      <div class="pl-reflection-text">“${esc(truncate(bestListen.text,160))}”</div>
       <div class="pl-reflection-meta">— ${esc(bestListen.step.title)}</div>
     </div>`:''}
     <div class="pl-reflection-cta">Tap to view full session →</div>
   </div>`;
+}
+
+let _plReflOpen = false;
+function togglePLReflection(btn){
+  _plReflOpen = !_plReflOpen;
+  const card = btn.closest('.pl-reflection-card'); if(!card) return;
+  card.classList.toggle('peek', !_plReflOpen);
+  btn.textContent = _plReflOpen ? '⌃' : '⌄';
+  btn.setAttribute('aria-expanded', _plReflOpen);
+  btn.setAttribute('aria-label', _plReflOpen ? 'Show less' : 'Show more');
 }
 
 function summarizeSession(s){
@@ -5518,7 +5614,7 @@ function summarizeSession(s){
   if(best){
     const max=110;
     const txt=best.text.length>max ? best.text.slice(0,max).trim()+'…' : best.text;
-    snippet=`"${esc(txt)}" <span class="he-snippet-from">— ${esc(best.stepTitle)} · ${esc(best.fieldLabel)}</span>`;
+    snippet=`“${esc(txt)}” <span class="he-snippet-from">— ${esc(best.stepTitle)} · ${esc(best.fieldLabel)}</span>`;
   }
   return { stats, snippet, touchedKeys };
 }
@@ -5543,7 +5639,7 @@ function renderPLHome(el){
   const calendarHTML = (allSessions.length && _plViewMode==='calendar') ? `<div class="pl-calendar" id="pl-calendar"></div>` : '';
 
   el.innerHTML=`
-    <div class="pl-banner">
+    <div class="pl-banner"><span class="banner-watermark" aria-hidden="true">${ICON.pen}</span>
       <div class="pl-date">${today()}</div>
       <h2>Weekly Deep Time</h2>
       <p>For once a week — Sunday recommended. Map your heart, then walk slowly through the Lord's Prayer with space to listen.</p>
@@ -5626,21 +5722,19 @@ function renderPLSearchResults(){
 function normalSessionEntryHTML(s){
   const summary = summarizeSession(s);
   return `<div class="history-entry" onclick="viewSession('${s.id}')">
-    <button class="he-delete" onclick="event.stopPropagation();deleteSession('${s.id}')" title="Delete session" aria-label="Delete session">✕</button>
     <div class="he-date">${s.date}</div>
     <div class="he-stats">${summary.stats}</div>
     ${summary.snippet?`<div class="he-snippet">${summary.snippet}</div>`:''}
-    <div class="he-chips">
-      ${PL_STEPS.filter(st=>summary.touchedKeys.includes(st.key)).map(st=>`<span class="he-chip" style="background:${st.sc}">${st.label||st.title}</span>`).join('')}
+    <div class="he-strip" role="img" aria-label="${summary.touchedKeys.length} of ${PL_STEPS.length} steps prayed">
+      ${PL_STEPS.map(st=>`<span class="he-seg${summary.touchedKeys.includes(st.key)?' on':''}" style="${idc(st.sc)}" title="${esc(st.label||st.title)}"></span>`).join('')}
     </div>
   </div>`;
 }
 
 function searchResultHTML(s, match){
   return `<div class="history-entry" onclick="viewSession('${s.id}')">
-    <button class="he-delete" onclick="event.stopPropagation();deleteSession('${s.id}')" title="Delete session" aria-label="Delete session">✕</button>
     <div class="he-date">${s.date}</div>
-    <div class="he-snippet">"${highlightMatch(match.snippet, _plSearchQuery)}"
+    <div class="he-snippet">“${highlightMatch(match.snippet, _plSearchQuery)}”
       <span class="he-snippet-from">— ${esc(match.stepTitle)} · ${esc(match.fieldLabel)}</span>
     </div>
   </div>`;
@@ -5691,7 +5785,7 @@ function renderPLStep(el){
   const prevListenHTML=prevListenText?`
     <div class="pl-prev-listen">
       <div class="pl-prev-label">🔔 Last time you sensed Him saying — ${esc(prevStep.date)}</div>
-      <div class="pl-prev-text">"${esc(prevListenText)}"</div>
+      <div class="pl-prev-text">“${esc(prevListenText)}”</div>
     </div>`:'';
 
   const animClass = _plAnimDir==='back' ? ' pl-anim-back' : (_plAnimDir==='next' ? ' pl-anim-next' : '');
@@ -6142,9 +6236,11 @@ function renderSilenceWidget(el){
       </svg>
       <span class="silence-active-label">Waiting</span>
       <span class="silence-countdown">${mins}:${String(secs).padStart(2,'0')}</span>
-      <button class="silence-extend" onclick="extendSilence(1)" title="Add a minute">+1</button>
-      <button class="silence-extend" onclick="extendSilence(3)" title="Add three minutes">+3</button>
-      <button class="silence-cancel" onclick="cancelSilence()" title="Cancel" aria-label="Cancel timer">×</button>
+      <span class="silence-actions">
+        <button class="silence-extend" onclick="extendSilence(1)" title="Add a minute">+1</button>
+        <button class="silence-extend" onclick="extendSilence(3)" title="Add three minutes">+3</button>
+        <button class="silence-cancel" onclick="cancelSilence()" title="Cancel" aria-label="Cancel timer">${ICON.close}</button>
+      </span>
     </div>`;
   } else {
     el.innerHTML=`<div class="silence-pills">
@@ -6199,9 +6295,9 @@ const TUTORIAL_SLIDES = [
     body: `<p>A daily rhythm — meeting God in His Word and bringing your heart honestly to Him.</p>
       <p>Three plans depending on the day:</p>
       <div class="tut-plans">
-        <div><strong>☀️ Morning</strong> · ~25 min · fuller, Bible-led</div>
-        <div><strong>🌙 Evening</strong> · ~15 min · shorter, Psalm-led</div>
-        <div><strong>✦ Starter</strong> · ~15 min · gentler entry if daily prayer is new</div>
+        <div><strong>${ICON.sun} Morning</strong> · ~25 min · fuller, Bible-led</div>
+        <div><strong>${ICON.moon} Evening</strong> · ~15 min · shorter, Psalm-led</div>
+        <div><strong>${ICON.sparkle} Starter</strong> · ~15 min · gentler entry if daily prayer is new</div>
       </div>
       <p>Each walks: Approach → Bible meditation → Prayer → Contemplation. <em>Listen as much as you speak.</em></p>`
   },
@@ -7129,7 +7225,7 @@ function getEntriesForDayKey(targetKey){
     const plan = DP_PLANS[s.plan];
     entries.push({
       type: 'daily',
-      icon: plan?.icon || '☀️',
+      icon: ICON[plan?.icon] || ICON.sun,
       title: plan?.title || 'Daily Prayer',
       snippet: summarizeDailySessionForDay(s),
       action: `viewDailySession('${s.id}')`
@@ -7141,7 +7237,7 @@ function getEntriesForDayKey(targetKey){
     const summary = summarizeSession(s);
     entries.push({
       type: 'weekly',
-      icon: '✍️',
+      icon: ICON.pen,
       title: 'Weekly Deep Time',
       snippet: summary?.snippet ? summary.snippet.replace(/<[^>]+>/g, '') : '',
       action: `viewSession('${s.id}')`
@@ -7155,7 +7251,7 @@ function getEntriesForDayKey(targetKey){
       if(!matchesDay(n.date)) return;
       entries.push({
         type: 'note',
-        icon: '📝',
+        icon: ICON.note,
         title: `Note on "${esc(c.person)}"`,
         snippet: n.text.length > 90 ? n.text.slice(0, 90).trimEnd() + '…' : n.text,
         action: `openDetail('${c.id}')`
@@ -7169,8 +7265,8 @@ function getEntriesForDayKey(targetKey){
     if(!matchesDay(ansDate)) return;
     entries.push({
       type: 'answered',
-      icon: '✨',
-      title: `"${esc(c.person)}" — prayer answered`,
+      icon: ICON.star,
+      title: `“${esc(c.person)}” — prayer answered`,
       snippet: c.scripture ? `"${c.scripture}"` : 'Marked as answered',
       action: `openDetail('${c.id}')`
     });
@@ -7213,11 +7309,17 @@ function renderAnsweredPrayers(){
   const list = items.map(({card, answeredDate}) => {
     const days = (answeredDate && card.dateStarted) ? daysBetween(card.dateStarted, answeredDate) : null;
     const dt = durationText(days);
+    // Start and answer drawn as two points on a line — the length of the praying
+    // made visible — with the dates beneath their points.
     const meta = answeredDate
-      ? `Started ${esc(card.dateStarted||'')} → Answered ${esc(answeredDate)}`
+      ? `<div class="ap-line" aria-label="Started ${esc(card.dateStarted||'')}, answered ${esc(answeredDate)}">
+          <span class="ap-dot"></span><span class="ap-rule"></span><span class="ap-dot end"></span>
+          <span class="ap-when"><span class="ap-lbl">Started</span>${esc(card.dateStarted||'')}</span>
+          <span class="ap-when end"><span class="ap-lbl">Answered</span>${esc(answeredDate)}</span>
+        </div>`
       : `Started ${esc(card.dateStarted||'')}`;
     return `<div class="ap-card" onclick="openDetail('${card.id}')">
-      <div class="ap-card-name">✨ ${esc(card.person)}</div>
+      <div class="ap-card-name">${ICON.star} ${esc(card.person)}</div>
       <div class="ap-card-meta">${meta}</div>
       ${dt ? `<div class="ap-card-duration">${dt}</div>` : ''}
       ${card.scripture ? `<div class="ap-card-scripture">${linkifyScriptureRefs(card.scripture)}</div>` : ''}
@@ -7290,17 +7392,21 @@ function renderReview(){
   const cards=loadCards(); const el=document.getElementById('review-content');
   if(!cards.length){ el.innerHTML=`<p style="font-size:.85rem;color:var(--text3);font-style:italic;padding:10px 0">No cards yet. Add some to get started.</p>`; return; }
   let html=`<p style="font-size:.85rem;color:var(--text2);margin-bottom:12px;line-height:1.6">Flip through each card. Add a dated note for anything you've noticed — open questions, small signs of grace, or answered prayers.</p>`;
+  // One compact row per card: the whole row opens the card; "+ Note" adds a note
+  // without leaving the review. The last note is a one-line excerpt.
   cards.forEach(c=>{
     const lastNote=(c.notes&&c.notes.length)?c.notes[c.notes.length-1]:null;
-    html+=`<div class="review-card">
-      ${catChip(c.category, null, 'font-size:.58rem;padding:2px 7px;border-radius:99px;display:inline-block;margin-bottom:4px')}
-      ${c.answered?'<span class="answered-badge" style="float:right">Answered ✓</span>':''}
-      <h3>${esc(c.person)}</h3>
-      ${c.scripture?`<div class="r-scripture">${linkifyScriptureRefs(c.scripture)}</div>`:''}
-      ${lastNote?`<div class="note-entry" style="margin-top:8px"><div class="note-date">Last note · ${esc(lastNote.date)}</div><div class="note-text">${esc(lastNote.text)}</div></div>`:''}
-      <div style="display:flex;gap:8px;margin-top:10px">
-        <button onclick="openNote('${c.id}')" style="flex:1;padding:8px;border:1.5px solid var(--border);border-radius:8px;background:var(--surface);font-family:var(--serif);font-size:.82rem;cursor:pointer;color:var(--accent)">＋ Add Note</button>
-        <button onclick="openDetail('${c.id}')" style="flex:1;padding:8px;border:1.5px solid var(--border);border-radius:8px;background:var(--surface);font-family:var(--serif);font-size:.82rem;cursor:pointer">View Card</button>
+    html+=`<div class="rv-row" onclick="openDetail('${c.id}')">
+      <div class="rv-main">
+        <div class="rv-top">${catChip(c.category, null, 'font-size:.58rem;padding:2px 7px;border-radius:99px;display:inline-flex')}
+          ${c.answered?'<span class="answered-badge">Answered ✓</span>':''}</div>
+        <div class="rv-name">${esc(c.person)}</div>
+        <div class="rv-meta">${c.scripture?`<span class="rv-scripture">${linkifyScriptureRefs(c.scripture)}</span>`:''}${lastNote?`<span class="rv-when">Last note · ${esc(lastNote.date)}</span>`:''}</div>
+        ${lastNote?`<div class="rv-excerpt">${esc(lastNote.text)}</div>`:''}
+      </div>
+      <div class="rv-actions">
+        <button class="rv-note" onclick="event.stopPropagation();openNote('${c.id}')" aria-label="Add a note to ${esc(c.person)}">＋ Note</button>
+        <span class="rv-chev" aria-hidden="true">›</span>
       </div>
     </div>`;
   });
