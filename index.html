@@ -340,6 +340,12 @@
   .note-knot { position: absolute; left: -19px; top: 13px; width: 11px; height: 11px; border-radius: 50%; background: var(--surface); border: 2px solid var(--accent2); }
   .note-knot.answered { width: 18px; height: 18px; left: -22.5px; top: 9px; border: none; background: var(--surface); color: var(--answered); display: flex; align-items: center; justify-content: center; }
   .note-knot.answered .ico { width: 16px; height: 16px; }
+  .note-ctx { display: flex; align-items: center; gap: 8px; margin: -4px 0 12px; }
+  .note-ctx:empty { display: none; }
+  .note-ctx-name { font-family: var(--serif); font-weight: bold; color: var(--text); }
+  .note-date-input { width: auto !important; min-width: 180px; padding: 9px 12px; border: 1.5px solid var(--border); border-radius: var(--radius-sm); background: var(--surface); color: var(--text); font-family: var(--sans); font-size: .9rem; color-scheme: light; }
+  [data-theme="dark"] .note-date-input { color-scheme: dark; }
+  .note-text-input { resize: none; }
   .note-entry .note-date .ico { width: 1.1em; height: 1.1em; vertical-align: -.2em; color: var(--accent2); }
   .note-entry .note-date { font-size: .68rem; font-family: var(--sans); color: var(--text3); margin-bottom: 3px; }
   .note-entry .note-text { font-size: .88rem; line-height: 1.5; white-space: pre-wrap; }
@@ -438,7 +444,7 @@
   .pl-prep-section:first-of-type { border-top: none; padding-top: 4px; margin-top: 4px; }
   .pl-prep-section h3 { font-size: 1rem; color: var(--text); margin-bottom: 10px; font-weight: bold; }
   .pl-chips { display: flex; flex-wrap: wrap; gap: 7px; margin-bottom: 12px; }
-  .pl-chip { background: #e8d8bc; border: 1px solid #cdb892; color: #5a4630; padding: 6px 14px; border-radius: 99px; font-size: .78rem; font-style: italic; font-family: var(--serif); line-height: 1.45; box-shadow: 0 1px 2px rgba(120, 90, 50, 0.08); }
+  .pl-chip { background: #f1e7d6; border: 1px solid #ddcbac; color: #5a4630; padding: 6px 14px; border-radius: 99px; font-size: .78rem; font-style: italic; font-family: var(--serif); line-height: 1.45; box-shadow: 0 1px 2px rgba(120, 90, 50, 0.08); }
   [data-theme="dark"] .pl-chip { background: #3d3024; border-color: #5a4832; color: #e0cdab; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3); }
   .pl-prep-hint { font-size: .85rem; color: var(--text2); line-height: 1.6; margin-bottom: 10px; font-style: italic; }
 
@@ -448,7 +454,7 @@
      distinct so it's obvious these are interactive. Pairs with the Daily Prayer "Soliloquy"
      meditation mode — same theological move (heart-speaking-to-itself, Psalm 103). */
   .pl-forget-block { margin: 14px 0 12px; padding: 12px 14px; background: var(--accent-light); border-radius: var(--radius-sm); border-left: 3px solid var(--accent2); }
-  .pl-forget-label { font-size: .72rem; font-family: var(--sans); text-transform: uppercase; letter-spacing: .055em; color: var(--accent); font-weight: 600; margin-bottom: 5px; }
+  .pl-forget-label { font-size: .86rem; font-family: var(--serif); font-style: italic; color: var(--accent); font-weight: 600; margin-bottom: 4px; line-height: 1.4; }
   .pl-forget-hint { font-size: .8rem; color: var(--text3); line-height: 1.55; margin-bottom: 10px; font-style: italic; }
   .pl-forget-chips { display: flex; flex-wrap: wrap; gap: 6px; }
   .pl-forget-chip { background: var(--surface); border: 1px solid var(--accent2); color: var(--accent); padding: 11px 14px; border-radius: 99px; font-size: .78rem; font-family: var(--serif); font-style: italic; cursor: pointer; line-height: 1.45; transition: background .15s, color .15s, transform .12s; }
@@ -473,6 +479,14 @@
 
   .link-card-row { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 12px 44px 12px 16px; margin-bottom: 8px; cursor: pointer; position: relative; transition: transform .12s, box-shadow .15s, border-color .15s; }
   .link-card-row.selected { box-shadow: 0 2px 12px rgba(100,70,40,0.15); border-color: var(--accent2); background: var(--accent-light); }
+  /* Compact: chip and name on one line, Scripture beneath; the category spine
+     appears once a card is linked. */
+  .link-card-row { padding-top: 10px !important; padding-bottom: 10px !important; }
+  .link-card-row.selected { box-shadow: inset 4px 0 0 color-mix(in srgb, var(--cat, var(--accent2)) 65%, transparent), 0 2px 12px rgba(100,70,40,0.15); }
+  .link-card-row .card-cat { display: inline-flex; vertical-align: middle; margin-right: 6px; }
+  .link-card-row .link-card-title { display: inline; vertical-align: middle; }
+  .link-card-row .link-card-sub { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .link-card-row.selected .link-card-check { color: var(--on-accent); }
   .link-card-row:active { transform: scale(.985); }
   .link-card-check { position: absolute; top: 50%; right: 14px; transform: translateY(-50%); width: 22px; height: 22px; border-radius: 50%; border: 2px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: .75rem; font-family: var(--sans); font-weight: bold; color: #fff; transition: all .15s; }
   .link-card-row.selected .link-card-check { background: var(--accent); border-color: var(--accent); }
@@ -713,10 +727,15 @@
   .scripture-ref:hover, .scripture-ref:active { color: var(--text); border-bottom-color: var(--accent); }
 
   /* Word frequency cloud (P4 #21) */
-  .wf-cloud { display: flex; flex-wrap: wrap; gap: 8px 14px; padding: 8px 0 4px; line-height: 1.8; align-items: baseline; }
+  .wf-wreath { position: relative; padding: 18px 26px 22px; margin: 4px 0 2px; }
+  .wf-laurel { position: absolute; inset: 0; color: var(--accent2); opacity: .32; pointer-events: none; display: block; }
+  .wf-laurel svg { width: 100%; height: 100%; display: block; }
+  .wf-cloud { position: relative; display: flex; flex-wrap: wrap; justify-content: center; gap: 8px 14px; padding: 8px 0 4px; line-height: 1.8; align-items: baseline; }
+  .wf-word.w1 { color: var(--accent); } .wf-word.w2 { color: #8d6a45; } .wf-word.w3 { color: #9a7a5e; }
+  [data-theme="dark"] .wf-word.w2 { color: #c49a6a; } [data-theme="dark"] .wf-word.w3 { color: #b09478; }
   .wf-word { color: var(--accent); font-family: var(--serif); font-style: italic; cursor: default; transition: color .15s; }
   .wf-word:hover { color: var(--text); }
-  .wf-word small { font-family: var(--sans); font-size: .58rem; color: var(--text3); font-style: normal; margin-left: 2px; vertical-align: super; letter-spacing: .03em; }
+  .wf-word small { font-family: var(--sans); font-size: .5rem; color: var(--text-quiet); font-style: normal; margin-left: 2px; vertical-align: super; letter-spacing: .03em; opacity: .8; }
 
   /* Prayer entry rows — used by the heatmap day-list when a filled cell is tapped
      in Year at a Glance. Each entry has a colored left-border keyed to its type:
@@ -906,7 +925,7 @@
 
   /* Daily Prayer step pieces */
   .dp-plan-tag { display: inline-block; font-size: .68rem; font-family: var(--sans); padding: 3px 10px; border-radius: 99px; margin-bottom: 12px; letter-spacing: .03em; }
-  .dp-invocation-selected { padding: 12px 14px; border-radius: var(--radius-sm); border: 1px solid; border-left-width: 3px; margin: 12px 0 14px; position: relative; }
+  .dp-invocation-selected { padding: 14px 16px; border-radius: var(--radius-sm); border: none; margin: 12px 0 14px; position: relative; }
   .dp-inv-label { font-size: .62rem; font-family: var(--sans); text-transform: uppercase; letter-spacing: .055em; font-weight: 600; margin-bottom: 6px; }
   .dp-inv-text { font-style: italic; font-size: .9rem; line-height: 1.65; color: var(--text2); }
   .dp-inv-change { background: none; border: none; color: var(--accent); font-family: var(--sans); font-size: .72rem; cursor: pointer; padding: 6px 0 0; margin-top: 6px; text-decoration: underline; }
@@ -999,12 +1018,18 @@
   .silence-label { font-size: .68rem; font-family: var(--sans); color: var(--text3); letter-spacing: .04em; text-transform: uppercase; font-weight: 600; }
   .silence-pill { background: var(--surface); border: 1.5px solid var(--border); border-radius: 99px; color: var(--text2); padding: 5px 14px; font-family: var(--serif); font-size: .82rem; cursor: pointer; transition: all .15s; }
   .silence-pill:hover, .silence-pill:active { background: var(--accent-light); color: var(--accent); border-color: var(--accent2); }
-  .silence-active { display: flex; align-items: center; gap: 9px; padding: 10px 14px; background: var(--accent-light); border: 1px solid var(--accent2); border-radius: 22px; flex-wrap: wrap; row-gap: 6px; }
+  .silence-active { display: flex; align-items: center; gap: 7px; padding: 8px 10px 8px 12px; background: var(--accent-light); border: 1px solid var(--accent2); border-radius: 22px; flex-wrap: wrap; row-gap: 6px; }
   /* The controls travel together: if the row is too narrow they drop to a second
      line as one group, instead of the ✕ alone making a lopsided pill. */
-  .silence-actions { display: inline-flex; align-items: center; gap: 8px; margin-left: auto; }
+  .silence-actions { display: inline-flex; align-items: center; gap: 4px; margin-left: auto; flex: none; }
+  /* "Waiting" as a quiet italic word rather than spaced capitals, so the whole
+     timer usually fits one row; it still wraps as a group if it must. */
   .silence-active .silence-icon { font-size: 1.05rem; opacity: .8; }
   .silence-active .silence-active-label { font-size: .68rem; font-family: var(--sans); text-transform: uppercase; letter-spacing: .05em; color: var(--accent); font-weight: 600; }
+  .silence-active .silence-active-label { text-transform: none; font-family: var(--serif); font-style: italic; font-weight: normal; font-size: .9rem; letter-spacing: 0; flex: none; }
+  .silence-active .silence-extend { padding: 3px 6px !important; }
+  .silence-active .silence-arc { width: 1.25rem; height: 1.25rem; }
+  .silence-active .silence-countdown { font-size: 1.02rem; }
   .silence-active .silence-countdown { font-family: var(--serif); font-size: 1.1rem; color: var(--accent); font-weight: bold; font-variant-numeric: tabular-nums; }
   .silence-active .silence-extend { background: var(--surface); border: 1px solid var(--accent2); color: var(--accent); font-family: var(--sans); font-size: .72rem; font-weight: bold; cursor: pointer; padding: 3px 9px; border-radius: 99px; line-height: 1; transition: background .15s, color .15s; position: relative; }
   /* 44px hit regions without changing the drawn size. */
@@ -1042,6 +1067,14 @@
   .theme-row { display: flex; gap: 7px; margin-top: 10px; }
   .theme-btn, .size-btn { flex: 1; padding: 9px; border: 1.5px solid var(--border); border-radius: var(--radius-sm); background: var(--surface); color: var(--text2); font-family: var(--serif); font-size: .82rem; cursor: pointer; transition: background .15s, color .15s, border-color .15s; }
   .theme-btn:active, .size-btn:active { opacity: .8; }
+  /* Each theme shows a scrap of its paper; each size shows its letters at that size. */
+  .theme-btn { position: relative; flex-direction: column !important; gap: 5px !important; }
+  .swatch { display: block; width: 100%; height: 16px; border-radius: 5px; border: 1px solid color-mix(in srgb, currentColor 25%, transparent); }
+  .sw-light { background: linear-gradient(180deg, #fdfaf5, #efe6da); }
+  .sw-dark { background: linear-gradient(180deg, #2a2119, #1a1410); }
+  .sw-auto { background: linear-gradient(105deg, #fdfaf5 0 50%, #1f1811 50% 100%); }
+  .size-btn { display: flex !important; flex-direction: column; align-items: center; gap: 2px; font-size: .78rem !important; }
+  .size-btn .aa { font-family: var(--serif); line-height: 1.1; }
   .theme-btn.active, .size-btn.active { background: var(--accent); color: var(--on-accent); border-color: var(--accent); }
   .switch-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 28px !important; font-family: var(--serif); font-size: .85rem; color: var(--text2); text-transform: none; letter-spacing: normal; font-weight: normal; cursor: pointer; }
   .switch { position: relative; display: inline-block; width: 46px; height: 26px; flex: 0 0 auto; }
@@ -1166,8 +1199,8 @@
   /* Scripture framed as on a manuscript page: four drawn corner brackets in the
      block's colour, instead of a bar down one side. Drawn with gradients on ::after
      so each block's own background and watermark are untouched. */
-  .pl-scripture-feature, .pl-done-verse, .dp-recall, .detail-section.ds-scripture, .tech-example { --bk: var(--accent2); position: relative; }
-  .pl-scripture-feature::after, .pl-done-verse::after, .dp-recall::after, .detail-section.ds-scripture::after, .tech-example::after {
+  .pl-scripture-feature, .pl-done-verse, .dp-recall, .detail-section.ds-scripture, .tech-example, .dp-invocation-selected { --bk: var(--accent2); position: relative; }
+  .pl-scripture-feature::after, .pl-done-verse::after, .dp-recall::after, .detail-section.ds-scripture::after, .tech-example::after, .dp-invocation-selected::after {
     content: ''; position: absolute; inset: 5px; pointer-events: none; opacity: .8;
     --bl: 15px; --bw: 1.5px;
     background:
@@ -1383,7 +1416,7 @@
   [data-theme="dark"] .pl-quote,
   [data-theme="dark"] .pl-scripture-feature,
   [data-theme="dark"] .pl-listen-block,
-  [data-theme="dark"] .dp-invocation-selected { background: var(--accent-light) !important; border-color: var(--accent2) !important; }
+  [data-theme="dark"] .dp-invocation-selected { background: var(--accent-light) !important; }
   /* And brighten the inline step-color labels so they read against the dark surface */
   [data-theme="dark"] .dp-inv-label,
   [data-theme="dark"] .pl-listen-label { color: var(--accent) !important; }
@@ -1449,7 +1482,8 @@
   .ta-expand-link:focus { opacity: 1; color: var(--accent); }
 
   /* Focus-compose modal — bigger textarea for distraction-free writing. */
-  .focus-compose-heading { font-size: 1rem; color: var(--accent); margin-bottom: 6px; font-weight: bold; line-height: 1.4; }
+  .focus-compose-heading { font-size: 1rem; color: var(--accent); margin-bottom: 6px; font-weight: bold; line-height: 1.4; display: flex; align-items: center; gap: 8px; }
+  .focus-compose-heading .ico { width: 18px; height: 18px; flex: none; }
   .focus-compose-prompt { font-size: .85rem; color: var(--text2); font-style: italic; line-height: 1.55; margin-bottom: 14px; }
   /* Min-height kept modest (was 50vh, which pushed the context heading out of reach
      once the mobile keyboard rose); max-height lets the textarea scroll internally
@@ -1641,7 +1675,7 @@
       <div id="heart-need-freq"></div>
     </details>
     <details class="about-block reflect-block">
-      <summary><h3><span data-ico="sparkle"></span>What You've Been Hearing</h3></summary>
+      <summary><h3><span data-ico="ear"></span>What You've Been Hearing</h3></summary>
       <div id="word-frequency"></div>
     </details>
     <details class="about-block reflect-block">
@@ -1655,15 +1689,15 @@
       <summary><h3><span data-ico="palette"></span>Appearance</h3></summary>
       <p style="font-size:.84rem">Choose a theme. Auto follows your system setting — useful if you pray morning &amp; evening.</p>
       <div class="theme-row">
-        <button class="theme-btn" data-theme="light" onclick="setTheme('light')"><span data-ico="sun"></span>Light</button>
-        <button class="theme-btn" data-theme="dark" onclick="setTheme('dark')"><span data-ico="moon"></span>Dark</button>
-        <button class="theme-btn" data-theme="auto" onclick="setTheme('auto')"><span data-ico="sparkle"></span>Auto</button>
+        <button class="theme-btn" data-theme="light" onclick="setTheme('light')"><span class="swatch sw-light" aria-hidden="true"></span><span data-ico="sun"></span>Light</button>
+        <button class="theme-btn" data-theme="dark" onclick="setTheme('dark')"><span class="swatch sw-dark" aria-hidden="true"></span><span data-ico="moon"></span>Dark</button>
+        <button class="theme-btn" data-theme="auto" onclick="setTheme('auto')"><span class="swatch sw-auto" aria-hidden="true"></span><span data-ico="sparkle"></span>Auto</button>
       </div>
       <p class="appearance-label">Text size</p>
       <div class="theme-row">
-        <button class="size-btn" data-size="small" onclick="setTextSize('small')">Small</button>
-        <button class="size-btn" data-size="medium" onclick="setTextSize('medium')">Medium</button>
-        <button class="size-btn" data-size="large" onclick="setTextSize('large')" style="font-size:1.05rem">Large</button>
+        <button class="size-btn" data-size="small" onclick="setTextSize('small')"><span class="aa" style="font-size:14px" aria-hidden="true">Aa</span>Small</button>
+        <button class="size-btn" data-size="medium" onclick="setTextSize('medium')"><span class="aa" style="font-size:18px" aria-hidden="true">Aa</span>Medium</button>
+        <button class="size-btn" data-size="large" onclick="setTextSize('large')"><span class="aa" style="font-size:23px" aria-hidden="true">Aa</span>Large</button>
       </div>
       <label class="switch-row">
         <span>Floating <span data-ico="book"></span>&#8202;Bible button</span>
@@ -1755,10 +1789,11 @@
   <div class="modal">
     <div class="modal-handle"></div>
     <h2 id="note-modal-title">Add Story Note</h2>
+    <div class="note-ctx" id="note-ctx"></div>
     <label>Date</label>
-    <input type="date" id="note-date">
+    <input type="date" id="note-date" class="note-date-input">
     <label>Note</label>
-    <textarea id="note-text" placeholder="What have you noticed? An answer, a question, a small sign of grace…" style="min-height:100px"></textarea>
+    <textarea id="note-text" class="note-text-input" placeholder="What have you noticed? An answer, a question, a small sign of grace…" style="min-height:100px"></textarea>
     <p class="hint">Or speak to your own soul about them, in His presence.</p>
     <button class="btn btn-primary" id="note-save-btn" onclick="saveNote()">Add Note</button>
     <button class="btn btn-secondary" onclick="closeModal('modal-note')">Cancel</button>
@@ -1895,7 +1930,9 @@ const ICON = {
   repeat:   _svg('<path d="M4 9.4a5 5 0 0 1 5-5h9M20 14.6a5 5 0 0 1-5 5H6"/><path d="M15.4 1.8L18.4 4.4l-3 2.6M8.6 22.2L5.6 19.6l3-2.6"/>'),
   pin:      _svg('<path d="M12 21.2s6.4-6.1 6.4-10.6a6.4 6.4 0 1 0-12.8 0C5.6 15.1 12 21.2 12 21.2z"/><circle cx="12" cy="10.4" r="2.4"/>'),
   dove:     _svg('<path d="M3.4 13.8c3.2.6 5.6-.4 7.4-2.4 1.8-2 2.6-4.4 5.2-5.3 2-.7 3.8-.1 4.6 1.4.7 1.4.3 3-1 3.8"/><path d="M19.6 11.3c.5 3.2-1 6-3.8 7.6-2.9 1.6-6.4 1.4-9-.6"/><path d="M10.8 11.4c1.9.9 3 2.7 3.1 5.1"/><circle cx="18.2" cy="7.9" r=".75" fill="currentColor" stroke="none"/><path d="M20.8 8.2l1.9-.7"/>'),
-  lamp:     _svg('<path d="M9 3.4h6M12 3.4v3"/><path d="M12 6.4a5.4 5.4 0 0 1 5.4 5.4c0 2.6-1.7 4.2-3 5.2-.9.7-1.4 1.3-1.4 2.2v.6h-2v-.6c0-.9-.5-1.5-1.4-2.2-1.3-1-3-2.6-3-5.2A5.4 5.4 0 0 1 12 6.4z"/><path d="M10.4 20.6h3.2"/>'),
+  // An oil lamp with its flame at the spout.
+  lamp:     _svg('<path d="M6 15.2c0-2.2 3.2-3.6 7.4-3.6s7.4 1.4 7.4 3.6-3.2 3-7.4 3S6 17.4 6 15.2z"/><path d="M7.4 13.6L2.8 12.4l3.6 3.6"/><path d="M20.6 14c1.6-.6 2.4 1.9.6 2.6"/><path d="M10.8 18.1l-.6 2h6.4l-.6-2"/><path d="M12.4 11.7c0-.8.5-1.3 1-1.3s1 .5 1 1.3" opacity=".8"/><path d="M2.8 11.2c-1-1.2-.9-2.6.2-3.8.2 1.1 1.3 1.7 1.3 2.8a1.2 1.2 0 0 1-1.5 1z" fill="currentColor" stroke="none"/>'),
+  ear:      _svg('<path d="M8.2 18.6c.6 1.2 1.9 1.9 3.2 1.7 1.8-.3 2.4-1.8 2.8-3.2.4-1.2 1.2-2 2-3 1-1.2 1.6-2.6 1.6-4.2A5.8 5.8 0 0 0 12 4.1a5.8 5.8 0 0 0-5.8 5.8"/><path d="M9.2 10.1a2.8 2.8 0 0 1 5.6 0c0 1.2-.6 1.9-1.3 2.6"/><path d="M3.4 8.2c-.6 1.2-.6 2.6 0 3.8M1.8 6.6c-1.2 2.4-1.2 5.2 0 7" opacity=".7"/>'),
   // Step marks — one per movement of prayer, shown in the step badge and active dot.
   compass:  _svg('<circle cx="12" cy="12" r="8.4"/><path d="M12 6.4l2.2 5.6-2.2 5.6-2.2-5.6z"/><path d="M12 6.4l2.2 5.6h-4.4z" fill="currentColor" stroke="none"/>'),
   door:     _svg('<path d="M5.6 20.4V4.2h12.8v16.2"/><path d="M5.6 4.2l6.2 2v14.2l-6.2 .8"/><circle cx="10.1" cy="13.4" r=".75" fill="currentColor" stroke="none"/><path d="M3.4 20.8h17.2"/>'),
@@ -2664,6 +2701,22 @@ function placeNavMark(){
   nav.style.setProperty('--nav-x', x + 'px');
 }
 window.addEventListener('resize', () => requestAnimationFrame(placeNavMark));
+// Typographic apostrophes in interface text, applied as the page renders. Anything
+// you wrote, Scripture, and form fields are left exactly as they are.
+const APOS_SKIP = 'textarea, input, select, script, style, [contenteditable], .bb-verse, .bb-preview, .note-text, .he-snippet, .sv-text, .pl-prev-text, .pl-reflection-text, .card-title, .card-scripture, .p-title, .p-scripture, .p-ask, .step-prompt em, .step-ask-line em, .persp-block em, .detail-section p, .rv-name, .rv-excerpt, .rv-scripture, .ap-card-name, .ap-card-scripture, .link-card-title, .link-card-sub, .timeline-snippet, .timeline-title, .focus-passage-body, .focus-carry-body, .dp-recall-body, .scripture-ref, .psf-text, .pl-done-verse, .dp-inv-text, .dp-inv-option-text, .dp-inv-ref, .wf-word, .emo-chip, .pl-linked-chip, .note-ctx-name, .prayer-lib-text, .tech-example, #scripture-content, .heatmap-day-list, mark';
+function smartApostrophes(root){
+  const w = document.createTreeWalker(root || document.body, NodeFilter.SHOW_TEXT, {
+    acceptNode: n => (n.nodeValue.includes("'") && n.parentElement && !n.parentElement.closest(APOS_SKIP)) ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT
+  });
+  const hits = []; while(w.nextNode()) hits.push(w.currentNode);
+  hits.forEach(n => { n.nodeValue = n.nodeValue.replace(/(\p{L})'(\p{L})/gu, '$1’$2'); });
+}
+let _aposPending = false;
+new MutationObserver(() => {
+  if(_aposPending) return; _aposPending = true;
+  requestAnimationFrame(() => { _aposPending = false; smartApostrophes(document.body); });
+}).observe(document.documentElement, { childList: true, subtree: true });
+document.addEventListener('DOMContentLoaded', () => smartApostrophes(document.body));
 function syncHeaderMode(){
   const inS = (currentView === 'daily' && dpMode === 'session') || (currentView === 'pl' && plMode === 'session');
   document.body.classList.toggle('in-session', !!inS);
@@ -3960,6 +4013,14 @@ function toggleFocusCarry(){
     btn.setAttribute('aria-label', _focusCarryOpen ? 'Collapse' : 'Expand'); }
 }
 
+// The current step's mark, for the focus-mode heading.
+function focusStepGlyph(ta){
+  try{
+    if(ta.closest('#dp-content') && dpSession) return stepGlyph(dpCurrentStep().key);
+    if(ta.closest('#pl-content') && plSession) return stepGlyph(currentStep().key);
+  }catch(e){}
+  return '';
+}
 function openFocusCompose(textareaId){
   const ta = document.getElementById(textareaId);
   if(!ta) return;
@@ -3985,7 +4046,7 @@ function openFocusCompose(textareaId){
   content.classList.toggle('has-carry', carried.length > 0 && !!passage);
   content.innerHTML = `
     ${pinnedHTML}
-    ${ctx.heading ? `<div class="focus-compose-heading">${esc(ctx.heading)}</div>` : ''}
+    ${ctx.heading ? `<div class="focus-compose-heading">${focusStepGlyph(ta)}${esc(ctx.heading)}</div>` : ''}
     ${ctx.prompt  ? `<div class="focus-compose-prompt">${esc(ctx.prompt)}</div>`   : ''}
     ${silenceHTML}
     <textarea id="focus-compose-textarea" class="focus-compose-textarea" placeholder="${esc(ta.placeholder || '')}">${escTa(ta.value)}</textarea>
@@ -4571,6 +4632,10 @@ function openNote(id, noteIndex){
     if(titleEl) titleEl.textContent = 'Add Story Note';
     if(saveBtn) saveBtn.textContent = 'Add Note';
   }
+  // Which story this note belongs to — its chip and name, from the card itself.
+  const cc = loadCards().find(x => x.id === id);
+  const ctxEl = document.getElementById('note-ctx');
+  if(ctxEl) ctxEl.innerHTML = cc ? `${catChip(cc.category)}<span class="note-ctx-name">${esc(cc.person)}</span>` : '';
   openModal('modal-note');
 }
 
@@ -5162,7 +5227,7 @@ function renderDPStep(){
     const selectedRef = saved.invocation;
     if(selectedRef){
       const inv = SCRIPTURAL_INVOCATIONS.find(i => i.ref === selectedRef);
-      invocationsHTML = `<div class="dp-invocation-selected" style="background:${step.cbg};border-color:${step.cborder}">
+      invocationsHTML = `<div class="dp-invocation-selected" style="background:${step.cbg};--bk:${step.cborder}">
         <div class="dp-inv-label" style="color:${step.color}">SCRIPTURAL INVOCATION · ${esc(inv?.ref||selectedRef)}</div>
         <div class="dp-inv-text">${esc(inv?.text||'')}</div>
         <button class="dp-inv-change" onclick="dpClearInvocation()">Change →</button>
@@ -6092,7 +6157,7 @@ function renderPLStep(el){
         return helperRow('pl-pray-area', { lib: PL_LIB_MAP[step.key], cryOut: true });
       })()}` : `
       <div class="pl-listen-block" style="background:${step.lbg};border-color:${step.lborder}">
-        <div class="pl-listen-label" style="color:${step.sc}"><span>${ICON.sparkle}</span><span>Listen</span></div>
+        <div class="pl-listen-label" style="color:${step.sc}"><span>${ICON.ear}</span><span>Listen</span></div>
         <div class="pl-listen-instruction" style="color:var(--text2)">${step.listenInstruction}</div>
         <div class="silence-widget"></div>
         <div class="pl-field-label" style="color:${step.sc}">What do you sense Him saying?</div>
@@ -6136,7 +6201,7 @@ function renderPrepareStep(el,step,dots,steps){
       <h3>${sec.title}</h3>
       <div class="pl-chips">${sec.prompts.map(p=>`<span class="pl-chip">${p}</span>`).join('')}</div>
       <div class="pl-prep-hint">${sec.hint}</div>
-      ${sec.hasChart?`<button class="pl-chart-btn" onclick="openHeartChart()">${ICON.list}${heartNeeds.length?'Edit your heart-need selections':'Open "Needs of the Heart" Chart — tap to choose'}</button>${selectedChipsHTML}`:''}
+      ${sec.hasChart?`<button class="pl-chart-btn" onclick="openHeartChart()">${ICON.list}${heartNeeds.length?'Edit your heart-need selections':'Open “Needs of the Heart” Chart — tap to choose'}</button>${selectedChipsHTML}`:''}
       ${sec.key==='feelings' ? emotionChipsAndLink(plEmotions, 'pl') : ''}
       ${sec.key==='mapping' ? forgetChipsBlock() : ''}
       <textarea id="pl-prep-${sec.key}" class="pl-textarea" placeholder="Jot down what feels most relevant…">${escTa(saved[sec.key]||'')}</textarea>
@@ -6279,7 +6344,8 @@ function renderLinkCards(){
 
 function linkRowHTML(c,linked){
   const sel=linked.includes(c.id);
-  return `<div class="link-card-row${sel?' selected':''}" onclick="toggleLinkCard('${c.id}')">
+  const ck = CAT_ICON[c.category] ? c.category : 'other';
+  return `<div class="link-card-row${sel?' selected':''}" style="--cat:${CAT_COLOR[ck]}" onclick="toggleLinkCard('${c.id}')">
     <div class="link-card-check">${sel?'✓':''}</div>
     ${catChip(c.category)}
     ${c.answered?`<span class="answered-badge" style="float:right">${ICON.olive}Answered ✓</span>`:''}
@@ -7354,6 +7420,7 @@ function getWordFrequency(minCount = 2, limit = 30){
     .slice(0, limit);
 }
 
+const WF_LAUREL = `<svg viewBox="0 0 220 130" fill="none" stroke="currentColor" stroke-width="1" stroke-linejoin="round"><path d="M127.9 115.1L136.7 113.9L145.3 112.3L153.6 110.2L161.6 107.7L169.1 104.8L176.1 101.5L182.6 97.9L188.5 93.9L193.8 89.6L198.4 85.1L202.3 80.4L205.4 75.5L207.7 70.4L209.2 65.2L209.9 60.0L209.8 54.8L208.9 49.5L207.2 44.4L204.7 39.4L201.4 34.5L197.4 29.8L192.6 25.3L187.2 21.1L181.1 17.2"/><path d="M148.7 111.5Q151.9 115.8 157.2 116.0Q154.0 111.7 148.7 111.5z"/><path d="M148.7 111.5Q153.3 108.8 154.2 103.5Q149.6 106.2 148.7 111.5z"/><path d="M167.6 105.4Q171.3 109.1 176.5 108.5Q172.8 104.8 167.6 105.4z"/><path d="M167.6 105.4Q171.8 102.2 171.8 97.0Q167.6 100.2 167.6 105.4z"/><path d="M183.9 97.1Q188.0 100.1 192.8 98.5Q188.7 95.5 183.9 97.1z"/><path d="M183.9 97.1Q187.3 93.4 186.4 88.4Q182.9 92.1 183.9 97.1z"/><path d="M196.6 87.0Q201.2 89.0 205.4 86.4Q200.9 84.4 196.6 87.0z"/><path d="M196.6 87.0Q199.2 82.7 197.2 78.2Q194.6 82.4 196.6 87.0z"/><path d="M205.4 75.5Q210.1 76.2 213.3 72.5Q208.6 71.8 205.4 75.5z"/><path d="M205.4 75.5Q206.7 70.8 203.5 67.2Q202.2 71.8 205.4 75.5z"/><path d="M209.6 63.1Q214.2 62.3 215.9 57.9Q211.3 58.8 209.6 63.1z"/><path d="M209.6 63.1Q209.3 58.5 205.2 56.2Q205.5 60.9 209.6 63.1z"/><path d="M209.2 50.6Q213.1 48.2 213.0 43.7Q209.1 46.0 209.2 50.6z"/><path d="M209.2 50.6Q207.3 46.4 202.8 45.9Q204.6 50.1 209.2 50.6z"/><path d="M204.1 38.4Q207.0 35.0 205.4 30.9Q202.5 34.2 204.1 38.4z"/><path d="M204.1 38.4Q201.1 35.1 196.8 36.2Q199.8 39.5 204.1 38.4z"/><path d="M194.6 27.1Q196.5 23.2 193.8 19.8Q191.9 23.7 194.6 27.1z"/><path d="M194.6 27.1Q191.0 24.7 187.3 26.9Q190.9 29.3 194.6 27.1z"/><path d="M92.1 115.1L83.3 113.9L74.7 112.3L66.4 110.2L58.4 107.7L50.9 104.8L43.9 101.5L37.4 97.9L31.5 93.9L26.2 89.6L21.6 85.1L17.7 80.4L14.6 75.5L12.3 70.4L10.8 65.2L10.1 60.0L10.2 54.8L11.1 49.5L12.8 44.4L15.3 39.4L18.6 34.5L22.6 29.8L27.4 25.3L32.8 21.1L38.9 17.2"/><path d="M71.3 111.5Q70.4 106.2 65.8 103.5Q66.7 108.8 71.3 111.5z"/><path d="M71.3 111.5Q66.0 111.7 62.8 116.0Q68.1 115.8 71.3 111.5z"/><path d="M52.4 105.4Q52.4 100.2 48.2 97.0Q48.2 102.2 52.4 105.4z"/><path d="M52.4 105.4Q47.2 104.8 43.5 108.5Q48.7 109.1 52.4 105.4z"/><path d="M36.1 97.1Q37.1 92.1 33.6 88.4Q32.7 93.4 36.1 97.1z"/><path d="M36.1 97.1Q31.3 95.5 27.2 98.5Q32.0 100.1 36.1 97.1z"/><path d="M23.4 87.0Q25.4 82.4 22.8 78.2Q20.8 82.7 23.4 87.0z"/><path d="M23.4 87.0Q19.1 84.4 14.6 86.4Q18.8 89.0 23.4 87.0z"/><path d="M14.6 75.5Q17.8 71.8 16.5 67.2Q13.3 70.8 14.6 75.5z"/><path d="M14.6 75.5Q11.4 71.8 6.7 72.5Q9.9 76.2 14.6 75.5z"/><path d="M10.4 63.1Q14.5 60.9 14.8 56.2Q10.7 58.5 10.4 63.1z"/><path d="M10.4 63.1Q8.7 58.8 4.1 57.9Q5.8 62.3 10.4 63.1z"/><path d="M10.8 50.6Q15.4 50.1 17.2 45.9Q12.7 46.4 10.8 50.6z"/><path d="M10.8 50.6Q10.9 46.0 7.0 43.7Q6.9 48.2 10.8 50.6z"/><path d="M15.9 38.4Q20.2 39.5 23.2 36.2Q18.9 35.1 15.9 38.4z"/><path d="M15.9 38.4Q17.5 34.2 14.6 30.9Q13.0 35.0 15.9 38.4z"/><path d="M25.4 27.1Q29.1 29.3 32.7 26.9Q29.0 24.7 25.4 27.1z"/><path d="M25.4 27.1Q28.1 23.7 26.2 19.8Q23.5 23.2 25.4 27.1z"/></svg>`;
 function renderWordFrequency(){
   const target = document.getElementById('word-frequency');
   if(!target) return;
@@ -7372,11 +7439,13 @@ function renderWordFrequency(){
     const scale = (count - min) / range;
     const fontSize = (0.82 + scale * 0.7).toFixed(2);
     const opacity = (0.6 + scale * 0.4).toFixed(2);
-    return `<span class="wf-word" style="font-size:${fontSize}rem;opacity:${opacity}">${esc(word)}<small>${count}</small></span>`;
+    // Three warm inks by weight, so the cloud has depth without leaving the palette.
+    const tone = count >= max*0.66 ? 'w1' : count >= max*0.4 ? 'w2' : 'w3';
+    return `<span class="wf-word ${tone}" style="font-size:${fontSize}rem;opacity:${opacity}">${esc(word)}<small>${count}</small></span>`;
   }).join('');
 
   target.innerHTML = `<p class="ap-intro">Top ${words.length} words across your Listen entries — a glimpse of what has been on your heart, and what He has been saying.</p>
-    <div class="wf-cloud">${cloud}</div>`;
+    <div class="wf-wreath"><span class="wf-laurel" aria-hidden="true">${WF_LAUREL}</span><div class="wf-cloud">${cloud}</div></div>`;
 }
 
 // ══════════ ANSWERED PRAYERS (P4 #20) ══════════

@@ -195,6 +195,18 @@ To unlock full PWA: deploy the folder to GitHub Pages / Netlify / Vercel (free) 
 - ✅ **Year at a Glance** — stepped month boundaries (`.mstart`) and a ✦ beneath today's week (`.heatmap-today-mark`).
 - ✅ **Your Stats** as serif figures over labels (`.stat-figs`); **prayer library** opens with a framed vignette per category.
 
+### 🎨 Graphics pass 4 (P16, 2026-09-28)
+- ✅ **Typographic apostrophes, render-time** — `smartApostrophes()` + a `MutationObserver` turn `'` between letters into `’` in interface text as it renders. `APOS_SKIP` excludes form fields, Scripture, and every surface that shows what you wrote (notes, titles, snippets, past sessions, word cloud). Source strings and Markdown export are unchanged.
+- ✅ **Listen** carries an ear-and-sound glyph (`ICON.ear`), also on "What You’ve Been Hearing".
+- ✅ **Word cloud** sits in a faint laurel wreath (`WF_LAUREL`), three warm inks by weight, quieter counts.
+- ✅ **Oil lamp** — `ICON.lamp` redrawn (the walkthrough's "Well done!").
+- ✅ **Focus mode** heading carries the step's mark (`focusStepGlyph`).
+- ✅ **Appearance** — theme buttons show a scrap of their paper; text-size buttons show "Aa" at each size.
+- ✅ **Note editor** shows the card's chip and name (`#note-ctx`); styled date field, no resize grip.
+- ✅ **Link Story Cards** — compact rows; a linked card shows its category spine.
+- ✅ **Prepare** — "Try the shape" and starter labels as italic captions; lighter prompt chips.
+- ✅ **Chosen invocation** framed with corner brackets like the rest of Scripture; the silence timer fits one row at 390px.
+
 ### 🛠️ Infrastructure
 - ✅ localStorage persistence (`prayer_cards`, `pl_sessions`, `pl_draft`, `streak_days`, `daily_<date>`)
 - ✅ Storage failure handling — all writes go through `safeSetItem()` / `safeRemoveItem()` wrappers. Distinguishes `QuotaExceededError` (storage full) from `SecurityError` (private mode, Brave shields, etc.) and shows a specific toast for each. Toasts are rate-limited to once per 5 seconds so auto-save during a typing burst doesn't flood the user. On app start, `storageAvailable()` does a probe write/remove — if it fails, surfaces a "⚠ Your browser is blocking local storage" warning toast after 800ms.
@@ -576,6 +588,13 @@ A full audit of every screen in both themes at 390px, with contrast, tap-target 
 
 **Two contrast pairs still fail as measured, and both are non-text:** `--border` on `--surface` at 1.73:1 is a decorative card edge (raising it to 3:1 makes the app look wireframed), and `--accent2` on `--accent-light` at 2.94:1 is only ever a border colour now — its one text use, the selected verse number, was moved to `--accent` at 5.07:1.
 
+### P16 — Graphics pass 4 (added 2026-09-28)
+
+| # | Feature | Status | Notes |
+|---|---|---|---|
+| 88 | Defects | **done** | Straight quotes on the Needs-of-the-Heart chart button; unstyled date field and resize grip in the note editor; chosen invocation still on the old left bar; silence timer wrapping to two rows. |
+| 89 | Apostrophes, ear, laurel, lamp, focus mark, appearance swatches, note context, link rows, Prepare captions | **done** | See §3 P16. |
+
 ### P15 — Graphics pass 3 (added 2026-09-28)
 
 | # | Feature | Status | Notes |
@@ -664,6 +683,7 @@ If you're starting a new chat and the user asks for "what's next," check §6 —
 
 Newest first. Format: `YYYY-MM-DD — what changed`.
 
+- **2026-09-28** — **P16: graphics pass 4** (§6 #88–89). Render-time typographic apostrophes in interface text (never in your own writing or Scripture); ear glyph for Listen; laurel wreath around the word cloud; oil lamp redrawn; step mark in focus mode; paper swatches and "Aa" samples in Appearance; the card named at the top of the note editor; compact link-card rows with spines; calmer Prepare captions; invocation brackets; one-row silence timer. Regression suite 65 → 69 checks, all passing.
 - **2026-09-28** — **P15: graphics pass 3** (§6 #86–87). Eph 3 four-direction figure and heading arrows; decorative emotion wheel; an icon for each heart need; story notes on a thread; chapter numeral opening each Bible chapter; ✦ on prayed calendar days; category spine on the walkthrough card; diamond headband on the header; month boundaries and a today mark in Year at a Glance; Your Stats as figures; framed vignettes in the prayer library. Curly quotes throughout the technique and petition sheets. Regression suite 58 → 65 checks, all passing.
 - **2026-09-28** — **P14: graphics pass 2** (§6 #84–85). Drawn marks for every prayer step in the badge and active dot; illuminated step badge; Scripture framed by corner brackets; Bible grid grouped into seven colour-tabbed sections; category spines and watermarks on story cards; olive sprig for answered prayers; trailing section rules; a ✦ riding the nav rule; light rays on Done screens; notebook margin on writing fields; Daily banner tinted by time of day; turning ✦ while Scripture loads. Regression suite 50 → 58 checks, all passing.
 - **2026-09-28** — **P13: fourth UX / UI audit pass** (§6 #82–83). Fixed dark-mode primary buttons (white on light tan, 2.18:1 — every Next/Save/Pray Again), icon keys printed as text in the past Daily session title and the Markdown export heading, and four sub-AA text colours. Floating buttons follow the content column on wide screens; long Scripture anchors clamp to two lines on the card list; heart-chart sub-labels calmed; the pray glyph redrawn as folded hands; confirm dialog restyled; tabs cross-fade. Regression suite 46 → 50 checks, all passing.
