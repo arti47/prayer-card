@@ -207,6 +207,12 @@ To unlock full PWA: deploy the folder to GitHub Pages / Netlify / Vercel (free) 
 - ✅ **Prepare** — "Try the shape" and starter labels as italic captions; lighter prompt chips.
 - ✅ **Chosen invocation** framed with corner brackets like the rest of Scripture; the silence timer fits one row at 390px.
 
+### 💬 From tester feedback (P17, 2026-09-28)
+- ✅ **Prepare questions as a guided list** — the three read-only questions on each Prepare section render as `.pl-prompts` (a plain italic list with a small `?` mark), not pills. The pill shape is kept for things you can tap, so the "When I forget…" starters are no longer confused with them.
+- ✅ **Scripture for a named feeling** — `EMOTION_VERSES`: four hand-chosen verses per core feeling (7 cores × 4), text taken from the bundled ESV. Once a feeling is named (Weekly Prepare → Feelings, Daily Approach), a collapsed "Scripture for this feeling" block lists them for up to two cores: tap a reference to read, **Add to what I'm writing** (`emoVerseInsert`), and in Morning/Starter **Meditate on this today** (`emoVerseMeditate` sets the meditation passage). Static, offline, no AI. Edit the constant freely.
+- ✅ **Card templates + field starters** — `CARD_TEMPLATES`: one ready-made card per category (Scripture from the ESV, both asks, Father's Perspective). "Start from a template" at the top of the New Card form (hidden when editing) fills everything except the name, confirming first if fields already hold text. Each field also gets a **Starters** link (`.cf-starters`) drawing from the same wording; starters append, never overwrite.
+- ⚠️ **Review the wording.** The verse choices and template text were drafted, not taken from source material — edit `EMOTION_VERSES` and `CARD_TEMPLATES` to taste before sharing.
+
 ### 🛠️ Infrastructure
 - ✅ localStorage persistence (`prayer_cards`, `pl_sessions`, `pl_draft`, `streak_days`, `daily_<date>`)
 - ✅ Storage failure handling — all writes go through `safeSetItem()` / `safeRemoveItem()` wrappers. Distinguishes `QuotaExceededError` (storage full) from `SecurityError` (private mode, Brave shields, etc.) and shows a specific toast for each. Toasts are rate-limited to once per 5 seconds so auto-save during a typing burst doesn't flood the user. On app start, `storageAvailable()` does a probe write/remove — if it fails, surfaces a "⚠ Your browser is blocking local storage" warning toast after 800ms.
@@ -588,6 +594,15 @@ A full audit of every screen in both themes at 390px, with contrast, tap-target 
 
 **Two contrast pairs still fail as measured, and both are non-text:** `--border` on `--surface` at 1.73:1 is a decorative card edge (raising it to 3:1 makes the app look wireframed), and `--accent2` on `--accent-light` at 2.94:1 is only ever a border colour now — its one text use, the selected verse number, was moved to `--accent` at 5.07:1.
 
+### P17 — Tester feedback (added 2026-09-28)
+
+| # | Feature | Status | Notes |
+|---|---|---|---|
+| 90 | Prepare questions no longer look tappable | **done** | Tester tapped the prompt pills expecting a response. |
+| 91 | Scripture for a named feeling | **done** | A RAG / semantic-search tool was suggested and declined: it would send feelings to a server or ship tens of MB of model and index, and a model choosing which Scripture you hear sits against §5. A curated static map does the job. |
+| 92 | Card templates + per-field starters | **done** | Randomising lines ("like D&D") was declined as gamifying intercession; starters give the same inspiration by choice. |
+| — | Sharing a deck with others | **not done** | Conflicts with §5 (no social/share) and real cards hold names and private situations. A names-stripped template export remains possible if the owner relaxes the guardrail. |
+
 ### P16 — Graphics pass 4 (added 2026-09-28)
 
 | # | Feature | Status | Notes |
@@ -683,6 +698,7 @@ If you're starting a new chat and the user asks for "what's next," check §6 —
 
 Newest first. Format: `YYYY-MM-DD — what changed`.
 
+- **2026-09-28** — **P17: tester feedback** (§6 #90–92). Prepare's read-only questions become a plain guided list so they no longer look like buttons; naming a feeling now offers four hand-chosen ESV verses per core feeling, to read, add to your writing, or take as today's meditation passage; new cards can start from one of eight category templates, and each field has Starters. Declined: a RAG verse search (privacy, size, §5), randomised cards (gamification), and sharing (§5). Regression suite 69 → 76 checks, all passing.
 - **2026-09-28** — **P16: graphics pass 4** (§6 #88–89). Render-time typographic apostrophes in interface text (never in your own writing or Scripture); ear glyph for Listen; laurel wreath around the word cloud; oil lamp redrawn; step mark in focus mode; paper swatches and "Aa" samples in Appearance; the card named at the top of the note editor; compact link-card rows with spines; calmer Prepare captions; invocation brackets; one-row silence timer. Regression suite 65 → 69 checks, all passing.
 - **2026-09-28** — **P15: graphics pass 3** (§6 #86–87). Eph 3 four-direction figure and heading arrows; decorative emotion wheel; an icon for each heart need; story notes on a thread; chapter numeral opening each Bible chapter; ✦ on prayed calendar days; category spine on the walkthrough card; diamond headband on the header; month boundaries and a today mark in Year at a Glance; Your Stats as figures; framed vignettes in the prayer library. Curly quotes throughout the technique and petition sheets. Regression suite 58 → 65 checks, all passing.
 - **2026-09-28** — **P14: graphics pass 2** (§6 #84–85). Drawn marks for every prayer step in the badge and active dot; illuminated step badge; Scripture framed by corner brackets; Bible grid grouped into seven colour-tabbed sections; category spines and watermarks on story cards; olive sprig for answered prayers; trailing section rules; a ✦ riding the nav rule; light rays on Done screens; notebook margin on writing fields; Daily banner tinted by time of day; turning ✦ while Scripture loads. Regression suite 50 → 58 checks, all passing.

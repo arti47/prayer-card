@@ -444,6 +444,45 @@
   .pl-prep-section:first-of-type { border-top: none; padding-top: 4px; margin-top: 4px; }
   .pl-prep-section h3 { font-size: 1rem; color: var(--text); margin-bottom: 10px; font-weight: bold; }
   .pl-chips { display: flex; flex-wrap: wrap; gap: 7px; margin-bottom: 12px; }
+  /* Scripture for a named feeling */
+  .emo-verses { margin: 8px 0 10px; border: 1px solid var(--border-soft); border-radius: var(--radius-sm); background: var(--surface); }
+  .emo-verses > summary { list-style: none; cursor: pointer; display: flex; align-items: center; gap: 7px; padding: 10px 12px; font-family: var(--serif); font-style: italic; font-size: .88rem; color: var(--accent); }
+  .emo-verses > summary::-webkit-details-marker { display: none; }
+  .emo-verses > summary::after { content: '›'; margin-left: auto; transition: transform .2s; }
+  .emo-verses[open] > summary::after { transform: rotate(90deg); }
+  .emo-verses > summary .ico { width: 16px; height: 16px; }
+  .emo-v-group { padding: 0 12px 8px; }
+  .emo-v-core { font-family: var(--sans); font-size: .64rem; text-transform: uppercase; letter-spacing: .06em; font-weight: 600; margin: 4px 0 4px; display: flex; align-items: center; gap: 6px; }
+  .emo-v-core::before { content: ''; width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
+  .emo-v { padding: 8px 0; border-top: 1px solid var(--border-soft); }
+  .emo-v-ref { font-family: var(--sans); font-size: .74rem; font-weight: 600; }
+  .emo-v-text { font-family: var(--serif); font-style: italic; font-size: .88rem; line-height: 1.55; color: var(--text2); margin-top: 2px; }
+  .emo-v-actions { display: flex; flex-wrap: wrap; gap: 4px 14px; margin-top: 4px; }
+  .emo-v-btn { display: inline-flex; align-items: center; gap: 5px; background: none; border: none; padding: 8px 0; margin: -4px 0; font-family: var(--serif); font-size: .78rem; color: var(--accent); cursor: pointer; }
+  .emo-v-btn .ico { width: 13px; height: 13px; }
+  /* Card templates + starters */
+  .cf-templates { margin: 2px 0 12px; border: 1px dashed var(--border); border-radius: var(--radius-sm); background: var(--surface2); }
+  .cf-templates > summary { list-style: none; cursor: pointer; display: flex; align-items: center; gap: 8px; padding: 11px 12px; font-family: var(--serif); font-size: .92rem; color: var(--accent); }
+  .cf-templates > summary::-webkit-details-marker { display: none; }
+  .cf-templates > summary::after { content: '›'; margin-left: auto; transition: transform .2s; }
+  .cf-templates[open] > summary::after { transform: rotate(90deg); }
+  .cf-templates > summary .ico { width: 17px; height: 17px; }
+  .cf-tpl-hint { font-size: .8rem; font-style: italic; color: var(--text3); padding: 0 12px 6px; }
+  .cf-tpl-list { display: flex; flex-direction: column; padding: 0 8px 8px; }
+  .cf-tpl { display: flex; align-items: center; gap: 9px; text-align: left; background: var(--surface); border: 1px solid var(--border-soft); border-radius: var(--radius-sm); padding: 9px 10px; margin-top: 6px; cursor: pointer; font-family: var(--serif); color: var(--text); }
+  .cf-tpl .card-cat { flex: none; }
+  .cf-tpl-title { font-size: .9rem; }
+  .cf-starters { margin: 4px 0 6px; }
+  .cf-starters .cf-chips { display: none; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+  .cf-starters.open .cf-chips { display: flex; }
+  .cf-starters.open .fh-link { color: var(--accent); }
+  .cf-chip { font-size: .8rem !important; text-align: left; }
+  /* The Prepare questions are things to consider, not controls: a plain guided
+     list with a small mark, no pill, border or shadow. The pill shape is kept for
+     things you can tap (the starter chips just below). */
+  .pl-prompts { list-style: none; margin: 2px 0 14px; padding: 2px 0 2px 14px; border-left: 1.5px solid var(--border); }
+  .pl-prompts li { position: relative; font-family: var(--serif); font-style: italic; font-size: .92rem; line-height: 1.5; color: var(--text2); padding: 3px 0 3px 16px; }
+  .pl-prompts li::before { content: '?'; position: absolute; left: 0; top: 3px; font-style: normal; font-weight: bold; font-size: .78rem; color: var(--accent2); }
   .pl-chip { background: #f1e7d6; border: 1px solid #ddcbac; color: #5a4630; padding: 6px 14px; border-radius: 99px; font-size: .78rem; font-style: italic; font-family: var(--serif); line-height: 1.45; box-shadow: 0 1px 2px rgba(120, 90, 50, 0.08); }
   [data-theme="dark"] .pl-chip { background: #3d3024; border-color: #5a4832; color: #e0cdab; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3); }
   .pl-prep-hint { font-size: .85rem; color: var(--text2); line-height: 1.6; margin-bottom: 10px; font-style: italic; }
@@ -1752,6 +1791,11 @@
   <div class="modal">
     <div class="modal-handle"></div>
     <h2 id="modal-card-title">New Prayer Card</h2>
+    <details class="cf-templates" id="cf-templates">
+      <summary><span data-ico="cards"></span>Start from a template</summary>
+      <p class="cf-tpl-hint">A ready-made shape to edit. You’ll add the name yourself.</p>
+      <div class="cf-tpl-list" id="cf-tpl-list"></div>
+    </details>
     <label>Person or Situation</label>
     <input type="text" id="f-person" placeholder="e.g. Mum's health, My job search…">
     <label>Category</label>
@@ -1767,15 +1811,20 @@
     <label>Scripture Anchor</label>
     <textarea id="f-scripture" placeholder="e.g. Psalm 27:14 — Wait for the Lord…"></textarea>
     <button type="button" class="bb-field-btn" onclick="openBibleBrowser('f-scripture')"><span data-ico="book"></span>Insert from Bible</button>
+    <div class="cf-starters" data-for="f-scripture"></div>
     <label>The Ask — Heart Level</label>
     <textarea id="f-ask-heart" placeholder="What deeper heart change or trust are you asking for?"></textarea>
+    <div class="cf-starters" data-for="f-ask-heart"></div>
     <label>The Ask — Desired Circumstance</label>
     <textarea id="f-ask-circ" placeholder="What outward change or answer are you hoping for?"></textarea>
-    <label>Father's Perspective — "Because you are…"</label>
+    <div class="cf-starters" data-for="f-ask-circ"></div>
+    <label>Father's Perspective — “Because you are…”</label>
     <input type="text" id="f-persp-attr" placeholder="Father, because you are…">
-    <label>"I will trust you with…"</label>
+    <div class="cf-starters" data-for="f-persp-attr"></div>
+    <label>“I will trust you with…”</label>
     <input type="text" id="f-persp-trust" placeholder="I will trust you with…">
-    <p class="hint">"Father, because you are ___, I will trust you with ___."</p>
+    <div class="cf-starters" data-for="f-persp-trust"></div>
+    <p class="hint">“Father, because you are ___, I will trust you with ___.”</p>
     <button class="btn btn-primary" onclick="saveCard()">Save Card</button>
     <button class="btn btn-secondary" onclick="closeModal('modal-new')">Cancel</button>
   </div>
@@ -2372,6 +2421,97 @@ function removeEmotion(type, idx){
   }
 }
 
+// ══════════ SCRIPTURE FOR A NAMED FEELING ══════════
+// A few verses for each of the seven core feelings, chosen by hand (not searched
+// for, not generated) and quoted from the bundled ESV. Shown once you have named
+// a feeling: read one, add it to what you're writing, or — in Daily Prayer — take
+// it as today's meditation passage. Edit this list freely; references resolve
+// against the bundled Bible, so any valid reference works.
+const EMOTION_VERSES = {
+  Happy: [
+    { ref:"Psalm 16:11", text:"You make known to me the path of life; in your presence there is fullness of joy; at your right hand are pleasures forevermore." },
+    { ref:"Psalm 118:24", text:"This is the day that the Lord has made; let us rejoice and be glad in it." },
+    { ref:"Philippians 4:4", text:"Rejoice in the Lord always; again I will say, rejoice." },
+    { ref:"James 1:17", text:"Every good gift and every perfect gift is from above, coming down from the Father of lights with whom there is no variation or shadow due to change." }
+  ],
+  Surprised: [
+    { ref:"Lamentations 3:22–23", text:"The steadfast love of the Lord never ceases; his mercies never come to an end; they are new every morning; great is your faithfulness." },
+    { ref:"Isaiah 55:8–9", text:"For my thoughts are not your thoughts, neither are your ways my ways, declares the Lord. For as the heavens are higher than the earth, so are my ways higher than your ways and my thoughts than your thoughts." },
+    { ref:"Romans 11:33", text:"Oh, the depth of the riches and wisdom and knowledge of God! How unsearchable are his judgments and how inscrutable his ways!" },
+    { ref:"Psalm 139:1–3", text:"O Lord, you have searched me and known me! You know when I sit down and when I rise up; you discern my thoughts from afar. You search out my path and my lying down and are acquainted with all my ways." }
+  ],
+  Bad: [
+    { ref:"Matthew 11:28–29", text:"Come to me, all who labor and are heavy laden, and I will give you rest. Take my yoke upon you, and learn from me, for I am gentle and lowly in heart, and you will find rest for your souls." },
+    { ref:"Isaiah 40:29–31", text:"He gives power to the faint, and to him who has no might he increases strength. Even youths shall faint and be weary, and young men shall fall exhausted; but they who wait for the Lord shall renew their strength; they shall mount up with wings like eagles; they shall run and not be weary; they shall walk and not faint." },
+    { ref:"Psalm 46:10", text:"Be still, and know that I am God. I will be exalted among the nations, I will be exalted in the earth!" },
+    { ref:"Psalm 62:1–2", text:"For God alone my soul waits in silence; from him comes my salvation. He alone is my rock and my salvation, my fortress; I shall not be greatly shaken." }
+  ],
+  Fearful: [
+    { ref:"Isaiah 41:10", text:"fear not, for I am with you; be not dismayed, for I am your God; I will strengthen you, I will help you, I will uphold you with my righteous right hand." },
+    { ref:"Psalm 56:3–4", text:"When I am afraid, I put my trust in you. In God, whose word I praise, in God I trust; I shall not be afraid. What can flesh do to me?" },
+    { ref:"John 14:27", text:"Peace I leave with you; my peace I give to you. Not as the world gives do I give to you. Let not your hearts be troubled, neither let them be afraid." },
+    { ref:"2 Timothy 1:7", text:"for God gave us a spirit not of fear but of power and love and self-control." }
+  ],
+  Angry: [
+    { ref:"Psalm 4:4", text:"Be angry, and do not sin; ponder in your own hearts on your beds, and be silent." },
+    { ref:"Ephesians 4:26–27", text:"Be angry and do not sin; do not let the sun go down on your anger, and give no opportunity to the devil." },
+    { ref:"James 1:19–20", text:"Know this, my beloved brothers : let every person be quick to hear, slow to speak, slow to anger; for the anger of man does not produce the righteousness of God." },
+    { ref:"Romans 12:19", text:"Beloved, never avenge yourselves, but leave it to the wrath of God, for it is written, Vengeance is mine, I will repay, says the Lord." }
+  ],
+  Disgusted: [
+    { ref:"Philippians 4:8", text:"Finally, brothers, whatever is true, whatever is honorable, whatever is just, whatever is pure, whatever is lovely, whatever is commendable, if there is any excellence, if there is anything worthy of praise, think about these things." },
+    { ref:"Romans 12:21", text:"Do not be overcome by evil, but overcome evil with good." },
+    { ref:"Psalm 73:16–17", text:"But when I thought how to understand this, it seemed to me a wearisome task, until I went into the sanctuary of God; then I discerned their end." },
+    { ref:"Micah 7:18–19", text:"Who is a God like you, pardoning iniquity and passing over transgression for the remnant of his inheritance? He does not retain his anger forever, because he delights in steadfast love. He will again have compassion on us; he will tread our iniquities underfoot. You will cast all our sins into the depths of the sea." }
+  ],
+  Sad: [
+    { ref:"Psalm 34:18", text:"The Lord is near to the brokenhearted and saves the crushed in spirit." },
+    { ref:"Matthew 5:4", text:"Blessed are those who mourn, for they shall be comforted." },
+    { ref:"Psalm 42:11", text:"Why are you cast down, O my soul, and why are you in turmoil within me? Hope in God; for I shall again praise him, my salvation and my God." },
+    { ref:"Revelation 21:4", text:"He will wipe away every tear from their eyes, and death shall be no more, neither shall there be mourning, nor crying, nor pain anymore, for the former things have passed away." }
+  ]
+};
+let _emoVersesOpen = false;
+function emotionVersesHTML(emotions, type){
+  const cores = [...new Set((emotions||[]).map(e => e.core))].filter(c => EMOTION_VERSES[c]).slice(0, 2);
+  if(!cores.length) return '';
+  const plan = type === 'dp' && dpSession ? DP_PLANS[dpSession.plan] : null;
+  const canMeditate = !!(plan && plan.steps.some(st => st.key === 'meditation' && st.passageField));
+  const groups = cores.map(core => `
+    <div class="emo-v-group" style="${idc(EMOTION_WHEEL[core].color)}">
+      <div class="emo-v-core idc">${esc(core)}</div>
+      ${EMOTION_VERSES[core].map(v => `
+        <div class="emo-v">
+          <span class="scripture-ref emo-v-ref" onclick="event.stopPropagation();lookupScripture('${v.ref}')">${esc(v.ref)}</span>
+          <div class="emo-v-text">${esc(v.text)}</div>
+          <div class="emo-v-actions">
+            <button type="button" class="emo-v-btn" onclick="emoVerseInsert('${type}','${v.ref}')">${ICON.pen}Add to what I'm writing</button>
+            ${canMeditate ? `<button type="button" class="emo-v-btn" onclick="emoVerseMeditate('${v.ref}')">${ICON.book}Meditate on this today</button>` : ''}
+          </div>
+        </div>`).join('')}
+    </div>`).join('');
+  return `<details class="emo-verses"${_emoVersesOpen?' open':''} ontoggle="_emoVersesOpen=this.open">
+    <summary>${ICON.book}Scripture for this feeling</summary>${groups}</details>`;
+}
+function emoVerseFind(ref){ for(const vs of Object.values(EMOTION_VERSES)){ const v = vs.find(x => x.ref === ref); if(v) return v; } return null; }
+function emoVerseInsert(type, ref){
+  const v = emoVerseFind(ref); if(!v) return;
+  const ta = document.getElementById(type === 'pl' ? 'pl-prep-feelings' : 'dp-field-text');
+  if(!ta){ showToast('Open the writing field first'); return; }
+  const line = `${v.ref} — ${v.text}`;
+  ta.value = ta.value.trim() ? ta.value.replace(/\s*$/, '') + '\n' + line : line;
+  ta.dispatchEvent(new Event('input', { bubbles: true }));
+  if(typeof autoGrow === 'function') autoGrow(ta);
+  showToast('✓ Added to your journal');
+}
+function emoVerseMeditate(ref){
+  if(!dpSession) return;
+  dpSaveCurrentStep && dpSaveCurrentStep();
+  dpSession.steps.meditation = Object.assign({}, dpSession.steps.meditation, { passage: ref });
+  saveDailyDraft(dpSession);
+  showToast('✓ Set as today’s meditation passage');
+}
+
 // Render emotion chips + the "Name what you're feeling" link inline in a step
 function emotionChipsAndLink(emotions, type){
   const chipsHTML = (emotions && emotions.length) ? `
@@ -2380,7 +2520,7 @@ function emotionChipsAndLink(emotions, type){
       ${emotions.map((e, idx) => `<span class="emo-chip tint-chip" style="${idc(emotionColor(e))}">${esc(emotionLabel(e))}<button class="emo-chip-x" title="Remove" onclick="event.stopPropagation();removeEmotion('${type}', ${idx})">×</button></span>`).join('')}
     </div>` : '';
   const linkLabel = ICON.heart + ((emotions && emotions.length) ? 'Name another emotion' : 'Name what you\'re feeling');
-  return `${chipsHTML}<button class="emo-link" onclick="openEmotionPicker('${type}')">${linkLabel}</button>`;
+  return `${chipsHTML}${emotionVersesHTML(emotions, type)}<button class="emo-link" onclick="openEmotionPicker('${type}')">${linkLabel}</button>`;
 }
 
 // ══════════ SCRIPTURE LOOKUP (P4 #15) ══════════
@@ -2703,7 +2843,7 @@ function placeNavMark(){
 window.addEventListener('resize', () => requestAnimationFrame(placeNavMark));
 // Typographic apostrophes in interface text, applied as the page renders. Anything
 // you wrote, Scripture, and form fields are left exactly as they are.
-const APOS_SKIP = 'textarea, input, select, script, style, [contenteditable], .bb-verse, .bb-preview, .note-text, .he-snippet, .sv-text, .pl-prev-text, .pl-reflection-text, .card-title, .card-scripture, .p-title, .p-scripture, .p-ask, .step-prompt em, .step-ask-line em, .persp-block em, .detail-section p, .rv-name, .rv-excerpt, .rv-scripture, .ap-card-name, .ap-card-scripture, .link-card-title, .link-card-sub, .timeline-snippet, .timeline-title, .focus-passage-body, .focus-carry-body, .dp-recall-body, .scripture-ref, .psf-text, .pl-done-verse, .dp-inv-text, .dp-inv-option-text, .dp-inv-ref, .wf-word, .emo-chip, .pl-linked-chip, .note-ctx-name, .prayer-lib-text, .tech-example, #scripture-content, .heatmap-day-list, mark';
+const APOS_SKIP = 'textarea, input, select, script, style, [contenteditable], .bb-verse, .bb-preview, .note-text, .he-snippet, .sv-text, .pl-prev-text, .pl-reflection-text, .card-title, .card-scripture, .p-title, .p-scripture, .p-ask, .step-prompt em, .step-ask-line em, .persp-block em, .detail-section p, .rv-name, .rv-excerpt, .rv-scripture, .ap-card-name, .ap-card-scripture, .link-card-title, .link-card-sub, .timeline-snippet, .timeline-title, .focus-passage-body, .focus-carry-body, .dp-recall-body, .scripture-ref, .psf-text, .pl-done-verse, .dp-inv-text, .dp-inv-option-text, .dp-inv-ref, .wf-word, .emo-chip, .pl-linked-chip, .note-ctx-name, .prayer-lib-text, .tech-example, #scripture-content, .heatmap-day-list, .emo-v-text, mark';
 function smartApostrophes(root){
   const w = document.createTreeWalker(root || document.body, NodeFilter.SHOW_TEXT, {
     acceptNode: n => (n.nodeValue.includes("'") && n.parentElement && !n.parentElement.closest(APOS_SKIP)) ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT
@@ -4487,11 +4627,70 @@ function syncCatSelectIcon(){
   ico.innerHTML = ICON[CAT_ICON[key]];
   ico.className = 'cat-select-ico ' + (CAT_CLASS[key] || 'cat-other');
 }
+// ══════════ CARD TEMPLATES + FIELD STARTERS ══════════
+// One ready-made card per category, for someone who would rather start from a
+// shape than a blank page. The name is always left for you to write; everything
+// else is a suggestion to edit. The same wording feeds each field's "Starters".
+const CARD_TEMPLATES = [
+  { category:"personal", title:"A decision or season of work", scripture:"Proverbs 3:5–6 — Trust in the Lord with all your heart, and do not lean on your own understanding. In all your ways acknowledge him, and he will make straight your paths.", askHeart:"that I would trust you more than my own understanding", askCirc:"clear direction and an open door", perspAttr:"wise and good in every detail", perspTrust:"the outcome" },
+  { category:"family", title:"A family member", scripture:"Psalm 103:17 — But the steadfast love of the Lord is from everlasting to everlasting on those who fear him, and his righteousness to children’s children,", askHeart:"that they would know how deeply they are loved by you", askCirc:"peace and patience in our home", perspAttr:"faithful from generation to generation", perspTrust:"the people I love most" },
+  { category:"suffering", title:"Someone who is suffering", scripture:"2 Corinthians 1:3–4 — Blessed be the God and Father of our Lord Jesus Christ, the Father of mercies and God of all comfort, who comforts us in all our affliction, so that we may be able to comfort those who are in any affliction, with the comfort with which we ourselves are comforted by God.", askHeart:"that they would sense your nearness in the pain", askCirc:"healing, relief, and the right help at the right time", perspAttr:"the Father of mercies and God of all comfort", perspTrust:"their suffering" },
+  { category:"friend", title:"A friend who doesn’t yet know Jesus", scripture:"1 Timothy 2:3–4 — This is good, and it is pleasing in the sight of God our Savior, who desires all people to be saved and to come to the knowledge of the truth.", askHeart:"that they would come to know you", askCirc:"a natural opening for a real conversation", perspAttr:"patient, not wishing that any should perish", perspTrust:"their story" },
+  { category:"church", title:"My church and its leaders", scripture:"Matthew 9:37–38 — Then he said to his disciples, The harvest is plentiful, but the laborers are few; therefore pray earnestly to the Lord of the harvest to send out laborers into his harvest.", askHeart:"that we would love you and one another more deeply", askCirc:"wisdom, unity, and workers for the harvest", perspAttr:"the Lord of the harvest", perspTrust:"the life of our church" },
+  { category:"heart", title:"A change in my own heart", scripture:"Psalm 139:23–24 — Search me, O God, and know my heart! Try me and know my thoughts! And see if there be any grievous way in me, and lead me in the way everlasting!", askHeart:"that you would search me and lead me in the way everlasting", askCirc:"freedom from the pattern I keep returning to", perspAttr:"gentle with my weakness", perspTrust:"my slow growth" },
+  { category:"dream", title:"A big dream", scripture:"Ephesians 3:20–21 — Now to him who is able to do far more abundantly than all that we ask or think, according to the power at work within us, to him be glory in the church and in Christ Jesus throughout all generations, forever and ever. Amen.", askHeart:"that I would want your glory more than my own success", askCirc:"the people and resources this needs, in your time", perspAttr:"able to do far more than all I ask or think", perspTrust:"this dream" },
+  { category:"other", title:"Something on my heart", scripture:"Psalm 27:14 — Wait for the Lord; be strong, and let your heart take courage; wait for the Lord!", askHeart:"that I would wait for you with courage", askCirc:"an answer, in your time and in your way", perspAttr:"near and never in a hurry", perspTrust:"this waiting" }
+];
+const CARD_FIELD_KEYS = { 'f-scripture':'scripture', 'f-ask-heart':'askHeart', 'f-ask-circ':'askCirc', 'f-persp-attr':'perspAttr', 'f-persp-trust':'perspTrust' };
+function renderCardFormHelpers(){
+  const list = document.getElementById('cf-tpl-list');
+  if(list && !list.dataset.built){
+    list.innerHTML = CARD_TEMPLATES.map((t, i) => `<button type="button" class="cf-tpl" onclick="applyCardTemplate(${i})">${catChip(t.category)}<span class="cf-tpl-title">${esc(t.title)}</span></button>`).join('');
+    list.dataset.built = '1';
+  }
+  document.querySelectorAll('.cf-starters').forEach(box => {
+    if(box.dataset.built) return;
+    const key = CARD_FIELD_KEYS[box.dataset.for];
+    const items = [...new Set(CARD_TEMPLATES.map(t => t[key]))];
+    box.innerHTML = `<button type="button" class="fh-link" onclick="this.parentElement.classList.toggle('open')">${ICON.sparkle}<span class="fh-txt">Starters</span></button>
+      <div class="cf-chips">${items.map((v, i) => `<button type="button" class="pl-forget-chip cf-chip" onclick="cardStarterInsert('${box.dataset.for}', ${i})">${esc(v)}</button>`).join('')}</div>`;
+    box.dataset.built = '1';
+  });
+}
+function cardStarterInsert(fieldId, i){
+  const key = CARD_FIELD_KEYS[fieldId];
+  const val = [...new Set(CARD_TEMPLATES.map(t => t[key]))][i];
+  const el = document.getElementById(fieldId); if(!el || !val) return;
+  const cur = el.value.trim();
+  // Never overwrite what's there: a longer field gets a new line, a short one a comma.
+  el.value = !cur ? val : (el.tagName === 'TEXTAREA' ? cur + '\n' + val : cur + ', ' + val);
+  el.dispatchEvent(new Event('input', { bubbles: true }));
+  el.closest('.modal')?.querySelectorAll('.cf-starters.open').forEach(b => b.classList.remove('open'));
+  el.focus();
+}
+async function applyCardTemplate(i){
+  const t = CARD_TEMPLATES[i]; if(!t) return;
+  const ids = ['f-scripture','f-ask-heart','f-ask-circ','f-persp-attr','f-persp-trust'];
+  if(ids.some(id => document.getElementById(id).value.trim())){
+    const ok = await uiConfirm('Replace what you’ve written in this card with the template?', { okText:'Replace' });
+    if(!ok) return;
+  }
+  document.getElementById('f-category').value = t.category; syncCatSelectIcon();
+  ids.forEach(id => { document.getElementById(id).value = t[CARD_FIELD_KEYS[id]]; });
+  const person = document.getElementById('f-person');
+  person.placeholder = t.title + ' — who or what is it?';
+  const d = document.getElementById('cf-templates'); if(d) d.open = false;
+  person.focus();
+}
 function openNewCard(){
   editingCardId=null;
   document.getElementById('modal-card-title').textContent='New Prayer Card';
   ['f-person','f-scripture','f-ask-heart','f-ask-circ','f-persp-attr','f-persp-trust'].forEach(id=>document.getElementById(id).value='');
-  document.getElementById('f-category').value='personal'; syncCatSelectIcon(); openModal('modal-new');
+  document.getElementById('f-category').value='personal'; syncCatSelectIcon();
+  document.getElementById('f-person').placeholder = "e.g. Mum's health, My job search…";
+  renderCardFormHelpers();
+  const tp = document.getElementById('cf-templates'); if(tp){ tp.hidden = false; tp.open = false; }
+  openModal('modal-new');
 }
 function openEditCard(id){
   const c=loadCards().find(x=>x.id===id); if(!c)return; editingCardId=id;
@@ -4503,6 +4702,8 @@ function openEditCard(id){
   document.getElementById('f-ask-circ').value=c.askCirc||'';
   document.getElementById('f-persp-attr').value=c.perspAttr||'';
   document.getElementById('f-persp-trust').value=c.perspTrust||'';
+  renderCardFormHelpers();
+  const tp = document.getElementById('cf-templates'); if(tp) tp.hidden = true;   // templates are for new cards only
   closeModal('modal-detail'); openModal('modal-new');
 }
 function saveCard(){
@@ -6199,7 +6400,7 @@ function renderPrepareStep(el,step,dots,steps){
   const sectionsHTML=secsToDraw.map(sec=>`
     <div class="pl-prep-section">
       <h3>${sec.title}</h3>
-      <div class="pl-chips">${sec.prompts.map(p=>`<span class="pl-chip">${p}</span>`).join('')}</div>
+      <ul class="pl-prompts" aria-label="Questions to consider">${sec.prompts.map(p=>`<li>${p}</li>`).join('')}</ul>
       <div class="pl-prep-hint">${sec.hint}</div>
       ${sec.hasChart?`<button class="pl-chart-btn" onclick="openHeartChart()">${ICON.list}${heartNeeds.length?'Edit your heart-need selections':'Open “Needs of the Heart” Chart — tap to choose'}</button>${selectedChipsHTML}`:''}
       ${sec.key==='feelings' ? emotionChipsAndLink(plEmotions, 'pl') : ''}
