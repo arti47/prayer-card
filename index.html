@@ -445,16 +445,37 @@
   .pl-prep-section h3 { font-size: 1rem; color: var(--text); margin-bottom: 10px; font-weight: bold; }
   .pl-chips { display: flex; flex-wrap: wrap; gap: 7px; margin-bottom: 12px; }
   /* Scripture for a named feeling */
-  .emo-verses { margin: 8px 0 10px; border: 1px solid var(--border-soft); border-radius: var(--radius-sm); background: var(--surface); }
-  .emo-verses > summary { list-style: none; cursor: pointer; display: flex; align-items: center; gap: 7px; padding: 10px 12px; font-family: var(--serif); font-style: italic; font-size: .88rem; color: var(--accent); }
-  .emo-verses > summary::-webkit-details-marker { display: none; }
-  .emo-verses > summary::after { content: '›'; margin-left: auto; transition: transform .2s; }
-  .emo-verses[open] > summary::after { transform: rotate(90deg); }
-  .emo-verses > summary .ico { width: 16px; height: 16px; }
-  .emo-v-group { padding: 0 12px 8px; }
-  .emo-v-core { font-family: var(--sans); font-size: .64rem; text-transform: uppercase; letter-spacing: .06em; font-weight: 600; margin: 4px 0 4px; display: flex; align-items: center; gap: 6px; }
-  .emo-v-core::before { content: ''; width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
+  .emo-verses, .bb-feel-refine { --emo-c: var(--idc); }
+  [data-theme="dark"] .emo-verses, [data-theme="dark"] .bb-feel-refine { --emo-c: var(--idc-dark); }
+  /* Opens as a peek — the first verse, two lines — so the feature is seen, not found. */
+  .emo-verses { margin: 8px 0 10px; border: 1px solid var(--border-soft); border-left: 3px solid var(--emo-c); border-radius: var(--radius-sm); background: var(--surface); padding: 0 12px 4px; scroll-margin: 90px; }
+  .emo-v-head { display: flex; align-items: center; gap: 7px; width: 100%; background: none; border: none; padding: 10px 0 6px; font-family: var(--serif); font-size: .9rem; color: var(--text2); text-align: left; cursor: pointer; }
+  .emo-v-head .ico { width: 16px; height: 16px; color: var(--accent); flex: none; }
+  .emo-v-head em { font-style: italic; color: var(--emo-c); }
+  .emo-v-n { margin-left: auto; font-family: var(--sans); font-size: .68rem; font-weight: 600; color: var(--text3); background: var(--surface2); border: 1px solid var(--border-soft); border-radius: 999px; padding: 1px 8px; }
   .emo-v { padding: 8px 0; border-top: 1px solid var(--border-soft); }
+  .emo-verses:not(.open) .emo-v ~ .emo-v, .emo-verses:not(.open) .emo-v-actions { display: none; }
+  .emo-verses:not(.open) .emo-v-text { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; cursor: pointer; }
+  .emo-v-more { display: block; background: none; border: none; padding: 8px 0 6px; margin: 0; font-family: var(--serif); font-style: italic; font-size: .82rem; color: var(--accent); cursor: pointer; }
+  .emo-verses.glow { animation: emoGlow 1.8s ease-out 1; }
+  @keyframes emoGlow { 0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--emo-c) 55%, transparent); } 35% { box-shadow: 0 0 0 6px color-mix(in srgb, var(--emo-c) 22%, transparent); } 100% { box-shadow: 0 0 0 0 transparent; } }
+  @media (prefers-reduced-motion: reduce) { .emo-verses.glow { animation: none; outline: 2px solid var(--emo-c); outline-offset: 2px; } }
+  .emo-link-cap { font-family: var(--serif); font-style: italic; font-size: .8rem; color: var(--text3); text-align: center; margin: -2px 0 10px; }
+  .emo-chip[role=button] { cursor: pointer; }
+  /* Bible reader — Scripture by feeling */
+  .bb-feel-btn { display: flex; align-items: center; gap: 8px; width: 100%; margin: 4px 0 10px; padding: 11px 12px; background: var(--surface2); border: 1px solid var(--border-soft); border-radius: var(--radius-sm); font-family: var(--serif); font-size: .92rem; color: var(--accent); cursor: pointer; text-align: left; }
+  .bb-feel-btn .ico { width: 17px; height: 17px; }
+  .bb-feel-btn::after { content: '›'; margin-left: auto; }
+  .bb-feel-lead { font-family: var(--serif); font-style: italic; font-size: .85rem; color: var(--text3); margin: 2px 0 10px; }
+  .bb-feel-grid { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 10px; }
+  .bb-feel-grid .emo-option { flex: 0 1 auto; }
+  .bb-feel-refine { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin: 0 0 8px; font-family: var(--sans); font-size: .7rem; color: var(--text3); }
+  .bb-feel-refine button { padding: 5px 11px; border-radius: 999px; border: 1px solid var(--emo-c); background: var(--surface); color: var(--emo-c); font-family: var(--serif); font-size: .82rem; cursor: pointer; }
+  .bb-feel-refine button.on { background: var(--emo-c); color: var(--on-accent); }
+  .bb-feel-v { padding: 10px 0; border-top: 1px solid var(--border-soft); cursor: pointer; }
+  .bb-feel-v .emo-v-ref { color: var(--accent); }
+  .bb-feel-v .emo-v-text { color: var(--text); }
+  .bb-feel-open { font-family: var(--sans); font-size: .68rem; color: var(--text3); margin-top: 3px; }
   .emo-v-ref { font-family: var(--sans); font-size: .74rem; font-weight: 600; }
   .emo-v-text { font-family: var(--serif); font-style: italic; font-size: .88rem; line-height: 1.55; color: var(--text2); margin-top: 2px; }
   .emo-v-actions { display: flex; flex-wrap: wrap; gap: 4px 14px; margin-top: 4px; }
@@ -1652,13 +1673,14 @@
     <details class="about-block reflect-block">
       <summary><h3><span data-ico="sun"></span>Daily Prayer</h3></summary>
       <p>A daily devotional rhythm. Three plan options — Morning (25 min), Evening (15 min), Starter (15 min) — each following the same shape: Approach → Bible meditation → Prayer → Contemplation.</p>
+      <p>On Approach, name what you’re feeling and Scripture chosen for that feeling appears beneath it — read it, add it to your prayer, or take it as the day’s meditation passage. The same verses are in the Bible reader under <em>Scripture by feeling</em>.</p>
     </details>
     <div data-orn-divider></div>
     <details class="about-block reflect-block">
       <summary><h3><span data-ico="pen"></span>Weekly Deep Time</h3></summary>
       <p>A once-a-week deeper practice — Sunday recommended. Begins with a <strong>Preparing to Pray</strong> reflection and walks through the Lord's Prayer in 6 steps — each with a <strong>Pray</strong> prompt and a <strong>Listen</strong> prompt.</p>
       <ul style="margin-top:8px">
-        <li>✦ <strong>Prepare</strong> — Circumstances, feelings, mapping your heart</li>
+        <li>✦ <strong>Prepare</strong> — Circumstances, feelings (name one, and Scripture for it appears), mapping your heart</li>
         <li><strong>1. Come</strong> — Worship, draw near</li>
         <li><strong>2. Humble</strong> — Trust &amp; submission</li>
         <li><strong>3. Ask</strong> — Bring your needs</li>
@@ -2387,9 +2409,12 @@ function pickEmotionSecondary(name){
 function pickEmotionTertiary(name){
   // Tap commits immediately
   const arr = _emoTarget.getArray();
-  if(arr) arr.push({ core:_emoCore, secondary:_emoSecondary, tertiary:name });
+  const e = { core:_emoCore, secondary:_emoSecondary, tertiary:name };
+  if(arr) arr.push(e);
+  _emoVerseFocus = emoGroupKey(e);
   _emoTarget.onChange();
   closeEmotionPicker();
+  emoFirstReveal(e);
 }
 function emotionBack(){
   if(_emoStage === 'tertiary'){ _emoStage = 'secondary'; _emoSecondary = null; }
@@ -2399,15 +2424,13 @@ function emotionBack(){
 function commitEmotion(){
   // Commit at current depth (secondary or tertiary stage's parent)
   const arr = _emoTarget.getArray();
-  if(arr){
-    if(_emoStage === 'secondary'){
-      arr.push({ core:_emoCore, secondary:null, tertiary:null });
-    } else if(_emoStage === 'tertiary'){
-      arr.push({ core:_emoCore, secondary:_emoSecondary, tertiary:null });
-    }
-  }
+  const e = _emoStage === 'tertiary' ? { core:_emoCore, secondary:_emoSecondary, tertiary:null }
+                                     : { core:_emoCore, secondary:null, tertiary:null };
+  if(arr) arr.push(e);
+  _emoVerseFocus = emoGroupKey(e);
   _emoTarget.onChange();
   closeEmotionPicker();
+  emoFirstReveal(e);
 }
 function closeEmotionPicker(){
   closeModal('modal-emotion');
@@ -3106,9 +3129,15 @@ const EMOTION_TER_VERSES = {
   }
 };
 EMOTION_TER_VERSES.Disgusted.Disappointed.Revolted = EMOTION_TER_VERSES.Disgusted.Disappointed.Appalled;
-let _emoVersesOpen = false;
+let _emoVersesOpen = new Set();   // group keys shown in full
+let _emoVerseFocus = null;         // a group asked for by tapping its chip — shown first
 // One set per named feeling — the most specific that exists: third level, then
 // second, then top. Repeats collapse; at most two sets show.
+function emoGroupKey(e){
+  const ter = e.secondary && e.tertiary && EMOTION_TER_VERSES[e.core]?.[e.secondary]?.[e.tertiary];
+  const sub = e.secondary && EMOTION_SUB_VERSES[e.core]?.[e.secondary];
+  return (ter ? [e.core, e.secondary, e.tertiary] : sub ? [e.core, e.secondary] : [e.core]).join('|');
+}
 function emoVerseGroups(emotions){
   const seen = new Set(), out = [];
   for(const e of emotions || []){
@@ -3119,8 +3148,10 @@ function emoVerseGroups(emotions){
     const key = path.join('|');
     if(!verses || seen.has(key)) continue;
     seen.add(key);
-    out.push({ core: e.core, label: path.join(' · '), verses });
+    out.push({ core: e.core, key, label: path.join(' · '), name: path[path.length - 1], verses });
   }
+  const f = out.findIndex(g => g.key === _emoVerseFocus);
+  if(f > 0) out.unshift(out.splice(f, 1)[0]);
   return out.slice(0, 2);
 }
 function emotionVersesHTML(emotions, type){
@@ -3128,21 +3159,57 @@ function emotionVersesHTML(emotions, type){
   if(!groups0.length) return '';
   const plan = type === 'dp' && dpSession ? DP_PLANS[dpSession.plan] : null;
   const canMeditate = !!(plan && plan.steps.some(st => st.key === 'meditation' && st.passageField));
-  const groups = groups0.map(g => `
-    <div class="emo-v-group" style="${idc(EMOTION_WHEEL[g.core].color)}">
-      <div class="emo-v-core idc">${esc(g.label)}</div>
+  return groups0.map(g => {
+    const open = _emoVersesOpen.has(g.key), n = g.verses.length;
+    return `
+    <div class="emo-verses${open ? ' open' : ''}" data-key="${esc(g.key)}" style="${idc(EMOTION_WHEEL[g.core].color)}">
+      <button type="button" class="emo-v-head" onclick="emoVersesToggle(this)" aria-expanded="${open}" title="${esc(g.label)}">${ICON.book}<span>Scripture for <em>${esc(g.name)}</em></span><span class="emo-v-n">${n}</span></button>
       ${g.verses.map(v => `
         <div class="emo-v">
           <span class="scripture-ref emo-v-ref" onclick="event.stopPropagation();lookupScripture('${v.ref}')">${esc(v.ref)}</span>
-          <div class="emo-v-text">${esc(v.text)}</div>
+          <div class="emo-v-text" onclick="emoVersesPeekTap(this)">${esc(v.text)}</div>
           <div class="emo-v-actions">
             <button type="button" class="emo-v-btn" onclick="emoVerseInsert('${type}','${v.ref}')">${ICON.pen}Add to what I'm writing</button>
             ${canMeditate ? `<button type="button" class="emo-v-btn" onclick="emoVerseMeditate('${v.ref}')">${ICON.book}Meditate on this today</button>` : ''}
           </div>
         </div>`).join('')}
-    </div>`).join('');
-  return `<details class="emo-verses"${_emoVersesOpen?' open':''} ontoggle="_emoVersesOpen=this.open">
-    <summary>${ICON.book}Scripture for this feeling</summary>${groups}</details>`;
+      <button type="button" class="emo-v-more" onclick="emoVersesToggle(this)">${open ? 'Show fewer' : `Show all ${n} →`}</button>
+    </div>`;
+  }).join('');
+}
+// Open or fold one feeling's verses in place — no re-render, so nothing jumps.
+function emoVersesToggle(el){
+  const box = el.closest('.emo-verses'); if(!box) return;
+  const key = box.dataset.key, open = !box.classList.contains('open');
+  box.classList.toggle('open', open);
+  open ? _emoVersesOpen.add(key) : _emoVersesOpen.delete(key);
+  box.querySelector('.emo-v-head')?.setAttribute('aria-expanded', open);
+  const more = box.querySelector('.emo-v-more');
+  if(more) more.textContent = open ? 'Show fewer' : `Show all ${box.querySelectorAll('.emo-v').length} →`;
+}
+function emoVersesPeekTap(el){ const box = el.closest('.emo-verses'); if(box && !box.classList.contains('open')) emoVersesToggle(el); }
+// Bring a feeling's verses into view with one soft glow. Used when a chip is
+// tapped, and once — the first time a feeling is named — so the verses are noticed.
+function emoRevealVerses(key){
+  setTimeout(() => {
+    const box = [...document.querySelectorAll('.emo-verses')].find(b => b.dataset.key === key) || document.querySelector('.emo-verses');
+    if(!box) return;
+    box.scrollIntoView({ block:'center', behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
+    box.classList.remove('glow'); void box.offsetWidth; box.classList.add('glow');
+    setTimeout(() => box.classList.remove('glow'), 1900);
+  }, 260);
+}
+function emoFirstReveal(e){
+  if(localStorage.getItem('emo_verses_seen')) return;
+  safeSetItem('emo_verses_seen', '1');
+  emoRevealVerses(emoGroupKey(e));
+}
+function emoChipVerses(type, idx){
+  const arr = type === 'pl' ? plSession?.steps?.prepare?.emotions : dpSession?.steps?.approach?.emotions;
+  const e = arr && arr[idx]; if(!e) return;
+  _emoVerseFocus = emoGroupKey(e);
+  type === 'pl' ? renderPL() : renderDailyPrayer();
+  emoRevealVerses(_emoVerseFocus);
 }
 function emoVerseFind(ref){
   const sets = [...Object.values(EMOTION_VERSES), ...Object.values(EMOTION_SUB_VERSES).flatMap(Object.values),
@@ -3181,10 +3248,11 @@ function emotionChipsAndLink(emotions, type){
   const chipsHTML = (emotions && emotions.length) ? `
     <div class="emo-chips-label">Named feelings</div>
     <div class="emo-chips-row">
-      ${emotions.map((e, idx) => `<span class="emo-chip tint-chip" style="${idc(emotionColor(e))}">${esc(emotionLabel(e))}<button class="emo-chip-x" title="Remove" onclick="event.stopPropagation();removeEmotion('${type}', ${idx})">×</button></span>`).join('')}
+      ${emotions.map((e, idx) => `<span class="emo-chip tint-chip" style="${idc(emotionColor(e))}" role="button" tabindex="0" title="Scripture for this feeling" onclick="emoChipVerses('${type}', ${idx})" onkeydown="if(event.key==='Enter')emoChipVerses('${type}', ${idx})">${esc(emotionLabel(e))}<button class="emo-chip-x" title="Remove" onclick="event.stopPropagation();removeEmotion('${type}', ${idx})">×</button></span>`).join('')}
     </div>` : '';
   const linkLabel = ICON.heart + ((emotions && emotions.length) ? 'Name another emotion' : 'Name what you\'re feeling');
-  return `${chipsHTML}${emotionVersesHTML(emotions, type)}<button class="emo-link" onclick="openEmotionPicker('${type}')">${linkLabel}</button>`;
+  const cap = (emotions && emotions.length) ? '' : `<p class="emo-link-cap">Name it, and Scripture for that feeling will appear here.</p>`;
+  return `${chipsHTML}${emotionVersesHTML(emotions, type)}<button class="emo-link" onclick="openEmotionPicker('${type}')">${linkLabel}</button>${cap}`;
 }
 
 // ══════════ SCRIPTURE LOOKUP (P4 #15) ══════════
@@ -3473,7 +3541,8 @@ document.addEventListener('focusin', e => {
 let _bbBook=null, _bbBookName='', _bbMd='', _bbChapter=null, _bbChapCount=0,
     _bbVerses=[], _bbSel=new Set(), _bbAnchor=null, _bbTargetId=null, _bbMode='both',
     _bbFilter='all', _bbSort='canon', _bbSearch='',
-    _bbBmOpen=false, _bbBmAll=false;
+    _bbBmOpen=false, _bbBmAll=false,
+    _bbFeel=null, _bbFeelReturn=false;   // Scripture by feeling: {core, sec, ter}
 const NT_START_INDEX = 39; // BIBLE_BOOKS_ORDERED[39] = Matthew
 const _bbFileToNameMap = Object.fromEntries(BIBLE_BOOKS_ORDERED.map(b => [b[1], b[0]]));
 function _bbFileToName(file){ return _bbFileToNameMap[file] || file; }
@@ -3562,7 +3631,7 @@ function setBibleFab(on){
 function openBibleBrowser(targetId){
   _bbTargetId = targetId || null;
   _bbBook=null; _bbBookName=''; _bbChapter=null; _bbVerses=[]; bbClearSel();
-  _bbSearch=''; _bbFilter='all'; _bbSort='canon'; _bbBmAll=false;
+  _bbSearch=''; _bbFilter='all'; _bbSort='canon'; _bbBmAll=false; _bbFeel=null; _bbFeelReturn=false;
   renderBibleBrowser();
   openModal('modal-bible');
 }
@@ -3653,6 +3722,7 @@ function bbScrollToFirstSelected(){
 
 function renderBibleBrowser(){
   const c=document.getElementById('bible-content');
+  if(!_bbBook && _bbFeel){ c.innerHTML = bbFeelHTML(); c.scrollTop = 0; return; }
   if(!_bbBook){ c.innerHTML = bbBookListHTML(); return; }
   if(!_bbChapter){ c.innerHTML = bbChapterListHTML(); return; }
   c.innerHTML = bbVerseViewHTML();
@@ -3673,6 +3743,7 @@ function bbBookListHTML(){
       `<div id="bb-jump">${bbJumpHTML(_bbSearch)}</div>` +
       `<div class="bb-filters">${bbFilterToggleHTML()}${bbSortToggleHTML()}</div>` +
     `</div>` +
+    `<div id="bb-feel-entry">${bbFeelEntryHTML()}</div>` +
     `<div id="bb-bookmarks">${bbBookmarksHTML()}</div>` +
     `<div id="bb-book-results">${bbBookResultsHTML()}</div>` +
     `<button class="btn btn-secondary" onclick="closeModal('modal-bible')" style="margin-top:12px">Close</button>`;
@@ -3747,6 +3818,7 @@ function bbSearchInput(){
   _bbSearch=el.value;
   document.getElementById('bb-jump').innerHTML=bbJumpHTML(_bbSearch);
   bbRefreshBookmarks();
+  const fe=document.getElementById('bb-feel-entry'); if(fe) fe.innerHTML=bbFeelEntryHTML();
   document.getElementById('bb-book-results').innerHTML=bbBookResultsHTML();
 }
 function bbSetFilter(f){ _bbFilter=f; bbRefreshBookControls(); }
@@ -3794,9 +3866,72 @@ function bbChapterListHTML(){
   for(let n=1;n<=_bbChapCount;n++) items += `<div class="bb-item" onclick="bbSelectChapter(${n})">${n}</div>`;
   return bbHead(_bbBookName,'bbBackToBooks()') + `<div class="bb-grid chapters">${items}</div>`;
 }
-function bbBackToBooks(){ _bbBook=null; _bbChapter=null; bbClearSel(); _bbSearch=''; renderBibleBrowser(); }
+function bbBackToBooks(){ _bbBook=null; _bbChapter=null; bbClearSel(); _bbSearch=''; _bbFeel=null; _bbFeelReturn=false; renderBibleBrowser(); }
 function bbSelectChapter(n){ _bbChapter=n; bbClearSel(); _bbVerses=bibleVerses(_bbMd,n); renderBibleBrowser(); }
-function bbBackToChapters(){ _bbChapter=null; bbClearSel(); renderBibleBrowser(); }
+function bbBackToChapters(){
+  // A verse opened from "By feeling" goes back to that feeling's list.
+  if(_bbFeelReturn){ _bbFeelReturn=false; _bbBook=null; _bbChapter=null; bbClearSel(); renderBibleBrowser(); return; }
+  _bbChapter=null; bbClearSel(); renderBibleBrowser();
+}
+// ── Scripture by feeling: the same hand-chosen verses as the sessions, any time ──
+function bbFeelEntryHTML(){
+  if(_bbSearch.trim()) return '';
+  return `<button class="bb-feel-btn" onclick="bbFeelOpen()">${ICON.heart}Scripture by feeling</button>`;
+}
+function bbFeelOpen(){ _bbFeel={core:null, sec:null, ter:null}; renderBibleBrowser(); }
+function bbFeelBack(){
+  if(!_bbFeel){ return; }
+  if(_bbFeel.ter){ _bbFeel.ter=null; }
+  else if(_bbFeel.sec !== null){ _bbFeel.sec=null; }
+  else if(_bbFeel.core){ _bbFeel.core=null; }
+  else { _bbFeel=null; }
+  renderBibleBrowser();
+}
+function bbFeelPick(level, val){
+  if(level==='core'){ _bbFeel={core:val, sec:null, ter:null}; }
+  else if(level==='sec'){ _bbFeel.sec=val; _bbFeel.ter=null; }
+  else { _bbFeel.ter = (_bbFeel.ter===val ? null : val); }
+  renderBibleBrowser();
+}
+function bbFeelVerses(){
+  const f=_bbFeel;
+  if(f.ter) return EMOTION_TER_VERSES[f.core]?.[f.sec]?.[f.ter];
+  if(f.sec) return EMOTION_SUB_VERSES[f.core]?.[f.sec];
+  return EMOTION_VERSES[f.core];
+}
+function bbFeelHTML(){
+  const f=_bbFeel, q=s=>s.replace(/'/g,"&#39;");
+  const crumb = [f.core, f.sec, f.ter].filter(Boolean).join(' · ') || 'By feeling';
+  let body='';
+  if(!f.core){
+    body = `<p class="bb-feel-lead">Where are you? Choose a feeling to read verses chosen for it.</p><div class="bb-feel-grid">${
+      Object.keys(EMOTION_WHEEL).map(n=>`<button class="emo-option" style="background:${EMOTION_WHEEL[n].color}" onclick="bbFeelPick('core','${n}')">${esc(n)}</button>`).join('')}</div>`;
+  } else if(f.sec === null){
+    const c=EMOTION_WHEEL[f.core];
+    body = `<p class="bb-feel-lead">Inside “${esc(f.core)}” — go deeper, or read for “${esc(f.core)}” as a whole.</p><div class="bb-feel-grid">${
+      Object.keys(c.children).map(n=>`<button class="emo-option" style="background:${c.color}" onclick="bbFeelPick('sec','${q(n)}')">${esc(n)}</button>`).join('')}</div>
+      <button class="bb-jump-btn" onclick="bbFeelPick('sec','')">All of “${esc(f.core)}” →</button>`;
+  } else {
+    const c=EMOTION_WHEEL[f.core];
+    const own = f.sec ? Object.keys(EMOTION_TER_VERSES[f.core]?.[f.sec] || {}) : [];
+    const refine = own.length ? `<div class="bb-feel-refine" style="${idc(c.color)}">More precisely:${
+      own.map(t=>`<button class="${f.ter===t?'on':''}" onclick="bbFeelPick('ter','${q(t)}')">${esc(t)}</button>`).join('')}</div>` : '';
+    const vs = bbFeelVerses() || [];
+    body = refine + `<div style="${idc(c.color)}">${vs.map(v=>`
+      <div class="bb-feel-v" onclick="bbFeelOpenVerse('${v.ref}')">
+        <span class="emo-v-ref">${esc(v.ref)}</span>
+        <div class="emo-v-text">${esc(v.text)}</div>
+        <div class="bb-feel-open">Open in the Bible to add or copy →</div>
+      </div>`).join('')}</div>`;
+  }
+  return bbHead(crumb, 'bbFeelBack()') + body +
+    `<button class="btn btn-secondary" onclick="closeModal('modal-bible')" style="margin-top:12px">Close</button>`;
+}
+function bbFeelOpenVerse(ref){
+  const r=parseScriptureRef(ref); if(!r) return;
+  _bbFeelReturn=true;
+  bbJumpTo(r.file, r.chapter, r.vStart, r.vEnd).then(() => bbScrollToFirstSelected());
+}
 function bbClearSel(){ _bbSel = new Set(); _bbAnchor = null; }
 function bbSelSorted(){ return [..._bbSel].sort((a,b)=>a-b); }
 
@@ -7504,12 +7639,14 @@ const TUTORIAL_SLIDES = [
         <div><strong>${ICON.moon} Evening</strong> · ~15 min · shorter, Psalm-led</div>
         <div><strong>${ICON.sparkle} Starter</strong> · ~15 min · gentler entry if daily prayer is new</div>
       </div>
-      <p>Each walks: Approach → Bible meditation → Prayer → Contemplation. <em>Listen as much as you speak.</em></p>`
+      <p>Each walks: Approach → Bible meditation → Prayer → Contemplation. <em>Listen as much as you speak.</em></p>
+      <p class="tut-soft">Name what you’re feeling as you begin, and Scripture for that feeling will be waiting.</p>`
   },
   {
     icon: '✍️', title: 'Weekly Deep Time',
     body: `<p>Once a week — Sunday recommended.</p>
       <p>Map your heart honestly (circumstances, feelings, the needs underneath), then walk slowly through the Lord's Prayer with space to listen at each step.</p>
+      <p class="tut-soft">Name a feeling, and Scripture for it appears.</p>
       <p>This is the <strong>deeper</strong> rhythm — not for every day. About 30–45 minutes, savored.</p>`
   },
   {
