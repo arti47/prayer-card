@@ -2504,10 +2504,18 @@ function emoVerseInsert(type, ref){
   if(typeof autoGrow === 'function') autoGrow(ta);
   showToast('✓ Added to your journal');
 }
-function emoVerseMeditate(ref){
+async function emoVerseMeditate(ref){
   if(!dpSession) return;
+  const v = emoVerseFind(ref); if(!v) return;
   dpSaveCurrentStep && dpSaveCurrentStep();
-  dpSession.steps.meditation = Object.assign({}, dpSession.steps.meditation, { passage: ref });
+  // The reference and its words, as the Bible reader inserts them ("Ref — text").
+  const passage = `${v.ref} — ${v.text}`;
+  const cur = (dpSession.steps.meditation?.passage || '').trim();
+  if(cur && cur !== passage){
+    const ok = await uiConfirm('Replace the passage you’ve already chosen for today?', { okText:'Replace' });
+    if(!ok) return;
+  }
+  dpSession.steps.meditation = Object.assign({}, dpSession.steps.meditation, { passage });
   saveDailyDraft(dpSession);
   showToast('✓ Set as today’s meditation passage');
 }
