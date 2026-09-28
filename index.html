@@ -97,18 +97,17 @@
     --measure: 34rem;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  /* Bottom padding has to clear the nav *and* the floating buttons above it —
-     they sit at 86px and stand 52px tall, so content needs ~150px of runway or
-     the last card is written underneath them. */
-  body { font-family: var(--serif); background: var(--bg); color: var(--text); min-height: 100vh; padding-bottom: calc(92px + env(safe-area-inset-bottom)); }
-  /* Set by showView on the tabs that carry floating buttons. */
-  body.has-fab { padding-bottom: calc(152px + env(safe-area-inset-bottom)); }
+  /* The tab bar's height is not fixed — it grows with text size, two-line labels
+     and the iPhone home-bar gap — so syncNavHeight() measures it into --nav-h and
+     everything that must clear it (page padding, ＋, toasts) is placed from that. */
+  body { font-family: var(--serif); background: var(--bg); color: var(--text); min-height: 100vh; padding-bottom: calc(var(--nav-h, calc(76px + env(safe-area-inset-bottom))) + 16px); }
+  /* Set by showView on the tab that carries the floating ＋ (14px gap + 52px + 14px). */
+  body.has-fab { padding-bottom: calc(var(--nav-h, calc(76px + env(safe-area-inset-bottom))) + 80px); }
   /* Respect iPhone notch and home-indicator when running as installed PWA */
   header { padding-top: calc(16px + env(safe-area-inset-top)) !important; }
   nav { padding-bottom: env(safe-area-inset-bottom); }
-  .fab { bottom: calc(86px + env(safe-area-inset-bottom)); }
-  .bible-fab { bottom: calc(86px + env(safe-area-inset-bottom)); }
-  .toast { bottom: calc(96px + env(safe-area-inset-bottom)); }
+  .fab { bottom: calc(var(--nav-h, calc(76px + env(safe-area-inset-bottom))) + 14px); }
+  .toast { bottom: calc(var(--nav-h, calc(76px + env(safe-area-inset-bottom))) + 12px); }
 
   /* Header — a softer slab: less shadow, gentler subtitle, so it frames rather
      than announces. Height is unchanged; it is the app's identity on every screen. */
@@ -184,23 +183,28 @@
   /* FAB */
   /* ＋ is the primary action and stays solid; the Bible is a secondary tool and
      sits on a surface fill, so the two stop reading as identical twins. */
-  .fab { position: fixed; bottom: 86px; right: 20px; width: 52px; height: 52px; border-radius: 50%; background: var(--accent); color: var(--on-accent); font-size: 1.6rem; border: none; cursor: pointer; box-shadow: var(--shadow-lg); display: none; align-items: center; justify-content: center; z-index: 101; transition: transform .12s, box-shadow .12s; }
+  .fab { position: fixed; bottom: calc(var(--nav-h, 76px) + 14px); right: 20px; width: 52px; height: 52px; border-radius: 50%; background: var(--accent); color: var(--on-accent); font-size: 1.6rem; border: none; cursor: pointer; box-shadow: var(--shadow-lg); display: none; align-items: center; justify-content: center; z-index: 101; transition: transform .12s, box-shadow .12s; }
   .fab:active { transform: scale(.93); }
-  .bible-fab { position: fixed; bottom: 86px; left: 20px; width: 46px; height: 46px; border-radius: 50%; background: var(--surface); color: var(--accent); border: 1.5px solid var(--border); cursor: pointer; box-shadow: var(--shadow); display: none; align-items: center; justify-content: center; z-index: 101; transition: transform .12s, border-color .12s; }
+  /* The Bible sits in the header's right corner: always visible, never floating
+     over content, on every tab and inside sessions. Hidden by the Reflect setting. */
+  header { padding-left: 60px; padding-right: 60px; }
+  .hdr-bible { position: absolute; right: 12px; top: calc(env(safe-area-inset-top, 0px) + (100% - env(safe-area-inset-top, 0px)) / 2); transform: translateY(-50%); width: 40px; height: 40px; border-radius: 50%; background: rgba(255,255,255,.08); color: #fff; border: 1px solid rgba(255,255,255,.38); cursor: pointer; display: none; align-items: center; justify-content: center; padding: 0; transition: background .15s, transform .12s; }
+  .hdr-bible::after { content: ''; position: absolute; inset: -4px; }
+  .hdr-bible .ico { width: 1.2rem; height: 1.2rem; }
+  .hdr-bible:active { transform: translateY(-50%) scale(.92); background: rgba(255,255,255,.18); }
+  body.in-session .hdr-bible { width: 34px; height: 34px; }
+  [data-theme="dark"] .hdr-bible { color: var(--accent); border-color: var(--border); background: var(--surface); }
   /* The floating buttons step back while you scroll down through content and come
      back when you scroll up or stop. At rest they also yield — stay faded and
      untappable — if they would sit on top of another control, such as the
      Recent / Calendar toggle, so they never take a tap meant for something else. */
-  .fab, .bible-fab { transition: transform .12s, box-shadow .12s, border-color .12s, opacity .25s ease; }
-  body.fab-hide .fab, body.fab-hide .bible-fab, .fab.fab-yield, .bible-fab.fab-yield { opacity: .14; pointer-events: none; }
+  .fab { transition: transform .12s, box-shadow .12s, border-color .12s, opacity .25s ease; }
+  body.fab-hide .fab, .fab.fab-yield { opacity: .14; pointer-events: none; }
   /* On wide screens the content is a centred 520px column; the floating buttons
      follow its edges instead of drifting to the far corners of the screen. */
   @media (min-width: 600px) {
     .fab { right: calc((100vw - 520px) / 2 + 16px); }
-    .bible-fab { left: calc((100vw - 520px) / 2 + 16px); }
   }
-  .bible-fab .ico { width: 1.32rem; height: 1.32rem; }
-  .bible-fab:active { transform: scale(.93); border-color: var(--accent2); }
   .bb-head { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
   .bb-back { background: none; border: none; color: var(--accent); font-size: 1.2rem; cursor: pointer; padding: 0 4px; line-height: 1; }
   /* Hit regions for small controls — an invisible ::after pads each out to about
@@ -689,11 +693,11 @@
   /* --text flips to cream in dark mode, so the toast's text must flip with it. */
   [data-theme="dark"] .toast, [data-theme="dark"] .undo-toast, [data-theme="dark"] .update-toast { color: var(--bg); }
   [data-theme="dark"] .undo-toast button { color: #7a5c3e; }   /* light-mode accent: 5.4:1 on the cream toast */
-  .update-toast { position: fixed; bottom: calc(150px + env(safe-area-inset-bottom)); left: 50%; transform: translateX(-50%); background: var(--accent); color: var(--on-accent); padding: 11px 18px; border-radius: 99px; font-size: .84rem; font-family: var(--sans); cursor: pointer; box-shadow: var(--shadow-lg); z-index: 1000; opacity: 0; pointer-events: none; transition: opacity .25s; white-space: nowrap; max-width: calc(100vw - 24px); }
+  .update-toast { position: fixed; bottom: calc(var(--nav-h, 76px) + 80px); left: 50%; transform: translateX(-50%); background: var(--accent); color: var(--on-accent); padding: 11px 18px; border-radius: 99px; font-size: .84rem; font-family: var(--sans); cursor: pointer; box-shadow: var(--shadow-lg); z-index: 1000; opacity: 0; pointer-events: none; transition: opacity .25s; white-space: nowrap; max-width: calc(100vw - 24px); }
   .update-toast strong { font-weight: 700; text-decoration: underline; }
   .update-toast.show { opacity: 1; pointer-events: auto; }
   .update-toast:active { opacity: .82; }
-  .undo-toast { position: fixed; bottom: calc(96px + env(safe-area-inset-bottom)); left: 50%; transform: translateX(-50%); background: var(--text); color: #fff; padding: 9px 12px 9px 18px; border-radius: 99px; font-size: .85rem; font-family: var(--sans); box-shadow: var(--shadow-lg); z-index: 1000; opacity: 0; pointer-events: none; transition: opacity .2s; white-space: nowrap; display: flex; align-items: center; gap: 12px; max-width: calc(100vw - 24px); }
+  .undo-toast { position: fixed; bottom: calc(var(--nav-h, 76px) + 12px); left: 50%; transform: translateX(-50%); background: var(--text); color: #fff; padding: 9px 12px 9px 18px; border-radius: 99px; font-size: .85rem; font-family: var(--sans); box-shadow: var(--shadow-lg); z-index: 1000; opacity: 0; pointer-events: none; transition: opacity .2s; white-space: nowrap; display: flex; align-items: center; gap: 12px; max-width: calc(100vw - 24px); }
   .undo-toast.show { opacity: 1; pointer-events: auto; }
   .undo-toast button { background: none; border: none; color: var(--accent); font-weight: 700; font-family: var(--sans); font-size: .85rem; cursor: pointer; padding: 12px 12px; margin: -8px -2px; }
 
@@ -938,7 +942,7 @@
     .modal { animation: none !important; }
     .modal-bg, .modal-bg.closing, .modal-bg.closing .modal { transition: none; transform: none; }
     *, *::before, *::after { transition-duration: .01ms !important; animation-duration: .01ms !important; }
-    .btn:active, .dp-plan-card:active, .card:active, .fab:active, .bible-fab:active,
+    .btn:active, .dp-plan-card:active, .card:active, .fab:active,
     .btn-pray-now:active, .history-entry:active { transform: none; }
   }
 
@@ -1398,7 +1402,7 @@
   nav button .ico { width: 1.42rem; height: 1.42rem; vertical-align: 0; stroke-width: 1.5; }
   .btn-pray-now .ico, .pl-link-btn .ico, .bb-field-btn .ico, .prayer-lib-btn .ico,
   .dp-cards-btn .ico, .pl-view-toggle button .ico { margin-right: .42em; }
-  .fab .ico, .bible-fab .ico { width: 1.5rem; height: 1.5rem; vertical-align: 0; }
+  .fab .ico { width: 1.5rem; height: 1.5rem; vertical-align: 0; }
 
   /* ════════ TYPE RHYTHM ════════
      Two jobs. First, open the gaps in the scale so a title, a body line and a
@@ -1407,6 +1411,11 @@
      a looser leading and a capped measure, so it stops sharing a rhythm with
      interface chrome. */
   header h1 { font-size: 1.3rem; letter-spacing: .02em; }
+  /* With the Bible button in the corner the title keeps one line on narrow phones
+     at large text: its size is capped by the screen width, never by the setting alone. */
+  header h1 { white-space: nowrap; font-size: min(1.3rem, 7vw); }
+  header p { white-space: nowrap; font-size: min(.66rem, 3.3vw); }
+  body.in-session header h1 { font-size: min(1.02rem, 6vw); }
   .card-title { font-size: var(--fs-title); line-height: 1.3; letter-spacing: -.004em; }
   .pl-step-title { font-size: 1.24rem; line-height: 1.24; letter-spacing: -.006em; }
   .modal h2 { font-size: var(--fs-display); line-height: 1.22; letter-spacing: -.008em; margin-bottom: 14px; }
@@ -1647,6 +1656,7 @@
 <header>
   <h1>✦ Prayer Journal</h1>
   <p>Story Cards &amp; Guided Prayer</p>
+  <button class="hdr-bible" id="bible-fab-btn" aria-label="Open Bible" title="Bible" onclick="openBibleBrowser()"><span data-ico="book"></span></button>
 </header>
 
 <!-- VIEWS -->
@@ -1769,10 +1779,10 @@
         <button class="size-btn" data-size="large" onclick="setTextSize('large')"><span class="aa" style="font-size:23px" aria-hidden="true">Aa</span>Large</button>
       </div>
       <label class="switch-row">
-        <span>Floating <span data-ico="book"></span>&#8202;Bible button</span>
+        <span><span data-ico="book"></span>&#8202;Bible button in the header</span>
         <span class="switch"><input type="checkbox" id="bible-fab-toggle" onchange="setBibleFab(this.checked)"><span class="switch-knob"></span></span>
       </label>
-      <p style="font-size:.8rem;color:var(--text3);margin-top:6px">Shown on Story Cards, Daily Prayer, and Weekly Deep Time for quick verse lookup. The inline “Insert from Bible” buttons on verse fields stay either way.</p>
+      <p style="font-size:.8rem;color:var(--text3);margin-top:6px">Top-right of every screen, for quick verse lookup and Scripture by feeling. The inline “Insert from Bible” buttons on verse fields stay either way.</p>
     </details>
     <details class="about-block reflect-block">
       <summary><h3><span data-ico="note"></span>Markdown Export</h3></summary>
@@ -1814,7 +1824,6 @@
 </nav>
 
 <button class="fab" id="fab-btn" aria-label="Add prayer card">＋</button>
-<button class="bible-fab" id="bible-fab-btn" aria-label="Open Bible" onclick="openBibleBrowser()"><span data-ico="book"></span></button>
 
 <!-- Modals -->
 <div class="modal-bg" id="modal-new">
@@ -3559,10 +3568,22 @@ function activeBibleTarget(){
 function bibleFabEnabled(){ return localStorage.getItem('bible_fab') !== 'off'; }
 function updateBibleFabVisibility(){
   const bfab = document.getElementById('bible-fab-btn'); if(!bfab) return;
-  const show = currentView !== 'reflect' && currentView !== 'guide' && bibleFabEnabled();
-  bfab.style.display = show ? 'flex' : 'none';
-  syncFabPadding();
+  bfab.style.display = bibleFabEnabled() ? 'flex' : 'none';
 }
+// Measure the tab bar into --nav-h so ＋, toasts and page padding sit above it
+// whatever its height (text size, wrapped labels, the iPhone home-bar gap).
+function syncNavHeight(){
+  const n = document.querySelector('nav'); if(!n) return;
+  document.documentElement.style.setProperty('--nav-h', Math.ceil(n.getBoundingClientRect().height) + 'px');
+}
+(function(){
+  const n = document.querySelector('nav'); if(!n) return;
+  syncNavHeight();
+  // border-box, so padding (the home-bar gap) counts, not just the icons and labels.
+  if(window.ResizeObserver) new ResizeObserver(syncNavHeight).observe(n, { box:'border-box' });
+  window.addEventListener('resize', syncNavHeight);
+  window.addEventListener('orientationchange', () => setTimeout(syncNavHeight, 300));
+})();
 // Content must clear whichever floating buttons are on screen, not just the nav.
 // Dawn / day / dusk / night, from the device clock — tints the Daily banner.
 function timeOfDay(){ const h = new Date().getHours(); return h>=5&&h<8 ? 'dawn' : h>=8&&h<17 ? 'day' : h>=17&&h<20 ? 'dusk' : 'night'; }
@@ -3596,7 +3617,7 @@ function syncHeaderMode(){
 }
 function syncFabPadding(){
   const vis = el => el && getComputedStyle(el).display !== 'none';
-  const any = vis(document.getElementById('fab-btn')) || vis(document.getElementById('bible-fab-btn'));
+  const any = vis(document.getElementById('fab-btn'));
   document.body.classList.toggle('has-fab', any);
 }
 // Scroll-direction fade + at-rest yielding for the floating buttons (see CSS).
@@ -3606,10 +3627,10 @@ function fabCoversControl(f){
   const r = f.getBoundingClientRect();
   const pts = [[r.left+r.width/2, r.top+r.height/2], [r.left+6, r.top+r.height/2], [r.right-6, r.top+r.height/2], [r.left+r.width/2, r.top+6], [r.left+r.width/2, r.bottom-6]];
   return pts.some(([x,y]) => document.elementsFromPoint(x,y).some(el =>
-    el !== f && !f.contains(el) && !el.closest('.fab, .bible-fab, nav') && el.matches(FAB_CTRL)));
+    el !== f && !f.contains(el) && !el.closest('.fab, nav') && el.matches(FAB_CTRL)));
 }
 function fabSettle(){
-  ['fab-btn','bible-fab-btn'].forEach(id => { const f = document.getElementById(id); if(f) f.classList.toggle('fab-yield', fabCoversControl(f)); });
+  ['fab-btn'].forEach(id => { const f = document.getElementById(id); if(f) f.classList.toggle('fab-yield', fabCoversControl(f)); });
 }
 (function(){
   let lastY = window.scrollY, restT = null;
