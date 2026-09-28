@@ -2463,7 +2463,7 @@ const EMOTION_VERSES = {
   Angry: [
     { ref:"Psalm 4:4", text:"Be angry, and do not sin; ponder in your own hearts on your beds, and be silent." },
     { ref:"Ephesians 4:26–27", text:"Be angry and do not sin; do not let the sun go down on your anger, and give no opportunity to the devil." },
-    { ref:"James 1:19–20", text:"Know this, my beloved brothers : let every person be quick to hear, slow to speak, slow to anger; for the anger of man does not produce the righteousness of God." },
+    { ref:"James 1:19–20", text:"Know this, my beloved brothers: let every person be quick to hear, slow to speak, slow to anger; for the anger of man does not produce the righteousness of God." },
     { ref:"Romans 12:19", text:"Beloved, never avenge yourselves, but leave it to the wrath of God, for it is written, Vengeance is mine, I will repay, says the Lord." }
   ],
   Disgusted: [
@@ -2479,16 +2479,376 @@ const EMOTION_VERSES = {
     { ref:"Revelation 21:4", text:"He will wipe away every tear from their eyes, and death shall be no more, neither shall there be mourning, nor crying, nor pain anymore, for the former things have passed away." }
   ]
 };
+// The same, for each second-level feeling on the wheel (at least five apiece). When a
+// second-level feeling is named, its own set is shown; the top-level set above is
+// used only when the feeling was named at the top level. Feelings that can
+// themselves be sin (Proud, Mad, Aggressive, Bitter, Critical, Disapproving) are
+// met with verses that gently turn them, not only soothe them.
+const EMOTION_SUB_VERSES = {
+  Happy: {
+    Playful: [
+      { ref:"Proverbs 17:22", text:"A joyful heart is good medicine, but a crushed spirit dries up the bones." },
+      { ref:"Ecclesiastes 3:4", text:"a time to weep, and a time to laugh; a time to mourn, and a time to dance;" },
+      { ref:"Psalm 126:2", text:"Then our mouth was filled with laughter, and our tongue with shouts of joy; then they said among the nations, The Lord has done great things for them." },
+      { ref:"Zechariah 8:5", text:"And the streets of the city shall be full of boys and girls playing in its streets." },
+      { ref:"Ecclesiastes 9:7", text:"Go, eat your bread with joy, and drink your wine with a merry heart, for God has already approved what you do." },
+      { ref:"Nehemiah 8:10", text:"Then he said to them, Go your way. Eat the fat and drink sweet wine and send portions to anyone who has nothing ready, for this day is holy to our Lord. And do not be grieved, for the joy of the Lord is your strength." }
+    ],
+    Content: [
+      { ref:"Philippians 4:11–12", text:"Not that I am speaking of being in need, for I have learned in whatever situation I am to be content. I know how to be brought low, and I know how to abound. In any and every circumstance, I have learned the secret of facing plenty and hunger, abundance and need." },
+      { ref:"1 Timothy 6:6–8", text:"But godliness with contentment is great gain, for we brought nothing into the world, and we cannot take anything out of the world. But if we have food and clothing, with these we will be content." },
+      { ref:"Hebrews 13:5", text:"Keep your life free from love of money, and be content with what you have, for he has said, I will never leave you nor forsake you." },
+      { ref:"Psalm 131:2", text:"But I have calmed and quieted my soul, like a weaned child with its mother; like a weaned child is my soul within me." },
+      { ref:"Psalm 16:5–6", text:"The Lord is my chosen portion and my cup; you hold my lot. The lines have fallen for me in pleasant places; indeed, I have a beautiful inheritance." },
+      { ref:"Proverbs 15:16", text:"Better is a little with the fear of the Lord than great treasure and trouble with it." }
+    ],
+    Interested: [
+      { ref:"Psalm 111:2", text:"Great are the works of the Lord, studied by all who delight in them." },
+      { ref:"Proverbs 25:2", text:"It is the glory of God to conceal things, but the glory of kings is to search things out." },
+      { ref:"Psalm 119:18", text:"Open my eyes, that I may behold wondrous things out of your law." },
+      { ref:"Proverbs 2:3–5", text:"yes, if you call out for insight and raise your voice for understanding, if you seek it like silver and search for it as for hidden treasures, then you will understand the fear of the Lord and find the knowledge of God." },
+      { ref:"Jeremiah 33:3", text:"Call to me and I will answer you, and will tell you great and hidden things that you have not known." },
+      { ref:"Acts 17:11", text:"Now these Jews were more noble than those in Thessalonica; they received the word with all eagerness, examining the Scriptures daily to see if these things were so." }
+    ],
+    Proud: [
+      { ref:"Jeremiah 9:23–24", text:"Thus says the Lord: Let not the wise man boast in his wisdom, let not the mighty man boast in his might, let not the rich man boast in his riches, but let him who boasts boast in this, that he understands and knows me, that I am the Lord who practices steadfast love, justice, and righteousness in the earth. For in these things I delight, declares the Lord." },
+      { ref:"1 Corinthians 15:10", text:"But by the grace of God I am what I am, and his grace toward me was not in vain. On the contrary, I worked harder than any of them, though it was not I, but the grace of God that is with me." },
+      { ref:"1 Corinthians 4:7", text:"For who sees anything different in you? What do you have that you did not receive? If then you received it, why do you boast as if you did not receive it?" },
+      { ref:"Psalm 115:1", text:"Not to us, O Lord, not to us, but to your name give glory, for the sake of your steadfast love and your faithfulness!" },
+      { ref:"Galatians 6:14", text:"But far be it from me to boast except in the cross of our Lord Jesus Christ, by which the world has been crucified to me, and I to the world." },
+      { ref:"James 4:6", text:"But he gives more grace. Therefore it says, God opposes the proud, but gives grace to the humble." }
+    ],
+    Accepted: [
+      { ref:"Romans 15:7", text:"Therefore welcome one another as Christ has welcomed you, for the glory of God." },
+      { ref:"Ephesians 1:5–6", text:"he predestined us for adoption as sons through Jesus Christ, according to the purpose of his will, to the praise of his glorious grace, with which he has blessed us in the Beloved." },
+      { ref:"1 John 3:1", text:"See what kind of love the Father has given to us, that we should be called children of God; and so we are. The reason why the world does not know us is that it did not know him." },
+      { ref:"John 6:37", text:"All that the Father gives me will come to me, and whoever comes to me I will never cast out." },
+      { ref:"Isaiah 43:4", text:"Because you are precious in my eyes, and honored, and I love you, I give men in return for you, peoples in exchange for your life." },
+      { ref:"Zephaniah 3:17", text:"The Lord your God is in your midst, a mighty one who will save; he will rejoice over you with gladness; he will quiet you by his love; he will exult over you with loud singing." }
+    ],
+    Powerful: [
+      { ref:"Zechariah 4:6", text:"Then he said to me, This is the word of the Lord to Zerubbabel: Not by might, nor by power, but by my Spirit, says the Lord of hosts." },
+      { ref:"Deuteronomy 8:17–18", text:"Beware lest you say in your heart, My power and the might of my hand have gotten me this wealth. You shall remember the Lord your God, for it is he who gives you power to get wealth, that he may confirm his covenant that he swore to your fathers, as it is this day." },
+      { ref:"John 15:5", text:"I am the vine; you are the branches. Whoever abides in me and I in him, he it is that bears much fruit, for apart from me you can do nothing." },
+      { ref:"Psalm 20:7", text:"Some trust in chariots and some in horses, but we trust in the name of the Lord our God." },
+      { ref:"Philippians 4:13", text:"I can do all things through him who strengthens me." },
+      { ref:"1 Peter 4:11", text:"whoever speaks, as one who speaks oracles of God; whoever serves, as one who serves by the strength that God supplies —in order that in everything God may be glorified through Jesus Christ. To him belong glory and dominion forever and ever. Amen." }
+    ],
+    Peaceful: [
+      { ref:"Isaiah 26:3", text:"You keep him in perfect peace whose mind is stayed on you, because he trusts in you." },
+      { ref:"Psalm 4:8", text:"In peace I will both lie down and sleep; for you alone, O Lord, make me dwell in safety." },
+      { ref:"Romans 5:1", text:"Therefore, since we have been justified by faith, we have peace with God through our Lord Jesus Christ." },
+      { ref:"Colossians 3:15", text:"And let the peace of Christ rule in your hearts, to which indeed you were called in one body. And be thankful." },
+      { ref:"2 Thessalonians 3:16", text:"Now may the Lord of peace himself give you peace at all times in every way. The Lord be with you all." },
+      { ref:"Numbers 6:24–26", text:"The Lord bless you and keep you; the Lord make his face to shine upon you and be gracious to you; the Lord lift up his countenance upon you and give you peace." }
+    ],
+    Trusting: [
+      { ref:"Proverbs 3:5–6", text:"Trust in the Lord with all your heart, and do not lean on your own understanding. In all your ways acknowledge him, and he will make straight your paths." },
+      { ref:"Psalm 9:10", text:"And those who know your name put their trust in you, for you, O Lord, have not forsaken those who seek you." },
+      { ref:"Psalm 37:5", text:"Commit your way to the Lord; trust in him, and he will act." },
+      { ref:"Isaiah 26:4", text:"Trust in the Lord forever, for the Lord God is an everlasting rock." },
+      { ref:"Jeremiah 17:7–8", text:"Blessed is the man who trusts in the Lord, whose trust is the Lord. He is like a tree planted by water, that sends out its roots by the stream, and does not fear when heat comes, for its leaves remain green, and is not anxious in the year of drought, for it does not cease to bear fruit." },
+      { ref:"Psalm 13:5", text:"But I have trusted in your steadfast love; my heart shall rejoice in your salvation." }
+    ],
+    Optimistic: [
+      { ref:"Romans 15:13", text:"May the God of hope fill you with all joy and peace in believing, so that by the power of the Holy Spirit you may abound in hope." },
+      { ref:"Lamentations 3:24", text:"The Lord is my portion, says my soul, therefore I will hope in him." },
+      { ref:"1 Peter 1:3", text:"Blessed be the God and Father of our Lord Jesus Christ! According to his great mercy, he has caused us to be born again to a living hope through the resurrection of Jesus Christ from the dead," },
+      { ref:"Hebrews 6:19", text:"We have this as a sure and steadfast anchor of the soul, a hope that enters into the inner place behind the curtain," },
+      { ref:"Romans 8:28", text:"And we know that for those who love God all things work together for good, for those who are called according to his purpose." },
+      { ref:"Jeremiah 29:11", text:"For I know the plans I have for you, declares the Lord, plans for welfare and not for evil, to give you a future and a hope." }
+    ]
+  },
+  Surprised: {
+    Excited: [
+      { ref:"Isaiah 43:19", text:"Behold, I am doing a new thing; now it springs forth, do you not perceive it? I will make a way in the wilderness and rivers in the desert." },
+      { ref:"Psalm 37:4", text:"Delight yourself in the Lord, and he will give you the desires of your heart." },
+      { ref:"Romans 12:11", text:"Do not be slothful in zeal, be fervent in spirit, serve the Lord." },
+      { ref:"Philippians 3:13–14", text:"Brothers, I do not consider that I have made it my own. But one thing I do: forgetting what lies behind and straining forward to what lies ahead, I press on toward the goal for the prize of the upward call of God in Christ Jesus." },
+      { ref:"Colossians 3:23", text:"Whatever you do, work heartily, as for the Lord and not for men," },
+      { ref:"Proverbs 16:9", text:"The heart of man plans his way, but the Lord establishes his steps." }
+    ],
+    Amazed: [
+      { ref:"Psalm 8:3–4", text:"When I look at your heavens, the work of your fingers, the moon and the stars, which you have set in place, what is man that you are mindful of him, and the son of man that you care for him?" },
+      { ref:"Psalm 19:1", text:"The heavens declare the glory of God, and the sky above proclaims his handiwork." },
+      { ref:"Psalm 92:4–5", text:"For you, O Lord, have made me glad by your work; at the works of your hands I sing for joy. How great are your works, O Lord! Your thoughts are very deep!" },
+      { ref:"Psalm 104:24", text:"O Lord, how manifold are your works! In wisdom have you made them all; the earth is full of your creatures." },
+      { ref:"Isaiah 40:26", text:"Lift up your eyes on high and see: who created these? He who brings out their host by number, calling them all by name, by the greatness of his might, and because he is strong in power not one is missing." },
+      { ref:"Job 38:4", text:"Where were you when I laid the foundation of the earth? Tell me, if you have understanding." }
+    ],
+    Confused: [
+      { ref:"James 1:5", text:"If any of you lacks wisdom, let him ask God, who gives generously to all without reproach, and it will be given him." },
+      { ref:"John 13:7", text:"Jesus answered him, What I am doing you do not understand now, but afterward you will understand." },
+      { ref:"Psalm 32:8", text:"I will instruct you and teach you in the way you should go; I will counsel you with my eye upon you." },
+      { ref:"Isaiah 30:21", text:"And your ears shall hear a word behind you, saying, This is the way, walk in it, when you turn to the right or when you turn to the left." },
+      { ref:"Psalm 119:105", text:"Your word is a lamp to my feet and a light to my path." },
+      { ref:"1 Corinthians 13:12", text:"For now we see in a mirror dimly, but then face to face. Now I know in part; then I shall know fully, even as I have been fully known." }
+    ],
+    Startled: [
+      { ref:"Psalm 112:7", text:"He is not afraid of bad news; his heart is firm, trusting in the Lord." },
+      { ref:"Psalm 46:1–2", text:"God is our refuge and strength, a very present help in trouble. Therefore we will not fear though the earth gives way, though the mountains be moved into the heart of the sea," },
+      { ref:"Proverbs 3:25–26", text:"Do not be afraid of sudden terror or of the ruin of the wicked, when it comes, for the Lord will be your confidence and will keep your foot from being caught." },
+      { ref:"Psalm 61:1–2", text:"Hear my cry, O God, listen to my prayer; from the end of the earth I call to you when my heart is faint. Lead me to the rock that is higher than I," },
+      { ref:"Isaiah 43:2", text:"When you pass through the waters, I will be with you; and through the rivers, they shall not overwhelm you; when you walk through fire you shall not be burned, and the flame shall not consume you." },
+      { ref:"1 Peter 4:12–13", text:"Beloved, do not be surprised at the fiery trial when it comes upon you to test you, as though something strange were happening to you. But rejoice insofar as you share Christ’s sufferings, that you may also rejoice and be glad when his glory is revealed." }
+    ]
+  },
+  Bad: {
+    Tired: [
+      { ref:"Mark 6:31", text:"And he said to them, Come away by yourselves to a desolate place and rest a while. For many were coming and going, and they had no leisure even to eat." },
+      { ref:"Exodus 33:14", text:"And he said, My presence will go with you, and I will give you rest." },
+      { ref:"Psalm 127:2", text:"It is in vain that you rise up early and go late to rest, eating the bread of anxious toil; for he gives to his beloved sleep." },
+      { ref:"Psalm 3:5", text:"I lay down and slept; I woke again, for the Lord sustained me." },
+      { ref:"Psalm 23:1–3", text:"The Lord is my shepherd; I shall not want. He makes me lie down in green pastures. He leads me beside still waters. He restores my soul. He leads me in paths of righteousness for his name’s sake." },
+      { ref:"2 Corinthians 4:16", text:"So we do not lose heart. Though our outer self is wasting away, our inner self is being renewed day by day." }
+    ],
+    Stressed: [
+      { ref:"1 Peter 5:7", text:"casting all your anxieties on him, because he cares for you." },
+      { ref:"Psalm 55:22", text:"Cast your burden on the Lord, and he will sustain you; he will never permit the righteous to be moved." },
+      { ref:"Psalm 94:19", text:"When the cares of my heart are many, your consolations cheer my soul." },
+      { ref:"Psalm 142:3", text:"When my spirit faints within me, you know my way! In the path where I walk they have hidden a trap for me." },
+      { ref:"2 Corinthians 4:8–9", text:"We are afflicted in every way, but not crushed; perplexed, but not driven to despair; persecuted, but not forsaken; struck down, but not destroyed;" },
+      { ref:"Psalm 18:2", text:"The Lord is my rock and my fortress and my deliverer, my God, my rock, in whom I take refuge, my shield, and the horn of my salvation, my stronghold." }
+    ],
+    Busy: [
+      { ref:"Luke 10:41–42", text:"But the Lord answered her, Martha, Martha, you are anxious and troubled about many things, but one thing is necessary. Mary has chosen the good portion, which will not be taken away from her." },
+      { ref:"Psalm 127:1", text:"Unless the Lord builds the house, those who build it labor in vain. Unless the Lord watches over the city, the watchman stays awake in vain." },
+      { ref:"Ecclesiastes 4:6", text:"Better is a handful of quietness than two hands full of toil and a striving after wind." },
+      { ref:"Isaiah 30:15", text:"For thus said the Lord God, the Holy One of Israel, In returning and rest you shall be saved; in quietness and in trust shall be your strength. But you were unwilling," },
+      { ref:"Matthew 6:33", text:"But seek first the kingdom of God and his righteousness, and all these things will be added to you." },
+      { ref:"Psalm 90:12", text:"So teach us to number our days that we may get a heart of wisdom." }
+    ],
+    Bored: [
+      { ref:"Psalm 63:1", text:"O God, you are my God; earnestly I seek you; my soul thirsts for you; my flesh faints for you, as in a dry and weary land where there is no water." },
+      { ref:"Psalm 51:12", text:"Restore to me the joy of your salvation, and uphold me with a willing spirit." },
+      { ref:"Psalm 85:6", text:"Will you not revive us again, that your people may rejoice in you?" },
+      { ref:"Psalm 119:37", text:"Turn my eyes from looking at worthless things; and give me life in your ways." },
+      { ref:"Ecclesiastes 3:11", text:"He has made everything beautiful in its time. Also, he has put eternity into man’s heart, yet so that he cannot find out what God has done from the beginning to the end." },
+      { ref:"Hebrews 6:11–12", text:"And we desire each one of you to show the same earnestness to have the full assurance of hope until the end, so that you may not be sluggish, but imitators of those who through faith and patience inherit the promises." }
+    ]
+  },
+  Fearful: {
+    Scared: [
+      { ref:"Psalm 23:4", text:"Even though I walk through the valley of the shadow of death, I will fear no evil, for you are with me; your rod and your staff, they comfort me." },
+      { ref:"Psalm 27:1", text:"The Lord is my light and my salvation; whom shall I fear? The Lord is the stronghold of my life; of whom shall I be afraid?" },
+      { ref:"Isaiah 43:1", text:"But now thus says the Lord, he who created you, O Jacob, he who formed you, O Israel: Fear not, for I have redeemed you; I have called you by name, you are mine." },
+      { ref:"Deuteronomy 31:8", text:"It is the Lord who goes before you. He will be with you; he will not leave you or forsake you. Do not fear or be dismayed." },
+      { ref:"Psalm 91:1–2", text:"He who dwells in the shelter of the Most High will abide in the shadow of the Almighty. I will say to the Lord, My refuge and my fortress, my God, in whom I trust." },
+      { ref:"Joshua 1:9", text:"Have I not commanded you? Be strong and courageous. Do not be frightened, and do not be dismayed, for the Lord your God is with you wherever you go." }
+    ],
+    Anxious: [
+      { ref:"Philippians 4:6–7", text:"do not be anxious about anything, but in everything by prayer and supplication with thanksgiving let your requests be made known to God. And the peace of God, which surpasses all understanding, will guard your hearts and your minds in Christ Jesus." },
+      { ref:"Matthew 6:34", text:"Therefore do not be anxious about tomorrow, for tomorrow will be anxious for itself. Sufficient for the day is its own trouble." },
+      { ref:"Luke 12:25–26", text:"And which of you by being anxious can add a single hour to his span of life? If then you are not able to do as small a thing as that, why are you anxious about the rest?" },
+      { ref:"John 14:1", text:"Let not your hearts be troubled. Believe in God; believe also in me." },
+      { ref:"Proverbs 12:25", text:"Anxiety in a man’s heart weighs him down, but a good word makes him glad." },
+      { ref:"Isaiah 35:4", text:"Say to those who have an anxious heart, Be strong; fear not! Behold, your God will come with vengeance, with the recompense of God. He will come and save you." }
+    ],
+    Insecure: [
+      { ref:"Psalm 139:13–14", text:"For you formed my inward parts; you knitted me together in my mother’s womb. I praise you, for I am fearfully and wonderfully made. Wonderful are your works; my soul knows it very well." },
+      { ref:"Ephesians 2:10", text:"For we are his workmanship, created in Christ Jesus for good works, which God prepared beforehand, that we should walk in them." },
+      { ref:"2 Corinthians 3:5", text:"Not that we are sufficient in ourselves to claim anything as coming from us, but our sufficiency is from God," },
+      { ref:"Philippians 1:6", text:"And I am sure of this, that he who began a good work in you will bring it to completion at the day of Jesus Christ." },
+      { ref:"1 Peter 2:9", text:"But you are a chosen race, a royal priesthood, a holy nation, a people for his own possession, that you may proclaim the excellencies of him who called you out of darkness into his marvelous light." },
+      { ref:"Exodus 4:11–12", text:"Then the Lord said to him, Who has made man’s mouth? Who makes him mute, or deaf, or seeing, or blind? Is it not I, the Lord? Now therefore go, and I will be with your mouth and teach you what you shall speak." }
+    ],
+    Weak: [
+      { ref:"2 Corinthians 12:9–10", text:"But he said to me, My grace is sufficient for you, for my power is made perfect in weakness. Therefore I will boast all the more gladly of my weaknesses, so that the power of Christ may rest upon me. For the sake of Christ, then, I am content with weaknesses, insults, hardships, persecutions, and calamities. For when I am weak, then I am strong." },
+      { ref:"Psalm 73:26", text:"My flesh and my heart may fail, but God is the strength of my heart and my portion forever." },
+      { ref:"Isaiah 42:3", text:"a bruised reed he will not break, and a faintly burning wick he will not quench; he will faithfully bring forth justice." },
+      { ref:"Psalm 103:13–14", text:"As a father shows compassion to his children, so the Lord shows compassion to those who fear him. For he knows our frame; he remembers that we are dust." },
+      { ref:"Luke 12:6–7", text:"Are not five sparrows sold for two pennies? And not one of them is forgotten before God. Why, even the hairs of your head are all numbered. Fear not; you are of more value than many sparrows." },
+      { ref:"1 Corinthians 1:27–29", text:"But God chose what is foolish in the world to shame the wise; God chose what is weak in the world to shame the strong; God chose what is low and despised in the world, even things that are not, to bring to nothing things that are, so that no human being might boast in the presence of God." }
+    ],
+    Rejected: [
+      { ref:"Psalm 27:10", text:"For my father and my mother have forsaken me, but the Lord will take me in." },
+      { ref:"Isaiah 53:3", text:"He was despised and rejected by men; a man of sorrows, and acquainted with grief; and as one from whom men hide their faces he was despised, and we esteemed him not." },
+      { ref:"1 Peter 2:4", text:"As you come to him, a living stone rejected by men but in the sight of God chosen and precious," },
+      { ref:"John 15:18–19", text:"If the world hates you, know that it has hated me before it hated you. If you were of the world, the world would love you as its own; but because you are not of the world, but I chose you out of the world, therefore the world hates you." },
+      { ref:"Matthew 5:11–12", text:"Blessed are you when others revile you and persecute you and utter all kinds of evil against you falsely on my account. Rejoice and be glad, for your reward is great in heaven, for so they persecuted the prophets who were before you." },
+      { ref:"Romans 8:31", text:"What then shall we say to these things? If God is for us, who can be against us?" }
+    ],
+    Threatened: [
+      { ref:"Psalm 118:6", text:"The Lord is on my side; I will not fear. What can man do to me?" },
+      { ref:"Psalm 3:3", text:"But you, O Lord, are a shield about me, my glory, and the lifter of my head." },
+      { ref:"Psalm 32:7", text:"You are a hiding place for me; you preserve me from trouble; you surround me with shouts of deliverance." },
+      { ref:"2 Thessalonians 3:3", text:"But the Lord is faithful. He will establish you and guard you against the evil one." },
+      { ref:"Isaiah 54:17", text:"no weapon that is fashioned against you shall succeed, and you shall refute every tongue that rises against you in judgment. This is the heritage of the servants of the Lord and their vindication from me, declares the Lord." },
+      { ref:"John 16:33", text:"I have said these things to you, that in me you may have peace. In the world you will have tribulation. But take heart; I have overcome the world." }
+    ]
+  },
+  Angry: {
+    "Let down": [
+      { ref:"Psalm 55:12–14", text:"For it is not an enemy who taunts me— then I could bear it; it is not an adversary who deals insolently with me— then I could hide from him. But it is you, a man, my equal, my companion, my familiar friend. We used to take sweet counsel together; within God’s house we walked in the throng." },
+      { ref:"2 Timothy 4:16–17", text:"At my first defense no one came to stand by me, but all deserted me. May it not be charged against them! But the Lord stood by me and strengthened me, so that through me the message might be fully proclaimed and all the Gentiles might hear it. So I was rescued from the lion’s mouth." },
+      { ref:"Psalm 146:3–5", text:"Put not your trust in princes, in a son of man, in whom there is no salvation. When his breath departs, he returns to the earth; on that very day his plans perish. Blessed is he whose help is the God of Jacob, whose hope is in the Lord his God," },
+      { ref:"Isaiah 49:15–16", text:"Can a woman forget her nursing child, that she should have no compassion on the son of her womb? Even these may forget, yet I will not forget you. Behold, I have engraved you on the palms of my hands; your walls are continually before me." },
+      { ref:"Romans 5:5", text:"and hope does not put us to shame, because God’s love has been poured into our hearts through the Holy Spirit who has been given to us." }
+    ],
+    Humiliated: [
+      { ref:"Hebrews 12:2", text:"looking to Jesus, the founder and perfecter of our faith, who for the joy that was set before him endured the cross, despising the shame, and is seated at the right hand of the throne of God." },
+      { ref:"Isaiah 50:7", text:"But the Lord God helps me; therefore I have not been disgraced; therefore I have set my face like a flint, and I know that I shall not be put to shame." },
+      { ref:"Psalm 34:5", text:"Those who look to him are radiant, and their faces shall never be ashamed." },
+      { ref:"Isaiah 61:7", text:"Instead of your shame there shall be a double portion; instead of dishonor they shall rejoice in their lot; therefore in their land they shall possess a double portion; they shall have everlasting joy." },
+      { ref:"Isaiah 54:4", text:"Fear not, for you will not be ashamed; be not confounded, for you will not be disgraced; for you will forget the shame of your youth, and the reproach of your widowhood you will remember no more." },
+      { ref:"1 Peter 4:14", text:"If you are insulted for the name of Christ, you are blessed, because the Spirit of glory and of God rests upon you." }
+    ],
+    Bitter: [
+      { ref:"Psalm 73:21–23", text:"When my soul was embittered, when I was pricked in heart, I was brutish and ignorant; I was like a beast toward you. Nevertheless, I am continually with you; you hold my right hand." },
+      { ref:"Proverbs 14:10", text:"The heart knows its own bitterness, and no stranger shares its joy." },
+      { ref:"Hebrews 12:15", text:"See to it that no one fails to obtain the grace of God; that no root of bitterness springs up and causes trouble, and by it many become defiled;" },
+      { ref:"Ephesians 4:31–32", text:"Let all bitterness and wrath and anger and clamor and slander be put away from you, along with all malice. Be kind to one another, tenderhearted, forgiving one another, as God in Christ forgave you." },
+      { ref:"Genesis 50:19–20", text:"But Joseph said to them, Do not fear, for am I in the place of God? As for you, you meant evil against me, but God meant it for good, to bring it about that many people should be kept alive, as they are today." }
+    ],
+    Mad: [
+      { ref:"Psalm 37:8", text:"Refrain from anger, and forsake wrath! Fret not yourself; it tends only to evil." },
+      { ref:"Proverbs 14:29", text:"Whoever is slow to anger has great understanding, but he who has a hasty temper exalts folly." },
+      { ref:"Proverbs 16:32", text:"Whoever is slow to anger is better than the mighty, and he who rules his spirit than he who takes a city." },
+      { ref:"Psalm 37:1", text:"Fret not yourself because of evildoers; be not envious of wrongdoers!" },
+      { ref:"Proverbs 14:30", text:"A tranquil heart gives life to the flesh, but envy makes the bones rot." }
+    ],
+    Aggressive: [
+      { ref:"Proverbs 15:1", text:"A soft answer turns away wrath, but a harsh word stirs up anger." },
+      { ref:"Proverbs 20:22", text:"Do not say, I will repay evil; wait for the Lord, and he will deliver you." },
+      { ref:"Romans 12:17–18", text:"Repay no one evil for evil, but give thought to do what is honorable in the sight of all. If possible, so far as it depends on you, live peaceably with all." },
+      { ref:"Matthew 5:9", text:"Blessed are the peacemakers, for they shall be called sons of God." },
+      { ref:"James 4:1", text:"What causes quarrels and what causes fights among you? Is it not this, that your passions are at war within you?" },
+      { ref:"2 Timothy 2:24", text:"And the Lord’s servant must not be quarrelsome but kind to everyone, able to teach, patiently enduring evil," }
+    ],
+    Frustrated: [
+      { ref:"Psalm 37:7", text:"Be still before the Lord and wait patiently for him; fret not yourself over the one who prospers in his way, over the man who carries out evil devices!" },
+      { ref:"Galatians 6:9", text:"And let us not grow weary of doing good, for in due season we will reap, if we do not give up." },
+      { ref:"Ecclesiastes 7:8–9", text:"Better is the end of a thing than its beginning, and the patient in spirit is better than the proud in spirit. Be not quick in your spirit to become angry, for anger lodges in the heart of fools." },
+      { ref:"Proverbs 19:11", text:"Good sense makes one slow to anger, and it is his glory to overlook an offense." },
+      { ref:"Colossians 3:12–13", text:"Put on then, as God’s chosen ones, holy and beloved, compassionate hearts, kindness, humility, meekness, and patience, bearing with one another and, if one has a complaint against another, forgiving each other; as the Lord has forgiven you, so you also must forgive." },
+      { ref:"James 1:2–4", text:"Count it all joy, my brothers, when you meet trials of various kinds, for you know that the testing of your faith produces steadfastness. And let steadfastness have its full effect, that you may be perfect and complete, lacking in nothing." }
+    ],
+    Distant: [
+      { ref:"Psalm 13:1–2", text:"How long, O Lord? Will you forget me forever? How long will you hide your face from me? How long must I take counsel in my soul and have sorrow in my heart all the day? How long shall my enemy be exalted over me?" },
+      { ref:"Psalm 42:1–2", text:"As a deer pants for flowing streams, so pants my soul for you, O God. My soul thirsts for God, for the living God. When shall I come and appear before God?" },
+      { ref:"Psalm 139:7–8", text:"Where shall I go from your Spirit? Or where shall I flee from your presence? If I ascend to heaven, you are there! If I make my bed in Sheol, you are there!" },
+      { ref:"James 4:8", text:"Draw near to God, and he will draw near to you. Cleanse your hands, you sinners, and purify your hearts, you double-minded." },
+      { ref:"Ezekiel 36:26", text:"And I will give you a new heart, and a new spirit I will put within you. And I will remove the heart of stone from your flesh and give you a heart of flesh." },
+      { ref:"Revelation 3:20", text:"Behold, I stand at the door and knock. If anyone hears my voice and opens the door, I will come in to him and eat with him, and he with me." }
+    ],
+    Critical: [
+      { ref:"Matthew 7:3–5", text:"Why do you see the speck that is in your brother’s eye, but do not notice the log that is in your own eye? Or how can you say to your brother, Let me take the speck out of your eye, when there is the log in your own eye? You hypocrite, first take the log out of your own eye, and then you will see clearly to take the speck out of your brother’s eye." },
+      { ref:"Luke 6:37", text:"Judge not, and you will not be judged; condemn not, and you will not be condemned; forgive, and you will be forgiven;" },
+      { ref:"James 4:11–12", text:"Do not speak evil against one another, brothers. The one who speaks against a brother or judges his brother, speaks evil against the law and judges the law. But if you judge the law, you are not a doer of the law but a judge. There is only one lawgiver and judge, he who is able to save and to destroy. But who are you to judge your neighbor?" },
+      { ref:"Philippians 2:3–4", text:"Do nothing from selfish ambition or conceit, but in humility count others more significant than yourselves. Let each of you look not only to his own interests, but also to the interests of others." },
+      { ref:"John 20:27–29", text:"Then he said to Thomas, Put your finger here, and see my hands; and put out your hand, and place it in my side. Do not disbelieve, but believe. Thomas answered him, My Lord and my God! Jesus said to him, Have you believed because you have seen me? Blessed are those who have not seen and yet have believed." },
+      { ref:"Mark 9:24", text:"Immediately the father of the child cried out and said, I believe; help my unbelief!" }
+    ]
+  },
+  Disgusted: {
+    Disapproving: [
+      { ref:"Romans 2:1", text:"Therefore you have no excuse, O man, every one of you who judges. For in passing judgment on another you condemn yourself, because you, the judge, practice the very same things." },
+      { ref:"Romans 14:4", text:"Who are you to pass judgment on the servant of another? It is before his own master that he stands or falls. And he will be upheld, for the Lord is able to make him stand." },
+      { ref:"John 8:7", text:"And as they continued to ask him, he stood up and said to them, Let him who is without sin among you be the first to throw a stone at her." },
+      { ref:"Galatians 6:1", text:"Brothers, if anyone is caught in any transgression, you who are spiritual should restore him in a spirit of gentleness. Keep watch on yourself, lest you too be tempted." },
+      { ref:"1 Corinthians 4:5", text:"Therefore do not pronounce judgment before the time, before the Lord comes, who will bring to light the things now hidden in darkness and will disclose the purposes of the heart. Then each one will receive his commendation from God." },
+      { ref:"Luke 18:13–14", text:"But the tax collector, standing far off, would not even lift up his eyes to heaven, but beat his breast, saying, God, be merciful to me, a sinner! I tell you, this man went down to his house justified, rather than the other. For everyone who exalts himself will be humbled, but the one who humbles himself will be exalted." }
+    ],
+    Disappointed: [
+      { ref:"Proverbs 13:12", text:"Hope deferred makes the heart sick, but a desire fulfilled is a tree of life." },
+      { ref:"Habakkuk 1:2–3", text:"O Lord, how long shall I cry for help, and you will not hear? Or cry to you Violence! and you will not save? Why do you make me see iniquity, and why do you idly look at wrong? Destruction and violence are before me; strife and contention arise." },
+      { ref:"Habakkuk 3:17–18", text:"Though the fig tree should not blossom, nor fruit be on the vines, the produce of the olive fail and the fields yield no food, the flock be cut off from the fold and there be no herd in the stalls, yet I will rejoice in the Lord; I will take joy in the God of my salvation." },
+      { ref:"Psalm 62:5–6", text:"For God alone, O my soul, wait in silence, for my hope is from him. He only is my rock and my salvation, my fortress; I shall not be shaken." },
+      { ref:"Romans 8:20–21", text:"For the creation was subjected to futility, not willingly, but because of him who subjected it, in hope that the creation itself will be set free from its bondage to corruption and obtain the freedom of the glory of the children of God." },
+      { ref:"Psalm 27:13–14", text:"I believe that I shall look upon the goodness of the Lord in the land of the living! Wait for the Lord; be strong, and let your heart take courage; wait for the Lord!" }
+    ],
+    Awful: [
+      { ref:"Psalm 6:2–3", text:"Be gracious to me, O Lord, for I am languishing; heal me, O Lord, for my bones are troubled. My soul also is greatly troubled. But you, O Lord — how long?" },
+      { ref:"Psalm 22:24", text:"For he has not despised or abhorred the affliction of the afflicted, and he has not hidden his face from him, but has heard, when he cried to him." },
+      { ref:"Jeremiah 17:14", text:"Heal me, O Lord, and I shall be healed; save me, and I shall be saved, for you are my praise." },
+      { ref:"Psalm 51:10", text:"Create in me a clean heart, O God, and renew a right spirit within me." },
+      { ref:"Isaiah 1:18", text:"Come now, let us reason together, says the Lord: though your sins are like scarlet, they shall be as white as snow; though they are red like crimson, they shall become like wool." },
+      { ref:"Romans 7:24–25", text:"Wretched man that I am! Who will deliver me from this body of death? Thanks be to God through Jesus Christ our Lord! So then, I myself serve the law of God with my mind, but with my flesh I serve the law of sin." }
+    ],
+    Repelled: [
+      { ref:"Romans 12:9", text:"Let love be genuine. Abhor what is evil; hold fast to what is good." },
+      { ref:"Psalm 97:10", text:"O you who love the Lord, hate evil! He preserves the lives of his saints; he delivers them from the hand of the wicked." },
+      { ref:"Habakkuk 1:13", text:"You who are of purer eyes than to see evil and cannot look at wrong, why do you idly look at traitors and remain silent when the wicked swallows up the man more righteous than he?" },
+      { ref:"Psalm 10:14", text:"But you do see, for you note mischief and vexation, that you may take it into your hands; to you the helpless commits himself; you have been the helper of the fatherless." },
+      { ref:"Revelation 21:5", text:"And he who was seated on the throne said, Behold, I am making all things new. Also he said, Write this down, for these words are trustworthy and true." },
+      { ref:"Isaiah 41:13", text:"For I, the Lord your God, hold your right hand; it is I who say to you, Fear not, I am the one who helps you." }
+    ]
+  },
+  Sad: {
+    Hurt: [
+      { ref:"Psalm 147:3", text:"He heals the brokenhearted and binds up their wounds." },
+      { ref:"Psalm 56:8", text:"You have kept count of my tossings; put my tears in your bottle. Are they not in your book?" },
+      { ref:"Psalm 31:7", text:"I will rejoice and be glad in your steadfast love, because you have seen my affliction; you have known the distress of my soul," },
+      { ref:"Isaiah 53:4–5", text:"Surely he has borne our griefs and carried our sorrows; yet we esteemed him stricken, smitten by God, and afflicted. But he was pierced for our transgressions; he was crushed for our iniquities; upon him was the chastisement that brought us peace, and with his wounds we are healed." },
+      { ref:"Hebrews 4:15", text:"For we do not have a high priest who is unable to sympathize with our weaknesses, but one who in every respect has been tempted as we are, yet without sin." },
+      { ref:"Isaiah 61:1", text:"The Spirit of the Lord God is upon me, because the Lord has anointed me to bring good news to the poor; he has sent me to bind up the brokenhearted, to proclaim liberty to the captives, and the opening of the prison to those who are bound;" }
+    ],
+    Depressed: [
+      { ref:"Psalm 88:1–2", text:"O Lord, God of my salvation; I cry out day and night before you. Let my prayer come before you; incline your ear to my cry!" },
+      { ref:"Psalm 40:1–3", text:"I waited patiently for the Lord; he inclined to me and heard my cry. He drew me up from the pit of destruction, out of the miry bog, and set my feet upon a rock, making my steps secure. He put a new song in my mouth, a song of praise to our God. Many will see and fear, and put their trust in the Lord." },
+      { ref:"Psalm 143:7–8", text:"Answer me quickly, O Lord! My spirit fails! Hide not your face from me, lest I be like those who go down to the pit. Let me hear in the morning of your steadfast love, for in you I trust. Make me know the way I should go, for to you I lift up my soul." },
+      { ref:"Psalm 18:28", text:"For it is you who light my lamp; the Lord my God lightens my darkness." },
+      { ref:"Isaiah 61:3", text:"to grant to those who mourn in Zion — to give them a beautiful headdress instead of ashes, the oil of gladness instead of mourning, the garment of praise instead of a faint spirit; that they may be called oaks of righteousness, the planting of the Lord, that he may be glorified." },
+      { ref:"Psalm 30:5", text:"For his anger is but for a moment, and his favor is for a lifetime. Weeping may tarry for the night, but joy comes with the morning." }
+    ],
+    Guilty: [
+      { ref:"Psalm 51:1–2", text:"Have mercy on me, O God, according to your steadfast love; according to your abundant mercy blot out my transgressions. Wash me thoroughly from my iniquity, and cleanse me from my sin!" },
+      { ref:"Psalm 32:5", text:"I acknowledged my sin to you, and I did not cover my iniquity; I said, I will confess my transgressions to the Lord, and you forgave the iniquity of my sin." },
+      { ref:"1 John 1:9", text:"If we confess our sins, he is faithful and just to forgive us our sins and to cleanse us from all unrighteousness." },
+      { ref:"Psalm 103:12", text:"as far as the east is from the west, so far does he remove our transgressions from us." },
+      { ref:"Isaiah 43:25", text:"I, I am he who blots out your transgressions for my own sake, and I will not remember your sins." },
+      { ref:"Romans 8:1", text:"There is therefore now no condemnation for those who are in Christ Jesus." }
+    ],
+    Despair: [
+      { ref:"Psalm 130:1–2", text:"Out of the depths I cry to you, O Lord! O Lord, hear my voice! Let your ears be attentive to the voice of my pleas for mercy!" },
+      { ref:"John 11:35", text:"Jesus wept." },
+      { ref:"2 Corinthians 1:8–9", text:"For we do not want you to be unaware, brothers, of the affliction we experienced in Asia. For we were so utterly burdened beyond our strength that we despaired of life itself. Indeed, we felt that we had received the sentence of death. But that was to make us rely not on ourselves but on God who raises the dead." },
+      { ref:"Romans 8:26", text:"Likewise the Spirit helps us in our weakness. For we do not know what to pray for as we ought, but the Spirit himself intercedes for us with groanings too deep for words." },
+      { ref:"1 Thessalonians 4:13–14", text:"But we do not want you to be uninformed, brothers, about those who are asleep, that you may not grieve as others do who have no hope. For since we believe that Jesus died and rose again, even so, through Jesus, God will bring with him those who have fallen asleep." },
+      { ref:"Romans 8:38–39", text:"For I am sure that neither death nor life, nor angels nor rulers, nor things present nor things to come, nor powers, nor height nor depth, nor anything else in all creation, will be able to separate us from the love of God in Christ Jesus our Lord." }
+    ],
+    Vulnerable: [
+      { ref:"Isaiah 40:11", text:"He will tend his flock like a shepherd; he will gather the lambs in his arms; he will carry them in his bosom, and gently lead those that are with young." },
+      { ref:"Psalm 91:4", text:"He will cover you with his pinions, and under his wings you will find refuge; his faithfulness is a shield and buckler." },
+      { ref:"2 Corinthians 4:7", text:"But we have this treasure in jars of clay, to show that the surpassing power belongs to God and not to us." },
+      { ref:"Psalm 9:9", text:"The Lord is a stronghold for the oppressed, a stronghold in times of trouble." },
+      { ref:"Psalm 10:17–18", text:"O Lord, you hear the desire of the afflicted; you will strengthen their heart; you will incline your ear to do justice to the fatherless and the oppressed, so that man who is of the earth may strike terror no more." },
+      { ref:"Psalm 12:5", text:"Because the poor are plundered, because the needy groan, I will now arise, says the Lord; I will place him in the safety for which he longs." }
+    ],
+    Lonely: [
+      { ref:"Psalm 25:16", text:"Turn to me and be gracious to me, for I am lonely and afflicted." },
+      { ref:"Psalm 102:7", text:"I lie awake; I am like a lonely sparrow on the housetop." },
+      { ref:"Psalm 68:6", text:"God settles the solitary in a home; he leads out the prisoners to prosperity, but the rebellious dwell in a parched land." },
+      { ref:"John 14:18", text:"I will not leave you as orphans; I will come to you." },
+      { ref:"Matthew 28:20", text:"teaching them to observe all that I have commanded you. And behold, I am with you always, to the end of the age." },
+      { ref:"Isaiah 54:10", text:"For the mountains may depart and the hills be removed, but my steadfast love shall not depart from you, and my covenant of peace shall not be removed, says the Lord, who has compassion on you." }
+    ]
+  }
+};
 let _emoVersesOpen = false;
+// One set per named feeling: the second-level set when there is one, otherwise the
+// top-level set. Repeats collapse; at most two sets show.
+function emoVerseGroups(emotions){
+  const seen = new Set(), out = [];
+  for(const e of emotions || []){
+    const sub = e.secondary && EMOTION_SUB_VERSES[e.core]?.[e.secondary];
+    const verses = sub || EMOTION_VERSES[e.core];
+    const key = sub ? `${e.core}|${e.secondary}` : e.core;
+    if(!verses || seen.has(key)) continue;
+    seen.add(key);
+    out.push({ core: e.core, label: sub ? `${e.core} · ${e.secondary}` : e.core, verses });
+  }
+  return out.slice(0, 2);
+}
 function emotionVersesHTML(emotions, type){
-  const cores = [...new Set((emotions||[]).map(e => e.core))].filter(c => EMOTION_VERSES[c]).slice(0, 2);
-  if(!cores.length) return '';
+  const groups0 = emoVerseGroups(emotions);
+  if(!groups0.length) return '';
   const plan = type === 'dp' && dpSession ? DP_PLANS[dpSession.plan] : null;
   const canMeditate = !!(plan && plan.steps.some(st => st.key === 'meditation' && st.passageField));
-  const groups = cores.map(core => `
-    <div class="emo-v-group" style="${idc(EMOTION_WHEEL[core].color)}">
-      <div class="emo-v-core idc">${esc(core)}</div>
-      ${EMOTION_VERSES[core].map(v => `
+  const groups = groups0.map(g => `
+    <div class="emo-v-group" style="${idc(EMOTION_WHEEL[g.core].color)}">
+      <div class="emo-v-core idc">${esc(g.label)}</div>
+      ${g.verses.map(v => `
         <div class="emo-v">
           <span class="scripture-ref emo-v-ref" onclick="event.stopPropagation();lookupScripture('${v.ref}')">${esc(v.ref)}</span>
           <div class="emo-v-text">${esc(v.text)}</div>
@@ -2501,7 +2861,11 @@ function emotionVersesHTML(emotions, type){
   return `<details class="emo-verses"${_emoVersesOpen?' open':''} ontoggle="_emoVersesOpen=this.open">
     <summary>${ICON.book}Scripture for this feeling</summary>${groups}</details>`;
 }
-function emoVerseFind(ref){ for(const vs of Object.values(EMOTION_VERSES)){ const v = vs.find(x => x.ref === ref); if(v) return v; } return null; }
+function emoVerseFind(ref){
+  const sets = [...Object.values(EMOTION_VERSES), ...Object.values(EMOTION_SUB_VERSES).flatMap(Object.values)];
+  for(const vs of sets){ const v = vs.find(x => x.ref === ref); if(v) return v; }
+  return null;
+}
 function emoVerseInsert(type, ref){
   const v = emoVerseFind(ref); if(!v) return;
   const ta = document.getElementById(type === 'pl' ? 'pl-prep-feelings' : 'dp-field-text');
