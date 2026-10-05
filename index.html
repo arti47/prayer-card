@@ -2040,6 +2040,7 @@
   .silence-seg .silence-pill { flex: 1 1 0; border: none; border-radius: 0; padding: 7px 4px; min-height: 36px; white-space: nowrap; background: none; font-size: .82rem; }
   .silence-seg .silence-pill + .silence-pill { border-left: 1px solid var(--border); }
   .silence-seg .silence-pill:active, .silence-seg .silence-pill:hover { background: var(--accent-light); }
+  .carry-eve-ref { font-style: normal; color: var(--text3); white-space: nowrap; }
 </style>
 </head>
 <body>
@@ -6305,7 +6306,24 @@ function carryPrevious(){
 }
 function carryUpdate(key, fn){ const l = loadCarryLog(); l[key] = l[key] || { notes: [] }; fn(l[key]); saveCarryLog(l); }
 // "John 15:5 — I am the vine…" → the reference, tappable; prose → a short excerpt.
-function carryRefHTML(passage){
+// The line as stored may already carry its own quote marks and reference
+// (“…” — Zephaniah 1:18a, from tapping verse parts). For display the words stand
+// alone in italic, no quote marks — they need none when nothing else is beside
+// them — and the exact reference replaces the passage reference beneath.
+// "Zephaniah 1:18b–c" / "John 15:4b–5a" → a reference the lookup understands.
+function plainVerseRef(r){ return String(r).trim().replace(/[–-][a-z]$/,'').replace(/(\d)[a-z](?=$|[–-])/g,'$1').replace(/([–-]\d+)[a-z]$/,'$1'); }
+function carryLineParts(line, passage){
+  let text = String(line||'').trim(), ref = '';
+  const m = text.match(/^(.*\S)\s+—\s+(.+)$/);
+  if(m && parseScriptureRef(plainVerseRef(m[2]))){ text = m[1]; ref = m[2].trim(); }
+  text = text.replace(/^[“"‘']+/, '').replace(/[”"’']+$/, '').trim();
+  return { text, ref };
+}
+function carryRefHTML(passage, exact){
+  if(exact){
+    const plain = plainVerseRef(exact);
+    return `<span class="carry-ref scripture-ref" onclick="event.stopPropagation();lookupScripture('${esc(plain).replace(/'/g,'&#39;')}')">${esc(exact)}</span>`;
+  }
   if(!passage) return '';
   const head = passage.split(/\s+[—–-]\s+/)[0].trim();
   if(parseScriptureRef(head)) return `<span class="carry-ref scripture-ref" onclick="event.stopPropagation();lookupScripture('${esc(head).replace(/'/g,'&#39;')}')">${esc(head)}</span>`;
@@ -6325,8 +6343,7 @@ function carryCardHTML(){
   // 1 — a line for today: show it, and let the day's thoughts gather beneath it.
   if(c.line){
     return `<div class="carry-card">${head('Today')}
-      <div class="carry-line">“${esc(c.line)}”</div>
-      ${carryRefHTML(c.passage)}
+      ${(()=>{ const lp=carryLineParts(c.line); return `<div class="carry-line">${esc(lp.text)}</div>${carryRefHTML(c.passage, lp.ref)}`; })()}
       ${carryNotesHTML(c, true)}
       <div class="carry-add"><input id="carry-note-input" placeholder="Add a thought as the day goes…" aria-label="Add a thought" onkeydown="if(event.key==='Enter'){event.preventDefault();carryAddNote()}"><button onclick="carryAddNote()">Add</button></div>
     </div>`;
@@ -6349,7 +6366,7 @@ function carryCardHTML(){
       ${_carryChoosing ? chooser : `<div class="carry-links">
         ${prev ? `<button class="carry-link" onclick="carryAgain()">Carry ${esc(prev.when)}’s line again</button>` : ''}
         <button class="carry-link" onclick="carryChoose(true)">Choose a line</button></div>`}
-      ${prev && !_carryChoosing ? `<div class="carry-passage" style="-webkit-line-clamp:2;font-size:.85rem">“${esc(prev.line)}”</div>` : ''}
+      ${prev && !_carryChoosing ? `<div class="carry-passage" style="-webkit-line-clamp:2;font-size:.85rem">${esc(carryLineParts(prev.line).text)}</div>` : ''}
     </div>`;
 }
 function refreshCarryCards(){ document.querySelectorAll('.carry-slot').forEach(el => { el.innerHTML = carryCardHTML(); }); }
@@ -6391,7 +6408,7 @@ function carryEveningHTML(key){
   const n = c.notes.length;
   return `<div class="dp-recall carry-eve">
       <div class="dp-recall-label">${ICON.sparkle}Carried today</div>
-      ${c.line ? `<div class="dp-recall-body">“${esc(c.line)}”</div>` : ''}
+      ${c.line ? `<div class="dp-recall-body">${(()=>{ const lp=carryLineParts(c.line); return esc(lp.text)+(lp.ref?` <span class="carry-eve-ref">— ${esc(lp.ref)}</span>`:''); })()}</div>` : ''}
       ${n ? (_carryEveOpen ? `<div class="carry-eve-notes">${carryNotesHTML(c, false)}</div><button class="carry-eve-toggle" onclick="_carryEveOpen=false;renderDailyPrayer()">⌃ Hide notes</button>`
                            : `<button class="carry-eve-toggle" onclick="_carryEveOpen=true;renderDailyPrayer()">⌄ ${n} note${n===1?'':'s'} from the day</button>`) : ''}
     </div>`;
@@ -8317,7 +8334,7 @@ function viewDailySession(id){
   const ownCarry = (s.steps?.meditation?.carry || '').trim();
   const carryHTML = (carryDayData.notes.length || (carryDayData.line && !ownCarry)) ? `<div class="sv-section">
       <div class="sv-head"><div class="sv-num" style="background:var(--accent2)">✦</div><div><div class="sv-title">Carried through the day</div></div></div>
-      ${carryDayData.line ? `<div class="sv-block"><div class="sv-text"><em>“${esc(carryDayData.line)}”</em></div></div>` : ''}
+      ${carryDayData.line ? `<div class="sv-block"><div class="sv-text"><em>${(()=>{ const lp=carryLineParts(carryDayData.line); return esc(lp.text)+(lp.ref?`</em> — ${esc(lp.ref)}<em>`:''); })()}</em></div></div>` : ''}
       ${carryNotesHTML(carryDayData, false)}</div>` : '';
   const prayed = (s.prayedCards||[]).map(id=>loadCards().find(c=>c.id===id)).filter(Boolean);
   const prayedHTML = prayed.length ? `<div class="sv-section"><div class="sv-head"><div class="sv-num" style="background:var(--accent2)">${ICON.cards}</div><div><div class="sv-title">Story cards</div></div></div>
