@@ -1691,9 +1691,9 @@
 </header>
 
 <!-- VIEWS -->
-<div id="view-cards" class="view active"><div id="cards-list"></div></div>
+<div id="view-cards" class="view"><div id="cards-list"></div></div>
 
-<div id="view-daily" class="view">
+<div id="view-daily" class="view active">
   <div id="dp-content"></div>
 </div>
 
@@ -1847,8 +1847,8 @@
 <!-- NAV -->
 <nav>
   <span class="nav-mark" id="nav-mark" aria-hidden="true"></span>
-  <button class="active" onclick="showView('cards')" id="nav-cards"><span class="icon" data-ico="cards"></span><span class="nav-label">Story Cards</span></button>
-  <button onclick="showView('daily')" id="nav-daily"><span class="icon" data-ico="sun"></span><span class="nav-label">Daily Prayer</span></button>
+  <button onclick="showView('cards')" id="nav-cards"><span class="icon" data-ico="cards"></span><span class="nav-label">Story Cards</span></button>
+  <button class="active" onclick="showView('daily')" id="nav-daily"><span class="icon" data-ico="sun"></span><span class="nav-label">Daily Prayer</span></button>
   <button onclick="showView('pl')" id="nav-pl"><span class="icon" data-ico="pen"></span><span class="nav-label">Weekly Deep</span></button>
   <button onclick="showView('reflect')" id="nav-reflect"><span class="icon" data-ico="mirror"></span><span class="nav-label">Reflect</span></button>
   <button onclick="showView('guide')" id="nav-guide"><span class="icon" data-ico="sparkle"></span><span class="nav-label">Guide</span></button>
@@ -5444,10 +5444,9 @@ function showView(name){
 // ══════════ STORY CARDS ══════════
 function renderCards(){
   const cards=loadCards(); const el=document.getElementById('cards-list');
-  const carry=`<div class="carry-slot">${carryCardHTML()}</div>`;
-  if(!cards.length){ el.innerHTML=carry+`<div class="empty">${emptyArt('dove')}<h3>No prayer cards yet</h3><p>Track a person or situation as an ongoing prayer story.<br>Aim for 8–12 over time.</p><button class="btn btn-primary" style="max-width:260px;margin:16px auto 0" onclick="openNewCard()">＋ Create your first card</button></div>`; return; }
+  if(!cards.length){ el.innerHTML=`<div class="empty">${emptyArt('dove')}<h3>No prayer cards yet</h3><p>Track a person or situation as an ongoing prayer story.<br>Aim for 8–12 over time.</p><button class="btn btn-primary" style="max-width:260px;margin:16px auto 0" onclick="openNewCard()">＋ Create your first card</button></div>`; return; }
   const active=cards.filter(c=>!c.answered), answered=cards.filter(c=>c.answered);
-  let html=carry;
+  let html='';
   if(active.length){
     html+=`<button class="btn-pray-now" onclick="openCardsWalkthrough()"><span class="bpn-label">${ICON.pray} Pray these now</span> <span class="bpn-meta">${active.length} active card${active.length===1?'':'s'} · ~5 min</span></button>`;
     html+=`<p class="section-title">Active (${active.length})</p>`;
@@ -9283,7 +9282,8 @@ window.addEventListener('beforeunload',()=>{
 // Initialize the default (Story Cards) view via showView so the floating add
 // button is shown and wired on first load — not just after switching tabs.
 hydrateIcons();
-showView('cards');
+// The app opens on Daily Prayer, where today's “Carry this with you” line lives.
+showView('daily');
 
 // P5 #31: detect blocked / unavailable storage early, so the user knows nothing will persist.
 if(!storageAvailable()){
