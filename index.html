@@ -2090,6 +2090,17 @@
   .ch-notes > summary::-webkit-details-marker { display: none; }
   .ch-notes > summary::before { content: '›'; display: inline-block; width: 12px; margin-right: 4px; transition: transform .2s; }
   .ch-notes[open] > summary::before { transform: rotate(90deg); }
+
+  .ch-day { position: relative; padding-right: 40px; }
+  .ch-remove { position: absolute; top: 8px; right: 0; width: 34px; height: 34px; border: none; background: none; color: var(--text3); border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+  .ch-remove .ico { width: 15px; height: 15px; }
+  .ch-remove::after { content: ''; position: absolute; inset: -5px; }
+  .ch-remove:active { color: var(--red); background: color-mix(in srgb, var(--red) 10%, transparent); }
+  #carry-sheet .carry-note { position: relative; }
+  .cs-edit { margin: 6px 0; }
+  .cs-edit textarea { width: 100%; min-height: 80px !important; }
+  .cs-edit-btns { display: flex; gap: 8px; margin-top: 6px; }
+  .cs-edit-btns .btn { margin: 0; flex: 1; padding: 8px !important; }
 </style>
 </head>
 <body>
@@ -6433,6 +6444,43 @@ function refreshCarryCards(){ document.querySelectorAll('.carry-slot').forEach(e
 // Emphasize: tap a word to lean on it (the technique, done on your line itself).
 // Paraphrase: look away and say it back. Notes written here are today's carry notes.
 let _carrySheet = null, _carryTech = 'emphasize', _carryStress = -1, _carryAway = false;
+// Notes in the sheets, editable in place for any day (✎ edit, ✕ remove with undo).
+let _csEdit = null;   // { key, id }
+function sheetNotesHTML(c){
+  if(!c.notes.length) return '';
+  return `<div class="carry-notes">${c.notes.map(n => {
+    if(_csEdit && _csEdit.key===c.key && _csEdit.id===n.id) return `<div class="cs-edit"><textarea id="cs-edit-input" class="note-text-input">${escTa(n.text)}</textarea><div class="cs-edit-btns"><button class="btn btn-secondary" onclick="csEditCancel()">Cancel</button><button class="btn btn-primary" onclick="csEditSave()">Save</button></div></div>`;
+    return `<div class="carry-note"><span class="carry-note-time">${esc(carryTime(n.t))}</span><span class="carry-note-text">${esc(n.text).replace(/<br>/g,'\n')}</span><span class="carry-note-act"><button aria-label="Edit note" onclick="csEditStart('${c.key}','${n.id}')">${ICON.pen}</button><button aria-label="Delete note" onclick="csDeleteNote('${c.key}','${n.id}')">${ICON.close}</button></span></div>`;
+  }).join('')}</div>`;
+}
+function csRerender(){ if(_carrySheet==='sit') carrySitRender(); else if(_carrySheet==='hist') carryHistList(); refreshCarryCardsOnly(); }
+function refreshCarryCardsOnly(){ document.querySelectorAll('.carry-slot').forEach(el => { el.innerHTML = carryCardHTML(); }); }
+function csEditStart(key,id){ _csEdit={key,id}; if(_carrySheet==='hist') _chOpenKeys.add(key); csRerender(); setTimeout(()=>{ const t=document.getElementById('cs-edit-input'); if(t){ t.focus(); t.setSelectionRange(t.value.length,t.value.length); } },30); }
+function csEditCancel(){ _csEdit=null; csRerender(); }
+function csEditSave(){
+  const v=(document.getElementById('cs-edit-input')?.value||'').trim(); const e=_csEdit; _csEdit=null; if(!e) return;
+  if(v) carryUpdate(e.key, d => { const n=(d.notes||[]).find(x=>x.id===e.id); if(n) n.text=v; });
+  csRerender();
+}
+function csDeleteNote(key,id){
+  const before=JSON.parse(JSON.stringify(loadCarryLog()));
+  carryUpdate(key, d => { d.notes=(d.notes||[]).filter(x=>x.id!==id); });
+  csRerender();
+  showUndoToast('Note removed', () => { saveCarryLog(before); csRerender(); });
+}
+// Remove a past day's line and its notes (after a warning). A line that came from
+// that day's Daily Prayer is cleared from the session's "Carry this with you" too;
+// the rest of the session stays.
+async function carryRemoveDay(key){
+  const d=new Date(key+'T12:00:00');
+  const ok=await uiConfirm(`Remove the line and notes from ${d.toLocaleDateString(undefined,{weekday:'long', day:'numeric', month:'long'})}? The rest of that day’s Daily Prayer stays.`, { danger:true, okText:'Remove' });
+  if(!ok) return;
+  const beforeLog=JSON.parse(JSON.stringify(loadCarryLog())), beforeSess=JSON.parse(JSON.stringify(loadDailySessions()));
+  const l=loadCarryLog(); delete l[key]; saveCarryLog(l);
+  saveDailySessions(loadDailySessions().map(s => { if(sessionDateKey(s)===key && s.steps?.meditation?.carry){ s.steps.meditation.carry=''; } return s; }));
+  csRerender();
+  showUndoToast('Line removed', () => { saveCarryLog(beforeLog); saveDailySessions(beforeSess); csRerender(); });
+}
 function carrySitOpen(){ _carrySheet='sit'; _carryStress=-1; _carryAway=false; carrySitRender(); openModal('modal-carry'); }
 function carrySitRender(){
   const c = carryForDay(dateKey(new Date())); if(!c.line){ closeModal('modal-carry'); return; }
@@ -6458,7 +6506,7 @@ function carrySitRender(){
     <p class="cs-guide">${esc(guide)}</p>
     ${_carryTech==='paraphrase' && t.closer ? `<p class="cs-guide quiet">${esc(t.closer)}</p>` : ''}
     <div class="cs-notes-h">Today’s notes</div>
-    ${c.notes.length ? `<div class="carry-notes">${c.notes.map(n=>`<div class="carry-note"><span class="carry-note-time">${esc(carryTime(n.t))}</span><span class="carry-note-text">${esc(n.text).replace(/<br>/g,'\n')}</span></div>`).join('')}</div>` : ''}
+    ${sheetNotesHTML(c)}
     <textarea id="carry-sit-input" class="note-text-input cs-input" placeholder="What are you noticing?" aria-label="What are you noticing?"></textarea>
     <div class="cs-actions"><button class="btn btn-secondary" onclick="closeModal('modal-carry')">Close</button><button class="btn btn-primary" onclick="carrySitAdd()">Add note</button></div>`;
 }
@@ -6475,7 +6523,7 @@ function carryHistory(){
   loadDailySessions().forEach(s => { if((s.steps?.meditation?.carry||'').trim()) keys.add(sessionDateKey(s)); });
   return [...keys].filter(k => k < today).sort().reverse().map(carryForDay).filter(c => c.line || c.notes.length);
 }
-let _carryHistQ = '';
+let _carryHistQ = '', _chOpenKeys = new Set();
 function carryHistOpen(){ _carrySheet='hist'; _carryHistQ=''; document.getElementById('carry-sheet').innerHTML = `
     <div class="cs-head"><span class="cs-mark">${ICON.scroll||ICON.sparkle}</span><h2>Earlier lines</h2></div>
     <input type="search" class="cs-search" placeholder="Search lines and notes…" aria-label="Search lines and notes" oninput="_carryHistQ=this.value;carryHistList()">
@@ -6492,7 +6540,8 @@ function carryHistList(){
       <div class="ch-date">${esc(d.toLocaleDateString(undefined,{weekday:'short', day:'numeric', month:'short', year: d.getFullYear()!==new Date().getFullYear()?'numeric':undefined}))}</div>
       ${lp.text ? `<div class="ch-line">${esc(lp.text)}</div>` : ''}
       ${carryRefHTML(c.passage, lp.ref)}
-      ${c.notes.length ? `<details class="ch-notes"${q?' open':''}><summary>${c.notes.length} note${c.notes.length===1?'':'s'}</summary><div class="carry-notes">${c.notes.map(n=>`<div class="carry-note"><span class="carry-note-time">${esc(carryTime(n.t))}</span><span class="carry-note-text">${esc(n.text).replace(/<br>/g,'\n')}</span></div>`).join('')}</div></details>` : ''}
+      ${c.notes.length ? `<details class="ch-notes"${(q||_chOpenKeys.has(c.key))?' open':''} ontoggle="this.open?_chOpenKeys.add('${c.key}'):_chOpenKeys.delete('${c.key}')"><summary>${c.notes.length} note${c.notes.length===1?'':'s'}</summary>${sheetNotesHTML(c)}</details>` : ''}
+      <button class="ch-remove" onclick="carryRemoveDay('${c.key}')" aria-label="Remove this day’s line">${ICON.close}</button>
     </div>`; }).join('') : `<p class="cs-guide quiet">${q ? 'Nothing matches.' : 'Nothing here yet.'}</p>`;
 }
 function carryChoose(on){ _carryChoosing = on; refreshCarryCards(); if(on) setTimeout(() => document.getElementById('carry-line-input')?.focus(), 30); }
