@@ -2181,6 +2181,27 @@
   .wn-mid .walk-dots { margin: 0; }
   .wn-mid span { font-size: .7rem; }
   .flip-card { height: clamp(320px, calc(92dvh - 210px), 720px) !important; }
+
+  /* Walkthrough, tighter: one title line beside the close, compact nav, roomier card. */
+  #modal-cards-walkthrough .modal { padding-top: 14px; }
+  #modal-cards-walkthrough .modal-handle { margin-bottom: 8px; }
+  #modal-cards-walkthrough .daily-header { text-align: left; padding: 0 48px 0 2px; margin: 0 0 4px; min-height: 38px; display: flex; align-items: center; }
+  #modal-cards-walkthrough .daily-header h2 { font-size: 1.02rem; margin: 0; }
+  .wk-close { top: 30px; right: 16px; }
+  #modal-cards-walkthrough .modal:has(.walk-finish) .daily-header, #modal-cards-walkthrough .modal:has(.walk-finish) .wk-close { display: none; }
+  .walk-nav { margin: 2px 0 8px; }
+  .wn-btn { width: 34px; height: 34px; }
+  .flip-card { height: clamp(320px, calc(92dvh - 165px), 760px) !important; }
+  /* Only the side facing you is drawn: iOS Safari can show a child of the hidden
+     face through the turned card, so the face away from you is hidden once the
+     turn passes its midpoint. */
+  .fc-front, .fc-back { transition: visibility 0s linear .26s; }
+  .flip-card.flipped .fc-front { visibility: hidden; }
+  .flip-card:not(.flipped) .fc-back { visibility: hidden; }
+  /* More room between the text block and the card's edges. */
+  .fc-face { padding: 20px 20px 14px; }
+  .fc-back .prayer-steps { padding: .2em 1em; }
+  .fc-back .fc-top { margin-bottom: .7em; }
 </style>
 </head>
 <body>
@@ -2523,7 +2544,7 @@
   <div class="modal">
     <div class="modal-handle"></div>
     <button class="wk-close" onclick="closeModal('modal-cards-walkthrough')" aria-label="Close"><span data-ico="close"></span></button>
-    <div class="daily-header"><h2>Pray Through Your Story Cards</h2><p>~5 min · One card at a time</p></div>
+    <div class="daily-header"><h2>Pray these now</h2></div>
     <div id="daily-content"></div>
   </div>
 </div>
@@ -7596,7 +7617,7 @@ function renderDailyCard(cards,idx,todayKey){
       <button class="wn-btn" onclick="dailyNav(${idx-1})" aria-label="Previous card"${idx>0?'':' disabled'}>‹</button>
       <div class="wn-mid">
         <div class="walk-dots" role="img" aria-label="Card ${idx+1} of ${total}">${cards.map((x,i)=>`<span class="walk-dot${i<idx?' done':''}${i===idx?' now':''}" style="--dc:${CAT_COLOR[CAT_ICON[x.category]?x.category:'other']}"></span>`).join('')}</div>
-        <span>Card ${idx+1} of ${total}${total>1?' · swipe to turn':''}</span>
+        <span>${idx+1} of ${total}</span>
       </div>
       ${idx<total-1?`<button class="wn-btn" onclick="dailyNav(${idx+1})" aria-label="Next card">›</button>`:`<button class="wn-btn wn-finish" onclick="dailyFinish()" aria-label="Finish">✓</button>`}
     </div>
@@ -7614,16 +7635,14 @@ function renderDailyCard(cards,idx,todayKey){
         </div>
         <div class="fc-face fc-back" aria-hidden="${_cardSide!=='back'}">
           <div class="fc-top"><span class="fc-back-name">${esc(c.person)}</span>${noteBtn}</div>
-          <div class="prayer-flow"><h3>Pray Through This Card</h3>
-            <p class="flow-hint">Where a line trails off, finish it in your own words before Him.</p>
+          <div class="prayer-flow">
             <div class="prayer-steps">${steps.map(s=>`<div class="prayer-step"><div class="step-label">${s.label}</div><div class="step-prompt">${s.prompt}</div></div>`).join('')}</div>
           </div>
           <div class="fc-hint">Tap to turn back</div>
         </div>
       </div>
     </div></div>`;
-  fitCardFaces();
-  requestAnimationFrame(fitCardFaces);
+  fitCardFacesSoon();
 }
 // ── Flick the card: drag the story card sideways and it follows your finger,
 // tilting like a real card; let go past the threshold (or flick fast) and it
@@ -7636,16 +7655,27 @@ let _flickEnter = null, _cardSide = 'front', _flickMoved = false;
 function fitCardFaces(){
   document.querySelectorAll('#daily-content .fc-face').forEach(f => {
     f.classList.remove('fit-overflow');
-    const fits = () => f.scrollHeight <= f.clientHeight + 1;
+    // Layout offsets, not scrollHeight: iOS Safari misreports scrollHeight on a
+    // face inside a 3D-turned card. The face is a flex column whose last child
+    // (the hint) sits at the foot; it fits when that child's bottom is inside.
+    const pad = parseFloat(getComputedStyle(f).paddingBottom) || 0;
+    const fits = () => { const last = f.lastElementChild; if(!last) return true;
+      let need = 0; for(const ch of f.children){ if(getComputedStyle(ch).position === 'absolute') continue; need += ch.offsetHeight; }
+      const cs = getComputedStyle(f); need += (parseFloat(cs.paddingTop)||0) + pad;
+      // (the hint's own top margin is auto — it only takes leftover space — so skip it)
+      [...f.children].forEach(ch => { if(ch === last || getComputedStyle(ch).position === 'absolute') return; const m = getComputedStyle(ch); need += (parseFloat(m.marginTop)||0) + (parseFloat(m.marginBottom)||0); });
+      return need <= f.clientHeight + 1; };
     f.style.setProperty('--fit', '1');
     if(!f.clientHeight || fits()) return;
-    let lo = 0.66, hi = 1;
+    let lo = 0.62, hi = 1;
     f.style.setProperty('--fit', String(lo));
     if(!fits()){ f.classList.add('fit-overflow'); return; }
-    for(let i = 0; i < 7; i++){ const mid = (lo + hi) / 2; f.style.setProperty('--fit', String(mid)); if(fits()) lo = mid; else hi = mid; }
+    for(let i = 0; i < 8; i++){ const mid = (lo + hi) / 2; f.style.setProperty('--fit', String(mid)); if(fits()) lo = mid; else hi = mid; }
     f.style.setProperty('--fit', String(lo));
   });
 }
+// Re-fit once the sheet has finished opening and fonts are settled.
+function fitCardFacesSoon(){ fitCardFaces(); requestAnimationFrame(fitCardFaces); [120, 400, 900].forEach(t => setTimeout(fitCardFaces, t)); if(document.fonts && document.fonts.ready) document.fonts.ready.then(fitCardFaces); }
 window.addEventListener('resize', () => { if(document.querySelector('#daily-content .fc-face')) fitCardFaces(); });
 function flipCard(){
   _cardSide = _cardSide==='back' ? 'front' : 'back';
