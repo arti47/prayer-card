@@ -7673,7 +7673,7 @@ function renderDailyCard(cards,idx,todayKey){
           ${walkScriptureHTML(c)}
           ${walkWeeklyLine(c)}
           ${walkNotesHTML(c)}
-          <div class="fc-quick"><input id="fc-quick-input" placeholder="Add a note…" aria-label="Add a story note" enterkeyhint="done" onkeydown="if(event.key==='Enter'){event.preventDefault();walkQuickNote('${c.id}')}"><button onclick="walkQuickNote('${c.id}')" aria-label="Add note">＋</button></div>
+          <form class="fc-quick" onsubmit="event.preventDefault();walkQuickNote('${c.id}')"><input id="fc-quick-input" placeholder="Add a note…" aria-label="Add a story note" enterkeyhint="send" autocomplete="off"><button type="submit" aria-label="Add note">＋</button></form>
           <div class="fc-hint">${ICON.pray}Tap to pray through it</div>
         </div>
         <div class="fc-face fc-back" aria-hidden="${_cardSide!=='back'}">
@@ -7736,7 +7736,8 @@ function walkQuickNote(id){
   const el=document.getElementById('fc-quick-input'); const v=(el?.value||'').trim(); if(!v) return;
   const cards=loadCards(); const c=cards.find(x=>x.id===id); if(!c) return;
   c.notes=c.notes||[]; c.notes.push({ date: today(), text: v }); saveCards(cards);
-  refreshWalkCard(); showToast('✓ Note added');
+  if(el) el.blur();
+  refreshWalkCard(); renderCards(); showToast('✓ Note added');
 }
 function walkEditScripture(id){ openEditCard(id); setTimeout(()=>document.getElementById('f-scripture')?.focus(), 300); }
 // Re-draw the card on screen in place (after a note or edit), keeping its side.
@@ -7797,12 +7798,12 @@ function flipCard(){
 document.addEventListener('click', e => {
   const card = e.target.closest && e.target.closest('#daily-content .flip-card'); if(!card) return;
   if(_flickMoved){ _flickMoved=false; return; }
-  if(e.target.closest('button, a, textarea, input, .scripture-ref')) return;
+  if(e.target.closest('button, a, textarea, input, form, .scripture-ref')) return;
   flipCard();
 });   // 'next' | 'back' — how the incoming card arrives
 (function setupCardFlick(){
   const host = () => document.getElementById('daily-content');
-  const IGN = 'button, a, textarea, input, .scripture-ref, .step-ask-line';
+  const IGN = 'button, a, textarea, input, form, .scripture-ref, .step-ask-line';
   let st = null;
   document.addEventListener('pointerdown', e => {
     const h = host(); if(!h || !h.contains(e.target) || e.target.closest(IGN)) return;
