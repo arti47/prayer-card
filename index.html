@@ -2215,6 +2215,34 @@
   .wk-close { top: 26px; }
   #modal-cards-walkthrough .modal-handle { margin-bottom: 6px; }
   .flip-card { height: clamp(320px, calc(92dvh - 112px), 800px) !important; }
+
+  /* Story card front, rebuilt: nothing the back repeats. */
+  .fc-front { padding: 0 !important; }
+  .fc-band { padding: 16px 18px 12px; background: linear-gradient(color-mix(in srgb, var(--cat) 16%, var(--surface)), color-mix(in srgb, var(--cat) 5%, var(--surface))); border-bottom: 1px solid color-mix(in srgb, var(--cat) 25%, var(--border)); }
+  .fc-front .p-title { font-size: 1.75em; margin: .15em 0 .15em; }
+  .fc-since { font-family: var(--sans); font-size: .72em; color: var(--text3); }
+  .fc-front > :not(.fc-band):not(.card-watermark) { margin-left: 18px; margin-right: 18px; }
+  .fc-front .fc-scripture { margin-top: 14px; padding: .8em 1em; }
+  .fc-ref { display: inline-block; background: none; border: none; padding: 0; font: inherit; font-family: var(--sans); font-size: .74em; letter-spacing: .04em; color: var(--accent); text-decoration: underline dotted; text-underline-offset: 3px; cursor: pointer; margin-bottom: .35em; }
+  .fc-front .fc-verse { font-family: var(--serif); font-style: italic; font-size: 1.08em; line-height: 1.55; color: var(--text); margin: 0; }
+  .fc-add-scr, .fc-weekly, .fc-nonotes { display: flex; align-items: center; gap: 7px; background: none; border: none; padding: .55em 0; font-family: var(--serif); font-style: italic; font-size: .88em; color: var(--accent); cursor: pointer; text-align: left; }
+  .fc-add-scr { margin-top: 12px; }
+  .fc-add-scr .ico, .fc-weekly .ico { width: 15px; height: 15px; flex: none; }
+  .fc-weekly { font-style: normal; font-family: var(--sans); font-size: .74em; color: var(--text2); padding: .7em 0 .2em; }
+  .fc-weekly span { color: var(--text3); }
+  .fc-nonotes { color: var(--text3); margin-top: 6px; }
+  .fc-notes { margin-top: 10px; padding-left: 20px; }
+  .fc-notes::before { top: 10px; bottom: 10px; }
+  .fc-note-row { position: relative; padding: .3em 0; }
+  .fc-note-row .note-knot { top: .65em; }
+  .fc-note-date { display: block; font-family: var(--sans); font-size: .66em; color: var(--text3); letter-spacing: .03em; }
+  .fc-note-text { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; font-size: .92em; line-height: 1.45; color: var(--text); }
+  .fc-quick { display: flex; gap: 8px; margin-top: 10px; }
+  .fc-quick input { flex: 1; min-width: 0; padding: 8px 12px; border: 1px solid var(--border); border-radius: 99px; background: var(--surface2); color: var(--text); font-family: var(--serif); font-size: 16px; }
+  .fc-quick button { flex: none; width: 38px; height: 38px; border-radius: 50%; border: 1px solid var(--accent); background: var(--accent); color: var(--on-accent); font-size: 1.1rem; cursor: pointer; }
+  .fc-front .fc-hint { margin-bottom: 12px; }
+  /* Back: a touch larger to start from; fit-to-card still steps it down if needed. */
+  .fc-back { font-size: calc(var(--fit, 1) * 1.1rem); }
 </style>
 </head>
 <body>
@@ -4224,7 +4252,7 @@ function placeNavMark(){
 window.addEventListener('resize', () => requestAnimationFrame(placeNavMark));
 // Typographic apostrophes in interface text, applied as the page renders. Anything
 // you wrote, Scripture, and form fields are left exactly as they are.
-const APOS_SKIP = 'textarea, input, select, script, style, [contenteditable], .bb-verse, .bb-preview, .note-text, .he-snippet, .sv-text, .pl-prev-text, .pl-reflection-text, .card-title, .card-scripture, .p-title, .p-scripture, .p-ask, .step-prompt em, .step-ask-line em, .persp-block em, .detail-section p, .rv-name, .rv-excerpt, .rv-scripture, .ap-card-name, .ap-card-scripture, .link-card-title, .link-card-sub, .timeline-snippet, .timeline-title, .focus-passage-body, .focus-carry-body, .dp-recall-body, .scripture-ref, .psf-text, .pl-done-verse, .dp-inv-text, .dp-inv-option-text, .dp-inv-ref, .wf-word, .emo-chip, .pl-linked-chip, .note-ctx-name, .prayer-lib-text, .tech-example, #scripture-content, .heatmap-day-list, .emo-v-text, .carry-line, .carry-note-text, .carry-passage, .tech-yours-body, .cs-line, .ch-line, .ch-day .carry-note-text, .dps-body, .dps-tab, mark';
+const APOS_SKIP = 'textarea, input, select, script, style, [contenteditable], .bb-verse, .bb-preview, .note-text, .he-snippet, .sv-text, .pl-prev-text, .pl-reflection-text, .card-title, .card-scripture, .p-title, .p-scripture, .p-ask, .step-prompt em, .step-ask-line em, .persp-block em, .detail-section p, .rv-name, .rv-excerpt, .rv-scripture, .ap-card-name, .ap-card-scripture, .link-card-title, .link-card-sub, .timeline-snippet, .timeline-title, .focus-passage-body, .focus-carry-body, .dp-recall-body, .scripture-ref, .psf-text, .pl-done-verse, .dp-inv-text, .dp-inv-option-text, .dp-inv-ref, .wf-word, .emo-chip, .pl-linked-chip, .note-ctx-name, .prayer-lib-text, .tech-example, #scripture-content, .heatmap-day-list, .emo-v-text, .carry-line, .carry-note-text, .carry-passage, .tech-yours-body, .cs-line, .ch-line, .fc-note-text, .fc-verse, .fc-since, .ch-day .carry-note-text, .dps-body, .dps-tab, mark';
 function smartApostrophes(root){
   const w = document.createTreeWalker(root || document.body, NodeFilter.SHOW_TEXT, {
     acceptNode: n => (n.nodeValue.includes("'") && n.parentElement && !n.parentElement.closest(APOS_SKIP)) ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT
@@ -6268,7 +6296,7 @@ function saveCard(){
     perspTrust:document.getElementById('f-persp-trust').value.trim() };
   if(editingCardId){ const i=cards.findIndex(c=>c.id===editingCardId); if(i>-1) Object.assign(cards[i],data); }
   else cards.push({ id:genId(),...data,dateStarted:today(),answered:false,notes:[] });
-  saveCards(cards); closeModal('modal-new'); renderCards();
+  saveCards(cards); closeModal('modal-new'); renderCards(); refreshWalkCard();
   showToast(editingCardId?'Card updated':'Card added ✓');
 }
 
@@ -6429,6 +6457,7 @@ function saveNote(){
   if(document.getElementById('modal-detail').classList.contains('open')) openDetail(noteTargetId);
   renderCards();
   showToast(noteEditIndex !== null ? 'Note updated ✓' : 'Note added ✓');
+  refreshWalkCard();
 }
 
 function deleteNote(cardId, noteIndex){
@@ -7583,6 +7612,7 @@ function renderDailyCard(cards,idx,todayKey){
   // P4 #17: record the date this card was prayed through. Idempotent — always sets to today.
   const all = loadCards();
   const stored = all.find(x => x.id === c.id);
+  const prevPrayed = stored ? stored.lastPrayed : null;   // before today's visit is recorded
   if(stored && stored.lastPrayed !== today()){
     stored.lastPrayed = today();
     saveCards(all);
@@ -7618,9 +7648,6 @@ function renderDailyCard(cards,idx,todayKey){
     {label:'Repent', prompt:`“Father, forgive me for trying to carry this myself — my cynicism, control, or fear. I give this story back into your hands.”`},
     {label:'Follow', prompt:'“Father, show me the next faithful step in this story — and give me grace to take it.”'}];
   const ck = CAT_ICON[c.category] ? c.category : 'other';
-  const scrRef = (c.scripture||'').trim();
-  const scrIsRef = !!(scrRef && parseScriptureRef(scrRef));
-  if(scrIsRef) setTimeout(()=>{ (async()=>{ let v=getScriptureText(scrRef); if(!v) v=await lookupBibleRef(scrRef); const el=document.getElementById('fc-verse'); if(el&&v){ el.textContent=v; el.hidden=false; fitCardFaces(); } })(); },0);
   const noteBtn = `<button class="fc-note" onclick="event.stopPropagation();openNote('${c.id}')" aria-label="Add Story Note">${ICON.note}<span>＋</span></button>`;
   // One card, two sides. Front: who and what you're praying for. Back (tap to
   // turn): the five moves. Swipe on either side to flick to the next card.
@@ -7638,11 +7665,15 @@ function renderDailyCard(cards,idx,todayKey){
       <div class="fc-inner">
         <div class="fc-face fc-front" aria-hidden="${_cardSide==='back'}">
           <span class="card-watermark" aria-hidden="true">${ICON[CAT_ICON[ck]]}</span>
-          <div class="fc-top">${catChip(c.category, (CAT_CLASS[c.category]||'cat-other')+' p-cat')}${noteBtn}</div>
-          <div class="p-title">${esc(c.person)}</div>
-          ${scrRef?`<div class="fc-scripture"><div class="p-scripture">${linkifyScriptureRefs(scrRef)}</div>${scrIsRef?'<div class="fc-verse" id="fc-verse" hidden></div>':''}</div>`:''}
-          ${(askCirc||askHeart)?`<div class="fc-asks">${askCirc?`<div class="fc-ask"><span>Circumstance</span>${esc(askCirc)}</div>`:''}${askHeart?`<div class="fc-ask"><span>Heart</span>${esc(askHeart)}</div>`:''}</div>`:''}
-          ${(c.perspAttr&&c.perspTrust)?`<div class="fc-persp"><span>Father's Perspective</span>Father, because you are <em>${esc(c.perspAttr)}</em>, I will trust you with <em>${esc(c.perspTrust)}</em>.</div>`:''}
+          <div class="fc-band">
+            <div class="fc-top">${catChip(c.category, (CAT_CLASS[c.category]||'cat-other')+' p-cat')}${noteBtn}</div>
+            <div class="p-title">${esc(c.person)}</div>
+            <div class="fc-since">${walkSinceLine(c, prevPrayed)}</div>
+          </div>
+          ${walkScriptureHTML(c)}
+          ${walkWeeklyLine(c)}
+          ${walkNotesHTML(c)}
+          <div class="fc-quick"><input id="fc-quick-input" placeholder="Add a note…" aria-label="Add a story note" enterkeyhint="done" onkeydown="if(event.key==='Enter'){event.preventDefault();walkQuickNote('${c.id}')}"><button onclick="walkQuickNote('${c.id}')" aria-label="Add note">＋</button></div>
           <div class="fc-hint">${ICON.pray}Tap to pray through it</div>
         </div>
         <div class="fc-face fc-back" aria-hidden="${_cardSide!=='back'}">
@@ -7654,6 +7685,53 @@ function renderDailyCard(cards,idx,todayKey){
       </div>
     </div></div>`;
   fitCardFacesSoon();
+}
+
+// ── Story card front: what the back doesn't already say ──
+function walkSinceLine(c, prevPrayed){
+  const parts = [];
+  const d = new Date(c.dateStarted);
+  if(!isNaN(d)){ const n = daysBetween(c.dateStarted, new Date()); parts.push(`Praying since ${d.toLocaleDateString(undefined,{day:'numeric', month:'short'})}`); if(n>0) parts.push(`${n} day${n===1?'':'s'}`); }
+  if(prevPrayed && prevPrayed !== today()){ const r = relativeTimeAgo(prevPrayed); if(r) parts.push(`last prayed ${r}`); }
+  return esc(parts.join(' · '));
+}
+function walkScriptureHTML(c){
+  const raw = (c.scripture||'').trim();
+  if(!raw) return `<button class="fc-add-scr" onclick="walkEditScripture('${c.id}')">${ICON.book}Add a Scripture anchor →</button>`;
+  const m = raw.match(/^(.+?)\s+[—–]\s+([\s\S]+)$/);
+  const ref = m ? m[1].trim() : raw, text = m ? m[2].trim() : '';
+  const p = parseScriptureRef(ref);
+  if(p && !text) setTimeout(()=>{ (async()=>{ let v=getScriptureText(ref); if(!v) v=await lookupBibleRef(ref); const el=document.getElementById('fc-verse'); if(el&&v){ el.textContent='“'+nestQuotes(v)+'”'; el.hidden=false; fitCardFacesSoon(); } })(); },0);
+  const refHTML = p ? `<button class="fc-ref" onclick="lookupInContext('${esc(ref).replace(/'/g,"\\'")}')">${esc(ref)}</button>` : `<span class="fc-ref">${esc(ref)}</span>`;
+  return `<div class="fc-scripture">${refHTML}${text ? `<div class="fc-verse">“${esc(nestQuotes(text.replace(/^[“"]|[”"]$/g,'')))}”</div>` : (p ? '<div class="fc-verse" id="fc-verse" hidden></div>' : '')}</div>`;
+}
+function walkWeeklyLine(c){
+  const ss = loadSessions().filter(s => (s.linkedCards||[]).includes(c.id));
+  if(!ss.length) return '';
+  const s0 = ss[0]; const d = new Date(s0.dateISO || s0.date);
+  const when = isNaN(d) ? (s0.date||'') : d.toLocaleDateString(undefined,{weekday:'short', day:'numeric', month:'short'});
+  return `<button class="fc-weekly" onclick="viewSession('${s0.id}')">${ICON.pen}Held in Weekly Deep · ${esc(when)}${ss.length>1?` <span>+${ss.length-1}</span>`:''}</button>`;
+}
+function walkNotesHTML(c){
+  const notes = (c.notes||[]).slice(-2);
+  if(!notes.length) return `<button class="fc-nonotes" onclick="openNote('${c.id}')">No story notes yet — what have you noticed?</button>`;
+  return `<div class="fc-notes note-thread">${notes.map(n => { const ans=(n.text||'').trim()==='🎉 Prayer answered!';
+    return `<div class="fc-note-row"><span class="note-knot${ans?' answered':''}" aria-hidden="true">${ans?ICON.olive:''}</span><span class="fc-note-date">${esc((n.date||'').replace(/,\s*\d{4}$/,''))}</span><span class="fc-note-text">${esc(n.text)}</span></div>`; }).join('')}</div>`;
+}
+function walkQuickNote(id){
+  const el=document.getElementById('fc-quick-input'); const v=(el?.value||'').trim(); if(!v) return;
+  const cards=loadCards(); const c=cards.find(x=>x.id===id); if(!c) return;
+  c.notes=c.notes||[]; c.notes.push({ date: today(), text: v }); saveCards(cards);
+  refreshWalkCard(); showToast('✓ Note added');
+}
+function walkEditScripture(id){ openEditCard(id); setTimeout(()=>document.getElementById('f-scripture')?.focus(), 300); }
+// Re-draw the card on screen in place (after a note or edit), keeping its side.
+function refreshWalkCard(){
+  if(!document.getElementById('modal-cards-walkthrough')?.classList.contains('open')) return;
+  if(document.querySelector('#daily-content .walk-finish')) return;
+  const cards=loadCards().filter(c=>!c.answered); if(!cards.length) return;
+  dailyIndex=Math.min(dailyIndex, cards.length-1); _flickEnter=null;
+  renderDailyCard(cards, dailyIndex, 'daily_'+new Date().toDateString());
 }
 // ── Flick the card: drag the story card sideways and it follows your finger,
 // tilting like a real card; let go past the threshold (or flick fast) and it
