@@ -2016,6 +2016,20 @@
   .cp-part.on { background: color-mix(in srgb, var(--accent) 22%, transparent); text-decoration: none; color: var(--text); }
   .cp-l { font-family: var(--sans); font-size: .62em; color: var(--accent); font-weight: 700; margin-right: 2px; vertical-align: super; line-height: 0; }
   .cp-v { font-family: var(--sans); font-size: .62em; color: var(--text3); margin: 0 1px 0 4px; }
+
+  /* Prayer screens: passage + meditation answer as a folded strip. */
+  .dp-strip { margin: 4px 0 14px; border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--surface2); overflow: hidden; }
+  .dps-tabs { display: flex; }
+  .dps-tab { flex: 1 1 auto; min-width: 0; display: flex; align-items: center; gap: 5px; min-height: 42px; padding: 8px 10px; background: none; border: none; font-family: var(--serif); font-size: .84rem; color: var(--text2); cursor: pointer; text-align: left; }
+  .dps-tab + .dps-tab { border-left: 1px solid var(--border); }
+  .dps-tab .ico { width: 15px; height: 15px; flex: none; color: var(--accent); }
+  .dps-tab span { flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .dps-tab i { font-style: normal; color: var(--accent); flex: none; }
+  .dps-tab.on { background: var(--accent-light); color: var(--text); }
+  .dps-body { border-top: 1px solid var(--border); padding: 12px 14px; max-height: 9.6em; max-height: 30vh; overflow-y: auto; font-family: var(--serif); font-size: .9rem; line-height: 1.65; color: var(--text); white-space: pre-wrap; animation: viewIn .18s ease; }
+  .dps-verse { font-style: italic; margin-top: 6px; padding-top: 6px; border-top: 1px solid var(--border-soft); }
+  .dps-item + .dps-item { margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--border-soft); }
+  .dps-sub { display: block; font-family: var(--sans); font-size: .66rem; letter-spacing: .05em; text-transform: uppercase; color: var(--text3); margin-bottom: 2px; }
 </style>
 </head>
 <body>
@@ -4019,7 +4033,7 @@ function placeNavMark(){
 window.addEventListener('resize', () => requestAnimationFrame(placeNavMark));
 // Typographic apostrophes in interface text, applied as the page renders. Anything
 // you wrote, Scripture, and form fields are left exactly as they are.
-const APOS_SKIP = 'textarea, input, select, script, style, [contenteditable], .bb-verse, .bb-preview, .note-text, .he-snippet, .sv-text, .pl-prev-text, .pl-reflection-text, .card-title, .card-scripture, .p-title, .p-scripture, .p-ask, .step-prompt em, .step-ask-line em, .persp-block em, .detail-section p, .rv-name, .rv-excerpt, .rv-scripture, .ap-card-name, .ap-card-scripture, .link-card-title, .link-card-sub, .timeline-snippet, .timeline-title, .focus-passage-body, .focus-carry-body, .dp-recall-body, .scripture-ref, .psf-text, .pl-done-verse, .dp-inv-text, .dp-inv-option-text, .dp-inv-ref, .wf-word, .emo-chip, .pl-linked-chip, .note-ctx-name, .prayer-lib-text, .tech-example, #scripture-content, .heatmap-day-list, .emo-v-text, .carry-line, .carry-note-text, .carry-passage, .tech-yours-body, mark';
+const APOS_SKIP = 'textarea, input, select, script, style, [contenteditable], .bb-verse, .bb-preview, .note-text, .he-snippet, .sv-text, .pl-prev-text, .pl-reflection-text, .card-title, .card-scripture, .p-title, .p-scripture, .p-ask, .step-prompt em, .step-ask-line em, .persp-block em, .detail-section p, .rv-name, .rv-excerpt, .rv-scripture, .ap-card-name, .ap-card-scripture, .link-card-title, .link-card-sub, .timeline-snippet, .timeline-title, .focus-passage-body, .focus-carry-body, .dp-recall-body, .scripture-ref, .psf-text, .pl-done-verse, .dp-inv-text, .dp-inv-option-text, .dp-inv-ref, .wf-word, .emo-chip, .pl-linked-chip, .note-ctx-name, .prayer-lib-text, .tech-example, #scripture-content, .heatmap-day-list, .emo-v-text, .carry-line, .carry-note-text, .carry-passage, .tech-yours-body, .dps-body, .dps-tab, mark';
 function smartApostrophes(root){
   const w = document.createTreeWalker(root || document.body, NodeFilter.SHOW_TEXT, {
     acceptNode: n => (n.nodeValue.includes("'") && n.parentElement && !n.parentElement.closest(APOS_SKIP)) ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT
@@ -6963,6 +6977,43 @@ function carryTapPart(i){
   carryRenderParts();
 }
 
+// ── On a prayer screen: the passage and your meditation answer, folded ──
+// One slim strip of tabs above the field; a tab unfolds its text in place (capped,
+// scrolls inside). Which tab is open carries from screen to screen.
+let _dpStripOpen = null;
+function dpStripHTML(fieldKey){
+  const passage = dpActivePassage();
+  const carried = dpCarriedAnswers('dp-field-' + fieldKey);
+  if(!passage && !carried.length) return '';
+  const spec = carried.length ? (DP_CARRY[dpSession.plan]||{})[`${dpCurrentStep().key}.${fieldKey}`] : null;
+  if(_dpStripOpen==='passage' && !passage) _dpStripOpen=null;
+  if(_dpStripOpen==='med' && !carried.length) _dpStripOpen=null;
+  const ref = passage ? passage.text.split(/\s+[—–-]\s+/)[0] : '';
+  const refShort = ref.length > 28 ? ref.slice(0,26)+'…' : ref;
+  const tab = (k, ico, label) => `<button type="button" class="dps-tab${_dpStripOpen===k?' on':''}" aria-expanded="${_dpStripOpen===k}" onclick="dpStripToggle('${k}','${fieldKey}')">${ico}<span>${esc(label)}</span><i aria-hidden="true">${_dpStripOpen===k?'⌃':'⌄'}</i></button>`;
+  let body='';
+  if(_dpStripOpen==='passage'){
+    const isRef = !!parseScriptureRef(passage.text);
+    if(isRef) setTimeout(()=>dpStripResolve(passage.text),0);
+    body = `<div class="dps-body">${esc(passage.text)}${isRef?'<div class="dps-verse" id="dps-verse" hidden></div>':''}</div>`;
+  } else if(_dpStripOpen==='med'){
+    body = `<div class="dps-body">${carried.map(c=>`<div class="dps-item">${c.label?`<span class="dps-sub">${esc(c.label)}</span>`:''}${esc(c.text)}</div>`).join('')}</div>`;
+  }
+  return `<div class="dp-strip" id="dp-strip">
+      <div class="dps-tabs">${passage?tab('passage',ICON.book,refShort):''}${carried.length?tab('med',ICON.pen,((spec?.title||'From your meditation').replace(/^From your /,'').replace(/^./,c=>c.toUpperCase()))):''}</div>
+      ${body}
+    </div>`;
+}
+async function dpStripResolve(ref){
+  let v=getScriptureText(ref.trim()); if(!v) v=await lookupBibleRef(ref.trim());
+  const el=document.getElementById('dps-verse'); if(el && v){ el.textContent=v; el.hidden=false; }
+}
+function dpStripToggle(k, fieldKey){
+  _dpStripOpen = _dpStripOpen===k ? null : k;
+  const el=document.getElementById('dp-strip'); if(!el) return;
+  el.outerHTML = dpStripHTML(fieldKey);
+}
+
 function renderDPStep(){
   maybeSwipeHint();
   const el = document.getElementById('dp-content');
@@ -7162,6 +7213,7 @@ function renderDPStep(){
         : (unit.kind === 'question' || (split && unit.kind === 'field' && step.passageField) ? dpPassageRecall(step, saved) : '')}
       ${dpSession.plan === 'evening' && step.key === 'prayer' ? carryEveningHTML(sessionDateKey(dpSession)) : ''}
       ${questionsHTML}
+      ${(!step.passageField && !step.questionsField && !step.showInvocations && (step.fields||[]).length) ? dpStripHTML((unit.f || step.fields[0]).key) : ''}
       ${fieldsHTML}
       ${silenceHTML}
       <div class="pl-nav">
