@@ -569,7 +569,8 @@
   /* Reflect summary band */
   .rf-band { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow); padding: 14px 14px 12px; margin-bottom: 14px; }
   .rf-figs { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 2px; }
-  .rf-fig span { overflow-wrap: anywhere; hyphens: auto; }
+  .rf-fig span { overflow-wrap: normal; word-break: normal; }
+  @media (max-width: 359px) { .rf-figs { grid-template-columns: repeat(3, minmax(0, 1fr)); row-gap: 6px; } }
   .rf-fig { display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 8px 2px; background: none; border: none; border-radius: var(--radius-sm); cursor: pointer; color: var(--text); }
   .rf-fig:active { background: var(--surface2); }
   .rf-fig b { font-family: var(--serif); font-size: 1.35rem; color: var(--accent); line-height: 1.1; font-weight: normal; }
@@ -1642,7 +1643,7 @@
      the rule at Small, Medium and Large alike; no pixel values to re-tune. */
   /* Ruled lines plus a notebook margin: a thin warm rule down the left, with the
      writing starting just past it. */
-  .pl-textarea, .focus-compose-textarea {
+  .pl-textarea, .focus-compose-textarea, .note-text-input {
     background-image:
       linear-gradient(to right, transparent 14px, var(--margin-rule) 14px, var(--margin-rule) 15px, transparent 15px),
       repeating-linear-gradient(to bottom,
@@ -1848,6 +1849,137 @@
      prominent prayed-button style. */
   .prayer-lib-btn { display: block; width: 100%; padding: 10px 12px; background: var(--accent-light); border: 1.5px solid var(--accent2); border-radius: var(--radius-sm); color: var(--accent); font-family: var(--serif); font-size: .85rem; cursor: pointer; margin-top: 8px; transition: background .15s; letter-spacing: .01em; text-align: center; }
   .prayer-lib-btn:hover, .prayer-lib-btn:active { background: var(--surface2); }
+
+  /* ═══ Redesign pass 3 ═══ */
+  /* Needs of the Heart: a 3×3 grid of tiles; the open need unfolds under its row. */
+  .hn-grid { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 8px; margin-bottom: 16px; }
+  .hn-tile { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; gap: 7px; min-height: 104px; padding: 14px 6px 10px; border-radius: var(--radius); border: 1px solid color-mix(in srgb, var(--nc) 30%, var(--border)); background: color-mix(in srgb, var(--nc) 7%, var(--surface)); color: var(--idc); font-family: var(--serif); cursor: pointer; transition: transform .12s, box-shadow .15s, background .15s; }
+  [data-theme="dark"] .hn-tile { color: var(--idc-dark); background: color-mix(in srgb, var(--idc-dark) 10%, var(--surface)); border-color: color-mix(in srgb, var(--idc-dark) 30%, var(--border)); }
+  .hn-tile:active { transform: scale(.97); }
+  .hn-tile-ico { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: color-mix(in srgb, currentColor 12%, transparent); }
+  .hn-tile-ico .ico { width: 22px; height: 22px; }
+  .hn-tile-t { font-size: .76rem; line-height: 1.3; color: var(--text); text-align: center; overflow-wrap: anywhere; }
+  .hn-tile.open { box-shadow: 0 0 0 2px currentColor inset; background: color-mix(in srgb, currentColor 13%, var(--surface)); }
+  .hn-tile.open::after { content: ''; position: absolute; left: 50%; bottom: -9px; width: 12px; height: 12px; transform: translateX(-50%) rotate(45deg); background: var(--surface); border-left: 1px solid color-mix(in srgb, currentColor 40%, var(--border)); border-top: 1px solid color-mix(in srgb, currentColor 40%, var(--border)); z-index: 1; }
+  .hn-tile.selected { background: color-mix(in srgb, currentColor 18%, var(--surface)); }
+  .hn-tick { position: absolute; top: 6px; right: 6px; width: 20px; height: 20px; border-radius: 50%; background: var(--idc); color: var(--on-accent); display: flex; align-items: center; justify-content: center; font-family: var(--sans); font-size: .68rem; font-weight: 700; }
+  [data-theme="dark"] .hn-tick { background: var(--idc-dark); }
+  .hn-detail { grid-column: 1 / -1; position: relative; margin-top: 4px; padding: 14px 16px 14px; border-radius: var(--radius); background: var(--surface); border: 1px solid color-mix(in srgb, currentColor 40%, var(--border)); border-top: 3px solid currentColor; box-shadow: var(--shadow); animation: viewIn .2s ease; }
+  .hn-detail .hn-title { font-size: 1rem; margin-bottom: 2px; }
+  .hn-detail .hn-label { text-transform: none; font-family: var(--serif); font-style: italic; font-weight: normal; font-size: .8rem; letter-spacing: 0; color: var(--text3); margin-bottom: 2px; }
+  .hn-about { display: inline-flex; align-items: center; gap: 6px; background: none; border: none; color: var(--accent); font-family: var(--serif); font-style: italic; font-size: .85rem; padding: 6px 0 8px; cursor: pointer; }
+  .hn-about .ico { width: 15px; height: 15px; }
+
+  /* Scripture lookup: a serif heading with an ornament, the verse framed by
+     corner brackets, and a way into the chapter. */
+  .lk-head { display: flex; align-items: center; gap: 9px; margin-bottom: 14px; }
+  .lk-head h2 { font-size: 1.2rem; color: var(--accent); margin: 0; }
+  .lk-orn { width: 18px; height: 18px; color: var(--accent2); flex: none; display: inline-flex; }
+  .lk-orn svg { width: 100%; height: 100%; }
+  .lk-verse { --bk: var(--accent2); position: relative; padding: 20px 22px; background: var(--accent-light); border-radius: var(--radius-sm); }
+  .lk-verse::after { content: ''; position: absolute; inset: 5px; pointer-events: none; opacity: .8; --bl: 15px; --bw: 1.5px;
+    background:
+      linear-gradient(var(--bk),var(--bk)) left top / var(--bl) var(--bw) no-repeat,
+      linear-gradient(var(--bk),var(--bk)) left top / var(--bw) var(--bl) no-repeat,
+      linear-gradient(var(--bk),var(--bk)) right top / var(--bl) var(--bw) no-repeat,
+      linear-gradient(var(--bk),var(--bk)) right top / var(--bw) var(--bl) no-repeat,
+      linear-gradient(var(--bk),var(--bk)) left bottom / var(--bl) var(--bw) no-repeat,
+      linear-gradient(var(--bk),var(--bk)) left bottom / var(--bw) var(--bl) no-repeat,
+      linear-gradient(var(--bk),var(--bk)) right bottom / var(--bl) var(--bw) no-repeat,
+      linear-gradient(var(--bk),var(--bk)) right bottom / var(--bw) var(--bl) no-repeat; }
+  [data-theme="dark"] .lk-verse::after { opacity: .55; }
+  .lk-verse p { font-family: var(--serif); font-style: italic; font-size: 1.02rem; line-height: 1.8; color: var(--text); margin: 0; max-width: var(--measure); }
+  .lk-actions { display: flex; gap: 10px; margin-top: 16px; }
+  .lk-actions .btn { margin: 0; flex: 1; }
+  .lk-ctx { display: inline-flex; align-items: center; justify-content: center; gap: 7px; }
+  .lk-ctx .ico { width: 16px; height: 16px; }
+
+  /* Prayer library: each category its own ink. */
+  #prayer-library-content { --lc: var(--accent); }
+  .lib-cat-praise { --lc: #8a6a22; } .lib-cat-thanksgiving { --lc: #5a6a34; } .lib-cat-confession { --lc: #74405e; }
+  .lib-cat-petition { --lc: #3f5d78; } .lib-cat-concluding { --lc: #7a5c3e; }
+  [data-theme="dark"] .lib-cat-praise { --lc: #d8b86a; } [data-theme="dark"] .lib-cat-thanksgiving { --lc: #b4c08a; }
+  [data-theme="dark"] .lib-cat-confession { --lc: #d4a0be; } [data-theme="dark"] .lib-cat-petition { --lc: #9ab8d4; }
+  [data-theme="dark"] .lib-cat-concluding { --lc: #d4a872; }
+  #prayer-library-content .lib-vignette { color: var(--lc); }
+  #prayer-library-content .lib-vignette .empty-art { color: var(--lc); }
+  #prayer-library-content > h2 { color: var(--lc) !important; }
+  #prayer-library-content .prayer-lib-list { border-top: 2px solid color-mix(in srgb, var(--lc) 45%, transparent); }
+  #prayer-library-content .prayer-lib-item summary::before { color: var(--lc); }
+  #prayer-library-content .prayer-lib-item[open] summary { color: var(--lc); }
+  #prayer-library-content .prayer-lib-item[open] { background: color-mix(in srgb, var(--lc) 7%, var(--surface)); box-shadow: inset 3px 0 0 var(--lc); }
+  .prayer-lib-item[open] .prayer-lib-text { color: var(--text); padding-top: 6px; }
+  .prayer-lib-item[open] .prayer-lib-text::first-letter { float: left; font-family: var(--serif); font-size: 2.9em; line-height: .86; padding: 4px 7px 0 0; color: var(--lc); }
+  #prayer-library-content .prayer-lib-use-btn { background: var(--lc); border-color: var(--lc); color: var(--on-accent); }
+
+  /* Walkthrough finish: one illuminated panel. */
+  .modal:has(.walk-finish) > .daily-header, .modal:has(.walk-finish) > .btn-secondary { display: none; }
+  .walk-finish { padding: 6px 0 4px; overflow-x: clip; }
+  .wf-panel { text-align: center; border: 1px solid var(--border); border-radius: 18px; padding: 8px 18px 20px; background: radial-gradient(120% 70% at 50% 0%, color-mix(in srgb, var(--accent-light) 85%, transparent), transparent 70%), var(--surface); box-shadow: var(--shadow); position: relative; }
+  .wf-panel::before { content: ''; position: absolute; inset: 6px; border: 1px solid var(--border-soft); border-radius: 13px; pointer-events: none; }
+  .wf-panel h3 { font-size: 1.35rem; color: var(--accent); margin: 2px 0 6px; }
+  .wf-panel > p { font-size: .9rem; color: var(--text2); line-height: 1.65; }
+  .wf-rule { display: flex; align-items: center; gap: 10px; color: var(--accent2); margin: 16px 10px 6px; }
+  .wf-rule span { flex: 1; height: 1px; background: linear-gradient(to right, transparent, var(--accent2)); opacity: .55; }
+  .wf-rule span:last-child { background: linear-gradient(to left, transparent, var(--accent2)); }
+  .wf-rule svg { width: 14px; height: 14px; }
+  .wf-panel .christ-anchor { background: none; border: none; box-shadow: none; padding: 4px 0 0; margin: 0; }
+  .wf-panel .christ-anchor-mark { display: none; }
+  .wf-panel .christ-anchor-text { font-size: 1.04rem; }
+  .wf-actions { display: flex; gap: 10px; margin-top: 18px; position: relative; }
+  .wf-actions .btn { margin: 0; flex: 1; }
+
+  /* Reflect settings: one panel, three panes. */
+  .set-seg { display: flex; gap: 4px; padding: 4px !important; margin: 14px 16px 6px; background: var(--surface2); border: 1px solid var(--border); border-radius: 99px; }
+  .set-seg button { flex: 1; min-height: 38px; border: none; border-radius: 99px; background: none; font-family: var(--sans); font-size: .8rem; color: var(--text2); cursor: pointer; transition: background .15s, color .15s; }
+  .set-seg button.on { background: var(--accent); color: var(--on-accent); box-shadow: 0 1px 3px rgba(60,40,20,.2); }
+  .set-pane { padding-bottom: 16px !important; }
+  .set-pane[hidden] { display: none !important; }
+  .set-h { display: flex; align-items: center; gap: 7px; font-family: var(--serif); font-weight: normal; font-size: .98rem; color: var(--accent); margin: 12px 0 8px; }
+  .set-h .ico { width: 17px; height: 17px; }
+
+  /* Sub-step counter as a quiet serif figure. */
+  .substep-label { font-family: var(--serif); text-transform: none; font-size: .8rem; letter-spacing: 0; font-style: italic; }
+
+  /* Invocations grouped by section of the Bible. */
+  .dp-inv-group { margin-top: 10px; padding-left: 10px; border-left: 2px solid var(--sec); }
+  .dp-inv-group-h { font-family: var(--serif); font-style: italic; font-size: .78rem; color: var(--text3); margin-bottom: 5px; }
+  .dp-inv-group .dp-inv-refs { margin: 0; }
+
+  /* Confirm: a centred card, not a sheet. */
+  #modal-confirm { align-items: center; justify-content: center; padding: 20px; }
+  #modal-confirm .modal { border-radius: 18px; padding: 26px 22px 20px; max-height: 80vh; animation: popIn .2s ease; }
+  #modal-confirm .modal-handle { display: none; }
+  #modal-confirm .cf-head { flex-direction: column; align-items: center; text-align: center; gap: 12px; }
+  #modal-confirm .cf-mark { width: 46px; height: 46px; }
+  #modal-confirm .cf-mark .ico { width: 22px; height: 22px; }
+  #modal-confirm .cf-msg { font-size: 1rem; line-height: 1.55; }
+  @keyframes popIn { from { opacity: 0; transform: scale(.94); } to { opacity: 1; transform: none; } }
+
+  /* Note editor: a date block beside the date, and ruled paper. */
+  .note-date-row { display: flex; align-items: flex-end; gap: 14px; margin: 6px 0 4px; }
+  .note-date-row .jp-date { width: 54px; }
+  .note-date-f { flex: 1; min-width: 0; }
+  .note-date-f label { margin-top: 0; }
+  .note-text-input { line-height: 1.68; min-height: 140px !important; font-family: var(--serif); }
+
+  /* Technique sheets: the movements numbered; word-stress readings on numbered lines. */
+  .tech-flow.numbered { counter-reset: tstep; }
+  .tech-flow.numbered > .tech-lead, .tech-flow.numbered > .tech-closer, .tech-flow.numbered > .tech-action { position: relative; padding-left: 34px; }
+  .tech-flow.numbered > .tech-lead::before, .tech-flow.numbered > .tech-closer::before, .tech-flow.numbered > .tech-action::before {
+    counter-increment: tstep; content: counter(tstep); position: absolute; left: 0; top: 0; width: 24px; height: 24px; border-radius: 50%;
+    border: 1px solid var(--accent2); color: var(--accent); font-family: var(--serif); font-style: normal; font-size: .82rem; display: flex; align-items: center; justify-content: center; }
+  .tech-flow.numbered > .tech-action { text-align: left; padding: 12px 14px 12px 44px; }
+  .tech-flow.numbered > .tech-action::before { left: 12px; top: 10px; }
+  .tech-lines { list-style: none; counter-reset: tl; margin: 4px 0 0; padding: 0; }
+  .tech-lines li { counter-increment: tl; position: relative; padding: 6px 0 6px 26px; border-top: 1px solid var(--border-soft); line-height: 1.6; }
+  .tech-lines li:first-child { border-top: none; }
+  .tech-lines li::before { content: counter(tl, lower-roman) '.'; position: absolute; left: 0; top: 6px; font-family: var(--serif); font-style: italic; font-size: .8rem; color: var(--text3); }
+  .tech-lines strong { color: var(--accent); }
+
+  /* Link Story Cards: hint for press-and-hold. */
+  .link-hint { font-size: .78rem; font-style: italic; color: var(--text3); margin: -6px 0 12px; }
+  .link-card-row { -webkit-touch-callout: none; user-select: none; -webkit-user-select: none; }
 </style>
 </head>
 <body>
@@ -1968,9 +2100,15 @@
     </details>
 
     <div class="orn-divider orn-divider-lg" aria-hidden="true"><svg class="orn-rule" viewBox="0 0 200 12" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" preserveAspectRatio="none"><path d="M2 6h72" opacity=".45"/><path d="M126 6h72" opacity=".45"/></svg><svg class="orn-mark" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3.6l1.75 5.6 5.6 1.75-5.6 1.75L12 18.3l-1.75-5.6-5.6-1.75 5.6-1.75z"/></svg></div>
-    <p class="section-title" style="margin-top:2px">Settings</p>
-    <details class="about-block reflect-block">
-      <summary><h3><span data-ico="palette"></span>Appearance</h3></summary>
+    <details class="about-block reflect-block settings-block" id="rf-settings">
+      <summary><h3><span data-ico="palette"></span>Settings</h3></summary>
+      <div class="seg-ctl set-seg" role="tablist">
+        <button role="tab" data-pane="appearance" class="on" onclick="setSettingsPane('appearance')">Appearance</button>
+        <button role="tab" data-pane="export" onclick="setSettingsPane('export')">Export</button>
+        <button role="tab" data-pane="backup" onclick="setSettingsPane('backup')">Backup</button>
+      </div>
+      <div class="set-pane" data-pane="appearance">
+      <h4 class="set-h"><span data-ico="palette"></span>Appearance</h4>
       <p style="font-size:.84rem">Choose a theme. Auto follows your system setting — useful if you pray morning &amp; evening.</p>
       <div class="theme-row">
         <button class="theme-btn" data-theme="light" onclick="setTheme('light')"><span class="swatch sw-light" aria-hidden="true"></span><span data-ico="sun"></span>Light</button>
@@ -1988,9 +2126,9 @@
         <span class="switch"><input type="checkbox" id="bible-fab-toggle" onchange="setBibleFab(this.checked)"><span class="switch-knob"></span></span>
       </label>
       <p style="font-size:.8rem;color:var(--text3);margin-top:6px">Top-right of every screen, for quick verse lookup and Scripture by feeling. The inline “Insert from Bible” buttons on verse fields stay either way.</p>
-    </details>
-    <details class="about-block reflect-block">
-      <summary><h3><span data-ico="note"></span>Markdown Export</h3></summary>
+      </div>
+      <div class="set-pane" data-pane="export" hidden>
+      <h4 class="set-h"><span data-ico="note"></span>Markdown Export</h4>
       <p>Export your prayer cards and sessions as Markdown — drop the files into Obsidian, Logseq, Bear, or any markdown editor. Each export uses YAML frontmatter, structured headings, and <code>[[wikilinks]]</code> so notes connect properly in Obsidian's graph view.</p>
 
       <p class="section-title" style="margin-top:18px">Bulk export</p>
@@ -2006,14 +2144,15 @@
       <label>Subfolder (optional)</label>
       <input type="text" id="obsidian-subfolder" placeholder="e.g. Prayer/Sessions">
       <button class="btn btn-primary" onclick="saveObsidianSettings()" style="margin-top:10px">Save</button>
-    </details>
-    <details class="about-block reflect-block">
-      <summary><h3><span data-ico="archive"></span>Backup &amp; Restore</h3></summary>
+      </div>
+      <div class="set-pane" data-pane="backup" hidden>
+      <h4 class="set-h"><span data-ico="archive"></span>Backup &amp; Restore</h4>
       <p>Your data lives in this browser only. Back it up regularly so you can restore on another device or after clearing cache. Backups include all prayer cards, Pray &amp; Listen sessions, story notes, heart-need selections, linked cards, and streak history.</p>
       <button class="btn btn-secondary" onclick="exportBackup()" style="margin-top:10px"><span data-ico="save"></span> Download Backup (.json)</button>
       <input type="file" id="import-file-input" accept="application/json,.json" style="display:none" onchange="importBackup(event)">
       <button class="btn btn-secondary" onclick="document.getElementById('import-file-input').click()"><span data-ico="restore"></span> Restore from Backup…</button>
       <button class="btn btn-danger" onclick="resetAllData()" style="margin-top:14px"><span data-ico="warn"></span> Reset All Data</button>
+      </div>
     </details>
   </div>
 </div>
@@ -2084,8 +2223,11 @@
     <div class="modal-handle"></div>
     <h2 id="note-modal-title">Add Story Note</h2>
     <div class="note-ctx" id="note-ctx"></div>
-    <label>Date</label>
-    <input type="date" id="note-date" class="note-date-input">
+    <div class="note-date-row">
+      <div class="jp-date" id="note-date-block" aria-hidden="true"><span></span><b></b></div>
+      <div class="note-date-f"><label for="note-date">Date</label>
+      <input type="date" id="note-date" class="note-date-input" oninput="syncNoteDateBlock()"></div>
+    </div>
     <label>Note</label>
     <textarea id="note-text" class="note-text-input" placeholder="What have you noticed? An answer, a question, a small sign of grace…" style="min-height:100px"></textarea>
     <p class="hint">Or speak to your own soul about them, in His presence.</p>
@@ -3642,12 +3784,19 @@ async function lookupBibleRef(ref){
 function renderScriptureModal(ref, text, loading){
   const missing = `<p style="font-size:.88rem;color:var(--text3);font-style:italic;line-height:1.6">This reference isn't bundled in the app. Open it in your Bible app or look it up online — the practice of reading slowly, in your own translation, is often more nourishing than a tooltip.</p>`;
   const loadingHtml = `<p class="lookup-loading"><span class="lookup-mark">${ORN.mark}</span>Looking it up…</p>`;
-  const found = t => `<p style="font-size:.95rem;line-height:1.75;font-style:italic;color:var(--text);padding:14px 16px;background:var(--accent-light);border-left:3px solid var(--accent2);border-radius:var(--radius-sm)">“${esc(nestQuotes(t))}”</p>`;
+  const found = t => `<div class="lk-verse"><p>“${esc(nestQuotes(t))}”</p></div>`;
+  const p = parseScriptureRef(ref);
+  const ctx = (p && !loading) ? `<button class="btn btn-secondary lk-ctx" onclick="lookupInContext('${esc(ref).replace(/'/g,"\\'")}')">${ICON.book}Read in context</button>` : '';
   document.getElementById('scripture-content').innerHTML = `
-    <h2 style="color:var(--accent);font-size:1.1rem;margin-bottom:12px">${esc(ref)}</h2>
+    <div class="lk-head"><span class="lk-orn" aria-hidden="true">${ORN.mark}</span><h2>${esc(ref)}</h2></div>
     ${loading ? loadingHtml : (text ? found(text) : missing)}
-    <button class="btn btn-secondary" onclick="closeModal('modal-scripture')" style="margin-top:14px">Close</button>
+    <div class="lk-actions">${ctx}<button class="btn btn-secondary" onclick="closeModal('modal-scripture')">Close</button></div>
   `;
+}
+function lookupInContext(ref){
+  const p=parseScriptureRef(ref); if(!p) return;
+  closeModal('modal-scripture');
+  openBibleBrowser(); bbJumpTo(p.file, p.chapter, p.vStart, p.vEnd).then(()=>bbScrollToFirstSelected&&bbScrollToFirstSelected());
 }
 
 async function lookupScripture(ref){
@@ -4206,7 +4355,11 @@ function bbVerseViewHTML(){
     `<button class="${_bbMode===m?'on':''}" onclick="bbSetMode('${m}')">${m==='both'?'Both':m==='ref'?'Ref':'Text'}</button>`).join('')}</div>`;
   const copyBtn = `<button class="btn btn-secondary" style="margin:0;padding:9px 14px;${has?'':'opacity:.45;pointer-events:none'}" onclick="bbCopy()">Copy</button>`;
   const canAdd = has && target;
-  const addBtn = `<button class="btn btn-primary" style="margin:0;flex:1;${canAdd?'':'opacity:.45;pointer-events:none'}" onclick="bbAdd()">${target?'Add to journal':'Tap a field first'}</button>`;
+  // With a field to write into, the main action adds to it. Opened from the header
+  // there is none, so the main action takes the passage into today's meditation.
+  const addBtn = target
+    ? `<button class="btn btn-primary" style="margin:0;flex:1;${canAdd?'':'opacity:.45;pointer-events:none'}" onclick="bbAdd()">Add to journal</button>`
+    : `<button class="btn btn-primary bb-praywith" style="margin:0;flex:1;${has?'':'opacity:.45;pointer-events:none'}" onclick="bbPrayWith()">Pray with this</button>`;
   const body = has ? bbPreviewHTML() : `<p class="bb-hint">Tap verses to select. Long-press a second verse to fill the range between.</p>`;
   const bookIdx = BIBLE_BOOKS_ORDERED.findIndex(b=>b[1]===_bbBook);
   const atStart = bookIdx===0 && _bbChapter===1;
@@ -4331,6 +4484,29 @@ function bbAdd(){
   closeModal('modal-bible');
   showToast('✓ Added to your journal');
   try{ t.focus(); t.setSelectionRange(t.value.length,t.value.length); }catch(e){}
+}
+let _pendingPassage = null;
+async function bbPrayWith(){
+  if(_bbSel.size===0) return;
+  const passage = `${bbRefString()} — ${bbSelectedText()}`;
+  const med = dpSession && (DP_PLANS[dpSession.plan]?.steps||[]).some(s=>s.key==='meditation');
+  if(med){
+    dpSaveCurrentStep && dpSaveCurrentStep();
+    const cur=(dpSession.steps.meditation?.passage||'').trim();
+    if(cur && cur!==passage && !(await uiConfirm('Replace the passage you’ve already chosen for today?', { okText:'Replace' }))) return;
+    dpSession.steps.meditation = Object.assign({}, dpSession.steps.meditation, { passage });
+    saveDailyDraft(dpSession);
+    closeModal('modal-bible');
+    if(currentView==='daily' && dpMode==='session') renderDailyPrayer();
+    showToast('✓ Set as today’s meditation passage');
+    return;
+  }
+  // No Morning or Starter session open: hold the passage for the next one begun.
+  _pendingPassage = passage;
+  closeModal('modal-bible');
+  dpMode = dpSession ? dpMode : 'home';
+  showView('daily');
+  showToast('Choose Morning or Starter — this will be your passage');
 }
 function bbCopy(){
   const s=bbInsertString(); if(!s) return;
@@ -4651,13 +4827,19 @@ function showMeditationTechnique(key){
     ? exampleBlock.replace(/<div class="tech-dim-label">(WIDE|LONG|DEEP|HIGH)<\/div>/g, (m, d) => `<div class="tech-dim-label">${ICON[DIM[d]]}${d}</div>`)
     : exampleBlock;
   const figure = key === 'love' ? EPH_FIGURE : '';
+  // Word-stress: each reading on its own numbered line, the stressed word lit.
+  const example2 = key === 'wordstress'
+    ? example.replace(t.exampleHTML, `<ol class="tech-lines">${t.exampleHTML.split('<br>').map(l=>`<li>${l}</li>`).join('')}</ol>`)
+    : example;
   document.getElementById('technique-content').innerHTML = smartQuotes(`
     <h2 style="color:var(--accent);font-size:1.05rem;margin-bottom:14px">${({wordstress:ICON.book, paraphrase:ICON.note, love:ICON.heart})[key] || ''} ${esc(t.title)}</h2>
+    <div class="tech-flow${key==='love'?'':' numbered'}">
     <p class="tech-lead">${esc(t.lead)}</p>
     ${figure}
-    ${example}
+    ${example2}
     ${t.closer ? `<p class="tech-closer">${esc(t.closer)}</p>` : ''}
     <div class="tech-action">${esc(t.action)}</div>
+    </div>
     <button class="btn btn-secondary" onclick="closeModal('modal-technique')" style="margin-top:14px">Close</button>
   `);
   openModal('modal-technique');
@@ -4853,7 +5035,9 @@ function openPrayerLibrary(category, targetId){
       ${showInsertBtn ? `<button class="prayer-lib-use-btn" onclick="usePrayerFromLibrary(${i}, this)">Use this prayer →</button>` : ''}
     </details>
   `).join('');
-  document.getElementById('prayer-library-content').innerHTML = `
+  const pc = document.getElementById('prayer-library-content');
+  pc.className = 'lib-cat-' + category;
+  pc.innerHTML = `
     <div class="lib-vignette">${emptyArt(({praise:'sun', thanksgiving:'olive', confession:'turn', petition:'pray', concluding:'sparkle'})[category] || 'book')}</div>
     <h2 style="color:var(--accent);font-size:1.05rem;margin-bottom:6px;text-align:center">${esc(lib.title)}</h2>
     <p style="font-size:.82rem;color:var(--text2);font-style:italic;margin-bottom:14px;line-height:1.6;text-align:center">${esc(lib.intro)}</p>
@@ -5917,12 +6101,12 @@ function openNote(id, noteIndex){
     const c = loadCards().find(x => x.id === id);
     const n = c && c.notes && c.notes[noteEditIndex];
     if(!n) return;
-    document.getElementById('note-date').value = displayDateToISO(n.date);
+    document.getElementById('note-date').value = displayDateToISO(n.date); syncNoteDateBlock();
     document.getElementById('note-text').value = n.text;
     if(titleEl) titleEl.textContent = 'Edit Story Note';
     if(saveBtn) saveBtn.textContent = 'Save Changes';
   } else {
-    document.getElementById('note-date').value = displayDateToISO(today());
+    document.getElementById('note-date').value = displayDateToISO(today()); syncNoteDateBlock();
     document.getElementById('note-text').value = '';
     if(titleEl) titleEl.textContent = 'Add Story Note';
     if(saveBtn) saveBtn.textContent = 'Add Note';
@@ -6149,6 +6333,7 @@ async function dpStart(planKey){
     prayedCards:[],
     stepIndex:0
   };
+  if(_pendingPassage && steps.meditation){ steps.meditation.passage = _pendingPassage; _pendingPassage = null; }
   dpStepIdx=0; dpSubIdx=0; dpMode='session'; _dpAnimDir='next';
   saveDailyDraft(dpSession);
   renderDailyPrayer();
@@ -6593,6 +6778,12 @@ function historyPeriodStart(kind){
   return d;
 }
 // The date block at the head of a past session: month, day numeral, weekday.
+function syncNoteDateBlock(){
+  const v=document.getElementById('note-date').value, b=document.getElementById('note-date-block'); if(!b) return;
+  const d=v?new Date(v+'T12:00:00'):null, ok=d&&!isNaN(d);
+  b.querySelector('span').textContent = ok ? d.toLocaleDateString(undefined,{month:'short'}) : '';
+  b.querySelector('b').textContent = ok ? d.getDate() : '';
+}
 function jpHeadHTML(s, titleHTML){
   const d = new Date(s.dateISO || s.date); const ok = !isNaN(d);
   return `<div class="jp-head"><div class="jp-date"><span>${ok ? d.toLocaleDateString(undefined,{month:'short'}) : ''}</span><b>${ok ? d.getDate() : ''}</b></div>
@@ -6646,8 +6837,23 @@ function renderDPStep(){
   const subRule = split ? `<div class="substep-rule" role="group" aria-label="${esc(unit.label||'')} — ${dpSubIdx+1} of ${units.length}">
       ${units.map((u,i)=>`<span class="substep-seg${i<dpSubIdx?' done':i===dpSubIdx?' active':''}"></span>`).join('')}
     </div>
-    <div class="substep-label"><span>Step ${dpSubIdx+1} of ${units.length}</span></div>` : '';
+    <div class="substep-label"><span>${dpSubIdx+1} / ${units.length}</span></div>` : '';
 
+  // Invocation references grouped under the Bible's own sections (Wisdom ·
+  // Prophets · Gospels & Acts · Letters), each with its section colour tab.
+  const invGroupsHTML = () => {
+    const groups=[];
+    SCRIPTURAL_INVOCATIONS.forEach(inv=>{
+      const p=parseScriptureRef(inv.ref); const bi=p?BIBLE_BOOKS_ORDERED.findIndex(b=>b[1]===p.file):-1;
+      const sec=bi>=0?bbSection(bi):{name:'',color:'var(--accent2)'};
+      let g=groups.find(x=>x.name===sec.name); if(!g){ g={name:sec.name,color:sec.color,items:[]}; groups.push(g); }
+      g.items.push(inv);
+    });
+    return groups.map(g=>`<div class="dp-inv-group" style="--sec:${g.color}">
+        <div class="dp-inv-group-h">${esc(g.name)}</div>
+        <div class="dp-inv-refs">${g.items.map(inv=>`<button type="button" class="dp-inv-ref${_dpInvOpen===inv.ref?' open':''}" onclick="dpToggleInvocation('${inv.ref}')" aria-expanded="${_dpInvOpen===inv.ref}">${esc(inv.ref)}</button>`).join('')}</div>
+      </div>`).join('');
+  };
   // Invocations picker (Approach step)
   let invocationsHTML = '';
   if(step.showInvocations){
@@ -6667,11 +6873,7 @@ function renderDPStep(){
       // re-render that tapping a reference triggers.
       invocationsHTML = `<details class="dp-inv-picker"${_dpInvPickerOpen?' open':''} ontoggle="_dpInvPickerOpen=this.open">
         <summary class="dp-inv-picker-label">Choose a Scriptural invocation to begin (optional):</summary>
-        <div class="dp-inv-refs">
-          ${SCRIPTURAL_INVOCATIONS.map(inv => `
-            <button type="button" class="dp-inv-ref${_dpInvOpen===inv.ref?' open':''}" onclick="dpToggleInvocation('${inv.ref}')" aria-expanded="${_dpInvOpen===inv.ref}">${esc(inv.ref)}</button>
-          `).join('')}
-        </div>
+        ${invGroupsHTML()}
         ${(() => {
           const inv = SCRIPTURAL_INVOCATIONS.find(i => i.ref === _dpInvOpen);
           return inv ? `<div class="dp-inv-preview">
@@ -6934,11 +7136,18 @@ function dailyFinish(){
   haptic(25);
   recordStreak();
   document.getElementById('daily-content').innerHTML=`
-    <div class="empty" style="padding-top:50px">
-      ${emptyArt('lamp', true)}<h3>Well done!</h3>
-      <p>You've prayed through all your cards today.<br><em>“Your prayers are part of a story God is telling.”</em></p>
-      ${christAnchorBlock()}
-      <button class="btn btn-primary" style="max-width:220px;display:inline-block;margin-top:18px" onclick="dailyNav(0)">Pray Again</button>
+    <div class="walk-finish">
+      <div class="wf-panel">
+        ${emptyArt('lamp', true)}
+        <h3>Well done!</h3>
+        <p>You've prayed through all your cards today.<br><em>“Your prayers are part of a story God is telling.”</em></p>
+        <div class="wf-rule" aria-hidden="true"><span></span>${ORN.mark}<span></span></div>
+        ${christAnchorBlock()}
+        <div class="wf-actions">
+          <button class="btn btn-secondary" onclick="closeModal('modal-cards-walkthrough')">Close</button>
+          <button class="btn btn-primary" onclick="dailyNav(0)">Pray Again</button>
+        </div>
+      </div>
     </div>`;
 }
 function recordStreak(){
@@ -7542,7 +7751,7 @@ function renderPLStep(el){
   const subRule = `<div class="substep-rule" role="group" aria-label="${esc(unit.label||'')} — ${plSubIdx+1} of ${units.length}">
       ${units.map((u,i)=>`<span class="substep-seg${i<plSubIdx?' done':i===plSubIdx?' active':''}"></span>`).join('')}
     </div>
-    <div class="substep-label"><span>Step ${plSubIdx+1} of ${units.length}</span></div>`;
+    <div class="substep-label"><span>${plSubIdx+1} / ${units.length}</span></div>`;
   const scriptureBlock=step.scripture?`
     <div class="pl-scripture-feature${_plScriptureOpen?'':' peek'}" id="pl-scripture-feature" style="background:${step.sbg};--bk:${step.sborder}">
       <div class="psf-head">
@@ -7631,7 +7840,7 @@ function renderPrepareStep(el,step,dots,steps){
   const subRule = `<div class="substep-rule" role="group" aria-label="${esc(unit.label||'')} — ${plSubIdx+1} of ${units.length}">
       ${units.map((u,i)=>`<span class="substep-seg${i<plSubIdx?' done':i===plSubIdx?' active':''}"></span>`).join('')}
     </div>
-    <div class="substep-label"><span>Step ${plSubIdx+1} of ${units.length}</span></div>`;
+    <div class="substep-label"><span>${plSubIdx+1} / ${units.length}</span></div>`;
 
   const heartNeeds=saved.heartNeeds||[];
   const selectedChipsHTML=heartNeeds.length
@@ -7701,32 +7910,42 @@ function renderPLDone(el){
 function plReturnHome(){ plMode='home'; renderPL(); }
 
 // ══════════ HEART NEEDS CHART ══════════
-function openHeartChart(){
+let _hnOpen=null;
+function hnTileTap(key){
+  const inSession = plMode==='session' && plSession && currentStep()?.key==='prepare';
+  if(inSession){ _hnOpen=key; toggleHeartNeed(key); return; }
+  _hnOpen = _hnOpen===key ? null : key; openHeartChart(true);
+}
+function openHeartChart(keep, focus){
+  if(!keep) _hnOpen = focus || null;
   // If we're in an active Prepare step, flush any pending textarea content first
   // and render the chart in selection mode.
   const inSession = plMode==='session' && plSession && currentStep()?.key==='prepare';
   if(inSession) plSaveCurrentStep();
   const selected = inSession ? (plSession.steps.prepare.heartNeeds||[]) : [];
 
-  const cards=HEART_NEEDS.map(n=>{
-    const isSel=selected.includes(n.key);
-    const tint=isSel?`background:${n.color}14;`:'';
-    const click=inSession?`onclick="toggleHeartNeed('${n.key}')"`:'';
-    const cls=`hn-card${inSession?' selectable':''}${isSel?' selected':''}`;
-    // Title and the emotions line stay visible so all nine can be scanned for what
-    // resonates — which is what the intro asks you to do — and the rest unfolds on
-    // tap. In selection mode the card itself still toggles; the disclosure doesn't.
-    return `<div class="${cls}" ${click} style="border-left-color:${n.color};${tint}">
-      ${inSession?`<div class="hn-check" style="background:${isSel?n.color:'transparent'};border-color:${n.color}">${isSel?'✓':''}</div>`:''}
+  // Nine needs as a 3×3 grid of tiles; the open one unfolds in place, full width,
+  // right under its row. In selection mode a tap also chooses (or un-chooses) it,
+  // so the intro's "tap any need that resonates" stays true.
+  const open = HEART_NEEDS.find(n=>n.key===_hnOpen);
+  const detail = n => `<div class="hn-detail idc" style="${idc(n.color)};--nc:${n.color}">
       <h3 class="idc hn-title" style="${idc(n.color)}">${needGlyph(n.key)}${esc(n.title)}</h3>
       <div class="hn-row"><div class="hn-label">Common emotions when threatened or unmet</div><div class="hn-text">${n.emotions}</div></div>
-      <details class="hn-more" onclick="event.stopPropagation()">
-        <summary class="idc" style="${idc(n.color)}">More on this need</summary>
-        <div class="hn-row"><div class="hn-label">Temptations to meet it in your own strength</div><div class="hn-text">${n.temptations}</div></div>
-        <div class="hn-row"><div class="hn-label">A few ways God speaks to that need</div><div class="hn-text">${n.god}</div><div class="hn-scripture">${makeScriptureRefsClickable(n.scriptures)}</div></div>
-      </details>
+      <div class="hn-row"><div class="hn-label">Temptations to meet it in your own strength</div><div class="hn-text">${n.temptations}</div></div>
+      <div class="hn-row"><div class="hn-label">A few ways God speaks to that need</div><div class="hn-text">${n.god}</div><div class="hn-scripture">${makeScriptureRefsClickable(n.scriptures)}</div></div>
     </div>`;
-  }).join('');
+  let cards='';
+  HEART_NEEDS.forEach((n,i)=>{
+    const isSel=selected.includes(n.key), isOpen=_hnOpen===n.key;
+    cards+=`<button type="button" class="hn-tile idc${isSel?' selected':''}${isOpen?' open':''}" style="${idc(n.color)};--nc:${n.color}" aria-expanded="${isOpen}" aria-pressed="${inSession?isSel:'false'}" onclick="hnTileTap('${n.key}')">
+      ${isSel?'<span class="hn-tick" aria-hidden="true">✓</span>':''}
+      <span class="hn-tile-ico">${needGlyph(n.key)}</span>
+      <span class="hn-tile-t">${esc(n.title)}</span>
+    </button>`;
+    const rowEnd = i%3===2 || i===HEART_NEEDS.length-1;
+    if(rowEnd && open && Math.floor(HEART_NEEDS.indexOf(open)/3)===Math.floor(i/3)) cards+=detail(open);
+  });
+  cards=`<div class="hn-grid">${cards}</div>`;
 
   const intro=inSession
     ? `<strong>Tap any need that resonates today.</strong> You can choose more than one. Selections save automatically.${selected.length?` <span style="color:var(--accent)">${selected.length} selected.</span>`:''}`
@@ -7755,7 +7974,7 @@ function toggleHeartNeed(key){
   if(i>-1) prep.heartNeeds.splice(i,1);
   else prep.heartNeeds.push(key);
   saveDraft(plSession);
-  openHeartChart();  // re-render modal with new state
+  openHeartChart(true);  // re-render modal with new state
 }
 
 // ══════════ LINK STORY CARDS TO SESSION ══════════
@@ -7774,7 +7993,8 @@ function renderLinkCards(){
   const linkedAnswered=all.filter(c=>c.answered && linked.includes(c.id));
 
   let html=`<h2 style="color:var(--accent);margin-bottom:6px">${ICON.pin} Link Story Cards</h2>
-    <p class="hn-intro">Tap any prayer story cards this session is touching on. They'll show as a banner on the session, and this session will appear in each card's history.${linked.length?` <span style="color:var(--accent)">${linked.length} linked.</span>`:''}</p>`;
+    <p class="hn-intro">Tap any prayer story cards this session is touching on. They'll show as a banner on the session, and this session will appear in each card's history.${linked.length?` <span style="color:var(--accent)">${linked.length} linked.</span>`:''}</p>
+    <p class="link-hint">Press and hold a card to open it.</p>`;
 
   if(!active.length && !linkedAnswered.length){
     html+=`<div class="empty">${emptyArt('cards')}<h3>No story cards yet</h3><p>Create cards in the Story Cards tab first, then come back to link them.</p></div>`;
@@ -7794,7 +8014,7 @@ function renderLinkCards(){
 function linkRowHTML(c,linked){
   const sel=linked.includes(c.id);
   const ck = CAT_ICON[c.category] ? c.category : 'other';
-  return `<div class="link-card-row${sel?' selected':''}" style="--cat:${CAT_COLOR[ck]}" onclick="toggleLinkCard('${c.id}')">
+  return `<div class="link-card-row${sel?' selected':''}" style="--cat:${CAT_COLOR[ck]}" data-id="${c.id}" onclick="linkRowClick('${c.id}')" oncontextmenu="return false">
     <div class="link-card-check">${sel?'✓':''}</div>
     ${catChip(c.category)}
     ${c.answered?`<span class="answered-badge" style="float:right">${ICON.olive}Answered ✓</span>`:''}
@@ -7803,6 +8023,21 @@ function linkRowHTML(c,linked){
   </div>`;
 }
 
+// A long-press on a row opens the card itself (stacked above); a tap links it.
+let _lpTimer=null, _lpFired=false;
+(function(){
+  const host=()=>document.getElementById('link-cards-content');
+  document.addEventListener('pointerdown',e=>{
+    const r=e.target.closest && e.target.closest('#link-cards-content .link-card-row'); if(!r) return;
+    _lpFired=false; const x=e.clientX, y=e.clientY;
+    clearTimeout(_lpTimer);
+    _lpTimer=setTimeout(()=>{ _lpFired=true; haptic&&haptic(12); openDetail(r.dataset.id); },500);
+    const cancel=ev=>{ if(ev.type!=='pointermove' || Math.hypot(ev.clientX-x,ev.clientY-y)>10){ clearTimeout(_lpTimer); off(); } };
+    const off=()=>{ ['pointermove','pointerup','pointercancel'].forEach(t=>document.removeEventListener(t,cancel)); };
+    ['pointermove','pointerup','pointercancel'].forEach(t=>document.addEventListener(t,cancel));
+  });
+})();
+function linkRowClick(id){ if(_lpFired){ _lpFired=false; return; } toggleLinkCard(id); }
 function toggleLinkCard(id){
   if(!plSession) return;
   plSession.linkedCards=plSession.linkedCards||[];
@@ -9198,7 +9433,7 @@ function renderHeartNeedFrequency(){
         <div class="hn-freq-bar idc-bg" style="width:${pct}%;${idc(n.color)}"></div>
         <span class="hn-freq-count${inside?' inside':''}" style="${pos}">${n.count}</span>
       </div>
-    </div>${_needOpen===n.key?`<div class="hn-freq-sessions">${loadSessions().filter(s=>(s.steps?.prepare?.heartNeeds||[]).includes(n.key)).map(normalSessionEntryHTML).join('')}</div>`:''}`;
+    </div>${_needOpen===n.key?`<div class="hn-freq-sessions"><button class="hn-about" onclick="openHeartChart(false,'${n.key}')">${needGlyph(n.key)}About this need →</button>${loadSessions().filter(s=>(s.steps?.prepare?.heartNeeds||[]).includes(n.key)).map(normalSessionEntryHTML).join('')}</div>`:''}`;
   }).join('');
 
   const top = entries[0];
@@ -9257,6 +9492,10 @@ function searchWeeklyFor(word){
   if(plMode === 'session') return showView('pl');
   _plViewMode = 'list'; _plCalSelectedDay = null; _plSearchQuery = word; plMode = 'home';
   showView('pl'); window.scrollTo(0, 0);
+}
+function setSettingsPane(k){
+  document.querySelectorAll('#rf-settings .set-seg button').forEach(b=>{ const on=b.dataset.pane===k; b.classList.toggle('on',on); b.setAttribute('aria-selected',on); });
+  document.querySelectorAll('#rf-settings .set-pane').forEach(p=>{ p.hidden = p.dataset.pane!==k; });
 }
 function openReflectBlock(id){
   const el=document.getElementById(id); const d=el && el.closest('details'); if(!d) return;
