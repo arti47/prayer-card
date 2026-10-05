@@ -591,12 +591,80 @@
   .hn-freq-row { cursor: pointer; }
   .hn-freq-sessions { margin: 4px 0 12px; }
   /* Guide tiles */
-  .guide-tiles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 12px; }
-  .guide-tile { display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 12px 6px 10px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow); cursor: pointer; font-family: var(--serif); font-size: var(--fs-4); color: var(--text); text-align: center; line-height: 1.25; }
-  .guide-tile.on { border-color: var(--accent2); background: color-mix(in srgb, var(--accent2) 10%, var(--surface)); }
-  .guide-tile svg { width: 56px; height: 40px; color: var(--accent); }
-  .guide-practice:not([open]) { display: none; }
-  .guide-go { margin-top: 12px; }
+  /* Guide: Start here + three rhythms */
+  #view-guide { --g-day: #8f6a24; --g-card: #7e5944; --g-week: #4f6390; }
+  [data-theme="dark"] #view-guide { --g-day: #d8b46a; --g-card: #c9a07f; --g-week: #a3b3d9; }
+  .g-start { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow); padding: 14px 14px 4px; margin-bottom: 6px; }
+  .g-start-h { font-family: var(--serif); font-size: var(--fs-7); color: var(--text); line-height: 1.2; }
+  .g-start-sub { font-size: var(--fs-3); color: var(--text3); font-style: italic; margin: 2px 0 8px; }
+  .g-steps { list-style: none; margin: 0; padding: 0; }
+  .g-step { display: grid; grid-template-columns: 30px 1fr auto; gap: 12px; align-items: center; padding: 11px 0; border-top: 1px solid var(--border-soft); }
+  .g-num { width: 30px; height: 30px; border-radius: 50%; border: 1.5px solid var(--accent2); color: var(--accent); font-family: var(--serif); font-size: var(--fs-5); display: flex; align-items: center; justify-content: center; }
+  .g-step.done .g-num { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
+  .g-num .ico { width: 16px; height: 16px; stroke-width: 2.2; }
+  .g-step-t { display: block; font-family: var(--serif); font-size: var(--fs-5); color: var(--text); line-height: 1.3; }
+  .g-step-d { display: block; font-size: var(--fs-3); color: var(--text3); line-height: 1.45; margin-top: 2px; }
+  .g-step.done .g-step-t { color: var(--text2); }
+  .g-step-btn { width: auto; margin: 0; padding: 9px 16px; min-height: 40px; white-space: nowrap; font-size: var(--fs-4); }
+  @media (max-width: 359px) { .g-step { grid-template-columns: 30px 1fr; } .g-step-btn { grid-column: 2; justify-self: start; } }
+  @media (max-width: 429px) { html[data-text-size="large"] .g-step { grid-template-columns: 30px 1fr; } html[data-text-size="large"] .g-step-btn { grid-column: 2; justify-self: start; } }
+  .g-step .g-num { align-self: start; }
+  .g-rhythm { scroll-margin-top: 72px; }
+  .g-tour { display: flex; align-items: center; gap: 10px; width: 100%; min-height: 48px; padding: 10px 2px; margin: 0; background: none; border: 0; border-top: 1px solid var(--border-soft); color: var(--accent); font-family: var(--serif); font-size: var(--fs-4); text-align: left; cursor: pointer; }
+  .g-tour .ico { width: 18px; height: 18px; flex: none; }
+  .g-tour span { flex: 1; }
+  .g-tour em { color: var(--text3); font-size: var(--fs-3); }
+  #guide-tour-row .g-tour span { font-weight: bold; font-size: var(--fs-5); }
+  #guide-tour-row .g-tour em { font-weight: normal; }
+  #guide-tour-row .g-tour { border-top: 0; border-bottom: 1px solid var(--border); padding: 15px 4px; min-height: 52px; }
+  .g-week { display: block; width: 100%; height: auto; margin: 0 0 6px; font-family: var(--sans); }
+  .g-wk-sun { fill: color-mix(in srgb, var(--g-week) 9%, transparent); stroke: color-mix(in srgb, var(--g-week) 30%, transparent); stroke-width: 1; }
+  .g-wk-l text { fill: var(--text3); font-size: 11px; font-weight: 600; letter-spacing: .04em; }
+  .g-wk-l .g-wk-sl { fill: var(--g-week); }
+  .g-wk-day { fill: var(--g-day); stroke: var(--g-day); stroke-width: 1.3; stroke-linecap: round; }
+  .g-wk-card path { fill: none; stroke: var(--g-card); stroke-width: 1.2; opacity: .7; }
+  .g-wk-card circle { fill: var(--g-card); }
+  .g-wk-wk path { fill: none; stroke: var(--g-week); stroke-width: 1.6; stroke-linecap: round; }
+  .g-wk-wk circle { fill: var(--g-week); }
+  .g-rhythm { padding: 14px 2px 12px; border-top: 1px solid var(--border); }
+  .g-rh-top { display: flex; align-items: center; gap: 12px; }
+  .g-rh-art { flex: none; width: 52px; height: 38px; display: flex; }
+  .g-rh-art svg { width: 100%; height: 100%; }
+  .g-r-day .g-rh-art { color: var(--g-day); } .g-r-card .g-rh-art { color: var(--g-card); } .g-r-week .g-rh-art { color: var(--g-week); }
+  .g-rh-txt { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+  .g-rh-name { font-family: var(--serif); font-size: var(--fs-6); color: var(--text); line-height: 1.25; }
+  .g-rh-when { font-size: var(--fs-3); color: var(--text3); margin-top: 1px; }
+  .g-rh-go { flex: none; width: 44px; height: 44px; border-radius: 50%; border: 1px solid var(--border); background: var(--surface); color: var(--accent); font-size: 1.4rem; line-height: 1; cursor: pointer; display: flex; align-items: center; justify-content: center; padding-bottom: 3px; }
+  .g-rh-line { font-family: var(--serif); font-size: var(--fs-5); color: var(--text2); line-height: 1.55; margin: 8px 0 0 64px; }
+  .g-rh-more { margin: 6px 0 0 64px; }
+  .g-rh-more > summary { list-style: none; display: inline-flex; align-items: center; gap: 6px; min-height: 36px; color: var(--accent); font-size: var(--fs-4); cursor: pointer; }
+  .g-rh-more > summary::-webkit-details-marker { display: none; }
+  .g-rh-more > summary::after { content: '›'; transition: transform var(--dur-1, .16s) var(--ease, ease); }
+  .g-rh-more[open] > summary::after { transform: rotate(90deg); }
+  .g-rh-more p { font-size: var(--fs-4); color: var(--text2); line-height: 1.6; margin-top: 8px; }
+  .g-plans { display: flex; flex-direction: column; gap: 10px; margin-top: 4px; }
+  .g-plan { display: flex; flex-direction: column; gap: 5px; padding-left: 10px; border-left: 2px solid var(--pi); }
+  .g-plan-n { font-family: var(--serif); font-size: var(--fs-5); color: var(--text); }
+  .g-plan-n em { font-style: normal; font-size: var(--fs-3); color: var(--text3); margin-left: 6px; }
+  .g-flow { display: block; font-size: var(--fs-4); color: var(--text2); line-height: 1.5; }
+  .g-flow i { font-style: normal; }
+  .g-flow i + i::before { content: ' › '; color: var(--text3); }
+  .g-anat { display: flex; gap: 14px; align-items: center; margin-top: 4px; }
+  .g-anat-card { flex: none; width: 74px; padding: 8px 8px 10px; border: 1px solid var(--border); border-left: 3px solid var(--g-card); border-radius: 6px; background: var(--surface); box-shadow: var(--shadow); display: flex; flex-direction: column; gap: 6px; }
+  .g-anat-name { font-family: var(--serif); font-size: var(--fs-2); color: var(--text); }
+  .g-anat-bar { height: 3px; border-radius: 2px; background: var(--border); }
+  .g-anat-bar.s { width: 60%; }
+  .g-anat-k { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 4px; }
+  .g-anat-k li { font-size: var(--fs-4); color: var(--text2); line-height: 1.35; }
+  .g-wk-steps { list-style: none; margin: 10px 0 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+  .g-wk-steps li { display: grid; grid-template-columns: 22px 1fr; column-gap: 10px; font-size: var(--fs-4); color: var(--text2); line-height: 1.45; }
+  .g-wk-steps li .g-sm { grid-row: span 2; color: var(--idc); width: 20px; height: 20px; margin-top: 1px; }
+  [data-theme="dark"] .g-wk-steps li .g-sm { color: var(--idc-dark); }
+  .g-wk-steps li .g-sm .ico { width: 20px; height: 20px; }
+  .g-wk-steps li b { font-family: var(--serif); font-weight: normal; color: var(--text); display: block; }
+  .g-nudge { display: flex; align-items: center; gap: 8px; width: 100%; margin: 0 0 12px; padding: 10px 14px; min-height: 44px; background: var(--accent-light); border: 1px solid var(--border-soft); border-radius: var(--radius-sm); color: var(--accent); font-family: var(--serif); font-size: var(--fs-4); text-align: left; cursor: pointer; }
+  .g-nudge .ico { width: 18px; height: 18px; flex: none; }
+  .g-nudge span { flex: 1; }
   /* Active tab pill */
   nav button .icon { width: 3.1rem; border-radius: var(--r-pill); transition: background .2s; }
   nav button.active .icon { background: color-mix(in srgb, var(--accent2) 16%, transparent); }
@@ -2307,7 +2375,7 @@
   /* L7 Reflect + Guide: folds as hairline rows; L19 ledger; L20 contents */
   #view-reflect .reflect-block, #view-guide .reflect-block { background: transparent; border: none; border-bottom: 1px solid var(--border); border-radius: 0; box-shadow: none; margin: 0; }
   #view-reflect .reflect-block + .reflect-block, #view-guide .reflect-block + .reflect-block { margin-top: 0; }
-  #view-reflect #reflect-band + .reflect-block, #view-reflect #stats-block + .reflect-block, #view-guide .guide-tiles + .reflect-block { border-top: 1px solid var(--border); }
+  #view-reflect #reflect-band + .reflect-block, #view-reflect #stats-block + .reflect-block, #view-guide #guide-tour-row + .reflect-block { border-top: 0; }
   #view-reflect .reflect-block > summary, #view-guide .reflect-block > summary { padding: 15px 4px; min-height: 52px; }
   #view-reflect .reflect-block > summary:hover, #view-guide .reflect-block > summary:hover { background: transparent; }
   #view-reflect .reflect-block > *:not(summary), #view-guide .reflect-block > *:not(summary) { padding-left: 4px; padding-right: 4px; }
@@ -2591,43 +2659,74 @@
 <div id="view-guide" class="view">
   <div style="padding: 4px 0;">
     <div id="guide-hero"></div>
-    <div class="about-block" style="background:var(--accent-light);border-left:3px solid var(--accent2)">
-      <h3><span data-ico="sparkle"></span>Take the tour</h3>
-      <p>A brief 5-screen intro to what this app is and how the three rhythms — Story Cards, Daily Prayer, Weekly Deep Time — fit together.</p>
-      <button class="btn btn-secondary" onclick="showTutorial()" style="margin-top:8px">View tutorial</button>
-    </div>
-    <div class="guide-tiles">
-      <button class="guide-tile" data-g="gd-cards" onclick="openGuidePractice('gd-cards')"><svg viewBox="0 0 56 40" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"><path d="M2 24 C12 10 20 34 30 20 S46 8 54 18"/><circle cx="12" cy="17" r="2.4" fill="currentColor"/><circle cx="30" cy="20" r="2.4" fill="currentColor"/><circle cx="46" cy="12" r="2.4" fill="currentColor"/></svg><span>Prayer Story Cards</span></button>
-      <button class="guide-tile" data-g="gd-daily" onclick="openGuidePractice('gd-daily')"><svg viewBox="0 0 56 40" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"><circle cx="28" cy="22" r="7"/><circle cx="28" cy="22" r="13" stroke-dasharray="2 3"/><path d="M28 3v4M28 37v-2M9 22H5M51 22h-4M14 8l3 3M42 8l-3 3"/></svg><span>Daily Prayer</span></button>
-      <button class="guide-tile" data-g="gd-weekly" onclick="openGuidePractice('gd-weekly')"><svg viewBox="0 0 56 40" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"><path d="M8 38 V20 a20 20 0 0 1 40 0 V38"/><circle cx="12" cy="31" r="1.6" fill="currentColor"/><circle cx="13" cy="20" r="1.6" fill="currentColor"/><circle cx="19" cy="11" r="1.6" fill="currentColor"/><circle cx="28" cy="7" r="1.6" fill="currentColor"/><circle cx="37" cy="11" r="1.6" fill="currentColor"/><circle cx="43" cy="20" r="1.6" fill="currentColor"/><circle cx="44" cy="31" r="1.6" fill="currentColor"/></svg><span>Weekly Deep Time</span></button>
-    </div>
-    <details class="about-block reflect-block guide-practice" id="gd-cards">
-      <summary><h3><span data-ico="cards"></span>Prayer Story Cards</h3></summary>
-      <p>From Paul Miller's <em>A Praying Life</em> — track prayers as ongoing stories. Each card has a Scripture anchor, a two-level ask, and a Father's Perspective line. Pray one card a day, add dated story notes weekly.</p>
-      <button class="btn btn-secondary guide-go" onclick="showView('cards')">Story Cards →</button>
-    </details>
-    <details class="about-block reflect-block guide-practice" id="gd-daily">
-      <summary><h3><span data-ico="sun"></span>Daily Prayer</h3></summary>
-      <p>A daily rhythm — meeting God in His Word and bringing your heart honestly to Him. Three plan options — Morning (25 min), Evening (15 min), Starter (15 min) — each following the same shape: Approach → Bible meditation → Prayer → Contemplation.</p>
-      <p><strong>Why three plans?</strong> Daily prayer can take different shapes depending on the day. Morning is fuller and Bible-led (Approach → Bible reading &amp; meditation → Prayer → Contemplation). Evening is shorter and Psalm-led (Approach → Read a Psalm → Pray through the day). The Starter Plan is a gentler entry point if daily prayer is new (Approach → Meditation → Word Prayer → Free Prayer → Contemplation).</p>
-      <p style="font-style:italic">For the deeper, once-a-week practice (Sundays recommended), use <strong>Weekly Deep</strong> instead — that’s where you map your heart and walk the Lord’s Prayer slowly.</p>
-      <p>On Approach, name what you’re feeling and Scripture chosen for that feeling appears beneath it — read it, add it to your prayer, or take it as the day’s meditation passage. The same verses are in the Bible reader under <em>Scripture by feeling</em>.</p>
-      <button class="btn btn-secondary guide-go" onclick="showView('daily')">Daily Prayer →</button>
-    </details>
-    <details class="about-block reflect-block guide-practice" id="gd-weekly">
-      <summary><h3><span data-ico="pen"></span>Weekly Deep Time</h3></summary>
-      <p>A once-a-week deeper practice — Sunday recommended. Map your heart, then walk slowly through the Lord’s Prayer with space to listen. Begins with a <strong>Preparing to Pray</strong> reflection and walks through the Lord's Prayer in 6 steps — each with a <strong>Pray</strong> prompt and a <strong>Listen</strong> prompt.</p>
-      <ul style="margin-top:8px">
-        <li>✦ <strong>Prepare</strong> — Circumstances, feelings (name one, and Scripture for it appears), mapping your heart</li>
-        <li><strong>1. Come</strong> — Worship, draw near</li>
-        <li><strong>2. Humble</strong> — Trust &amp; submission</li>
-        <li><strong>3. Ask</strong> — Bring your needs</li>
-        <li><strong>4. Repent</strong> — Confess &amp; receive forgiveness</li>
-        <li><strong>5. Forgive</strong> — Release others</li>
-        <li><strong>6. Follow</strong> — Dependent obedience</li>
-      </ul>
-      <button class="btn btn-secondary guide-go" onclick="showView('pl')">Weekly Deep →</button>
-    </details>
+    <div id="guide-start"></div>
+    <p class="section-title">Three rhythms</p>
+    <svg class="g-week" viewBox="0 0 336 94" role="img" aria-label="A week: Daily Prayer each day, a story card each day, Weekly Deep Time on Sunday">
+      <rect class="g-wk-sun" x="2" y="2" width="44" height="90" rx="10"/>
+      <g class="g-wk-l" text-anchor="middle"><text x="24" y="17" class="g-wk-sl">S</text><text x="72" y="17">M</text><text x="120" y="17">T</text><text x="168" y="17">W</text><text x="216" y="17">T</text><text x="264" y="17">F</text><text x="312" y="17">S</text></g>
+      <defs><g id="g-wk-sunmark"><circle r="3.4"/><path d="M0-8v2.2M0 8v-2.2M-8 0h2.2M8 0h-2.2M-5.6-5.6l1.6 1.6M5.6 5.6l-1.6-1.6M5.6-5.6l-1.6 1.6M-5.6 5.6l1.6-1.6"/></g></defs>
+      <g class="g-wk-day"><use href="#g-wk-sunmark" x="24" y="38"/><use href="#g-wk-sunmark" x="72" y="38"/><use href="#g-wk-sunmark" x="120" y="38"/><use href="#g-wk-sunmark" x="168" y="38"/><use href="#g-wk-sunmark" x="216" y="38"/><use href="#g-wk-sunmark" x="264" y="38"/><use href="#g-wk-sunmark" x="312" y="38"/></g>
+      <g class="g-wk-card"><path d="M6 60 C14 54 18 66 24 60 S56 54 72 60 S104 66 120 60 S152 54 168 60 S200 66 216 60 S248 54 264 60 S296 66 312 60 S326 56 332 58"/><circle cx="24" cy="60" r="2.6"/><circle cx="72" cy="60" r="2.6"/><circle cx="120" cy="60" r="2.6"/><circle cx="168" cy="60" r="2.6"/><circle cx="216" cy="60" r="2.6"/><circle cx="264" cy="60" r="2.6"/><circle cx="312" cy="60" r="2.6"/></g>
+      <g class="g-wk-wk"><path d="M14 88 V80 a10 10 0 0 1 20 0 V88"/><circle cx="24" cy="74.5" r="1.3"/></g>
+    </svg>
+
+    <section class="g-rhythm g-r-day" id="gd-daily">
+      <div class="g-rh-top">
+        <span class="g-rh-art"><svg viewBox="0 0 56 40" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"><circle cx="28" cy="22" r="7"/><circle cx="28" cy="22" r="13" stroke-dasharray="2 3"/><path d="M28 3v4M28 37v-2M9 22H5M51 22h-4M14 8l3 3M42 8l-3 3"/></svg></span>
+        <span class="g-rh-txt"><span class="g-rh-name">Daily Prayer</span><span class="g-rh-when">Every day · 15–25 min</span></span>
+        <button class="g-rh-go" onclick="showView('daily')" aria-label="Open Daily Prayer">›</button>
+      </div>
+      <p class="g-rh-line">Meeting God in His Word and bringing your heart honestly to Him.</p>
+      <details class="g-rh-more"><summary>How it works</summary>
+        <div class="g-plans">
+          <div class="g-plan" style="--pi:#b8892e"><span class="g-plan-n">Morning <em>25 min</em></span><span class="g-flow"><i>Approach</i><i>Bible reading &amp; meditation</i><i>Prayer</i><i>Contemplation</i></span></div>
+          <div class="g-plan" style="--pi:#4f6390"><span class="g-plan-n">Evening <em>15 min</em></span><span class="g-flow"><i>Approach</i><i>Read a Psalm</i><i>Pray through the day</i></span></div>
+          <div class="g-plan" style="--pi:#6f8a5a"><span class="g-plan-n">Starter <em>15 min</em></span><span class="g-flow"><i>Approach</i><i>Meditation</i><i>Word Prayer</i><i>Free Prayer</i><i>Contemplation</i></span></div>
+        </div>
+        <p><strong>Why three plans?</strong> Daily prayer can take different shapes depending on the day. Morning is fuller and Bible-led. Evening is shorter and Psalm-led. The Starter Plan is a gentler entry point if daily prayer is new.</p>
+        <p>On Approach, name what you’re feeling and Scripture chosen for that feeling appears beneath it — read it, add it to your prayer, or take it as the day’s meditation passage. The same verses are in the Bible reader under <em>Scripture by feeling</em>.</p>
+      </details>
+    </section>
+
+    <section class="g-rhythm g-r-card" id="gd-cards">
+      <div class="g-rh-top">
+        <span class="g-rh-art"><svg viewBox="0 0 56 40" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"><path d="M2 24 C12 10 20 34 30 20 S46 8 54 18"/><circle cx="12" cy="17" r="2.4" fill="currentColor"/><circle cx="30" cy="20" r="2.4" fill="currentColor"/><circle cx="46" cy="12" r="2.4" fill="currentColor"/></svg></span>
+        <span class="g-rh-txt"><span class="g-rh-name">Prayer Story Cards</span><span class="g-rh-when">One card a day · notes weekly</span></span>
+        <button class="g-rh-go" onclick="showView('cards')" aria-label="Open Story Cards">›</button>
+      </div>
+      <p class="g-rh-line">Track prayers as ongoing stories.</p>
+      <details class="g-rh-more"><summary>How it works</summary>
+        <div class="g-anat">
+          <div class="g-anat-card"><span class="g-anat-name">Name</span><span class="g-anat-bar"></span><span class="g-anat-bar s"></span><span class="g-anat-bar"></span><span class="g-anat-bar s"></span></div>
+          <ul class="g-anat-k"><li>A person or situation</li><li>A Scripture anchor</li><li>A two-level ask</li><li>A Father’s Perspective line</li></ul>
+        </div>
+        <p>Pray one card a day, add dated story notes weekly.</p>
+      </details>
+    </section>
+
+    <section class="g-rhythm g-r-week" id="gd-weekly">
+      <div class="g-rh-top">
+        <span class="g-rh-art"><svg viewBox="0 0 56 40" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"><path d="M8 38 V20 a20 20 0 0 1 40 0 V38"/><circle cx="12" cy="31" r="1.6" fill="currentColor"/><circle cx="13" cy="20" r="1.6" fill="currentColor"/><circle cx="19" cy="11" r="1.6" fill="currentColor"/><circle cx="28" cy="7" r="1.6" fill="currentColor"/><circle cx="37" cy="11" r="1.6" fill="currentColor"/><circle cx="43" cy="20" r="1.6" fill="currentColor"/><circle cx="44" cy="31" r="1.6" fill="currentColor"/></svg></span>
+        <span class="g-rh-txt"><span class="g-rh-name">Weekly Deep Time</span><span class="g-rh-when">Once a week · Sunday recommended</span></span>
+        <button class="g-rh-go" onclick="showView('pl')" aria-label="Open Weekly Deep">›</button>
+      </div>
+      <p class="g-rh-line">Map your heart, then walk slowly through the Lord’s Prayer with space to listen.</p>
+      <details class="g-rh-more"><summary>How it works</summary>
+        <p>Begins with a <strong>Preparing to Pray</strong> reflection and walks through the Lord’s Prayer in 6 steps — each with a <strong>Pray</strong> prompt and a <strong>Listen</strong> prompt.</p>
+        <ul class="g-wk-steps">
+          <li data-k="prepare"><b>Prepare</b> Circumstances, feelings (name one, and Scripture for it appears), mapping your heart</li>
+          <li data-k="come"><b>1. Come</b> Worship, draw near</li>
+          <li data-k="humble"><b>2. Humble</b> Trust &amp; submission</li>
+          <li data-k="ask"><b>3. Ask</b> Bring your needs</li>
+          <li data-k="confess"><b>4. Repent</b> Confess &amp; receive forgiveness</li>
+          <li data-k="forgive"><b>5. Forgive</b> Release others</li>
+          <li data-k="follow"><b>6. Follow</b> Dependent obedience</li>
+        </ul>
+      </details>
+    </section>
+
+    <p class="section-title">More</p>
+    <div id="guide-tour-row"></div>
     <details class="about-block reflect-block">
       <summary><h3><span data-ico="phone"></span>Install on your phone</h3></summary>
       <div id="install-block"></div>
@@ -3009,6 +3108,7 @@ const ICON = {
   dimLong:  _svg('<path d="M4 18.6L19.4 5.4M13.6 5.2h5.8v5.8"/>'),
   dimDeep:  _svg('<path d="M12 3.4v17.2M8.8 17.4l3.2 3.2 3.2-3.2"/>'),
   dimHigh:  _svg('<path d="M12 20.6V3.4M8.8 6.6L12 3.4l3.2 3.2"/>'),
+  check:    _svg('<path d="M5 12.6l4.4 4.4L19 7.2"/>'),
   close:    _svg('<path d="M6.5 6.5l11 11M17.5 6.5l-11 11"/>'),
   breath:   _svg('<path d="M3.5 9.5h10.2a2.8 2.8 0 1 0-2.8-2.8"/><path d="M3.5 13.5h14.2a2.8 2.8 0 1 1-2.8 2.8"/><path d="M3.5 17.5h5"/>'),
   swirl:    _svg('<path d="M12 12.2a1.6 1.6 0 1 1 1.6-1.6 3.4 3.4 0 0 1-3.4 3.4 5 5 0 0 1-5-5 6.6 6.6 0 0 1 6.6-6.6 8.2 8.2 0 0 1 8.2 8.2 9.8 9.8 0 0 1-9.8 9.8"/>'),
@@ -6735,7 +6835,7 @@ function showView(name){
   if(name==='daily') renderDailyPrayer();
   if(name==='pl') renderPL();
   if(name==='reflect'){ _heatmapSelectedKey = null; renderReflectBand(); renderStats(); renderReflectSections(); applyTheme(); applyTextSize(); populateObsidianFields(); const t=document.getElementById('bible-fab-toggle'); if(t) t.checked=bibleFabEnabled(); }
-  if(name==='guide'){ renderInstallBlock(); }
+  if(name==='guide'){ renderInstallBlock(); renderGuideStart(); }
   if(name==='reflect'||name==='guide'){ const h=document.getElementById(name+'-hero'); if(h && !h.innerHTML) h.innerHTML=pageHeroHTML(name==='reflect'?'Reflect':'Guide', name); }
   syncFabPadding();   // after both buttons have settled for this view
   syncHeaderMode();
@@ -7669,6 +7769,7 @@ function renderDPHome(){
       <h2>Daily Prayer</h2>
     </div>
     ${draft ? resumeRibbonHTML(`${esc(draftPlan?.title||'')} · ${esc(draftStep?.title||'')}`, 'dpContinue()', 'dpDiscardDraft()') : ''}
+    ${(!sessions.length && !draft && !loadSessions().length && !loadCards().some(c=>!c.isSample)) ? `<button class="g-nudge" onclick="showView('guide')">${ICON.sparkle}<span>New here? See where to begin</span>›</button>` : ''}
 
     <div class="carry-slot">${carryCardHTML()}</div>
 
@@ -9850,7 +9951,7 @@ function renderTutorialSlide(){
   const navHTML = s.isLast ? `
     <div class="tut-nav-final">
       <button class="btn btn-primary" onclick="loadSampleCardFromTutorial()">🃏 Load a sample card to explore</button>
-      <button class="btn btn-secondary" onclick="dismissTutorial()">Begin from scratch</button>
+      <button class="btn btn-secondary" onclick="tutorialBegin()">Begin from scratch</button>
     </div>
   ` : `
     <div class="tut-nav">
@@ -9885,6 +9986,11 @@ function tutorialBack(){
 
 function dismissTutorial(){
   closeModal('modal-tutorial');
+}
+// "Begin from scratch" lands on the Guide's Start here, so the first step is in view.
+function tutorialBegin(){
+  dismissTutorial();
+  showView('guide'); window.scrollTo(0, 0);
 }
 
 function loadSampleCardFromTutorial(){
@@ -11007,9 +11113,51 @@ function renderReflectBand(){
     </div>
   </div>`;
 }
+// Open a practice's "How it works" in place and bring it into view.
 function openGuidePractice(id){
-  document.querySelectorAll('.guide-practice').forEach(d=>{ d.open = (d.id===id) ? !d.open : false; });
-  document.querySelectorAll('.guide-tile').forEach(t=>t.classList.toggle('on', document.getElementById(t.dataset.g)?.open));
+  const sec = document.getElementById(id); if(!sec) return;
+  const more = sec.querySelector('.g-rh-more'); if(more) more.open = true;
+  sec.scrollIntoView({ block:'start', behavior:'smooth' });
+}
+// "Start here": three first steps, each with its action. A step is ticked once
+// the thing exists (your own card, a finished Daily or Weekly session) — no counts.
+// Once all three are ticked the panel steps aside and the tour stays as a row below.
+function renderGuideStart(){
+  const el = document.getElementById('guide-start'), row = document.getElementById('guide-tour-row');
+  if(!el) return;
+  const done = [
+    loadCards().some(c => !c.isSample),
+    loadDailySessions().length > 0,
+    loadSessions().length > 0
+  ];
+  const steps = [
+    { t:'Name someone you’re praying for', d:'Make a story card for a person or situation.', b:'Make a card', go:'guideGo(0)' },
+    { t:'Pray for fifteen minutes', d:'The Starter plan walks you through it, one screen at a time.', b:'Begin', go:'guideGo(1)' },
+    { t:'Set aside Sunday', d:'Weekly Deep Time: map your heart, then pray the Lord’s Prayer slowly.', b:'Begin', go:'guideGo(2)' }
+  ];
+  const tour = `<button class="g-tour" onclick="showTutorial()">${ICON.sparkle}<span>Take the tour <em>· five short screens</em></span>›</button>`;
+  const all = done.every(Boolean);
+  el.innerHTML = all ? '' : `<div class="g-start">
+    <div class="g-start-h">Start here</div>
+    <div class="g-start-sub">New to this? Three first steps.</div>
+    <ol class="g-steps">${steps.map((s,i) => `<li class="g-step${done[i]?' done':''}">
+      <span class="g-num" aria-label="${done[i]?'Done':'Step '+(i+1)}">${done[i]?ICON.check:(i+1)}</span>
+      <span><span class="g-step-t">${s.t}</span><span class="g-step-d">${s.d}</span></span>
+      <button class="btn ${done[i]?'btn-secondary':'btn-primary'} g-step-btn" onclick="${s.go}">${done[i]?'Again':s.b}</button>
+    </li>`).join('')}</ol>
+    ${tour}
+  </div>`;
+  if(row) row.innerHTML = all ? tour : '';
+  document.querySelectorAll('#view-guide .g-wk-steps li[data-k]').forEach(li => {
+    if(li.querySelector('.g-sm')) return;
+    const st = PL_STEPS.find(x => x.key === li.dataset.k); if(!st) return;
+    li.insertAdjacentHTML('afterbegin', `<span class="g-sm" style="${idc(st.sc)}">${stepGlyph(st.key)}</span>`);
+  });
+}
+function guideGo(i){
+  if(i === 0){ openNewCard(); return; }
+  if(i === 1){ showView('daily'); dpStart('starter'); return; }
+  showView('pl'); plStartNew();
 }
 // From a word in "What You've Been Hearing" to the Weekly sessions that hold it.
 function searchWeeklyFor(word){
