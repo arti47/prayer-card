@@ -2110,6 +2110,8 @@
   /* Carry: the passage as lettered, tappable parts. */
   .carry-pick-hint { margin-left: auto; font-family: var(--serif); font-style: italic; text-transform: none; letter-spacing: 0; font-size: var(--fs-3); color: var(--text3); font-weight: normal; }
   .carry-pick .dp-recall-label { display: flex; align-items: center; gap: 6px; }
+  .focus-passage.carry-pick .carry-pick-hint { margin-left: auto; }
+  .focus-passage.carry-pick .focus-passage-body { white-space: normal; }
   .carry-pick .dp-recall-body { max-height: 45vh; }
   .cp-part { display: inline; background: none; border: none; padding: 1px 2px; margin: 0; font: inherit; color: inherit; text-align: left; cursor: pointer; border-radius: 4px; line-height: inherit;
     box-decoration-break: clone; -webkit-box-decoration-break: clone; transition: background .15s; text-decoration: underline dotted color-mix(in srgb, var(--accent2) 55%, transparent); text-underline-offset: 4px; }
@@ -6583,15 +6585,17 @@ function dpActivePassage(){
   const text = (live ? live.value : (dpSession.steps?.[step.key]?.[pf.key] || '')).trim();
   return text ? { label: pf.label, text } : null;
 }
-function focusPassageHTML(p){
-  return `<div class="focus-passage${_focusPassageOpen ? '' : ' collapsed'}" id="focus-passage">
+function focusPassageHTML(p, pick){
+  const open = pick || _focusPassageOpen;   // the picker is never folded away
+  return `<div class="focus-passage${open ? '' : ' collapsed'}${pick ? ' carry-pick' : ''}" id="focus-passage">
       <div class="focus-passage-inner">
         <div class="focus-passage-head">
           <span class="focus-passage-label">${ICON.book} ${esc(p.label)}</span>
-          <button class="focus-passage-toggle" onclick="toggleFocusPassage()"
-            aria-label="${_focusPassageOpen ? 'Collapse passage' : 'Expand passage'}">${_focusPassageOpen ? '⌃' : '⌄'}</button>
+          ${pick ? '<span class="carry-pick-hint">Tap a part to carry it</span>' : `<button class="focus-passage-toggle" onclick="toggleFocusPassage()"
+            aria-label="${_focusPassageOpen ? 'Collapse passage' : 'Expand passage'}">${_focusPassageOpen ? '⌃' : '⌄'}</button>`}
         </div>
-        <div class="focus-passage-body">${esc(p.text)}<div class="focus-passage-verse" id="focus-passage-verse" style="display:none"></div></div>
+        ${pick ? `<div class="focus-passage-body carry-parts">${esc(pick)}</div>`
+          : `<div class="focus-passage-body">${esc(p.text)}<div class="focus-passage-verse" id="focus-passage-verse" style="display:none"></div></div>`}
       </div>
     </div>`;
 }
@@ -6721,8 +6725,11 @@ function openFocusCompose(textareaId){
   const carrySpec = carried.length
     ? (DP_CARRY[dpSession.plan] || {})[`${DP_PLANS[dpSession.plan].steps[dpStepIdx].key}.${textareaId.slice(9)}`]
     : null;
+  // On the Carry field the passage is the verse-part picker, as on its own screen.
+  const pick = (passage && textareaId === 'dp-field-carry') ? carryPickPrep(passage.text) : null;
+  _carryPickSnap = pick ? { ..._carryPick } : null;
   const pinnedHTML = (passage || carried.length)
-    ? `<div class="focus-pinned">${passage ? focusPassageHTML(passage) : ''}${
+    ? `<div class="focus-pinned">${passage ? focusPassageHTML(passage, pick) : ''}${
         carried.length ? focusCarryHTML(carried, carrySpec?.title || 'From your meditation') : ''}</div>`
     : '';
   // If a silence timer is running, carry it into focus mode so the user can keep
@@ -6744,11 +6751,12 @@ function openFocusCompose(textareaId){
   `;
   if(_silenceEnd) refreshSilenceWidgets();  // populate the freshly-rendered widget
   fieldAttrs(content);
-  if(passage) resolveFocusPassage(passage.text);
+  if(passage && !pick) resolveFocusPassage(passage.text);
   openModal('modal-focus-compose');
   refreshFocusFades();   // after open — a hidden modal measures as zero-height
-  // Focus the textarea after the modal slide-up animation settles
-  setTimeout(() => {
+  // Focus the textarea after the modal slide-up animation settles — except over the
+  // verse-part picker, where the keyboard would cover the parts you came to tap.
+  if(!pick) setTimeout(() => {
     const el = document.getElementById('focus-compose-textarea');
     if(el){ el.focus(); el.setSelectionRange(el.value.length, el.value.length); }
   }, 280);
@@ -6763,7 +6771,7 @@ function saveFocusCompose(){
     // Trigger input event so the autosave delegation picks up the change
     ta.dispatchEvent(new Event('input', { bubbles: true }));
   }
-  _focusComposeTargetId = null;
+  _focusComposeTargetId = null; _carryPickSnap = null;
   closeModal('modal-focus-compose');
 }
 
@@ -7102,6 +7110,9 @@ function openModal(id){
 function closeModal(id){
   const m = document.getElementById(id); if(!m) return;
   if(!m.classList.contains('open')) return;  // already closed — don't double-unlock
+  if(id === 'modal-focus-compose' && _carryPickSnap){   // cancelled: the field kept its line, so does the picker
+    _carryPick = _carryPickSnap; _carryPickSnap = null; carryRenderParts();
+  }
   // Play a short exit before removing .open, so closing reads as a movement rather
   // than a cut. Bail straight to hidden if the user asked for reduced motion.
   const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -7900,6 +7911,7 @@ async function dpStart(planKey){
   if(loadDailyDraft() && !(await uiConfirm('You have a daily prayer draft in progress. Discard it and start fresh?', {danger:true, okText:'Discard & start'}))) return;
   const steps={};
   plan.steps.forEach(s => steps[s.key]=dpEmptyStepData(s));
+  _carryPick = { key:null, i0:-1, i1:-1 };   // a new session starts with nothing picked
   dpSession={
     id:genId(), date:today(), dateISO:new Date().toISOString(),
     type:'daily', plan:planKey,
@@ -8454,40 +8466,48 @@ function dpPassageRecall(step, saved){
 // Each verse splits at its main clause breaks (. ; : ? !), lettered a, b, c… as
 // commentaries cite part of a verse. Tapping builds a contiguous run and writes
 // “text” — Book C:Vx[–y] into the Carry field; a whole verse drops the letter.
-let _carryPick = { key:null, i0:-1, i1:-1 }, _carryParts = [], _carryBook = '', _carryChap = 0;
+let _carryPick = { key:null, i0:-1, i1:-1 }, _carryPickSnap = null, _carryParts = [], _carryBook = '', _carryChap = 0;
 function carrySplitVerse(t){
   const parts = String(t).match(/[^.;:?!]+(?:[.;:?!]+[’”'"\)]*|$)/g) || [t];
   const out = parts.map(x=>x.trim()).filter(Boolean);
   // A trailing fragment of only closing marks joins the part before it.
   return out.reduce((a,x)=>{ if(a.length && !/[A-Za-z0-9]/.test(x)) a[a.length-1]+=x; else a.push(x); return a; }, []);
 }
-function carryPickHTML(step, saved){
-  const txt = (saved[step.passageField.key] || '').trim();
+// Parse a passage entry for the verse-part picker; null when it doesn't start with
+// a Book C:V reference. Schedules the parts to be filled into every picker host.
+function carryPickPrep(txt){
+  txt = (txt || '').trim();
   const refPart = txt.split(/\s+[—–-]\s+/)[0];
   const p = parseScriptureRef(refPart);
   const m = refPart.match(/^(.+?)\s+\d+:/);
-  if(!txt || !p || !m) return dpPassageRecall(step, saved);
+  if(!txt || !p || !m) return null;
   _carryBook = m[1].trim(); _carryChap = p.chapter;
   const key = `${p.file}|${p.chapter}|${p.vStart}-${p.vEnd}`;
   if(_carryPick.key !== key) _carryPick = { key, i0:-1, i1:-1 };
   setTimeout(()=>carryFillParts(p), 0);
+  return txt;
+}
+function carryPickHTML(step, saved){
+  const txt = carryPickPrep(saved[step.passageField.key]);
+  if(!txt) return dpPassageRecall(step, saved);
   return `<div class="dp-recall carry-pick">
       <div class="dp-recall-label">${ICON.book}${esc(step.passageField.label)}<span class="carry-pick-hint">Tap a part to carry it</span></div>
-      <div class="dp-recall-body" id="carry-parts">${esc(txt)}</div>
+      <div class="dp-recall-body carry-parts" id="carry-parts">${esc(txt)}</div>
     </div>`;
 }
 async function carryFillParts(p){
   let md; try { md = await fetchBibleFile(p.file); } catch(e){ return; }
   const vs = bibleVerses(md, p.chapter).filter(v=>v.n>=p.vStart && v.n<=p.vEnd);
-  const el = document.getElementById('carry-parts'); if(!el || !vs.length) return;
+  if(!document.querySelector('.carry-parts') || !vs.length) return;
   _carryParts = [];
   vs.forEach(v=>{ const ps=carrySplitVerse(v.text); ps.forEach((t,j)=>_carryParts.push({ v:v.n, letter: ps.length>1 ? String.fromCharCode(97+j) : '', first:j===0, last:j===ps.length-1, text:t })); });
   carryRenderParts();
 }
 function carryRenderParts(){
-  const el = document.getElementById('carry-parts'); if(!el) return;
+  const els = document.querySelectorAll('.carry-parts'); if(!els.length || !_carryParts.length) return;
   const {i0,i1} = _carryPick;
-  el.innerHTML = _carryParts.map((pt,i)=>`${pt.first && _carryParts.length>1 && new Set(_carryParts.map(x=>x.v)).size>1 ? `<sup class="cp-v">${pt.v}</sup>` : ''}<button type="button" class="cp-part${i>=i0&&i<=i1&&i0>=0?' on':''}" onclick="carryTapPart(${i})">${pt.letter?`<sup class="cp-l">${pt.letter}</sup>`:''}${esc(pt.text)}</button>`).join(' ');
+  const html = _carryParts.map((pt,i)=>`${pt.first && _carryParts.length>1 && new Set(_carryParts.map(x=>x.v)).size>1 ? `<sup class="cp-v">${pt.v}</sup>` : ''}<span role="button" tabindex="0" class="cp-part${i>=i0&&i<=i1&&i0>=0?' on':''}" onclick="carryTapPart(${i})" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();carryTapPart(${i})}">${pt.letter?`<sup class="cp-l">${pt.letter}</sup>`:''}${esc(pt.text)}</span>`).join(' ');
+  els.forEach(el => { el.innerHTML = html; });
 }
 function carryRef(i0,i1){
   const a=_carryParts[i0], b=_carryParts[i1];
@@ -8508,7 +8528,9 @@ function carryTapPart(i){
   else if(i0===i1 && i===i0) { i0=i1=-1; }             // tap the only part again: clear
   else { i0=i1=i; }                                    // tapped inside: just this part
   _carryPick.i0=i0; _carryPick.i1=i1;
-  const ta=document.getElementById('dp-field-carry');
+  // In focus mode the line goes into the composer; Save carries it back to the field.
+  const inFocus = _focusComposeTargetId === 'dp-field-carry' && document.getElementById('modal-focus-compose')?.classList.contains('open');
+  const ta=document.getElementById(inFocus ? 'focus-compose-textarea' : 'dp-field-carry');
   if(ta){
     ta.value = i0<0 ? '' : `“${_carryParts.slice(i0,i1+1).map(x=>x.text).join(' ').replace(/[,;:.]$/,'')}” — ${carryRef(i0,i1)}`;
     ta.dispatchEvent(new Event('input',{bubbles:true}));
@@ -12003,7 +12025,7 @@ function setupSwipeFor(containerId, isActive, onNext, onBack, rootSel){
   rootSel = rootSel || '.pl-step-card';
   let startX = 0, startY = 0, startT = 0, tracking = false;
   // Selectors to ignore swipes on — interactive elements user is engaging with
-  const ignoreSel = 'textarea, input, select, button, a, label, .pl-chip, .pl-forget-chip, .scripture-ref, .pl-need-chip, .pl-linked-chip, .dp-inv-option, .silence-pill, .silence-active, .pl-link-btn, .pl-chart-btn, .cry-out-link, .cry-out-phrase, .cry-out-close';
+  const ignoreSel = 'textarea, input, select, button, a, label, .pl-chip, .pl-forget-chip, .scripture-ref, .pl-need-chip, .pl-linked-chip, .dp-inv-option, .silence-pill, .silence-active, .pl-link-btn, .pl-chart-btn, .cry-out-link, .cry-out-phrase, .cry-out-close, [role=button]';
 
   el.addEventListener('pointerdown', (e) => {
     if(!isActive()) return;
