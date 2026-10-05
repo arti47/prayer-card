@@ -6490,13 +6490,14 @@ function renderDPSearchResults(){
     target.innerHTML = `<p class="pl-search-count">${matches.length} match${matches.length===1?'':'es'} for "${esc(_dpSearchQuery)}"</p>` +
       matches.map(({s, match}) => dpSearchResultHTML(s, match)).join('');
   } else {
-    const recent = sessions.slice(0, 5);
+    // The home list holds this week only (Monday onward); the rest is in Calendar and search.
+    const recent = sessions.filter(s => new Date(s.dateISO || s.date) >= historyPeriodStart('week'));
     const recentHTML = recent.length
-      ? historyGroupsHTML(recent, dpSessionEntryHTML)
-      : `<div class="empty" style="padding:18px 10px">${emptyArt('book')}<p style="font-size:.85rem">No sessions yet.<br>Your completed prayers will appear here.</p></div>`;
+      ? `<div class="he-group">This week</div>${recent.map(dpSessionEntryHTML).join('')}`
+      : sessions.length ? '' : `<div class="empty" style="padding:18px 10px">${emptyArt('book')}<p style="font-size:.85rem">No sessions yet.<br>Your completed prayers will appear here.</p></div>`;
     target.innerHTML = `
       ${recentHTML}
-      ${sessions.length>5?`<p class="he-more">Older sessions are in Calendar and search.</p>`:''}
+      ${sessions.length>recent.length?`<p class="he-more">Older sessions are in Calendar and search.</p>`:''}
     `;
   }
 }
@@ -6519,6 +6520,13 @@ function dpSessionEntryHTML(s){
     <span class="he-main"><span class="he-line"><span class="he-when">${esc(heWhen(s))}</span><span class="he-snippet">${snippet}</span></span></span>
     <span class="he-chev" aria-hidden="true">›</span>
   </div>`;
+}
+// Start of the current week (Monday) or month, local time.
+function historyPeriodStart(kind){
+  const d = new Date(); d.setHours(0,0,0,0);
+  if(kind === 'month') d.setDate(1);
+  else d.setDate(d.getDate() - ((d.getDay() + 6) % 7));
+  return d;
 }
 // Short date for a history row: "Mon 5 Oct".
 function heWhen(s){
@@ -7414,14 +7422,15 @@ function renderPLSearchResults(){
       matches.map(({s, match}) => searchResultHTML(s, match)).join('');
   } else {
     const reflectionHTML = (!draft && sessions[0]) ? renderReflectionCard(sessions[0]) : '';
-    const recent = sessions.slice(0, 5);
+    // The home list holds this month only; the rest is in Calendar and search.
+    const recent = sessions.filter(s => new Date(s.dateISO || s.date) >= historyPeriodStart('month'));
     const recentHTML = recent.length
-      ? historyGroupsHTML(recent, normalSessionEntryHTML)
-      : `<div class="empty" style="padding:18px 10px">${emptyArt('book')}<p style="font-size:.85rem">No sessions yet.<br>Your completed journals will appear here.</p></div>`;
+      ? `<div class="he-group">This month</div>${recent.map(normalSessionEntryHTML).join('')}`
+      : sessions.length ? '' : `<div class="empty" style="padding:18px 10px">${emptyArt('book')}<p style="font-size:.85rem">No sessions yet.<br>Your completed journals will appear here.</p></div>`;
     target.innerHTML = `
       ${reflectionHTML}
       ${recentHTML}
-      ${sessions.length>5?`<p class="he-more">Older sessions are in Calendar and search.</p>`:''}
+      ${sessions.length>recent.length?`<p class="he-more">Older sessions are in Calendar and search.</p>`:''}
     `;
   }
 }
