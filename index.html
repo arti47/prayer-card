@@ -2243,6 +2243,115 @@
   .fc-front .fc-hint { margin-bottom: 12px; }
   /* Back: a touch larger to start from; fit-to-card still steps it down if needed. */
   .fc-back { font-size: calc(var(--fit, 1) * 1.1rem); }
+  /* ══════════ P18 — fifth audit pass ══════════ */
+  /* L1 Immersive session: header + tab bar away; slim bar above, Back/Next foot below */
+  .session-bar, .session-foot { display: none; }
+  body.in-session > header, body.in-session > nav { display: none !important; }
+  body.in-session .session-bar { display: flex; align-items: center; gap: 8px; position: sticky; top: 0; z-index: 100; padding: 8px 12px; padding-top: calc(8px + env(safe-area-inset-top)); background: color-mix(in srgb, var(--bg) 86%, transparent); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border-soft); }
+  .sb-btn { flex: none; width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--border-soft); background: var(--surface); color: var(--accent); display: flex; align-items: center; justify-content: center; cursor: pointer; padding: 0; }
+  .sb-btn .ico { width: 18px; height: 18px; }
+  .sb-btn:active { transform: scale(.94); }
+  .sb-aa { font-family: var(--serif); font-size: 1rem; line-height: 1; }
+  .sb-title { flex: 1; min-width: 0; text-align: center; font-family: var(--serif); font-size: 1rem; color: var(--text2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .sb-saved { font-family: var(--sans); font-size: .7rem; color: var(--text3); margin-left: .5em; opacity: 0; transition: opacity .35s; }
+  .sb-saved.show { opacity: 1; }
+  body.in-session .session-foot:not(.empty) { display: block; position: fixed; left: 0; right: 0; bottom: 0; z-index: 100; padding: 10px 16px; padding-bottom: calc(10px + env(safe-area-inset-bottom)); background: color-mix(in srgb, var(--surface) 90%, transparent); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); border-top: 1px solid var(--border-soft); box-shadow: 0 -2px 14px rgba(60,40,22,.07); }
+  body.in-session .session-foot .pl-nav { margin: 0 auto; max-width: 520px; }
+  body.in-session .pl-save-exit, body.in-session .dp-plan-tag { display: none; }
+  body.in-session .pl-progress-dots { margin-top: 10px; }
+  /* L3 instruction peek */
+  .pl-instruction.peek, .pl-recommendation.peek { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; margin-bottom: 2px; -webkit-mask-image: linear-gradient(#000 55%, transparent); mask-image: linear-gradient(#000 55%, transparent); }
+  .instr-toggle { display: block; margin: 0 auto 12px; width: 44px; height: 30px; border: none; background: none; color: var(--accent); font-size: 1.1rem; cursor: pointer; }
+  /* L4 plan tiles with scenes */
+  .dp-plan-tile .plan-scene { width: 56px; height: 35px; color: var(--accent); }
+  .dp-plan-tile-text { display: flex; flex-direction: column; align-items: center; gap: 2px; }
+  .dp-plan-row.has-suggest { grid-template-columns: 1fr 1fr; }
+  .dp-plan-tile.suggest { grid-column: 1 / -1; flex-direction: row; justify-content: flex-start; gap: 14px; padding: 14px 16px; text-align: left; border-top-width: 3px; background: linear-gradient(120deg, color-mix(in srgb, var(--accent2) 10%, var(--surface)), var(--surface) 70%); }
+  .dp-plan-tile.suggest .plan-scene { width: 74px; height: 46px; }
+  .dp-plan-tile.suggest .dp-plan-tile-text { align-items: flex-start; flex: 1; }
+  .dp-plan-tile.suggest .dp-plan-tile-title { font-size: 1.15rem; }
+  .dp-plan-go { font-size: 1.4rem; color: var(--accent2); line-height: 1; }
+  .dp-plan-row.has-suggest .dp-plan-tile:not(.suggest) { flex-direction: row; justify-content: center; gap: 10px; padding: 10px 8px; }
+  .dp-plan-row.has-suggest .dp-plan-tile:not(.suggest) .plan-scene { width: 40px; height: 25px; }
+  .dp-plan-row.has-suggest .dp-plan-tile:not(.suggest) .dp-plan-tile-text { align-items: flex-start; }
+  /* U4 resume ribbon */
+  .resume-ribbon { display: flex; align-items: center; gap: 10px; margin: -6px 0 16px; padding: 6px 6px 6px 14px; background: var(--accent-light); border: 1px solid color-mix(in srgb, var(--accent2) 45%, transparent); border-radius: var(--radius); }
+  .rr-mark { color: var(--accent); display: flex; } .rr-mark .ico { width: 18px; height: 18px; }
+  .rr-main { flex: 1; min-width: 0; display: flex; flex-direction: column; align-items: flex-start; gap: 1px; background: none; border: none; padding: 6px 0; text-align: left; cursor: pointer; color: var(--text); font-family: var(--serif); }
+  .rr-k { font-family: var(--sans); font-size: .7rem; color: var(--accent); font-weight: 600; letter-spacing: .03em; }
+  .rr-v { font-size: .95rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
+  .rr-x { flex: none; width: 44px; height: 44px; border-radius: 50%; border: none; background: none; color: var(--text3); display: flex; align-items: center; justify-content: center; cursor: pointer; }
+  .rr-x .ico { width: 16px; height: 16px; }
+  /* L5 search + calendar row */
+  .home-tools { display: flex; gap: 8px; align-items: center; margin-bottom: 14px; }
+  .home-tools .pl-search-row { flex: 1; margin-bottom: 0; }
+  .home-cal-btn { flex: none; width: 44px; height: 44px; border-radius: 50%; border: 1.5px solid var(--border); background: var(--surface); color: var(--accent); display: flex; align-items: center; justify-content: center; cursor: pointer; }
+  .home-cal-btn .ico { width: 19px; height: 19px; }
+  .home-cal-btn.on { background: var(--accent); color: var(--on-accent); border-color: var(--accent); }
+  .pl-search-input { min-height: 44px; }
+  /* D1 Weekly banner: the arch sits clear of the buttons */
+  .pl-banner .pl-arch { top: 6px; bottom: auto; right: 6px; width: 84px; height: 66px; opacity: .45; }
+  /* L2 slim header; G1 page heroes */
+  header > p { display: none; }
+  header { padding-top: 12px; padding-bottom: 12px; }
+  @supports (padding: env(safe-area-inset-top)) { header { padding-top: calc(12px + env(safe-area-inset-top)) !important; } }
+  .page-hero { display: flex; align-items: flex-end; justify-content: space-between; gap: 12px; margin: 2px 2px 14px; padding-bottom: 8px; border-bottom: 1px solid var(--border-soft); }
+  .page-hero-t { font-family: var(--serif); font-weight: normal; font-size: 1.7rem; line-height: 1.1; color: var(--text); letter-spacing: .01em; }
+  .page-hero-art { color: var(--accent2); flex: none; display: flex; }
+  .page-hero-art svg { width: 84px; height: 56px; }
+  .pl-banner .pl-arch { width: 64px; height: 50px; top: 4px; right: 4px; }
+  /* L7 Reflect + Guide: folds as hairline rows; L19 ledger; L20 contents */
+  #view-reflect .reflect-block, #view-guide .reflect-block { background: transparent; border: none; border-bottom: 1px solid var(--border); border-radius: 0; box-shadow: none; margin: 0; }
+  #view-reflect .reflect-block + .reflect-block, #view-guide .reflect-block + .reflect-block { margin-top: 0; }
+  #view-reflect #reflect-band + .reflect-block, #view-reflect #stats-block + .reflect-block, #view-guide .guide-tiles + .reflect-block { border-top: 1px solid var(--border); }
+  #view-reflect .reflect-block > summary, #view-guide .reflect-block > summary { padding: 15px 4px; min-height: 52px; }
+  #view-reflect .reflect-block > summary:hover, #view-guide .reflect-block > summary:hover { background: transparent; }
+  #view-reflect .reflect-block > *:not(summary), #view-guide .reflect-block > *:not(summary) { padding-left: 4px; padding-right: 4px; }
+  #view-reflect .reflect-block[open], #view-guide .reflect-block[open] { padding-bottom: 6px; }
+  #view-reflect .reflect-block[open] > summary, #view-guide .reflect-block[open] > summary { border-bottom-color: transparent; }
+  .rf-toc { display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; margin: -4px -16px 12px; padding: 0 16px 2px; }
+  .rf-toc::-webkit-scrollbar { display: none; }
+  .rf-toc-chip { flex: none; display: inline-flex; align-items: center; gap: 6px; min-height: 36px; padding: 6px 12px; border-radius: 99px; border: 1px solid var(--border); background: var(--surface); color: var(--text2); font-family: var(--serif); font-size: .82rem; white-space: nowrap; cursor: pointer; }
+  .rf-toc-chip .ico { width: 14px; height: 14px; color: var(--accent); }
+  .rf-figs { gap: 0; }
+  .rf-fig { position: relative; border-radius: 0; }
+  .rf-fig + .rf-fig::before { content: ''; position: absolute; left: 0; top: 14%; bottom: 14%; width: 1px; background: var(--border-soft); }
+  .rf-fig b { font-size: 1.6rem; font-variant-numeric: oldstyle-nums; }
+  .rf-fig span { font-size: .68rem; }
+  .rf-row { flex-direction: column; align-items: center; }
+  .rf-mini-wrap { align-self: center; }
+  .rf-mini { grid-template-rows: repeat(7, 8px); gap: 2px; }
+  .rf-mini i { width: 8px; height: 8px; background: color-mix(in srgb, var(--accent2) 14%, var(--surface)); }
+  .ds-verse { margin-top: 6px; font-style: italic; color: var(--text2); line-height: 1.6; }
+  .ds-verse:empty { display: none; }
+  /* L13 sheet ✕ */
+  .sheet-x-wrap { position: sticky; top: 0; height: 0; display: flex; justify-content: flex-end; z-index: 6; pointer-events: none; }
+  .sheet-x { pointer-events: auto; width: 38px; height: 38px; margin: -6px -6px 0 0; border-radius: 50%; border: 1px solid var(--border-soft); background: color-mix(in srgb, var(--surface) 92%, transparent); color: var(--text2); display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 1px 4px rgba(60,40,22,.08); }
+  .sheet-x .ico { width: 16px; height: 16px; }
+  .modal.has-x h2, .modal.has-x .cs-head, .modal.has-x .lk-head, .modal.has-x .cd-band .card-cat { padding-right: 40px; }
+  .modal.has-x .cd-band h2 { padding-right: 0; }
+  .tech-btns { display: flex; } .tech-btns .btn { flex: 1; }
+  .lk-actions { display: flex; }
+  /* L23 note date: one control — the date block opens the picker */
+  .note-date-row { position: relative; align-items: center; width: max-content; max-width: 100%; }
+  .note-date-cap { font-family: var(--sans); font-size: .8rem; color: var(--text2); display: flex; align-items: center; gap: 8px; }
+  .ndc-edit { color: var(--accent); display: flex; } .ndc-edit .ico { width: 14px; height: 14px; }
+  .note-date-f { position: absolute; inset: 0; }
+  .note-date-f label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+  .note-date-f .note-date-input { position: absolute; inset: 0; width: 100% !important; min-width: 0; height: 100%; opacity: 0; cursor: pointer; }
+  /* D4 no resize grips anywhere */
+  textarea { resize: none; }
+  /* L15 heart tiles: equal size; intro peek */
+  .hn-grid { grid-auto-rows: 1fr; }
+  .hn-tile { min-height: 112px; justify-content: center; }
+  /* D14 Bible sheet keeps its height on every screen */
+  #modal-bible .modal { min-height: min(88dvh, 780px); }
+  /* L14 wheel: larger, readable, and the second ring */
+  .emo-wheel.pick { width: min(300px, 78vw); height: min(300px, 78vw); margin: 4px auto 10px; }
+  .emo-wheel.pick text { font-size: 5.1px; }
+  .emo-wheel.ring text { fill: #fff; font-family: var(--serif); pointer-events: none; }
+  .emo-wheel.ring .hub-t { font-style: italic; }
+  .emo-stage-label { text-align: center; }
 </style>
 </head>
 <body>
@@ -2252,6 +2361,13 @@
   <p>Story Cards &amp; Guided Prayer</p>
   <button class="hdr-bible" id="bible-fab-btn" aria-label="Open Bible" title="Bible" onclick="openBibleBrowser()"><span data-ico="book"></span></button>
 </header>
+<div id="session-bar" class="session-bar" role="toolbar" aria-label="Session">
+  <button class="sb-btn" id="sb-exit" aria-label="Save and exit" title="Save &amp; exit" onclick="sessionExit()"><span data-ico="close"></span></button>
+  <div class="sb-title"><span id="sb-title"></span><span id="sb-saved" class="sb-saved" aria-hidden="true">Saved</span></div>
+  <button class="sb-btn" id="sb-aa" aria-label="Text size" title="Text size" onclick="cycleTextSize()"><span class="sb-aa">Aa</span></button>
+  <button class="sb-btn" id="sb-bible" aria-label="Open Bible" title="Bible" onclick="openBibleBrowser()"><span data-ico="book"></span></button>
+</div>
+<div id="session-foot" class="session-foot"></div>
 
 <!-- VIEWS -->
 <div id="view-cards" class="view"><div id="cards-list"></div></div>
@@ -2264,6 +2380,7 @@
 
 <div id="view-guide" class="view">
   <div style="padding: 4px 0;">
+    <div id="guide-hero"></div>
     <div class="about-block" style="background:var(--accent-light);border-left:3px solid var(--accent2)">
       <h3><span data-ico="sparkle"></span>Take the tour</h3>
       <p>A brief 5-screen intro to what this app is and how the three rhythms — Story Cards, Daily Prayer, Weekly Deep Time — fit together.</p>
@@ -2339,6 +2456,7 @@
 
 <div id="view-reflect" class="view">
   <div style="padding: 4px 0;">
+    <div id="reflect-hero"></div>
     <div id="reflect-band"></div>
     <div id="stats-block" hidden></div>
     <details class="about-block reflect-block">
@@ -2488,6 +2606,7 @@
     <div class="note-ctx" id="note-ctx"></div>
     <div class="note-date-row">
       <div class="jp-date" id="note-date-block" aria-hidden="true"><span></span><b></b></div>
+      <div class="note-date-cap" id="note-date-cap" aria-hidden="true"></div>
       <div class="note-date-f"><label for="note-date">Date</label>
       <input type="date" id="note-date" class="note-date-input" oninput="syncNoteDateBlock()"></div>
     </div>
@@ -2836,7 +2955,7 @@ const HEART_NEEDS = [
   { key:"belong-connected", title:"To belong & be connected", color:"#6f4866", emotions:"Rejection, sadness, resentment, fear of being left out", temptations:"Conforming, cliques/tribes, gossip, withdrawing first, using relationships to feel okay", god:"You are brought near and made part of God's people. You are not alone.", scriptures:"Ephesians 2:19 · Romans 12:4–5 · Hebrews 10:24–25" },
   { key:"control-predictability", title:"To have control & predictability", color:"#404877", emotions:"Anxiety, anger, agitation, despair", temptations:"Micromanaging, rigidity, refusal to delegate, manipulation, controlling others, spiritual bargaining", god:"God is sovereign and wise. You can entrust tomorrow to Him and obey today.", scriptures:"Proverbs 3:5–6 · James 4:13–15 · Matthew 6:10" },
   { key:"known-understood", title:"To be known & understood", color:"#794c3e", emotions:"Frustration, sadness, bitterness, feeling invisible", temptations:"Demanding validation, over-explaining, rehearsing arguments, punishing silence, self-protection", god:"God fully knows you and still invites you near. You are seen and cared for.", scriptures:"Psalm 139:1–4 · Hebrews 4:15–16 · 1 Peter 5:7" },
-  { key:"righteous-okay", title:"To be righteous & 'okay'", color:"#687740", emotions:"Guilt, shame, condemnation, pride", temptations:"Moralism, self-salvation projects, judging others, hiding sin, performing spirituality", god:"Your standing comes from Christ's righteousness, not your record. Repentance and faith lead to cleansing.", scriptures:"Romans 8:1 · 2 Corinthians 5:21 · 1 John 1:9" }
+  { key:"righteous-okay", title:"To be righteous & ‘okay’", color:"#687740", emotions:"Guilt, shame, condemnation, pride", temptations:"Moralism, self-salvation projects, judging others, hiding sin, performing spirituality", god:"Your standing comes from Christ's righteousness, not your record. Repentance and faith lead to cleansing.", scriptures:"Romans 8:1 · 2 Corinthians 5:21 · 1 John 1:9" }
 ];
 function findHeartNeed(key){ return HEART_NEEDS.find(n=>n.key===key); }
 
@@ -2973,7 +3092,29 @@ function emotionWheelPickSVG(){
     const [tx, ty] = pt(am, (R + r) / 2 + 2).split(' ');
     return `<path d="${d}" fill="${EMOTION_WHEEL[name].color}" opacity=".92" role="button" tabindex="0" aria-label="${esc(name)}" onclick="pickEmotionCore('${name}')" onkeydown="if(event.key==='Enter'){pickEmotionCore('${name}')}"/><text x="${tx}" y="${ty}" text-anchor="middle" dominant-baseline="middle">${esc(name)}</text>`;
   }).join('');
-  return `<div class="emo-wheel pick"><svg viewBox="0 0 100 100">${segs}<circle cx="50" cy="50" r="6" fill="var(--accent2)" opacity=".5"/></svg></div>`;
+  return `<div class="emo-wheel pick"><svg viewBox="0 0 100 100">${segs}<path d="M50 44.5c.5 3.6 1.3 4.4 4.9 5.5c-3.6 1.1-4.4 1.9-4.9 5.5c-.5-3.6-1.3-4.4-4.9-5.5c3.6-1.1 4.4-1.9 4.9-5.5z" fill="var(--accent2)" opacity=".7"/></svg></div>`;
+}
+// L14: the whole drill-down happens on the wheel. After a core feeling is chosen,
+// a ring of its finer feelings surrounds a hub in its colour; tapping the hub goes back.
+function emotionRingSVG(items, color, pickFn, hubLabel){
+  const n = items.length, R = 49, r = 21, cx = 50, cy = 50;
+  const pt = (a, rad) => [cx + Math.cos(a) * rad, cy + Math.sin(a) * rad].map(v => v.toFixed(2)).join(' ');
+  const q = t => t.replace(/'/g, '&#39;');
+  const segs = items.map((name, i) => {
+    const gap = n > 1 ? .018 : 0;
+    const a0 = -Math.PI/2 + i * 2*Math.PI/n + gap, a1 = -Math.PI/2 + (i+1) * 2*Math.PI/n - gap, am = (a0 + a1) / 2;
+    const big = (a1 - a0) > Math.PI ? 1 : 0;
+    const d = n === 1 ? `M${cx} ${cy-R}A${R} ${R} 0 1 1 ${cx-.01} ${cy-R}L${cx-.01} ${cy-r}A${r} ${r} 0 1 0 ${cx} ${cy-r}z`
+      : `M${pt(a0,r)}L${pt(a0,R)}A${R} ${R} 0 ${big} 1 ${pt(a1,R)}L${pt(a1,r)}A${r} ${r} 0 ${big} 0 ${pt(a0,r)}z`;
+    const mid = (R + r) / 2, [tx, ty] = pt(am, mid).split(' ');
+    let deg = am * 180 / Math.PI; const radial = n > 5;
+    if(radial && (deg > 90 || deg < -90)) deg += 180;
+    const rot = radial ? ` transform="rotate(${deg.toFixed(1)} ${tx} ${ty})"` : '';
+    const fs = radial ? (name.length > 10 ? 3.7 : 4.3) : (name.length > 10 ? 4.2 : 4.8);
+    return `<path d="${d}" fill="${color}" opacity="${i % 2 ? .78 : .95}" role="button" tabindex="0" aria-label="${esc(name)}" onclick="${pickFn}('${q(name)}')" onkeydown="if(event.key==='Enter'){${pickFn}('${q(name)}')}"/><text x="${tx}" y="${ty}" text-anchor="middle" dominant-baseline="middle" style="font-size:${fs}px"${rot}>${esc(name)}</text>`;
+  }).join('');
+  const hub = `<circle cx="50" cy="50" r="${r-2}" fill="${color}" role="button" tabindex="0" aria-label="Back" onclick="emotionBack()" onkeydown="if(event.key==='Enter'){emotionBack()}" style="cursor:pointer"/><text x="50" y="50" text-anchor="middle" dominant-baseline="middle" class="hub-t" style="font-size:${hubLabel.length > 9 ? 4 : 4.8}px">${esc(hubLabel)}</text>`;
+  return `<div class="emo-wheel pick ring"><svg viewBox="0 0 100 100">${segs}${hub}</svg></div>`;
 }
 function renderEmotionPicker(){
   const el = document.getElementById('emotion-content');
@@ -2999,13 +3140,13 @@ function renderEmotionPicker(){
       const c = EMOTION_WHEEL[name];
       return `<button class="emo-option" style="background:${c.color}" onclick="pickEmotionCore('${name}')">${esc(name)}</button>`;
     }).join('');
-    bodyHTML = `<div class="emo-stage-label">Where are you?</div><div class="emo-grid">${opts}</div>`;
+    bodyHTML = `<div class="emo-stage-label">Where are you?</div>`;
   } else if(_emoStage === 'secondary'){
     const c = EMOTION_WHEEL[_emoCore];
     const opts = Object.keys(c.children).map(name => {
       return `<button class="emo-option" style="background:${c.color}" onclick="pickEmotionSecondary('${name.replace(/'/g, '&#39;')}')">${esc(name)}</button>`;
     }).join('');
-    bodyHTML = `<div class="emo-stage-label">Inside “${esc(_emoCore)}” — go deeper</div><div class="emo-grid">${opts}</div>`;
+    bodyHTML = `<div class="emo-stage-label">Inside “${esc(_emoCore)}” — go deeper</div>`;
     navHTML = `<div class="emo-modal-nav">
       <button onclick="emotionBack()">← Back</button>
       <button class="commit" onclick="commitEmotion()">Use just “${esc(_emoCore)}”</button>
@@ -3016,7 +3157,7 @@ function renderEmotionPicker(){
     const opts = tertiaries.map(name => {
       return `<button class="emo-option" style="background:${c.color}" onclick="pickEmotionTertiary('${name.replace(/'/g, '&#39;')}')">${esc(name)}</button>`;
     }).join('');
-    bodyHTML = `<div class="emo-stage-label">Inside “${esc(_emoSecondary)}” — most precise</div><div class="emo-grid">${opts}</div>`;
+    bodyHTML = `<div class="emo-stage-label">Inside “${esc(_emoSecondary)}” — most precise</div>`;
     navHTML = `<div class="emo-modal-nav">
       <button onclick="emotionBack()">← Back</button>
       <button class="commit" onclick="commitEmotion()">Use just “${esc(_emoSecondary)}”</button>
@@ -3026,11 +3167,12 @@ function renderEmotionPicker(){
   el.innerHTML = `
     <h2 style="color:var(--accent);font-size:1.05rem;margin-bottom:8px">${ICON.swirl} Name what you're feeling</h2>
     <p class="emo-intro">Naming a feeling specifically tends to reduce its intensity and clarify what is needed.</p>
-    ${_emoStage === 'core' ? emotionWheelPickSVG() : emotionWheelSVG()}
-    ${breadcrumbHTML}
     ${bodyHTML}
+    ${_emoStage === 'core' ? emotionWheelPickSVG()
+      : _emoStage === 'secondary' ? emotionRingSVG(Object.keys(EMOTION_WHEEL[_emoCore].children), EMOTION_WHEEL[_emoCore].color, 'pickEmotionSecondary', _emoCore)
+      : emotionRingSVG(EMOTION_WHEEL[_emoCore].children[_emoSecondary] || [], EMOTION_WHEEL[_emoCore].color, 'pickEmotionTertiary', _emoSecondary)}
+    ${breadcrumbHTML}
     ${navHTML}
-    <button class="btn btn-secondary" onclick="closeEmotionPicker()" style="margin-top:8px">Close</button>
   `;
 }
 
@@ -4059,7 +4201,7 @@ function renderScriptureModal(ref, text, loading){
   document.getElementById('scripture-content').innerHTML = `
     <div class="lk-head"><span class="lk-orn" aria-hidden="true">${ORN.mark}</span><h2>${esc(ref)}</h2></div>
     ${loading ? loadingHtml : (text ? found(text) : missing)}
-    <div class="lk-actions">${ctx}<button class="btn btn-secondary" onclick="closeModal('modal-scripture')">Close</button></div>
+    ${ctx ? `<div class="lk-actions">${ctx}</div>` : ''}
   `;
 }
 function lookupInContext(ref){
@@ -4209,14 +4351,16 @@ function updateBibleFabVisibility(){
 // Measure the tab bar into --nav-h so ＋, toasts and page padding sit above it
 // whatever its height (text size, wrapped labels, the iPhone home-bar gap).
 function syncNavHeight(){
-  const n = document.querySelector('nav'); if(!n) return;
+  const inS = document.body.classList.contains('in-session');
+  const foot = document.getElementById('session-foot');
+  const n = inS ? foot : document.querySelector('nav'); if(!n) return;
   document.documentElement.style.setProperty('--nav-h', Math.ceil(n.getBoundingClientRect().height) + 'px');
 }
 (function(){
   const n = document.querySelector('nav'); if(!n) return;
   syncNavHeight();
   // border-box, so padding (the home-bar gap) counts, not just the icons and labels.
-  if(window.ResizeObserver) new ResizeObserver(syncNavHeight).observe(n, { box:'border-box' });
+  if(window.ResizeObserver){ const ro = new ResizeObserver(syncNavHeight); ro.observe(n, { box:'border-box' }); const f = document.getElementById('session-foot'); if(f) ro.observe(f, { box:'border-box' }); }
   window.addEventListener('resize', syncNavHeight);
   window.addEventListener('orientationchange', () => setTimeout(syncNavHeight, 300));
 })();
@@ -4266,9 +4410,83 @@ new MutationObserver(() => {
   requestAnimationFrame(() => { _aposPending = false; smartApostrophes(document.body); });
 }).observe(document.documentElement, { childList: true, subtree: true });
 document.addEventListener('DOMContentLoaded', () => smartApostrophes(document.body));
+// Immersive session (L1): inside a Daily or Weekly session the app header and the
+// tab bar step away. A slim bar at the top holds ✕ (save & exit), the plan's name,
+// text size and the Bible; the step's Back/Next row is lifted out of the card into
+// a fixed foot (#session-foot) — moved, not copied, so its inline handlers still work.
 function syncHeaderMode(){
   const inS = (currentView === 'daily' && dpMode === 'session') || (currentView === 'pl' && plMode === 'session');
   document.body.classList.toggle('in-session', !!inS);
+  const was = document.body.dataset.inS === '1';
+  document.body.dataset.inS = inS ? '1' : '';
+  if(inS && !was) histPush('s');
+  else if(!inS && was && !_fromPop) histPopIf('s');
+  const foot = document.getElementById('session-foot');
+  if(foot){
+    foot.innerHTML = '';
+    if(inS){
+      const root = document.getElementById(currentView === 'daily' ? 'dp-content' : 'pl-content');
+      const nav = root && root.querySelector('.pl-nav');
+      if(nav) foot.appendChild(nav);
+    }
+    foot.classList.toggle('empty', !foot.children.length);
+  }
+  const t = document.getElementById('sb-title');
+  if(t && inS){
+    t.textContent = currentView === 'daily'
+      ? (DP_PLANS[dpSession?.plan]?.title || 'Daily Prayer')
+      : (plSession?.includesPrep === false ? 'Weekly Deep Time · Quick Prayer' : 'Weekly Deep Time');
+  }
+  const sbb = document.getElementById('sb-bible');
+  if(sbb) sbb.style.display = (typeof bibleFabEnabled === 'function' && !bibleFabEnabled()) ? 'none' : '';
+  syncNavHeight();
+}
+// L3: a step's instruction opens in full the first time it is met; on later days it
+// opens as a two-line peek with ⌄, since it is already known. Keyed by the text
+// itself, so it needs no step bookkeeping. Listen instructions are never folded.
+let _instrSeenAtLoad = null; const _instrOpen = new Set();
+function textKey(t){ let h = 5381; t = String(t||'').slice(0, 240); for(let i=0;i<t.length;i++) h = ((h<<5) + h + t.charCodeAt(i)) | 0; return (h>>>0).toString(36); }
+function settleInstructionPeek(root){
+  if(!root) return;
+  let stored; try{ stored = JSON.parse(localStorage.getItem('seen_instr') || '[]'); }catch(e){ stored = []; }
+  if(!_instrSeenAtLoad) _instrSeenAtLoad = new Set(stored);
+  const all = new Set(stored); let changed = false;
+  root.querySelectorAll('.pl-step-card .pl-instruction, .pl-step-card .pl-recommendation').forEach(el => {
+    const k = textKey(el.textContent);
+    if(_instrSeenAtLoad.has(k) && !_instrOpen.has(k)){
+      el.classList.add('peek');
+      if(el.scrollHeight > el.clientHeight + 4){
+        el.insertAdjacentHTML('afterend', `<button type="button" class="instr-toggle" aria-expanded="false" aria-label="Show the whole instruction" onclick="openInstr(this,'${k}')">⌄</button>`);
+      } else el.classList.remove('peek');
+    }
+    if(!all.has(k)){ all.add(k); changed = true; }
+  });
+  if(changed) safeSetItem('seen_instr', JSON.stringify([...all].slice(-300)));
+}
+function openInstr(btn, k){
+  _instrOpen.add(k);
+  const el = btn.previousElementSibling; if(el) el.classList.remove('peek');
+  btn.remove();
+}
+function sessionExit(){
+  if(currentView === 'daily' && dpMode === 'session') dpSaveAndExit();
+  else if(currentView === 'pl' && plMode === 'session') plSaveAndExit();
+}
+function flashSaved(hint){
+  [hint, document.getElementById('sb-saved')].forEach(h => {
+    if(!h) return; h.classList.add('show'); clearTimeout(h._t); h._t = setTimeout(() => h.classList.remove('show'), 1400);
+  });
+}
+// Aa in the session bar: Small → Medium → Large, applied at once. The current
+// screen is saved first and drawn again so the composer re-measures its height.
+function cycleTextSize(){
+  const order = ['small','medium','large'];
+  const cur = localStorage.getItem('text_size') || 'medium';
+  const next = order[(order.indexOf(cur) + 1) % order.length];
+  setTextSize(next);
+  if(currentView === 'daily' && dpMode === 'session'){ dpSaveCurrentStep(); renderDailyPrayer(); }
+  else if(currentView === 'pl' && plMode === 'session'){ plSaveCurrentStep(); renderPL(); }
+  showToast('Text size: ' + next[0].toUpperCase() + next.slice(1));
 }
 function syncFabPadding(){
   const vis = el => el && getComputedStyle(el).display !== 'none';
@@ -4422,8 +4640,7 @@ function bbBookListHTML(){
     `</div>` +
     `<div id="bb-feel-entry">${bbFeelEntryHTML()}</div>` +
     `<div id="bb-bookmarks">${bbBookmarksHTML()}</div>` +
-    `<div id="bb-book-results">${bbBookResultsHTML()}</div>` +
-    `<button class="btn btn-secondary" onclick="closeModal('modal-bible')" style="margin-top:12px">Close</button>`;
+    `<div id="bb-book-results">${bbBookResultsHTML()}</div>` ;
 }
 function bbFilterToggleHTML(){
   const opts=[['all','All'],['ot','OT'],['nt','NT']];
@@ -4601,8 +4818,7 @@ function bbFeelHTML(){
         <div class="bb-feel-open">Open in the Bible to add or copy →</div>
       </div>`).join('')}</div>`;
   }
-  return bbHead(crumb, 'bbFeelBack()') + body +
-    `<button class="btn btn-secondary" onclick="closeModal('modal-bible')" style="margin-top:12px">Close</button>`;
+  return bbHead(crumb, 'bbFeelBack()') + body ;
 }
 function bbFeelOpenVerse(ref){
   const r=parseScriptureRef(ref); if(!r) return;
@@ -4931,7 +5147,6 @@ function showPetitionExplanation(stepKey){
     <h2 style="color:var(--accent);font-size:1.05rem;margin-bottom:8px">${ICON.book} What this petition asks</h2>
     <p style="font-size:.72rem;color:var(--text3);font-family: var(--sans);letter-spacing:.06em;text-transform:uppercase;margin-bottom:14px">${esc(p.title)}</p>
     ${bodyHTML}
-    <button class="btn btn-secondary" onclick="closeModal('modal-petition')" style="margin-top:14px">Close</button>
   `);
   openModal('modal-petition');
 }
@@ -5155,8 +5370,7 @@ function showMeditationTechnique(key){
     ${t.closer ? `<p class="tech-closer">${esc(t.closer)}</p>` : ''}
     <div class="tech-action">${esc(t.action)}</div>
     </div>
-    ${techCanWrite() ? `<div class="tech-btns"><button class="btn btn-secondary" onclick="closeModal('modal-technique')">Close</button><button class="btn btn-primary" onclick="techWriteNow()">Write it now →</button></div>`
-      : `<button class="btn btn-secondary" onclick="closeModal('modal-technique')" style="margin-top:14px">Close</button>`}
+    ${techCanWrite() ? `<div class="tech-btns"><button class="btn btn-primary" onclick="techWriteNow()">Write it now →</button></div>` : ''}
   `);
   openModal('modal-technique');
 }
@@ -5358,7 +5572,6 @@ function openPrayerLibrary(category, targetId){
     <h2 style="color:var(--accent);font-size:1.05rem;margin-bottom:6px;text-align:center">${esc(lib.title)}</h2>
     <p style="font-size:.82rem;color:var(--text2);font-style:italic;margin-bottom:14px;line-height:1.6;text-align:center">${esc(lib.intro)}</p>
     <div class="prayer-lib-list">${prayersHTML}</div>
-    <button class="btn btn-secondary" onclick="closeModal('modal-prayer-library')" style="margin-top:14px">Close</button>
   `;
   openModal('modal-prayer-library');
 }
@@ -6088,6 +6301,13 @@ function openModal(id){
   m.style.zIndex = String(maxZ + 1);
   m.classList.add('open');
   lockBodyScroll();
+  // A1: remember where focus was, and move it into the sheet (the sheet itself, not a
+  // field, so the phone keyboard doesn't rise uninvited).
+  m._prevFocus = document.activeElement;
+  const inner = m.querySelector('.modal');
+  if(inner){ if(!inner.hasAttribute('tabindex')) inner.setAttribute('tabindex','-1'); try{ inner.focus({preventScroll:true}); }catch(e){} }
+  histPush('m:' + id);
+  fillVerses(m);
 }
 function closeModal(id){
   const m = document.getElementById(id); if(!m) return;
@@ -6104,9 +6324,64 @@ function closeModal(id){
     if(inner){ inner.style.transform = ''; inner.style.transition = ''; }
   };
   unlockBodyScroll();
+  if(!_fromPop) histPopIf('m:' + id);
+  const back = m._prevFocus; m._prevFocus = null;
+  if(back && back.focus && document.contains(back) && !(window.matchMedia && matchMedia('(pointer:coarse)').matches)){ try{ back.focus({preventScroll:true}); }catch(e){} }
   if(reduce){ finish(); return; }
   m.classList.add('closing');
   setTimeout(finish, 180);
+}
+// A1/A2/A4: sheets are dialogs — Tab stays inside the top one, Esc closes it, and the
+// phone's Back closes it (or leaves a session) instead of leaving the app.
+let _fromPop = false, _histSkip = 0;
+function histPush(tag){ try{ history.pushState({ pj: tag }, ''); }catch(e){} }
+function histPopIf(tag){ try{ if(history.state && history.state.pj === tag){ _histSkip++; history.back(); } }catch(e){} }
+function topModal(){ return [...document.querySelectorAll('.modal-bg.open:not(.closing)')].sort((a,b) => (+b.style.zIndex||0) - (+a.style.zIndex||0))[0] || null; }
+window.addEventListener('popstate', () => {
+  if(_histSkip > 0){ _histSkip--; return; }
+  const top = topModal();
+  _fromPop = true;
+  try{
+    if(top) closeModal(top.id);
+    else if(document.body.classList.contains('in-session')) sessionExit();
+  } finally { _fromPop = false; }
+});
+document.addEventListener('keydown', e => {
+  const top = topModal(); if(!top) return;
+  if(e.key === 'Escape'){ e.preventDefault(); closeModal(top.id); return; }
+  if(e.key !== 'Tab') return;
+  const f = [...top.querySelectorAll('button, [href], input, select, textarea, summary, [tabindex]:not([tabindex="-1"])')]
+    .filter(x => !x.disabled && x.offsetParent !== null);
+  if(!f.length){ e.preventDefault(); return; }
+  const first = f[0], last = f[f.length-1];
+  if(!top.contains(document.activeElement)){ e.preventDefault(); first.focus(); }
+  else if(e.shiftKey && (document.activeElement === first || document.activeElement === top.querySelector('.modal'))){ e.preventDefault(); last.focus(); }
+  else if(!e.shiftKey && document.activeElement === last){ e.preventDefault(); first.focus(); }
+});
+(function(){
+  // L13: one sheet pattern — a ✕ that stays at the top right while the sheet scrolls.
+  const NO_X = ['modal-cards-walkthrough','modal-bible','modal-focus-compose','modal-confirm','modal-tutorial'];
+  const CLOSE_FN = { 'modal-heart-chart':'closeHeartChart()', 'modal-emotion':'closeEmotionPicker()' };
+  document.querySelectorAll('.modal-bg').forEach(bg => {
+    if(NO_X.includes(bg.id)) return; const m = bg.querySelector('.modal'); if(!m) return;
+    m.classList.add('has-x');
+    const h = m.querySelector('.modal-handle');
+    const x = `<div class="sheet-x-wrap"><button type="button" class="sheet-x" aria-label="Close" onclick="${CLOSE_FN[bg.id] || `closeModal('${bg.id}')`}">${ICON.close}</button></div>`;
+    if(h) h.insertAdjacentHTML('afterend', x); else m.insertAdjacentHTML('afterbegin', x);
+  });
+  document.querySelectorAll('.modal-bg .modal').forEach(m => { m.setAttribute('role','dialog'); m.setAttribute('aria-modal','true');
+    const h = m.querySelector('h2, h3'); if(h){ if(!h.id) h.id = m.parentElement.id + '-title'; m.setAttribute('aria-labelledby', h.id); } });
+  ['toast','undo-toast'].forEach(id => { const t = document.getElementById(id); if(t){ t.setAttribute('role','status'); t.setAttribute('aria-live','polite'); } });
+})();
+// Fill a verse beside a bare reference (past sessions, card detail) from the curated
+// texts or the bundled Bible. Leaves nothing behind if the reference can't be read.
+function fillVerses(root){
+  (root || document).querySelectorAll('.verse-fill:not([data-done])').forEach(async el => {
+    el.dataset.done = '1';
+    const ref = el.dataset.ref; let t = getScriptureText(ref);
+    if(!t) t = await lookupBibleRef(ref);
+    if(t && typeof t === 'string'){ el.textContent = (el.dataset.lead || '') + nestQuotes(t); el.classList.add('filled'); }
+  });
 }
 document.querySelectorAll('.modal-bg').forEach(bg => {
   bg.addEventListener('click', e => { if(e.target === bg) closeModal(bg.id); });
@@ -6133,6 +6408,7 @@ function showView(name){
   document.querySelectorAll('nav button').forEach(b=>b.classList.remove('active'));
   document.getElementById('view-'+name).classList.add('active');
   document.getElementById('nav-'+name).classList.add('active');
+  document.querySelectorAll('nav button').forEach(b => b.toggleAttribute('aria-current', b.id === 'nav-'+name)); document.getElementById('nav-'+name).setAttribute('aria-current','page');
   const fab=document.getElementById('fab-btn'); fab.style.display='none';
   updateBibleFabVisibility();
   if(name==='cards'){ fab.style.display='flex'; fab.onclick=openNewCard; renderCards(); }
@@ -6140,6 +6416,7 @@ function showView(name){
   if(name==='pl') renderPL();
   if(name==='reflect'){ _heatmapSelectedKey = null; renderReflectBand(); renderStats(); renderCalendarHeatmap(); renderAnsweredPrayers(); renderHeartNeedFrequency(); renderWordFrequency(); renderReview(); applyTheme(); applyTextSize(); populateObsidianFields(); const t=document.getElementById('bible-fab-toggle'); if(t) t.checked=bibleFabEnabled(); }
   if(name==='guide'){ renderInstallBlock(); }
+  if(name==='reflect'||name==='guide'){ const h=document.getElementById(name+'-hero'); if(h && !h.innerHTML) h.innerHTML=pageHeroHTML(name==='reflect'?'Reflect':'Guide', name); }
   syncFabPadding();   // after both buttons have settled for this view
   syncHeaderMode();
   placeNavMark();
@@ -6147,12 +6424,20 @@ function showView(name){
   requestAnimationFrame(()=>window.scrollTo(0, _viewScroll[name]||0)); // restore this tab's scroll
 }
 
+// G1: each tab without a banner opens on its own title with a small drawing in the
+// app's single stroke — a fanned deck, an open almanac, a lamp on a path.
+const HERO_ART = {
+  cards: `<svg viewBox="0 0 96 64" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round" aria-hidden="true"><rect x="26" y="12" width="30" height="42" rx="4" transform="rotate(-14 41 33)"/><rect x="34" y="9" width="30" height="42" rx="4" transform="rotate(-2 49 30)" fill="var(--surface)"/><rect x="42" y="10" width="30" height="42" rx="4" transform="rotate(11 57 31)" fill="var(--surface)"/><path d="M57 24 c1 5 2.4 6.4 7.4 7.4 c-5 1-6.4 2.4-7.4 7.4 c-1-5-2.4-6.4-7.4-7.4 c5-1 6.4-2.4 7.4-7.4z" transform="rotate(11 57 31)"/></svg>`,
+  reflect: `<svg viewBox="0 0 96 64" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round" aria-hidden="true"><path d="M48 16 C40 10 26 10 14 13 V54 C26 51 40 51 48 57 C56 51 70 51 82 54 V13 C70 10 56 10 48 16Z"/><path d="M48 16 V57"/><path d="M21 22h18M21 28h18M21 34h14M21 40h17"/><g fill="currentColor" stroke="none" opacity=".75"><rect x="56" y="21" width="4" height="4" rx="1"/><rect x="62" y="21" width="4" height="4" rx="1" opacity=".4"/><rect x="68" y="21" width="4" height="4" rx="1"/><rect x="56" y="27" width="4" height="4" rx="1" opacity=".4"/><rect x="62" y="27" width="4" height="4" rx="1"/><rect x="68" y="27" width="4" height="4" rx="1"/><rect x="56" y="33" width="4" height="4" rx="1"/><rect x="62" y="33" width="4" height="4" rx="1"/><rect x="68" y="33" width="4" height="4" rx="1" opacity=".4"/></g></svg>`,
+  guide: `<svg viewBox="0 0 96 64" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 60 C26 52 30 46 46 44 S70 40 90 30" stroke-dasharray="2 4"/><path d="M38 34 h22 c4 0 6-3 8-6 l4-1 c-1 5-4 10-11 11 H40 c-4 0-6-2-6-4z"/><path d="M60 28 c0-4 6-6 8-2"/><path d="M36 33 c-3-6 0-11 2-14 c1 4 3 6 2 10"/><path d="M38 11v3M30 15l2 2M46 15l-2 2"/></svg>`
+};
+function pageHeroHTML(title, art){ return `<div class="page-hero"><h2 class="page-hero-t">${title}</h2><span class="page-hero-art">${HERO_ART[art]||''}</span></div>`; }
 // ══════════ STORY CARDS ══════════
 function renderCards(){
   const cards=loadCards(); const el=document.getElementById('cards-list');
-  if(!cards.length){ el.innerHTML=`<div class="empty">${emptyArt('dove')}<h3>No prayer cards yet</h3><p>Track a person or situation as an ongoing prayer story.<br>Aim for 8–12 over time.</p><button class="btn btn-primary" style="max-width:260px;margin:16px auto 0" onclick="openNewCard()">＋ Create your first card</button></div>`; return; }
+  if(!cards.length){ el.innerHTML=pageHeroHTML('Story Cards','cards')+`<div class="empty">${emptyArt('dove')}<h3>No prayer cards yet</h3><p>Track a person or situation as an ongoing prayer story.<br>Aim for 8–12 over time.</p><button class="btn btn-primary" style="max-width:260px;margin:16px auto 0" onclick="openNewCard()">＋ Create your first card</button></div>`; return; }
   const active=cards.filter(c=>!c.answered), answered=cards.filter(c=>c.answered);
-  let html='';
+  let html=pageHeroHTML('Story Cards','cards');
   if(active.length){
     // A thread with a knot for each active card, in its category colour.
     const knots = active.slice(0, 12).map((c, i, a) => { const x = 20 + (i + .5) * (360 / a.length); const y = 75 + Math.sin(x / 38) * 3; return `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="3" fill="${CAT_COLOR[CAT_ICON[c.category]?c.category:'other']}" stroke="#fff" stroke-width=".8"/>`; }).join('');
@@ -6331,7 +6616,7 @@ function openDetail(id){
       <button class="cd-tool${c.answered?'':' answer'}" onclick="toggleAnswered('${c.id}')">${c.answered?ICON.turn:ICON.olive}<span>${c.answered?'Mark as Active':'Mark as Answered'}</span></button>
       <button class="cd-tool" onclick="openEditCard('${c.id}')">${ICON.pen}<span>Edit Card</span></button>
     </div>
-    ${c.scripture?`<div class="detail-section ds-scripture"><h3>Scripture Anchor</h3><p><em>${linkifyScriptureRefs(c.scripture)}</em></p></div>`:''}
+    ${c.scripture?`<div class="detail-section ds-scripture"><h3>Scripture Anchor</h3><p><em>${linkifyScriptureRefs(c.scripture)}</em></p>${(()=>{ const a=splitAnchor(c.scripture); return (a.ref && !a.text) ? `<p class="ds-verse verse-fill" data-ref="${esc(a.ref)}" data-lead=""></p>` : ''; })()}</div>`:''}
     ${(c.askHeart||c.askCirc)?`<div class="detail-section ds-asks">
       ${c.askHeart?`<div class="ds-row"><h3>The Ask — Heart</h3><p>${esc(c.askHeart)}</p></div>`:''}
       ${c.askCirc?`<div class="ds-row"><h3>The Ask — Circumstance</h3><p>${esc(c.askCirc)}</p></div>`:''}
@@ -6357,9 +6642,8 @@ function openDetail(id){
       </div>`).join('');
       return `<p class="section-title" style="margin-top:16px">Daily Prayer Sessions (${ds.length})</p><div>${items}</div>`;
     })()}
-    <button class="cd-delete" onclick="deleteCard('${c.id}')">Delete Card</button>
-    <button class="btn btn-secondary" onclick="closeModal('modal-detail')">Close</button>`;
-  openModal('modal-detail');
+    <button class="cd-delete" onclick="deleteCard('${c.id}')">Delete Card</button>`;
+  openModal('modal-detail'); fillVerses(document.getElementById('modal-detail'));
 }
 function toggleAnswered(id){
   const cards=loadCards(); const c=cards.find(x=>x.id===id); if(!c)return;
@@ -6650,7 +6934,7 @@ function carrySitRender(){
     <div class="cs-notes-h">Today’s notes</div>
     ${sheetNotesHTML(c)}
     <textarea id="carry-sit-input" class="note-text-input cs-input" placeholder="What are you noticing?" aria-label="What are you noticing?"></textarea>
-    <div class="cs-actions"><button class="btn btn-secondary" onclick="closeModal('modal-carry')">Close</button><button class="btn btn-primary" onclick="carrySitAdd()">Add note</button></div>`;
+    <div class="cs-actions"><button class="btn btn-primary" onclick="carrySitAdd()">Add note</button></div>`;
 }
 function carryStress(i){ _carryStress = _carryStress===i ? -1 : i; const keep=document.getElementById('carry-sit-input')?.value||''; carrySitRender(); const ta=document.getElementById('carry-sit-input'); if(ta) ta.value=keep; }
 function carrySitAdd(){
@@ -6669,8 +6953,7 @@ let _carryHistQ = '', _chOpenKeys = new Set();
 function carryHistOpen(){ _carrySheet='hist'; _carryHistQ=''; document.getElementById('carry-sheet').innerHTML = `
     <div class="cs-head"><span class="cs-mark">${ICON.scroll||ICON.sparkle}</span><h2>Earlier lines</h2></div>
     <input type="search" class="cs-search" placeholder="Search lines and notes…" aria-label="Search lines and notes" oninput="_carryHistQ=this.value;carryHistList()">
-    <div id="carry-hist-list"></div>
-    <button class="btn btn-secondary" style="margin-top:14px" onclick="closeModal('modal-carry')">Close</button>`;
+    <div id="carry-hist-list"></div>`;
   carryHistList(); openModal('modal-carry'); }
 function carryHistList(){
   const q = _carryHistQ.trim().toLowerCase();
@@ -6893,6 +7176,15 @@ function dpSaveAndExit(){
   showToast('Progress saved — continue anytime');
 }
 
+// K8: a past Daily session can be prayed again — same plan, same passage carried in.
+async function dpRepray(id){
+  const s = loadDailySessions().find(x => x.id === id); if(!s) return;
+  closeModal('modal-session');
+  const passage = s.steps?.meditation?.passage || '';
+  if(passage) _pendingPassage = passage;
+  if(currentView !== 'daily') showView('daily');
+  await dpStart(s.plan);
+}
 function dpReturnHome(){ dpMode='home'; renderDailyPrayer(); }
 
 function dpSetMeditationMode(mode){
@@ -6935,12 +7227,44 @@ function renderDailyPrayer(){
   else if(dpMode==='session') result = renderDPStep();
   else if(dpMode==='done') result = renderDPDone();
   injectExpandButtons();
-  if(dpMode==='session') fillComposer('dp-content');
+  if(dpMode==='session'){ settleInstructionPeek(document.getElementById('dp-content')); fillComposer('dp-content'); }
   syncHeaderMode();
   requestAnimationFrame(fabSettle);
   return result;
 }
 
+// L4: the plan that suits the hour is drawn as one wide tile; the other two sit
+// beneath it. Before noon → Morning; from five in the evening → Evening; between
+// (and for anyone who prefers it) all three stay equal. Emphasis only — no prompt.
+const PLAN_SCENE = {
+  morning: `<svg class="plan-scene" viewBox="0 0 64 40" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"><path d="M4 34 C18 26 30 30 40 27 S56 24 62 28"/><path d="M20 29 a12 12 0 0 1 24 0"/><path d="M32 8v5M17 13l3 3.4M47 13l-3 3.4M10 24h4M50 24h4"/></svg>`,
+  evening: `<svg class="plan-scene" viewBox="0 0 64 40" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"><path d="M4 34 C18 27 30 31 40 28 S56 25 62 29"/><path d="M38 7 a10 10 0 1 0 8 15 a8 8 0 0 1 -8 -15z"/><path d="M14 10l.8 1.6 1.6.8-1.6.8-.8 1.6-.8-1.6-1.6-.8 1.6-.8zM24 18v.01M54 12v.01"/></svg>`,
+  starter: `<svg class="plan-scene" viewBox="0 0 64 40" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"><path d="M32 6 C33.6 16 36 18.4 46 20 C36 21.6 33.6 24 32 34 C30.4 24 28 21.6 18 20 C28 18.4 30.4 16 32 6Z"/><path d="M50 9v4M48 11h4M14 28v3M12.5 29.5h3" stroke-linecap="round"/></svg>`
+};
+function suggestedPlan(){ const h = new Date().getHours(); return (h >= 4 && h < 12) ? 'morning' : ((h >= 17 || h < 4) ? 'evening' : null); }
+function planTilesHTML(){
+  const P = [['morning','Morning','~25 min','Morning Prayer, about 25 minutes'],['evening','Evening','~15 min','Evening Prayer, about 15 minutes'],['starter','Starter','~15 min','Starter Plan, about 15 minutes']];
+  const sug = suggestedPlan();
+  const tile = ([k,t,m,a], wide) => `<button type="button" class="dp-plan-tile plan-${k}${wide?' suggest':''}" onclick="dpStart('${k}')" aria-label="${a}">${PLAN_SCENE[k]}<span class="dp-plan-tile-text"><span class="dp-plan-tile-title">${t}</span><span class="dp-plan-tile-min">${m}</span></span>${wide?'<span class="dp-plan-go" aria-hidden="true">›</span>':''}</button>`;
+  if(!sug) return `<div class="dp-plan-row">${P.map(x => tile(x,false)).join('')}</div>`;
+  const first = P.find(x => x[0] === sug), rest = P.filter(x => x[0] !== sug);
+  return `<div class="dp-plan-row has-suggest">${tile(first,true)}${rest.map(x => tile(x,false)).join('')}</div>`;
+}
+// U4: a draft waits in a ribbon of its own, not inside the banner.
+function resumeRibbonHTML(where, go, discard){
+  return `<div class="resume-ribbon"><span class="rr-mark" aria-hidden="true">${ICON.turn}</span>
+    <button type="button" class="rr-main" onclick="${go}"><span class="rr-k">Continue draft</span><span class="rr-v">${where}</span></button>
+    <button type="button" class="rr-x" onclick="${discard}" aria-label="Discard draft" title="Discard draft">${ICON.close}</button></div>`;
+}
+// L5: one row — search, and a calendar button that opens the month beneath.
+function homeToolsHTML(kind){
+  const dp = kind === 'dp', K = dp ? 'DP' : 'PL', id = dp ? 'dp' : 'pl';
+  const mode = dp ? _dpViewMode : _plViewMode, q = dp ? _dpSearchQuery : _plSearchQuery, cal = mode === 'calendar';
+  return `<div class="home-tools"><div class="pl-search-row">
+    <input type="text" enterkeyhint="search" class="pl-search-input" id="${id}-search-input" placeholder="Search your sessions…" aria-label="Search your sessions" value="${esc(q)}" oninput="on${K}SearchInput(event)">
+    ${q ? `<button class="pl-search-clear" onclick="clear${K}Search()" aria-label="Clear">×</button>` : ''}
+  </div><button type="button" class="home-cal-btn${cal?' on':''}" aria-pressed="${cal}" aria-label="Calendar" title="Calendar" onclick="set${K}View('${cal?'list':'calendar'}')">${ICON.calendar}</button></div>`;
+}
 function renderDPHome(){
   const el = document.getElementById('dp-content');
   const draft = loadDailyDraft();
@@ -6948,16 +7272,9 @@ function renderDPHome(){
   const draftPlan = draft ? DP_PLANS[draft.plan] : null;
   const draftStep = draft && draftPlan ? draftPlan.steps[draft.stepIndex||0] : null;
 
-  // Two-view toggle only shows when there's at least one session to view
-  const toggleHTML = sessions.length ? `<div class="pl-view-toggle">
-    <button class="${_dpViewMode==='list'?'active':''}" onclick="setDPView('list')">${ICON.list}Recent</button>
-    <button class="${_dpViewMode==='calendar'?'active':''}" onclick="setDPView('calendar')">${ICON.calendar}Calendar</button>
-  </div>` : '';
-
-  const searchRowHTML = (sessions.length && _dpViewMode==='list') ? `<div class="pl-search-row">
-    <input type="text" class="pl-search-input" id="dp-search-input" placeholder="Search your sessions…" value="${esc(_dpSearchQuery)}" oninput="onDPSearchInput(event)">
-    ${_dpSearchQuery?`<button class="pl-search-clear" onclick="clearDPSearch()" aria-label="Clear">×</button>`:''}
-  </div>` : '';
+  // Search and the calendar share one row (L5); the calendar opens beneath it.
+  const toggleHTML = '';
+  const searchRowHTML = sessions.length ? homeToolsHTML('dp') : '';
 
   const calendarHTML = (sessions.length && _dpViewMode==='calendar') ? `<div class="pl-calendar" id="dp-calendar"></div>` : '';
 
@@ -6965,19 +7282,14 @@ function renderDPHome(){
     <div class="pl-banner compact tod-${timeOfDay()}">${skySVG()}
       <div class="pl-date">${today()}</div>
       <h2>Daily Prayer</h2>
-      ${draft ? `<button class="pl-banner-btn tertiary" onclick="dpContinue()">↩ Continue draft — ${esc(draftPlan?.title||'')} · ${esc(draftStep?.title||'')}</button>
-      <button class="pl-banner-btn tertiary" onclick="dpDiscardDraft()">Discard draft</button>` : ''}
     </div>
+    ${draft ? resumeRibbonHTML(`${esc(draftPlan?.title||'')} · ${esc(draftStep?.title||'')}`, 'dpContinue()', 'dpDiscardDraft()') : ''}
 
     <div class="carry-slot">${carryCardHTML()}</div>
 
     <p class="section-title">Choose a plan</p>
 
-    <div class="dp-plan-row">
-      <button type="button" class="dp-plan-tile" onclick="dpStart('morning')" aria-label="Morning Prayer, about 25 minutes">${ICON.sun}<span class="dp-plan-tile-title">Morning</span><span class="dp-plan-tile-min">~25 min</span></button>
-      <button type="button" class="dp-plan-tile" onclick="dpStart('evening')" aria-label="Evening Prayer, about 15 minutes">${ICON.moon}<span class="dp-plan-tile-title">Evening</span><span class="dp-plan-tile-min">~15 min</span></button>
-      <button type="button" class="dp-plan-tile" onclick="dpStart('starter')" aria-label="Starter Plan, about 15 minutes">${ICON.sparkle}<span class="dp-plan-tile-title">Starter</span><span class="dp-plan-tile-min">~15 min</span></button>
-    </div>
+    ${planTilesHTML()}
 
     ${toggleHTML}
     ${searchRowHTML}
@@ -7108,6 +7420,7 @@ function dpMatchesQuery(s, q){
 
 function onDPSearchInput(e){
   _dpSearchQuery = e.target.value.trim();
+  if(_dpViewMode === 'calendar' && _dpSearchQuery){ _dpViewMode = 'list'; renderDPHome(); return; }
   renderDPSearchResults();
   // Toggle clear button without re-rendering the input
   const existing = document.querySelector('.pl-search-clear');
@@ -7222,6 +7535,8 @@ function syncNoteDateBlock(){
   const d=v?new Date(v+'T12:00:00'):null, ok=d&&!isNaN(d);
   b.querySelector('span').textContent = ok ? d.toLocaleDateString(undefined,{month:'short'}) : '';
   b.querySelector('b').textContent = ok ? d.getDate() : '';
+  const cap=document.getElementById('note-date-cap');
+  if(cap) cap.innerHTML = ok ? `${d.toLocaleDateString(undefined,{weekday:'long'})} · ${d.getFullYear()}<span class="ndc-edit">${ICON.pen}</span>` : '';
 }
 function jpHeadHTML(s, titleHTML){
   const d = new Date(s.dateISO || s.date); const ok = !isNaN(d);
@@ -7900,8 +8215,7 @@ function scheduleAutoSave(){
   clearTimeout(_autoSaveTimer);
   _autoSaveTimer=setTimeout(()=>{
     plSaveCurrentStep();
-    const hint=document.getElementById('pl-autosave-hint');
-    if(hint){ hint.classList.add('show'); setTimeout(()=>hint.classList.remove('show'),1400); }
+    flashSaved(document.getElementById('pl-autosave-hint'));
   },800);
 }
 
@@ -8077,7 +8391,7 @@ function renderPL(){
   else if(plMode==='done'){ renderPLDone(el); }
   injectExpandButtons();
   syncHeaderMode();
-  if(plMode==='session'){ settleScripturePeek(); fillComposer('pl-content'); }
+  if(plMode==='session'){ settleInstructionPeek(document.getElementById('pl-content')); settleScripturePeek(); fillComposer('pl-content'); }
   requestAnimationFrame(fabSettle);
 }
 
@@ -8232,6 +8546,7 @@ function highlightMatch(text, q){
 
 function onPLSearchInput(e){
   _plSearchQuery = e.target.value.trim();
+  if(_plViewMode === 'calendar' && _plSearchQuery){ _plViewMode = 'list'; renderPL(); return; }
   renderPLSearchResults();
   // Toggle clear button without re-rendering the input
   const existing = document.querySelector('.pl-search-clear');
@@ -8353,16 +8668,8 @@ function renderPLHome(el){
   const draftActiveSteps=draft && draft.includesPrep===false ? PL_STEPS.slice(1) : PL_STEPS;
   const draftCurrentStep=draft ? draftActiveSteps[draft.stepIndex||0] : null;
 
-  // Two-view toggle only shows when there's at least one session to view
-  const toggleHTML = allSessions.length ? `<div class="pl-view-toggle">
-    <button class="${_plViewMode==='list'?'active':''}" onclick="setPLView('list')">${ICON.list}Recent</button>
-    <button class="${_plViewMode==='calendar'?'active':''}" onclick="setPLView('calendar')">${ICON.calendar}Calendar</button>
-  </div>` : '';
-
-  const searchRowHTML = (allSessions.length && _plViewMode==='list') ? `<div class="pl-search-row">
-    <input type="text" class="pl-search-input" id="pl-search-input" placeholder="Search your sessions…" value="${esc(_plSearchQuery)}" oninput="onPLSearchInput(event)">
-    ${_plSearchQuery?`<button class="pl-search-clear" onclick="clearPLSearch()" aria-label="Clear">×</button>`:''}
-  </div>` : '';
+  const toggleHTML = '';
+  const searchRowHTML = allSessions.length ? homeToolsHTML('pl') : '';
 
   const calendarHTML = (allSessions.length && _plViewMode==='calendar') ? `<div class="pl-calendar" id="pl-calendar"></div>` : '';
 
@@ -8375,9 +8682,8 @@ function renderPLHome(el){
         <button class="pl-banner-btn" onclick="plStartNew()">${ICON.sparkle}Begin Full Session</button>
         <button class="pl-banner-btn secondary" onclick="plStartQuick()" aria-label="Quick Prayer, skipping Prepare">${ICON.pray}Quick Prayer</button>
       </div>
-      ${draft?`<button class="pl-banner-btn tertiary" onclick="plContinue()">↩ Continue draft — ${draftCurrentStep?.title||'Session'}</button>
-      <button class="pl-banner-btn tertiary" onclick="plDiscardDraft()">Discard draft</button>`:''}
     </div>
+    ${draft ? resumeRibbonHTML(esc(draftCurrentStep?.title||'Session'), 'plContinue()', 'plDiscardDraft()') : ''}
     ${toggleHTML}
     ${searchRowHTML}
     ${calendarHTML}
@@ -8689,7 +8995,7 @@ function openHeartChart(keep, focus){
     <h2 style="color:var(--accent);margin-bottom:6px">Needs of the Heart</h2>
     <p class="hn-intro">${intro}</p>
     ${cards}
-    <button class="btn btn-primary" onclick="closeHeartChart()">${inSession?'Done':'Close'}</button>
+    ${inSession ? `<button class="btn btn-primary" onclick="closeHeartChart()">Done</button>` : ''}
   `;
   openModal('modal-heart-chart');
 }
@@ -8807,7 +9113,8 @@ function viewDailySession(id){
     let body = '';
     if(step.showInvocations && data.invocation){
       const inv = SCRIPTURAL_INVOCATIONS.find(i => i.ref === data.invocation);
-      body += `<div class="sv-block"><div class="sv-label">Scriptural invocation</div><div class="sv-text"><strong>${esc(data.invocation)}</strong> — <em>${esc(inv?.text||'')}</em></div></div>`;
+      const iref = esc(data.invocation).replace(/'/g,'&#39;');
+      body += `<div class="sv-block"><div class="sv-label">Scriptural invocation</div><div class="sv-text"><strong><span class="scripture-ref" onclick="event.stopPropagation();lookupScripture('${iref}')">${esc(data.invocation)}</span></strong>${inv?.text ? ` — <em>${esc(inv.text)}</em>` : `<em class="verse-fill" data-ref="${esc(data.invocation)}" data-lead=" — "></em>`}</div></div>`;
     }
     if(step.key === 'approach' && data.emotions && data.emotions.length){
       body += `<div class="sv-block"><div class="sv-label">Named feelings</div><div class="emo-chips-row" style="margin-top:4px">${data.emotions.map(e=>`<span class="emo-chip tint-chip" style="${idc(emotionColor(e))}">${esc(emotionLabel(e))}</span>`).join('')}</div></div>`;
@@ -8849,8 +9156,8 @@ function viewDailySession(id){
     ${stepsHTML}
     ${prayedHTML}
     ${carryHTML}
-    <button class="btn btn-danger" style="margin-top:18px" onclick="closeModal('modal-session');deleteDailySession('${s.id}')">Delete Session</button>
-    <button class="btn btn-secondary" onclick="closeModal('modal-session')">Close</button>
+    <button class="btn btn-repray" style="margin-top:18px" onclick="dpRepray('${s.id}')">${ICON.turn}Pray this again</button>
+    <button class="cd-delete" onclick="closeModal('modal-session');deleteDailySession('${s.id}')">Delete Session</button>
   `;
   openModal('modal-session');
 }
@@ -8914,8 +9221,7 @@ function viewSession(id){
     ${linkedHTML}
     ${sectionsHTML}
     <button class="btn btn-repray" style="margin-top:18px" onclick="plRepray('${s.id}')">${ICON.turn}Pray this again</button>
-    <button class="btn btn-danger" onclick="closeModal('modal-session');deleteSession('${s.id}')">Delete Session</button>
-    <button class="btn btn-secondary" onclick="closeModal('modal-session')">Close</button>`;
+    <button class="cd-delete" onclick="closeModal('modal-session');deleteSession('${s.id}')">Delete Session</button>`;
   openModal('modal-session');
 }
 
@@ -8934,8 +9240,14 @@ function ensureAudio(){
 }
 
 let _silenceStart=0;
+// A5: keep the screen awake while a wait you started is running.
+let _wakeLock = null;
+async function holdWake(){ try{ if('wakeLock' in navigator && !_wakeLock){ _wakeLock = await navigator.wakeLock.request('screen'); _wakeLock.addEventListener('release', () => { _wakeLock = null; }); } }catch(e){ _wakeLock = null; } }
+function releaseWake(){ try{ if(_wakeLock){ _wakeLock.release(); _wakeLock = null; } }catch(e){} }
+document.addEventListener('visibilitychange', () => { if(document.visibilityState === 'visible' && _silenceEnd) holdWake(); });
 function startSilence(mins){
   ensureAudio();  // unlock audio during the user gesture
+  holdWake();
   if(_silenceInterval) clearInterval(_silenceInterval);
   _silenceEnd=Date.now()+mins*60*1000;
   _silenceStart=Date.now();
@@ -8944,6 +9256,7 @@ function startSilence(mins){
 }
 
 function cancelSilence(){
+  releaseWake();
   clearInterval(_silenceInterval);
   _silenceInterval=null; _silenceEnd=null;
   refreshSilenceWidgets();
@@ -8963,6 +9276,7 @@ function updateSilenceTick(){
   if(Date.now()>=_silenceEnd){
     clearInterval(_silenceInterval);
     _silenceInterval=null; _silenceEnd=null;
+    releaseWake();
     playSilenceChime();
     silenceBloom();
     showToast('✦ Wait complete — write what you sensed');
@@ -10215,7 +10529,9 @@ function renderReflectBand(){
   const counts=buildDayCountMap(), start=new Date(); start.setHours(0,0,0,0); start.setDate(start.getDate()-start.getDay()-77);
   let cells=''; for(let i=0;i<84;i++){ const d=new Date(start); d.setDate(start.getDate()+i); const n=d>new Date()?0:(counts[dayKeyForDate(d)]||0); cells+=`<i class="${n?'l'+Math.min(4,n):''}"></i>`; }
   const fig=(n,label,go)=>`<button class="rf-fig" onclick="${go}"><b>${n}</b><span>${label}</span></button>`;
-  el.innerHTML=`<div class="rf-band">
+  // L20: a contents row of the sections below, each opening its fold in place.
+  const toc=[...document.querySelectorAll('#view-reflect details.reflect-block > summary h3')].map(h=>{ const d=h.closest('details'); if(!d.id) d.id='rf-'+textKey(h.textContent); return `<button type="button" class="rf-toc-chip" onclick="openReflectBlock('${d.id}')">${h.innerHTML}</button>`; }).join('');
+  el.innerHTML=`<div class="rf-toc" role="navigation" aria-label="Sections">${toc}</div><div class="rf-band">
     <div class="rf-figs">
       ${fig(cards.length,'prayer cards',"showView('cards')")}
       ${fig(cards.filter(c=>c.answered).length,'answered',"openReflectBlock('answered-prayers')")}
@@ -10244,7 +10560,7 @@ function setSettingsPane(k){
   document.querySelectorAll('#rf-settings .set-pane').forEach(p=>{ p.hidden = p.dataset.pane!==k; });
 }
 function openReflectBlock(id){
-  const el=document.getElementById(id); const d=el && el.closest('details'); if(!d) return;
+  const el=document.getElementById(id); const d=el && (el.matches('details')?el:el.closest('details')); if(!d) return;
   d.open=true; setTimeout(()=>d.scrollIntoView({block:'start',behavior:'smooth'}),30);
 }
 
@@ -10406,8 +10722,7 @@ function scheduleDPAutoSave(){
   clearTimeout(_dpAutoSaveTimer);
   _dpAutoSaveTimer=setTimeout(()=>{
     dpSaveCurrentStep();
-    const hint=document.getElementById('dp-autosave-hint');
-    if(hint){ hint.classList.add('show'); setTimeout(()=>hint.classList.remove('show'),1400); }
+    flashSaved(document.getElementById('dp-autosave-hint'));
   },800);
 }
 document.getElementById('dp-content').addEventListener('input',(e)=>{
