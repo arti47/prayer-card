@@ -2499,6 +2499,10 @@
   .gs-snip { font-size: var(--fs-5); line-height: 1.5; }
   .gs-snip mark { background: color-mix(in srgb, var(--accent2) 30%, transparent); color: inherit; border-radius: 2px; }
   .rf-band .streak-day { background: none; border: none; padding: 4px 2px; cursor: pointer; font: inherit; color: inherit; min-width: 32px; }
+  /* The seven marks always share one row: they divide the band's width instead of
+     wrapping (at 320px Large text, Monday used to drop to a second line). */
+  .rf-row .streak-bar { flex-wrap: nowrap; gap: 0; width: 100%; max-width: 330px; justify-content: space-between; }
+  .rf-band .streak-day { flex: 1 1 0; min-width: 0; max-width: 44px; }
   .sv-carry-more { margin-top: 6px; }
   /* D19/M5 Weekly Review rows */
   .rv-mark { flex: none; width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--cat); background: color-mix(in srgb, var(--cat) 12%, var(--surface)); }

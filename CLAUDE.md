@@ -787,6 +787,7 @@ If you're starting a new chat and the user asks for "what's next," check §6 —
 
 Newest first. Format: `YYYY-MM-DD — what changed`.
 
+- **2026-10-05** — Fix: Reflect's seven day marks wrapped at 320px Large text (Monday dropped to a second line). They now divide the band's width on one row (`.rf-row .streak-bar` nowrap, `.streak-day` flex 1, 37–44px wide). Regression suite 161 → 162, all passing.
 - **2026-10-05** — **Settings moved from Reflect to the Guide** (under *More*, after the tour row): Appearance with Colour, Markdown Export, Backup & Restore — same panel, same wording. Reflect is now analysis only. Privacy's “Backup & Restore in the Reflect tab” now reads “in Settings, above”; README updated. Regression suite 161, all passing.
 - **2026-10-05** — **24 colour schemes** (Appearance → Colour): 12 single-colour and 12 multi-colour, each with a light and a contrast-checked dark version; Parchment stays the default. Header, banners, *Pray these now* and dark text-on-accent moved onto tokens so a scheme reaches them. Step, category, heart-need, feeling and rubric colours unchanged. Regression suite 160 → 161, all passing; rendered-text contrast scan clean across all 48 scheme/theme pairs.
 - **2026-10-05** — The tour's *Skip* now opens the Guide's *Start here*, like *Begin from scratch*, so every new user sees the first steps. Regression suite 159 → 160, all passing.
