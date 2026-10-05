@@ -9956,7 +9956,7 @@ function renderTutorialSlide(){
   ` : `
     <div class="tut-nav">
       ${_tutorialSlide > 0 ? `<button class="tut-btn-back" onclick="tutorialBack()">← Back</button>` : `<button class="tut-btn-back" style="visibility:hidden">←</button>`}
-      <button class="tut-btn-skip" onclick="dismissTutorial()">Skip</button>
+      <button class="tut-btn-skip" onclick="tutorialBegin()">Skip</button>
       <button class="tut-btn-next" onclick="tutorialNext()">Next →</button>
     </div>
   `;
@@ -9987,7 +9987,7 @@ function tutorialBack(){
 function dismissTutorial(){
   closeModal('modal-tutorial');
 }
-// "Begin from scratch" lands on the Guide's Start here, so the first step is in view.
+// "Begin from scratch" and Skip land on the Guide's Start here, so the first step is in view.
 function tutorialBegin(){
   dismissTutorial();
   showView('guide'); window.scrollTo(0, 0);
