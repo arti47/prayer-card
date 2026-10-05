@@ -6490,7 +6490,7 @@ function renderDPSearchResults(){
     target.innerHTML = `<p class="pl-search-count">${matches.length} match${matches.length===1?'':'es'} for "${esc(_dpSearchQuery)}"</p>` +
       matches.map(({s, match}) => dpSearchResultHTML(s, match)).join('');
   } else {
-    // The home list holds this week only (Monday onward); the rest is in Calendar and search.
+    // The home list holds this week only (Sunday onward); the rest is in Calendar and search.
     const recent = sessions.filter(s => new Date(s.dateISO || s.date) >= historyPeriodStart('week'));
     const recentHTML = recent.length
       ? `<div class="he-group">This week</div>${recent.map(dpSessionEntryHTML).join('')}`
@@ -6521,11 +6521,11 @@ function dpSessionEntryHTML(s){
     <span class="he-chev" aria-hidden="true">›</span>
   </div>`;
 }
-// Start of the current week (Monday) or month, local time.
+// Start of the current week (Sunday) or month, local time.
 function historyPeriodStart(kind){
   const d = new Date(); d.setHours(0,0,0,0);
   if(kind === 'month') d.setDate(1);
-  else d.setDate(d.getDate() - ((d.getDay() + 6) % 7));
+  else d.setDate(d.getDate() - d.getDay());
   return d;
 }
 // Short date for a history row: "Mon 5 Oct".
