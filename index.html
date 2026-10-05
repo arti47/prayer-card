@@ -2822,6 +2822,29 @@
   .sheet-foot-link { margin: 14px auto 4px; display: flex; }
 
   @media (max-width: 359px) { .carry-head { letter-spacing: .03em; } .sb-name { font-size: min(var(--fs-6), 4.6vw); } }
+
+  /* Psalter tracking on Evening's Read a Psalm */
+  .psalm-track { display: flex; flex-direction: column; gap: 6px; margin: 2px 0 10px; }
+  .pt-last { font-size: var(--fs-3); color: var(--text3); font-style: italic; }
+  .pt-row { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; }
+  .pt-chip { min-height: 38px; padding: 6px 14px; border-radius: var(--r-pill); border: 1px solid color-mix(in srgb, var(--idc, var(--accent)) 50%, var(--border)); background: color-mix(in srgb, var(--accent) 8%, var(--surface)); color: var(--accent); font-family: var(--serif); font-size: var(--fs-4); cursor: pointer; }
+  .pt-map { display: inline-flex; align-items: center; gap: 6px; min-height: 38px; padding: 4px 2px; background: none; border: 0; color: var(--accent); font-family: var(--serif); font-size: var(--fs-4); cursor: pointer; text-decoration: underline dotted color-mix(in srgb, var(--accent) 45%, transparent); text-underline-offset: 4px; }
+  .pt-map .ico, .ps-head .ico { width: 16px; height: 16px; }
+  .ps-head { display: flex; align-items: center; gap: 8px; color: var(--accent); margin: 2px 0 12px; }
+  .ps-head h2 { font-family: var(--serif); font-weight: normal; font-size: var(--fs-7); color: var(--text); }
+  .ps-grid { display: grid; grid-template-columns: repeat(10, minmax(0, 1fr)); gap: 4px; }
+  .ps-cell { position: relative; aspect-ratio: 1; min-height: 30px; padding: 0; border-radius: 5px; border: 1px solid var(--border-soft); cursor: pointer; color: var(--text3); font-family: var(--sans); font-size: var(--fs-1);
+    background: linear-gradient(to top, color-mix(in srgb, #417746 38%, var(--surface)) var(--f, 0%), var(--surface) var(--f, 0%)); }
+  .ps-cell b { font-weight: 500; }
+  .ps-cell.full { background: color-mix(in srgb, #417746 70%, var(--surface)); border-color: transparent; color: #fff; }
+  [data-theme="dark"] .ps-cell { background: linear-gradient(to top, color-mix(in srgb, #7fb487 30%, var(--surface)) var(--f, 0%), var(--surface) var(--f, 0%)); }
+  [data-theme="dark"] .ps-cell.full { background: color-mix(in srgb, #7fb487 55%, var(--surface)); color: var(--bg); }
+  .ps-cell.ps-119 { grid-column: span 3; aspect-ratio: auto; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; padding: 4px; background: var(--surface); }
+  .ps-marks { display: grid; grid-template-columns: repeat(11, 1fr); gap: 2px; width: 100%; }
+  .ps-marks i { height: 5px; border-radius: 1px; background: var(--border-soft); }
+  .ps-marks i.on { background: color-mix(in srgb, #417746 70%, var(--surface)); }
+  [data-theme="dark"] .ps-marks i.on { background: #7fb487; }
+  .ps-cell.ps-119.full { color: var(--text3); }
 </style>
 </head>
 <body>
@@ -3184,6 +3207,12 @@
   </div>
 </div>
 
+<div class="modal-bg" id="modal-psalter">
+  <div class="modal" style="max-width:520px">
+    <div class="modal-handle"></div>
+    <div id="psalter-sheet"></div>
+  </div>
+</div>
 <div class="modal-bg" id="modal-carry">
   <div class="modal" style="max-width:520px">
     <div class="modal-handle"></div>
@@ -5067,6 +5096,97 @@ function openBibleBrowser(targetId){
   _bbSearch=''; _bbFilter='all'; _bbSort='canon'; _bbBmAll=false; _bbFeel=null; _bbFeelReturn=false;
   renderBibleBrowser();
   openModal('modal-bible');
+}
+
+// ══════════ PSALTER — where you are in the Psalms (Evening) ══════════
+// Worked out from saved Evening sessions' Psalm field; nothing new is stored.
+// A reading may be a whole psalm, a verse range, several psalms or verse runs;
+// a free-text entry that isn't a reference is simply not tracked.
+const PSALM_VERSES = [6,12,8,8,12,10,17,9,20,18,7,8,6,7,5,11,15,50,14,9,13,31,6,10,22,12,14,9,11,12,24,11,22,22,28,12,40,22,13,17,13,11,5,26,17,11,9,14,20,23,19,9,6,7,23,13,11,11,17,12,8,12,11,10,13,20,7,35,36,5,24,20,28,23,10,12,20,72,13,19,16,8,18,12,13,17,7,18,52,17,16,15,5,23,11,13,12,9,9,5,8,28,22,35,45,48,43,13,31,7,10,10,9,8,18,19,2,29,176,7,8,9,4,8,5,6,5,6,8,8,3,18,3,3,21,26,9,8,24,13,10,7,12,15,21,10,20,14,9,6];
+const PSALMS_FILE = 'Bible_19_Psalms';
+function psalmLen(p){ return PSALM_VERSES[p-1] || 0; }
+// → [{p, from, to}] in reading order, or [] if not a Psalms reference
+function psalmReadings(text){
+  const head = String(text||'').split('\n')[0].split(/\s[—–]\s|\s-\s/)[0].trim();
+  const m = head.match(/^(.+?)\s+(\d+)(.*)$/); if(!m) return [];
+  if(BIBLE_BOOK_FILES[normBook(m[1])] !== PSALMS_FILE) return [];
+  const out = [], P = +m[2], rest = m[3].replace(/\s+/g,'');
+  const add = (p, a, b) => { if(p<1 || p>150) return; const L = psalmLen(p); a = Math.max(1, Math.min(a, L)); b = Math.max(a, Math.min(b, L)); out.push({ p, from:a, to:b }); };
+  let r;
+  if(!rest){ add(P, 1, psalmLen(P)); return out; }
+  if((r = rest.match(/^[–-](\d+)$/))){ for(let p = P; p <= Math.min(150, +r[1]); p++) add(p, 1, psalmLen(p)); return out; }       // Psalms 120–122
+  if((r = rest.match(/^:(\d+)[–-](\d+):(\d+)$/))){ const Q = +r[2]; add(P, +r[1], psalmLen(P)); for(let p = P+1; p < Q; p++) add(p, 1, psalmLen(p)); add(Q, 1, +r[3]); return out; } // 18:30–19:4
+  if(rest[0] !== ':') return out;
+  rest.slice(1).split(',').forEach(run => { const q = run.match(/^(\d+)(?:[–-](\d+))?$/); if(q) add(P, +q[1], q[2] ? +q[2] : +q[1]); });
+  return out;
+}
+// Evening readings, oldest first, from completed sessions (optionally leaving one out)
+function psalmHistory(excludeId){
+  return loadDailySessions().filter(s => s.plan === 'evening' && s.id !== excludeId)
+    .map(s => ({ s, r: psalmReadings(s.steps?.psalm?.reference) })).filter(x => x.r.length).reverse();
+}
+// The map for this time through: psalm → Set of verses read. Starts fresh when,
+// having finished Psalm 150, you begin again at Psalm 1.
+function psalterMap(excludeId){
+  let map = {}, finished150 = false;
+  psalmHistory(excludeId).forEach(({ r }) => {
+    if(finished150 && r[0].p === 1 && r[0].from === 1){ map = {}; finished150 = false; }
+    r.forEach(({ p, from, to }) => { const set = map[p] || (map[p] = new Set()); for(let v = from; v <= to; v++) set.add(v); });
+    const last = r[r.length-1];
+    if(last.p === 150 && last.to === psalmLen(150)) finished150 = true;
+  });
+  return map;
+}
+// The next reading after the last one: the rest of a psalm left partway, Psalm 119
+// in its 8-verse sections, otherwise the next psalm (150 → 1).
+function psalmNext(excludeId){
+  const h = psalmHistory(excludeId), last = h.length ? h[h.length-1] : null;
+  let p, from;
+  if(!last){ p = 1; from = 1; }
+  else { const e = last.r[last.r.length-1]; if(e.to < psalmLen(e.p)){ p = e.p; from = e.to + 1; } else { p = e.p % 150 + 1; from = 1; } }
+  let to = psalmLen(p);
+  if(p === 119) to = Math.min(176, Math.ceil(from / 8) * 8);
+  const whole = from === 1 && to === psalmLen(p);
+  return { last, p, from, to, whole, ref: whole ? `Psalm ${p}` : `Psalm ${p}:${from}–${to}`,
+    label: whole ? `Psalm ${p}` : (p !== 119 && from > 1 ? `Continue Psalm ${p} from v. ${from}` : `Psalm ${p}:${from}–${to}`) };
+}
+function psalmTrackHTML(current){
+  const n = psalmNext(dpSession?.id);
+  const lastLine = n.last ? `<span class="pt-last">Last time: ${esc(String(n.last.s.steps.psalm.reference).split('\n')[0].split(/\s[—–]\s/)[0])} · ${esc(heWhen(n.last.s))}</span>` : '';
+  const chip = (current || '').trim() ? '' : `<button type="button" class="pt-chip" onclick="psalmUseNext()">${esc(n.label)} ›</button>`;
+  return `<div class="psalm-track">${lastLine}<span class="pt-row">${chip}<button type="button" class="pt-map" onclick="openPsalter()">${ICON.lyre}Psalter ›</button></span></div>`;
+}
+function psalmTrackRefresh(){ const el = document.getElementById('psalm-track'), ta = document.getElementById('dp-passage'); if(el && ta) el.innerHTML = psalmTrackHTML(ta.value); }
+function psalmUseNext(){
+  const ta = document.getElementById('dp-passage'); if(!ta) return;
+  ta.value = psalmNext(dpSession?.id).ref; ta.dispatchEvent(new Event('input', { bubbles:true })); psalmTrackRefresh(); ta.focus();
+}
+// Insert from Bible on the Psalm screen opens at the suggested reading.
+function psalmOpenBible(){
+  const n = psalmNext(dpSession?.id);
+  openBibleBrowser('dp-passage'); bbJumpTo(PSALMS_FILE, n.p, n.from, n.to);
+}
+function openPsalter(){ psalterRender(); openModal('modal-psalter'); }
+function psalterRender(){
+  const map = psalterMap(dpSession?.id), cells = [];
+  for(let p = 1; p <= 150; p++){
+    const L = psalmLen(p), set = map[p], n = set ? set.size : 0, pct = Math.round(n / L * 100);
+    if(p === 119){
+      const marks = Array.from({ length: 22 }, (_, i) => { let all = true; for(let v = i*8+1; v <= i*8+8; v++) if(!set || !set.has(v)) { all = false; break; } return `<i class="${all ? 'on' : ''}"></i>`; }).join('');
+      cells.push(`<button type="button" class="ps-cell ps-119${n === L ? ' full' : ''}" onclick="psalterOpen(119)" aria-label="Psalm 119"><b>119</b><span class="ps-marks">${marks}</span></button>`);
+    } else {
+      cells.push(`<button type="button" class="ps-cell${n === L ? ' full' : n ? ' part' : ''}" style="--f:${pct}%" onclick="psalterOpen(${p})" aria-label="Psalm ${p}"><b>${p}</b></button>`);
+    }
+  }
+  document.getElementById('psalter-sheet').innerHTML = `<div class="ps-head">${ICON.lyre}<h2>Psalter</h2></div><div class="ps-grid">${cells.join('')}</div>`;
+}
+// A cell opens its psalm at the first verse not yet read.
+function psalterOpen(p){
+  const set = psalterMap(dpSession?.id)[p]; let v = 1; while(set && set.has(v) && v < psalmLen(p)) v++;
+  if(set && set.size === psalmLen(p)) v = 1;
+  const inPsalm = currentView === 'daily' && dpMode === 'session' && dpCurrentStep && dpCurrentStep()?.key === 'psalm' && document.getElementById('dp-passage');
+  closeModal('modal-psalter');
+  setTimeout(() => { openBibleBrowser(inPsalm ? 'dp-passage' : undefined); bbJumpTo(PSALMS_FILE, p, v, v); }, 200);
 }
 
 // ══════════ BIBLE BOOKMARKS ══════════
@@ -8453,10 +8573,12 @@ function renderDPStep(){
   let passageHTML = '';
   if(step.passageField && (unit.kind === 'all' || unit.kind === 'passage')){
     const pf = step.passageField;
+    const isPsalm = step.key === 'psalm';
     passageHTML = `<div class="dp-field-row">
         <div class="pl-field-label" style="color:${step.color}">${esc(pf.label)}</div>
-        <textarea id="dp-passage" class="pl-textarea" placeholder="${esc(pf.placeholder)}" data-focus-prompt="The verse or passage you're meditating on — write or paste it here.">${escTa(saved[pf.key]||'')}</textarea>
-        <button type="button" class="bb-field-btn" onclick="openBibleBrowser('dp-passage')">${ICON.book}Insert from Bible</button>
+        ${isPsalm ? `<div id="psalm-track">${psalmTrackHTML(saved[pf.key])}</div>` : ''}
+        <textarea id="dp-passage" class="pl-textarea" placeholder="${esc(pf.placeholder)}" data-focus-prompt="The verse or passage you're meditating on — write or paste it here."${isPsalm ? ' oninput="psalmTrackRefresh()"' : ''}>${escTa(saved[pf.key]||'')}</textarea>
+        <button type="button" class="bb-field-btn" onclick="${isPsalm ? 'psalmOpenBible()' : "openBibleBrowser('dp-passage')"}">${ICON.book}Insert from Bible</button>
       </div>`;
   }
 
