@@ -2005,6 +2005,17 @@
   .tech-yours.away .tech-yours-body { display: none; }
   .tech-yours.away .tech-yours-away { display: block; }
   .tech-yours.empty { display: flex; align-items: center; justify-content: space-between; gap: 10px; font-style: italic; color: var(--text3); font-size: .88rem; }
+
+  /* Carry: the passage as lettered, tappable parts. */
+  .carry-pick-hint { margin-left: auto; font-family: var(--serif); font-style: italic; text-transform: none; letter-spacing: 0; font-size: .78rem; color: var(--text3); font-weight: normal; }
+  .carry-pick .dp-recall-label { display: flex; align-items: center; gap: 6px; }
+  .carry-pick .dp-recall-body { max-height: 45vh; }
+  .cp-part { display: inline; background: none; border: none; padding: 1px 2px; margin: 0; font: inherit; color: inherit; text-align: left; cursor: pointer; border-radius: 4px; line-height: inherit;
+    box-decoration-break: clone; -webkit-box-decoration-break: clone; transition: background .15s; text-decoration: underline dotted color-mix(in srgb, var(--accent2) 55%, transparent); text-underline-offset: 4px; }
+  .cp-part:active { background: color-mix(in srgb, var(--accent) 12%, transparent); }
+  .cp-part.on { background: color-mix(in srgb, var(--accent) 22%, transparent); text-decoration: none; color: var(--text); }
+  .cp-l { font-family: var(--sans); font-size: .62em; color: var(--accent); font-weight: 700; margin-right: 2px; vertical-align: super; line-height: 0; }
+  .cp-v { font-family: var(--sans); font-size: .62em; color: var(--text3); margin: 0 1px 0 4px; }
 </style>
 </head>
 <body>
@@ -6885,6 +6896,73 @@ function dpPassageRecall(step, saved){
     </div>`;
 }
 
+// ── Carry this with you: choose the line by tapping lettered verse parts ──
+// Each verse splits at its main clause breaks (. ; : ? !), lettered a, b, c… as
+// commentaries cite part of a verse. Tapping builds a contiguous run and writes
+// “text” — Book C:Vx[–y] into the Carry field; a whole verse drops the letter.
+let _carryPick = { key:null, i0:-1, i1:-1 }, _carryParts = [], _carryBook = '', _carryChap = 0;
+function carrySplitVerse(t){
+  const parts = String(t).match(/[^.;:?!]+(?:[.;:?!]+[’”'"\)]*|$)/g) || [t];
+  const out = parts.map(x=>x.trim()).filter(Boolean);
+  // A trailing fragment of only closing marks joins the part before it.
+  return out.reduce((a,x)=>{ if(a.length && !/[A-Za-z0-9]/.test(x)) a[a.length-1]+=x; else a.push(x); return a; }, []);
+}
+function carryPickHTML(step, saved){
+  const txt = (saved[step.passageField.key] || '').trim();
+  const refPart = txt.split(/\s+[—–-]\s+/)[0];
+  const p = parseScriptureRef(refPart);
+  const m = refPart.match(/^(.+?)\s+\d+:/);
+  if(!txt || !p || !m) return dpPassageRecall(step, saved);
+  _carryBook = m[1].trim(); _carryChap = p.chapter;
+  const key = `${p.file}|${p.chapter}|${p.vStart}-${p.vEnd}`;
+  if(_carryPick.key !== key) _carryPick = { key, i0:-1, i1:-1 };
+  setTimeout(()=>carryFillParts(p), 0);
+  return `<div class="dp-recall carry-pick">
+      <div class="dp-recall-label">${ICON.book}${esc(step.passageField.label)}<span class="carry-pick-hint">Tap a part to carry it</span></div>
+      <div class="dp-recall-body" id="carry-parts">${esc(txt)}</div>
+    </div>`;
+}
+async function carryFillParts(p){
+  let md; try { md = await fetchBibleFile(p.file); } catch(e){ return; }
+  const vs = bibleVerses(md, p.chapter).filter(v=>v.n>=p.vStart && v.n<=p.vEnd);
+  const el = document.getElementById('carry-parts'); if(!el || !vs.length) return;
+  _carryParts = [];
+  vs.forEach(v=>{ const ps=carrySplitVerse(v.text); ps.forEach((t,j)=>_carryParts.push({ v:v.n, letter: ps.length>1 ? String.fromCharCode(97+j) : '', first:j===0, last:j===ps.length-1, text:t })); });
+  carryRenderParts();
+}
+function carryRenderParts(){
+  const el = document.getElementById('carry-parts'); if(!el) return;
+  const {i0,i1} = _carryPick;
+  el.innerHTML = _carryParts.map((pt,i)=>`${pt.first && _carryParts.length>1 && new Set(_carryParts.map(x=>x.v)).size>1 ? `<sup class="cp-v">${pt.v}</sup>` : ''}<button type="button" class="cp-part${i>=i0&&i<=i1&&i0>=0?' on':''}" onclick="carryTapPart(${i})">${pt.letter?`<sup class="cp-l">${pt.letter}</sup>`:''}${esc(pt.text)}</button>`).join(' ');
+}
+function carryRef(i0,i1){
+  const a=_carryParts[i0], b=_carryParts[i1];
+  const sFull=a.first, eFull=b.last;
+  if(a.v===b.v){
+    const v = (sFull&&eFull) ? `${a.v}` : `${a.v}${a.letter}${b.letter!==a.letter?'–'+b.letter:''}`;
+    return `${_carryBook} ${_carryChap}:${v}`;
+  }
+  return `${_carryBook} ${_carryChap}:${a.v}${sFull?'':a.letter}–${b.v}${eFull?'':b.letter}`;
+}
+function carryTapPart(i){
+  let {i0,i1} = _carryPick;
+  if(i0<0 || i<i0-1 || i>i1+1) { i0=i1=i; }          // nothing yet, or not touching: start afresh
+  else if(i===i0-1) i0=i;                              // extend left
+  else if(i===i1+1) i1=i;                              // extend right
+  else if(i===i0 && i0<i1) i0++;                       // trim an end
+  else if(i===i1 && i0<i1) i1--;
+  else if(i0===i1 && i===i0) { i0=i1=-1; }             // tap the only part again: clear
+  else { i0=i1=i; }                                    // tapped inside: just this part
+  _carryPick.i0=i0; _carryPick.i1=i1;
+  const ta=document.getElementById('dp-field-carry');
+  if(ta){
+    ta.value = i0<0 ? '' : `“${_carryParts.slice(i0,i1+1).map(x=>x.text).join(' ').replace(/[,;:.]$/,'')}” — ${carryRef(i0,i1)}`;
+    ta.dispatchEvent(new Event('input',{bubbles:true}));
+    autoGrow && autoGrow(ta);
+  }
+  carryRenderParts();
+}
+
 function renderDPStep(){
   maybeSwipeHint();
   const el = document.getElementById('dp-content');
@@ -7080,7 +7158,8 @@ function renderDPStep(){
       ${invocationsHTML}
       ${dpEmotionsHTML}
       ${passageHTML}
-      ${unit.kind === 'question' || (split && unit.kind === 'field' && step.passageField) ? dpPassageRecall(step, saved) : ''}
+      ${unit.kind === 'field' && unit.f?.key === 'carry' ? carryPickHTML(step, saved)
+        : (unit.kind === 'question' || (split && unit.kind === 'field' && step.passageField) ? dpPassageRecall(step, saved) : '')}
       ${dpSession.plan === 'evening' && step.key === 'prayer' ? carryEveningHTML(sessionDateKey(dpSession)) : ''}
       ${questionsHTML}
       ${fieldsHTML}
