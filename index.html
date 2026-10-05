@@ -2851,6 +2851,10 @@
   .pf-row.has-text .pf-wrap .bb-field-btn .ico { width: 17px; height: 17px; margin: 0; }
   .pf-row.has-text .bfb-label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
   .pf-row.has-text #dp-passage { padding-right: 46px; }
+
+  .field-guide { margin: 0 0 12px; }
+  .field-guide li { font-size: var(--fs-4); padding-top: 2px; padding-bottom: 2px; }
+  .field-guide li.s::before { content: ''; top: .72em; left: 3px; width: 4px; height: 4px; border-radius: 50%; background: var(--accent2); }
 </style>
 </head>
 <body>
@@ -5164,6 +5168,13 @@ function psalmTrackHTML(current){
 }
 // Once the passage field holds text, Insert from Bible shrinks to a book icon in
 // the field's corner; empty again, the full button returns.
+// On a prayer move that has its own screen, the field's guiding prompt (the same
+// words focus mode shows) is set out as a short list, one sentence per point.
+function fieldGuideHTML(text){
+  if(!text) return '';
+  const pts = String(text).split(/(?<=[.?!])\s+(?=[A-Z“"'‘])/).map(t => t.trim()).filter(Boolean);
+  return `<ul class="pl-prompts field-guide" aria-label="Questions to consider">${pts.map(t => `<li class="${/\?$/.test(t) ? 'q' : 's'}">${esc(t)}</li>`).join('')}</ul>`;
+}
 function pfSync(ta){ ta.closest('.pf-row')?.classList.toggle('has-text', !!ta.value.trim()); }
 function psalmTrackRefresh(){ const el = document.getElementById('psalm-track'), ta = document.getElementById('dp-passage'); if(el && ta) el.innerHTML = psalmTrackHTML(ta.value); }
 function psalmUseNext(){
@@ -8675,6 +8686,7 @@ function renderDPStep(){
       // opens its own content; they no longer repeat down the page.
       return `<div class="dp-field-row">
         <div class="pl-field-label" style="color:${step.color}">${esc(f.label)}</div>
+        ${(step.fields||[]).length > 1 ? fieldGuideHTML(f.focusPrompt) : ''}
         <textarea id="dp-field-${f.key}" class="pl-textarea" placeholder="${esc(f.placeholder||'')}"${fpAttr}>${escTa(saved[f.key]||'')}</textarea>
         ${helperRow(`dp-field-${f.key}`, { chips: starterChips, lib: libCat, cryOut: stepIsPrayerMode, cards: !!f.showCardsButton })}
         ${cardsBtn ? '' : ''}
