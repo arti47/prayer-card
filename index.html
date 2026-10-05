@@ -380,7 +380,8 @@
   .prayer-steps .prayer-step + .prayer-step { border-top: 1px solid color-mix(in srgb, var(--accent2) 30%, transparent); }
   .prayer-step .step-label { font-size: .63rem; font-family: var(--sans); text-transform: uppercase; letter-spacing: .05em; color: var(--accent); margin-bottom: 2px; font-weight: 600; }
   .prayer-step .step-prompt { font-size: .9rem; line-height: 1.45; }
-  .prayer-step .step-ask-line { font-size: .85rem; color: var(--text3); margin: 3px 0 3px 14px; line-height: 1.45; }
+  .prayer-step .step-ask-line { font-size: .95em; color: var(--text2); margin: 4px 0 4px 14px; line-height: 1.5; position: relative; padding-left: 12px; }
+  .prayer-step .step-ask-line::before { content: '·'; position: absolute; left: 0; color: var(--accent); font-weight: 700; }
   .prayer-flow .flow-hint { font-size: .74rem; color: var(--text-quiet); font-style: italic; margin: -2px 0 10px; }
   .prayer-nav { display: flex; gap: 10px; margin-top: 14px; }
   .prayer-nav button { flex: 1; padding: 11px; border-radius: var(--radius-sm); border: 1.5px solid var(--border); background: var(--surface); color: var(--text2); font-family: var(--serif); font-size: .9rem; cursor: pointer; }
@@ -7485,25 +7486,24 @@ function renderDailyCard(cards,idx,todayKey){
   // free text fits. Trailing "…" lines are deliberate — finished mentally before Him.
   const youArePart=(c.perspAttr||'').trim();
   const youAreHTML=youArePart?`<em>${esc(youArePart)}</em>.`:'…';
-  const personHTML=`<em>${esc(c.person)}</em>`;
   const trustPart=(c.perspTrust||'').trim();
   const trustHTML=trustPart?`<em>${esc(trustPart)}</em>`:'this story';
   const askHeart=(c.askHeart||'').trim(), askCirc=(c.askCirc||'').trim();
   let askPrompt;
   if(askHeart||askCirc){
     const askLines=
-      (askCirc?`<div class="step-ask-line">the circumstance — <em>${esc(askCirc)}</em></div>`:'')+
-      (askHeart?`<div class="step-ask-line">the heart — <em>${esc(askHeart)}</em></div>`:'');
-    askPrompt=`“Father, you know what I’m asking —”${askLines}“Please act in this story.”`;
+      (askCirc?`<div class="step-ask-line"><em>${esc(askCirc)}</em></div>`:'')+
+      (askHeart?`<div class="step-ask-line"><em>${esc(askHeart)}</em></div>`:'');
+    askPrompt=`“Father, this is what I’m asking of you:”${askLines}“Please act in this story.”`;
   } else {
-    askPrompt='“Please act in this story by…”';
+    askPrompt='“Father, please act in this story by…”';
   }
   const steps=[
     {label:'Come & Worship', prompt:`“Father, you are ${youAreHTML}”`},
     {label:'Trust & Submission', prompt:`“Because of Jesus, I know your heart toward me is good. I trust you with ${trustHTML}.”`},
     {label:'Ask', prompt:askPrompt},
-    {label:'Repent', prompt:`“Father, forgive me for trying to carry this myself — my cynicism, control, or fear. I release this story — ${personHTML} — into your hands.”`},
-    {label:'Follow', prompt:'“The next faithful step in this story is… — help me take it.”'}];
+    {label:'Repent', prompt:`“Father, forgive me for trying to carry this myself — my cynicism, control, or fear. I give this story back into your hands.”`},
+    {label:'Follow', prompt:'“Father, show me the next faithful step in this story — and give me grace to take it.”'}];
   const persp=(c.perspAttr&&c.perspTrust)?`<div class="prayer-step persp-block" style="margin-bottom:12px"><div class="step-label">Father's Perspective</div><div class="step-prompt">Father, because you are <em>${esc(c.perspAttr)}</em>, I will trust you with <em>${esc(c.perspTrust)}</em>.</div></div>`:'';
   document.getElementById('daily-content').innerHTML=`
     <div class="walk-dots" role="img" aria-label="Card ${idx+1} of ${total}">${cards.map((x,i)=>`<span class="walk-dot${i<idx?' done':''}${i===idx?' now':''}" style="--dc:${CAT_COLOR[CAT_ICON[x.category]?x.category:'other']}"></span>`).join('')}</div>
