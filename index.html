@@ -2115,6 +2115,7 @@
   .carry-pick .dp-recall-body { max-height: 45vh; }
   .cp-part { display: inline; background: none; border: none; padding: 1px 2px; margin: 0; font: inherit; color: inherit; text-align: left; cursor: pointer; border-radius: 4px; line-height: inherit;
     box-decoration-break: clone; -webkit-box-decoration-break: clone; transition: background .15s; text-decoration: underline dotted color-mix(in srgb, var(--accent2) 55%, transparent); text-underline-offset: 4px; }
+  .cp-gap { color: var(--text3); margin: 0 2px; }
   .cp-part:active { background: color-mix(in srgb, var(--accent) 12%, transparent); }
   .cp-part.on { background: color-mix(in srgb, var(--accent) 22%, transparent); text-decoration: none; color: var(--text); }
   .cp-l { font-family: var(--sans); font-size: .62em; color: var(--accent); font-weight: 700; margin-right: 2px; vertical-align: super; line-height: 0; }
@@ -8475,14 +8476,21 @@ function carrySplitVerse(t){
 }
 // Parse a passage entry for the verse-part picker; null when it doesn't start with
 // a Book C:V reference. Schedules the parts to be filled into every picker host.
+// Book C:V, with ranges and lists — "2:11", "2:11–15", "2:11, 15", "3:1, 4–6".
+function carryParseRef(ref){
+  const m = String(ref).trim().match(/^(.+?)\s+(\d+):(\d+(?:\s*[–-]\s*\d+)?(?:\s*,\s*\d+(?:\s*[–-]\s*\d+)?)*)$/);
+  if(!m) return null;
+  const file = BIBLE_BOOK_FILES[normBook(m[1])]; if(!file) return null;
+  const verses = new Set();
+  m[3].split(',').forEach(r => { const [a,b] = r.split(/[–-]/).map(x=>+x.trim()); for(let v=a; v<=Math.max(a, b||a); v++) verses.add(v); });
+  return { file, book:m[1].trim(), chapter:+m[2], verses:[...verses].sort((a,b)=>a-b) };
+}
 function carryPickPrep(txt){
   txt = (txt || '').trim();
-  const refPart = txt.split(/\s+[—–-]\s+/)[0];
-  const p = parseScriptureRef(refPart);
-  const m = refPart.match(/^(.+?)\s+\d+:/);
-  if(!txt || !p || !m) return null;
-  _carryBook = m[1].trim(); _carryChap = p.chapter;
-  const key = `${p.file}|${p.chapter}|${p.vStart}-${p.vEnd}`;
+  const p = carryParseRef(txt.split(/\s+[—–-]\s+/)[0]);
+  if(!txt || !p) return null;
+  _carryBook = p.book; _carryChap = p.chapter;
+  const key = `${p.file}|${p.chapter}|${p.verses.join(',')}`;
   if(_carryPick.key !== key) _carryPick = { key, i0:-1, i1:-1 };
   setTimeout(()=>carryFillParts(p), 0);
   return txt;
@@ -8497,7 +8505,7 @@ function carryPickHTML(step, saved){
 }
 async function carryFillParts(p){
   let md; try { md = await fetchBibleFile(p.file); } catch(e){ return; }
-  const vs = bibleVerses(md, p.chapter).filter(v=>v.n>=p.vStart && v.n<=p.vEnd);
+  const vs = bibleVerses(md, p.chapter).filter(v=>p.verses.includes(v.n));
   if(!document.querySelector('.carry-parts') || !vs.length) return;
   _carryParts = [];
   vs.forEach(v=>{ const ps=carrySplitVerse(v.text); ps.forEach((t,j)=>_carryParts.push({ v:v.n, letter: ps.length>1 ? String.fromCharCode(97+j) : '', first:j===0, last:j===ps.length-1, text:t })); });
@@ -8506,7 +8514,7 @@ async function carryFillParts(p){
 function carryRenderParts(){
   const els = document.querySelectorAll('.carry-parts'); if(!els.length || !_carryParts.length) return;
   const {i0,i1} = _carryPick;
-  const html = _carryParts.map((pt,i)=>`${pt.first && _carryParts.length>1 && new Set(_carryParts.map(x=>x.v)).size>1 ? `<sup class="cp-v">${pt.v}</sup>` : ''}<span role="button" tabindex="0" class="cp-part${i>=i0&&i<=i1&&i0>=0?' on':''}" onclick="carryTapPart(${i})" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();carryTapPart(${i})}">${pt.letter?`<sup class="cp-l">${pt.letter}</sup>`:''}${esc(pt.text)}</span>`).join(' ');
+  const html = _carryParts.map((pt,i)=>`${i && pt.first && pt.v - _carryParts[i-1].v > 1 ? '<span class="cp-gap" aria-hidden="true">…</span> ' : ''}${pt.first && _carryParts.length>1 && new Set(_carryParts.map(x=>x.v)).size>1 ? `<sup class="cp-v">${pt.v}</sup>` : ''}<span role="button" tabindex="0" class="cp-part${i>=i0&&i<=i1&&i0>=0?' on':''}" onclick="carryTapPart(${i})" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();carryTapPart(${i})}">${pt.letter?`<sup class="cp-l">${pt.letter}</sup>`:''}${esc(pt.text)}</span>`).join(' ');
   els.forEach(el => { el.innerHTML = html; });
 }
 function carryRef(i0,i1){
@@ -8520,7 +8528,8 @@ function carryRef(i0,i1){
 }
 function carryTapPart(i){
   let {i0,i1} = _carryPick;
-  if(i0<0 || i<i0-1 || i>i1+1) { i0=i1=i; }          // nothing yet, or not touching: start afresh
+  const joins = (a,b) => _carryParts[b].v - _carryParts[a].v <= 1;   // a verse list can skip verses
+  if(i0<0 || i<i0-1 || i>i1+1 || (i===i0-1 && !joins(i,i0)) || (i===i1+1 && !joins(i1,i))) { i0=i1=i; }   // not touching: start afresh
   else if(i===i0-1) i0=i;                              // extend left
   else if(i===i1+1) i1=i;                              // extend right
   else if(i===i0 && i0<i1) i0++;                       // trim an end
