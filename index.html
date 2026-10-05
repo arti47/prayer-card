@@ -1971,6 +1971,8 @@
     border: 1px solid var(--accent2); color: var(--accent); font-family: var(--serif); font-style: normal; font-size: .82rem; display: flex; align-items: center; justify-content: center; }
   .tech-flow.numbered > .tech-action { text-align: left; padding: 12px 14px 12px 44px; }
   .tech-flow.numbered > .tech-action::before { left: 12px; top: 10px; }
+  .tech-btns { display: flex; gap: 10px; margin-top: 14px; }
+  .tech-btns .btn { margin: 0; flex: 1; }
   .tech-lines { list-style: none; counter-reset: tl; margin: 4px 0 0; padding: 0; }
   .tech-lines li { counter-increment: tl; position: relative; padding: 6px 0 6px 26px; border-top: 1px solid var(--border-soft); line-height: 1.6; }
   .tech-lines li:first-child { border-top: none; }
@@ -4766,7 +4768,7 @@ const MEDITATION_TECHNIQUES = {
     exampleRef: 'Mark 1:17',
     exampleHTML: '"<strong>Follow</strong> me, and I will make you to become fishers of men."<br>"Follow <strong>me</strong>, and I will make you to become fishers of men."<br>"Follow me, <strong>and I will</strong> make you to become fishers of men."<br>"Follow me, and I will make you to <strong>become</strong> fishers of men."',
     closer: 'Each emphasis reveals something the others didn\'t. Notice what you hadn\'t seen before.',
-    action: 'Now apply this to your passage. Write what you noticed in the meditation field above.'
+    action: 'Now apply this to your passage. Write what you noticed in the meditation field.'
   },
   paraphrase: {
     icon: '✍️',
@@ -4775,7 +4777,7 @@ const MEDITATION_TECHNIQUES = {
     exampleRef: null,
     exampleHTML: null,
     closer: 'Then look back at the passage. You\'ll see how much you missed. Do it again until your paraphrase feels honest — putting truth in your own heart-language sends it deeper than reading alone.',
-    action: 'Write your paraphrase in the meditation field above.'
+    action: 'Write your paraphrase in the meditation field.'
   },
   // P7 #51 — Eph 3:18 four-dimensions meditation (Keller Ch. 11). The one concrete
   // structured meditation the chapter walks through. Not a technique applied to your
@@ -4808,10 +4810,24 @@ const MEDITATION_TECHNIQUES = {
         <div class="tech-dim-text">"We will be like Him, because… we will see Him as He is." He will give us the very same glory that fills His own heart with infallible joy.</div>
       </div>`,
     closer: null,
-    action: 'What hit you? Write it in the meditation field above.'
+    action: 'What hit you? Write it in the meditation field.'
   }
 };
 
+// The meditation fields sit on the screens after the passage (one per screen), so
+// the sheet offers to go straight to the first of them.
+function techMedIndex(){ return dpSession ? (DP_PLANS[dpSession.plan]?.steps||[]).findIndex(st=>st.questionsField) : -1; }
+function techCanWrite(){ return currentView==='daily' && dpMode==='session' && techMedIndex()>=0; }
+function techWriteNow(){
+  closeModal('modal-technique');
+  const i=techMedIndex(); if(i<0) return;
+  dpSaveCurrentStep();
+  const units=dpSubUnits(DP_PLANS[dpSession.plan].steps[i]);
+  dpStepIdx=i; dpSubIdx=Math.max(0, units.findIndex(u=>u.kind==='question'));
+  dpSession.stepIndex=dpStepIdx; dpSession.subIndex=dpSubIdx; saveDailyDraft(dpSession);
+  _dpAnimDir='next'; renderDailyPrayer(); window.scrollTo(0,0);
+  setTimeout(()=>{ const t=[...document.querySelectorAll('#dp-content textarea.pl-textarea')].find(x=>x.offsetParent && x.id!=='dp-passage'); if(t){ t.focus({preventScroll:true}); t.scrollIntoView({block:'center'}); } }, 320);
+}
 function showMeditationTechnique(key){
   const t = MEDITATION_TECHNIQUES[key];
   if(!t) return;
@@ -4840,7 +4856,8 @@ function showMeditationTechnique(key){
     ${t.closer ? `<p class="tech-closer">${esc(t.closer)}</p>` : ''}
     <div class="tech-action">${esc(t.action)}</div>
     </div>
-    <button class="btn btn-secondary" onclick="closeModal('modal-technique')" style="margin-top:14px">Close</button>
+    ${techCanWrite() ? `<div class="tech-btns"><button class="btn btn-secondary" onclick="closeModal('modal-technique')">Close</button><button class="btn btn-primary" onclick="techWriteNow()">Write it now →</button></div>`
+      : `<button class="btn btn-secondary" onclick="closeModal('modal-technique')" style="margin-top:14px">Close</button>`}
   `);
   openModal('modal-technique');
 }
