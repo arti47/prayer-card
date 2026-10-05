@@ -1982,6 +1982,29 @@
   /* Link Story Cards: hint for press-and-hold. */
   .link-hint { font-size: .78rem; font-style: italic; color: var(--text3); margin: -6px 0 12px; }
   .link-card-row { -webkit-touch-callout: none; user-select: none; -webkit-user-select: none; }
+
+  /* Your passage on the word-stress and paraphrase sheets. */
+  .tech-yours { --bk: var(--accent2); position: relative; margin: 0 0 16px; padding: 14px 18px 16px; background: var(--accent-light); border-radius: var(--radius-sm); }
+  .tech-yours::after { content: ''; position: absolute; inset: 5px; pointer-events: none; opacity: .8; --bl: 13px; --bw: 1.5px;
+    background:
+      linear-gradient(var(--bk),var(--bk)) left top / var(--bl) var(--bw) no-repeat,
+      linear-gradient(var(--bk),var(--bk)) left top / var(--bw) var(--bl) no-repeat,
+      linear-gradient(var(--bk),var(--bk)) right top / var(--bl) var(--bw) no-repeat,
+      linear-gradient(var(--bk),var(--bk)) right top / var(--bw) var(--bl) no-repeat,
+      linear-gradient(var(--bk),var(--bk)) left bottom / var(--bl) var(--bw) no-repeat,
+      linear-gradient(var(--bk),var(--bk)) left bottom / var(--bw) var(--bl) no-repeat,
+      linear-gradient(var(--bk),var(--bk)) right bottom / var(--bl) var(--bw) no-repeat,
+      linear-gradient(var(--bk),var(--bk)) right bottom / var(--bw) var(--bl) no-repeat; }
+  [data-theme="dark"] .tech-yours::after { opacity: .55; }
+  .tech-yours-h { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 6px; }
+  .tech-yours-h span { font-family: var(--sans); font-size: .66rem; letter-spacing: .06em; text-transform: uppercase; color: var(--text3); }
+  .tech-yours-body { font-family: var(--serif); font-size: .95rem; line-height: 1.7; color: var(--text); max-height: 30vh; overflow-y: auto; white-space: pre-wrap; }
+  .tech-yours-verse { font-style: italic; margin-top: 6px; padding-top: 6px; border-top: 1px solid var(--border); }
+  .tech-yours-btn { position: relative; z-index: 1; background: none; border: 1px solid var(--accent2); color: var(--accent); border-radius: 99px; padding: 6px 12px; min-height: 32px; font-family: var(--sans); font-size: .74rem; cursor: pointer; }
+  .tech-yours-away { display: none; font-family: var(--serif); font-style: italic; color: var(--text3); font-size: .9rem; padding: 6px 0 2px; }
+  .tech-yours.away .tech-yours-body { display: none; }
+  .tech-yours.away .tech-yours-away { display: block; }
+  .tech-yours.empty { display: flex; align-items: center; justify-content: space-between; gap: 10px; font-style: italic; color: var(--text3); font-size: .88rem; }
 </style>
 </head>
 <body>
@@ -3985,7 +4008,7 @@ function placeNavMark(){
 window.addEventListener('resize', () => requestAnimationFrame(placeNavMark));
 // Typographic apostrophes in interface text, applied as the page renders. Anything
 // you wrote, Scripture, and form fields are left exactly as they are.
-const APOS_SKIP = 'textarea, input, select, script, style, [contenteditable], .bb-verse, .bb-preview, .note-text, .he-snippet, .sv-text, .pl-prev-text, .pl-reflection-text, .card-title, .card-scripture, .p-title, .p-scripture, .p-ask, .step-prompt em, .step-ask-line em, .persp-block em, .detail-section p, .rv-name, .rv-excerpt, .rv-scripture, .ap-card-name, .ap-card-scripture, .link-card-title, .link-card-sub, .timeline-snippet, .timeline-title, .focus-passage-body, .focus-carry-body, .dp-recall-body, .scripture-ref, .psf-text, .pl-done-verse, .dp-inv-text, .dp-inv-option-text, .dp-inv-ref, .wf-word, .emo-chip, .pl-linked-chip, .note-ctx-name, .prayer-lib-text, .tech-example, #scripture-content, .heatmap-day-list, .emo-v-text, .carry-line, .carry-note-text, .carry-passage, mark';
+const APOS_SKIP = 'textarea, input, select, script, style, [contenteditable], .bb-verse, .bb-preview, .note-text, .he-snippet, .sv-text, .pl-prev-text, .pl-reflection-text, .card-title, .card-scripture, .p-title, .p-scripture, .p-ask, .step-prompt em, .step-ask-line em, .persp-block em, .detail-section p, .rv-name, .rv-excerpt, .rv-scripture, .ap-card-name, .ap-card-scripture, .link-card-title, .link-card-sub, .timeline-snippet, .timeline-title, .focus-passage-body, .focus-carry-body, .dp-recall-body, .scripture-ref, .psf-text, .pl-done-verse, .dp-inv-text, .dp-inv-option-text, .dp-inv-ref, .wf-word, .emo-chip, .pl-linked-chip, .note-ctx-name, .prayer-lib-text, .tech-example, #scripture-content, .heatmap-day-list, .emo-v-text, .carry-line, .carry-note-text, .carry-passage, .tech-yours-body, mark';
 function smartApostrophes(root){
   const w = document.createTreeWalker(root || document.body, NodeFilter.SHOW_TEXT, {
     acceptNode: n => (n.nodeValue.includes("'") && n.parentElement && !n.parentElement.closest(APOS_SKIP)) ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT
@@ -4818,6 +4841,33 @@ const MEDITATION_TECHNIQUES = {
 // the sheet offers to go straight to the first of them.
 function techMedIndex(){ return dpSession ? (DP_PLANS[dpSession.plan]?.steps||[]).findIndex(st=>st.questionsField) : -1; }
 function techCanWrite(){ return currentView==='daily' && dpMode==='session' && techMedIndex()>=0; }
+function techPassageHTML(key){
+  if(!techCanWrite()) return '';
+  const p = dpActivePassage();
+  if(!p) return `<div class="tech-yours empty"><span>No passage chosen yet</span><button class="tech-yours-btn" onclick="techChoosePassage()">Choose one →</button></div>`;
+  const isRef = !!parseScriptureRef(p.text);
+  if(isRef) setTimeout(()=>resolveTechPassage(p.text), 0);
+  return `<div class="tech-yours${key==='paraphrase'?' can-hide':''}" id="tech-yours">
+      <div class="tech-yours-h"><span>Your passage</span>${key==='paraphrase'?`<button class="tech-yours-btn" id="tech-look" onclick="techLook()">Look away</button>`:''}</div>
+      <div class="tech-yours-body">${esc(p.text)}${isRef?'<div class="tech-yours-verse" id="tech-yours-verse" hidden></div>':''}</div>
+      <div class="tech-yours-away" aria-hidden="true">Restate it in your own words…</div>
+    </div>`;
+}
+async function resolveTechPassage(ref){
+  let v=getScriptureText(ref.trim()); if(!v) v=await lookupBibleRef(ref.trim());
+  const el=document.getElementById('tech-yours-verse'); if(el && v){ el.textContent=v; el.hidden=false; }
+}
+function techLook(){
+  const b=document.getElementById('tech-yours'); if(!b) return;
+  const away=b.classList.toggle('away');
+  document.getElementById('tech-look').textContent = away ? 'Look back' : 'Look away';
+}
+function techChoosePassage(){
+  closeModal('modal-technique');
+  const i=techMedIndex(); if(i<0) return;
+  if(dpStepIdx!==i || dpSubIdx!==0){ dpSaveCurrentStep(); dpStepIdx=i; dpSubIdx=0; dpSession.stepIndex=i; dpSession.subIndex=0; saveDailyDraft(dpSession); renderDailyPrayer(); }
+  setTimeout(()=>openBibleBrowser('dp-passage'), 200);
+}
 function techWriteNow(){
   closeModal('modal-technique');
   const i=techMedIndex(); if(i<0) return;
@@ -4847,8 +4897,12 @@ function showMeditationTechnique(key){
   const example2 = key === 'wordstress'
     ? example.replace(t.exampleHTML, `<ol class="tech-lines">${t.exampleHTML.split('<br>').map(l=>`<li>${l}</li>`).join('')}</ol>`)
     : example;
+  // Word-stress and paraphrase work on your own passage, so it sits at the top of
+  // the sheet; paraphrase can hide it ("look away") and bring it back.
+  const yours = (key==='wordstress' || key==='paraphrase') ? techPassageHTML(key) : '';
   document.getElementById('technique-content').innerHTML = smartQuotes(`
     <h2 style="color:var(--accent);font-size:1.05rem;margin-bottom:14px">${({wordstress:ICON.book, paraphrase:ICON.note, love:ICON.heart})[key] || ''} ${esc(t.title)}</h2>
+    ${yours}
     <div class="tech-flow${key==='love'?'':' numbered'}">
     <p class="tech-lead">${esc(t.lead)}</p>
     ${figure}
