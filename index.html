@@ -1915,7 +1915,7 @@
   #prayer-library-content .prayer-lib-use-btn { background: var(--lc); border-color: var(--lc); color: var(--on-accent); }
 
   /* Walkthrough finish: one illuminated panel. */
-  .modal:has(.walk-finish) > .daily-header, .modal:has(.walk-finish) > .btn-secondary { display: none; }
+  .modal:has(.walk-finish) > .daily-header, .modal:has(.walk-finish) > .btn-secondary, .modal:has(.walk-finish) > .wk-close { display: none; }
   .walk-finish { padding: 6px 0 4px; overflow-x: clip; }
   .wf-panel { text-align: center; border: 1px solid var(--border); border-radius: 18px; padding: 8px 18px 20px; background: radial-gradient(120% 70% at 50% 0%, color-mix(in srgb, var(--accent-light) 85%, transparent), transparent 70%), var(--surface); box-shadow: var(--shadow); position: relative; }
   .wf-panel::before { content: ''; position: absolute; inset: 6px; border: 1px solid var(--border-soft); border-radius: 13px; pointer-events: none; }
@@ -2145,6 +2145,42 @@
   .fc-back-name { font-family: var(--serif); font-size: 1.05rem; font-weight: 600; color: var(--text); min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .fc-back .prayer-flow h3 { margin-top: 2px; }
   @media (prefers-reduced-motion: reduce) { .fc-inner { transition: none; } }
+
+  /* Card faces never scroll: text is sized to fit the card (fitCardFaces sets --fit). */
+  .fc-face { overflow: hidden; font-size: calc(var(--fit, 1) * 1rem); }
+  .fc-face.fit-overflow { overflow-y: auto; }
+  .fc-front .p-title { font-size: 1.6em; margin: .2em 0 .55em; }
+  .fc-front .p-cat { font-size: .62rem; }
+  .fc-scripture { padding: .65em .8em; margin-bottom: .7em; }
+  .fc-scripture .p-scripture, .fc-verse { font-size: .95em; line-height: 1.5; }
+  .fc-asks { gap: .45em; margin-bottom: .7em; }
+  .fc-ask { font-size: .95em; line-height: 1.45; }
+  .fc-persp { font-size: .92em; line-height: 1.5; padding-top: .6em; }
+  .fc-ask span, .fc-persp span { font-size: .66em; }
+  .fc-back .prayer-flow h3 { font-size: .64em; margin: 0 0 .25em; }
+  .fc-back .flow-hint { font-size: .74em; margin: 0 0 .5em; }
+  .fc-back .prayer-steps { padding: .1em .75em; margin: 0; }
+  .fc-back .prayer-step { padding: .5em 0; }
+  .fc-back .prayer-step .step-label { font-size: .62em; margin-bottom: .1em; }
+  .fc-back .prayer-step .step-prompt { font-size: .9em; line-height: 1.42; max-width: none; }
+  .fc-back .prayer-step .step-ask-line { font-size: .95em; margin: .15em 0 .15em .8em; line-height: 1.4; }
+  .fc-back-name { font-size: 1.05em; }
+  .fc-hint { font-size: .8em; padding-top: .6em; }
+  .fc-top { margin-bottom: .4em; }
+
+  /* Walkthrough sheet: close in the corner, compact header, so the card gets the height. */
+  #modal-cards-walkthrough .modal { position: relative; padding-bottom: 20px; }
+  .wk-close { position: absolute; top: 14px; right: 14px; width: 38px; height: 38px; border-radius: 50%; border: 1px solid var(--border); background: var(--surface); color: var(--text2); display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 3; }
+  .wk-close .ico { width: 17px; height: 17px; }
+  .wk-close::after { content: ''; position: absolute; inset: -4px; }
+  #modal-cards-walkthrough .daily-header { padding: 0 44px; margin-bottom: 6px; }
+  #modal-cards-walkthrough .daily-header h2 { font-size: 1.05rem; line-height: 1.3; margin-bottom: 2px; }
+  #modal-cards-walkthrough .daily-header p { font-size: .76rem; margin: 0; }
+  .walk-nav { margin: 4px 0 10px; gap: 10px; }
+  .wn-mid { display: flex; flex-direction: column; align-items: center; gap: 4px; min-width: 0; }
+  .wn-mid .walk-dots { margin: 0; }
+  .wn-mid span { font-size: .7rem; }
+  .flip-card { height: clamp(320px, calc(92dvh - 210px), 720px) !important; }
 </style>
 </head>
 <body>
@@ -2486,9 +2522,9 @@
 <div class="modal-bg" id="modal-cards-walkthrough">
   <div class="modal">
     <div class="modal-handle"></div>
+    <button class="wk-close" onclick="closeModal('modal-cards-walkthrough')" aria-label="Close"><span data-ico="close"></span></button>
     <div class="daily-header"><h2>Pray Through Your Story Cards</h2><p>~5 min · One card at a time</p></div>
     <div id="daily-content"></div>
-    <button class="btn btn-secondary" style="margin-top:14px" onclick="closeModal('modal-cards-walkthrough')">Close</button>
   </div>
 </div>
 
@@ -7551,15 +7587,17 @@ function renderDailyCard(cards,idx,todayKey){
   const ck = CAT_ICON[c.category] ? c.category : 'other';
   const scrRef = (c.scripture||'').trim();
   const scrIsRef = !!(scrRef && parseScriptureRef(scrRef));
-  if(scrIsRef) setTimeout(()=>{ (async()=>{ let v=getScriptureText(scrRef); if(!v) v=await lookupBibleRef(scrRef); const el=document.getElementById('fc-verse'); if(el&&v){ el.textContent=v; el.hidden=false; } })(); },0);
+  if(scrIsRef) setTimeout(()=>{ (async()=>{ let v=getScriptureText(scrRef); if(!v) v=await lookupBibleRef(scrRef); const el=document.getElementById('fc-verse'); if(el&&v){ el.textContent=v; el.hidden=false; fitCardFaces(); } })(); },0);
   const noteBtn = `<button class="fc-note" onclick="event.stopPropagation();openNote('${c.id}')" aria-label="Add Story Note">${ICON.note}<span>＋</span></button>`;
   // One card, two sides. Front: who and what you're praying for. Back (tap to
   // turn): the five moves. Swipe on either side to flick to the next card.
   document.getElementById('daily-content').innerHTML=`
-    <div class="walk-dots" role="img" aria-label="Card ${idx+1} of ${total}">${cards.map((x,i)=>`<span class="walk-dot${i<idx?' done':''}${i===idx?' now':''}" style="--dc:${CAT_COLOR[CAT_ICON[x.category]?x.category:'other']}"></span>`).join('')}</div>
     <div class="walk-nav">
       <button class="wn-btn" onclick="dailyNav(${idx-1})" aria-label="Previous card"${idx>0?'':' disabled'}>‹</button>
-      <span>Card ${idx+1} of ${total}${total>1?' · swipe to turn':''}</span>
+      <div class="wn-mid">
+        <div class="walk-dots" role="img" aria-label="Card ${idx+1} of ${total}">${cards.map((x,i)=>`<span class="walk-dot${i<idx?' done':''}${i===idx?' now':''}" style="--dc:${CAT_COLOR[CAT_ICON[x.category]?x.category:'other']}"></span>`).join('')}</div>
+        <span>Card ${idx+1} of ${total}${total>1?' · swipe to turn':''}</span>
+      </div>
       ${idx<total-1?`<button class="wn-btn" onclick="dailyNav(${idx+1})" aria-label="Next card">›</button>`:`<button class="wn-btn wn-finish" onclick="dailyFinish()" aria-label="Finish">✓</button>`}
     </div>
     <div class="pc-stack more-${Math.min(2,total-1-idx)}">${total-1-idx>=2?'<span class="pc-under u2"></span>':''}${total-1-idx>=1?'<span class="pc-under u1"></span>':''}
@@ -7584,12 +7622,31 @@ function renderDailyCard(cards,idx,todayKey){
         </div>
       </div>
     </div></div>`;
+  fitCardFaces();
+  requestAnimationFrame(fitCardFaces);
 }
 // ── Flick the card: drag the story card sideways and it follows your finger,
 // tilting like a real card; let go past the threshold (or flick fast) and it
 // flies off and the next one rises from the stack. Left = next (or Finish on the
 // last card), right = back. A short drag springs back. Vertical drags scroll.
 let _flickEnter = null, _cardSide = 'front', _flickMoved = false;
+// Size each face's text so all of it fits the card without scrolling: start at
+// the full size and step down (binary search on --fit) to no smaller than 0.66.
+// Only if even that overflows does the face fall back to scrolling.
+function fitCardFaces(){
+  document.querySelectorAll('#daily-content .fc-face').forEach(f => {
+    f.classList.remove('fit-overflow');
+    const fits = () => f.scrollHeight <= f.clientHeight + 1;
+    f.style.setProperty('--fit', '1');
+    if(!f.clientHeight || fits()) return;
+    let lo = 0.66, hi = 1;
+    f.style.setProperty('--fit', String(lo));
+    if(!fits()){ f.classList.add('fit-overflow'); return; }
+    for(let i = 0; i < 7; i++){ const mid = (lo + hi) / 2; f.style.setProperty('--fit', String(mid)); if(fits()) lo = mid; else hi = mid; }
+    f.style.setProperty('--fit', String(lo));
+  });
+}
+window.addEventListener('resize', () => { if(document.querySelector('#daily-content .fc-face')) fitCardFaces(); });
 function flipCard(){
   _cardSide = _cardSide==='back' ? 'front' : 'back';
   const c=document.querySelector('#daily-content .flip-card'); if(!c) return;
