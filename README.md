@@ -17,8 +17,8 @@ The app is organised around three prayer rhythms plus reflection and a guide, re
   - **Morning** (~25 min), **Evening** (~15 min), **Starter** (~15 min).
   - Scriptural invocations, meditation questions and techniques, written-prayer library, and a "pray your story cards" shortcut.
 - **✍️ Weekly Deep Time** — A once-a-week deeper practice (Sunday recommended). Begins with a *Preparing to Pray* reflection, then walks the Lord's Prayer in six steps — **Come · Humble · Ask · Repent · Forgive · Follow** — each with a *Pray* prompt and a *Listen* prompt.
-- **🪞 Reflect** — Stats and streaks, a year-at-a-glance heatmap, answered prayers, heart-need and word-frequency views, a weekly review of story cards, plus settings (theme, text size), Markdown export, and backup/restore.
-- **✦ Guide** — A short tutorial, an overview of the three rhythms, install instructions, credits, and privacy details.
+- **🪞 Reflect** — Stats and streaks, a year-at-a-glance heatmap, answered prayers, heart-need and word-frequency views, and a weekly review of story cards.
+- **✦ Guide** — Where to begin, an overview of the three rhythms, settings (theme, colour scheme, text size, Markdown export, backup/restore), install instructions, credits, and privacy details.
 
 Supporting touches throughout: a 9-need **Needs of the Heart** chart, a 3-level **emotion wheel** for naming feelings, "cry out" / praise / thanksgiving prompt chips, an embedded **Prayer Library** of ~40 Scripture-saturated written prayers (from Matthew Henry's method), light/dark/auto themes, adjustable text size, and a swipe-friendly mobile UI with autosaving drafts.
 
@@ -35,7 +35,7 @@ Your data is **local-only**:
 
 Because everything lives in your browser's local storage:
 
-- Clearing your browser cache or site data will erase everything — use **💾 Backup & Restore** (in the Reflect tab) regularly.
+- Clearing your browser cache or site data will erase everything — use **💾 Backup & Restore** (Guide → Settings) regularly.
 - Moving to a new device means exporting a backup and importing it on the other end.
 - The service worker caches only the app files (HTML, icon, manifest). It does not collect or transmit anything you write.
 
@@ -115,7 +115,7 @@ State is stored in `localStorage` under keys including:
 - `daily_sessions` / `daily_draft` — Daily Prayer sessions and draft.
 - `streak_days`, `theme`, `text_size`, and Obsidian export preferences.
 
-The **Reflect → Backup & Restore** export bundles all of this into a single JSON file; import merges it back in. Markdown export produces Obsidian-friendly files (YAML frontmatter and `[[wikilinks]]`).
+The **Guide → Settings → Backup** export bundles all of this into a single JSON file; import merges it back in. Markdown export produces Obsidian-friendly files (YAML frontmatter and `[[wikilinks]]`).
 
 ---
 
