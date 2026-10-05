@@ -2047,6 +2047,49 @@
   .bb-close::after { content: ''; position: absolute; inset: -4px; }
   .bb-close:active { background: var(--accent-light); color: var(--accent); }
   .bb-head .bb-crumb { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+  /* Sit with it / Earlier lines sheets */
+  .carry-more { margin-top: 10px; padding-top: 8px; border-top: 1px solid var(--border-soft); }
+  .cs-head { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
+  .cs-head h2 { font-size: 1.15rem; color: var(--accent); margin: 0; }
+  .cs-mark { width: 18px; height: 18px; color: var(--accent2); display: inline-flex; }
+  .cs-mark .ico { width: 18px; height: 18px; }
+  .cs-line { --bk: var(--accent2); position: relative; padding: 16px 18px 12px; background: var(--accent-light); border-radius: var(--radius-sm); margin-bottom: 14px; }
+  .cs-line::after { content: ''; position: absolute; inset: 5px; pointer-events: none; opacity: .8; --bl: 13px; --bw: 1.5px;
+    background:
+      linear-gradient(var(--bk),var(--bk)) left top / var(--bl) var(--bw) no-repeat,
+      linear-gradient(var(--bk),var(--bk)) left top / var(--bw) var(--bl) no-repeat,
+      linear-gradient(var(--bk),var(--bk)) right top / var(--bl) var(--bw) no-repeat,
+      linear-gradient(var(--bk),var(--bk)) right top / var(--bw) var(--bl) no-repeat,
+      linear-gradient(var(--bk),var(--bk)) left bottom / var(--bl) var(--bw) no-repeat,
+      linear-gradient(var(--bk),var(--bk)) left bottom / var(--bw) var(--bl) no-repeat,
+      linear-gradient(var(--bk),var(--bk)) right bottom / var(--bl) var(--bw) no-repeat,
+      linear-gradient(var(--bk),var(--bk)) right bottom / var(--bw) var(--bl) no-repeat; }
+  [data-theme="dark"] .cs-line::after { opacity: .55; }
+  .cs-line-text { font-family: var(--serif); font-style: italic; font-size: 1.12rem; line-height: 1.6; color: var(--text); }
+  .cs-word { background: none; border: none; padding: 0 1px; margin: 0; font: inherit; color: inherit; cursor: pointer; border-radius: 3px; position: relative; z-index: 1; }
+  .cs-word.on { font-style: normal; font-weight: 700; color: var(--accent); background: color-mix(in srgb, var(--accent) 16%, transparent); padding: 0 4px; text-transform: uppercase; letter-spacing: .03em; font-size: .92em; }
+  .cs-word:active { background: color-mix(in srgb, var(--accent) 10%, transparent); }
+  .cs-away { color: var(--text3); }
+  .cs-line-foot { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-top: 8px; min-height: 32px; position: relative; z-index: 1; }
+  .cs-seg { display: flex; gap: 4px; padding: 4px; margin: 0 0 10px; background: var(--surface2); border: 1px solid var(--border); border-radius: 99px; }
+  .cs-seg button { flex: 1; min-height: 38px; border: none; border-radius: 99px; background: none; font-family: var(--sans); font-size: .82rem; color: var(--text2); cursor: pointer; }
+  .cs-seg button.on { background: var(--accent); color: var(--on-accent); }
+  .cs-guide { font-size: .88rem; line-height: 1.6; color: var(--text2); margin: 0 0 8px; }
+  .cs-guide.quiet { font-style: italic; color: var(--text3); }
+  .cs-notes-h { font-family: var(--sans); font-size: .66rem; letter-spacing: .06em; text-transform: uppercase; color: var(--text3); margin: 14px 0 4px; }
+  .cs-input { width: 100%; min-height: 110px !important; margin-top: 6px; }
+  .cs-actions { display: flex; gap: 10px; margin-top: 10px; }
+  .cs-actions .btn { margin: 0; flex: 1; }
+  .cs-search { width: 100%; margin-bottom: 10px; padding: 10px 14px; border: 1px solid var(--border); border-radius: 99px; background: var(--surface); color: var(--text); font-family: var(--serif); font-size: 16px; }
+  .ch-day { padding: 12px 0; border-bottom: 1px solid var(--border-soft); }
+  .ch-date { font-family: var(--sans); font-size: .7rem; letter-spacing: .04em; color: var(--text3); margin-bottom: 4px; }
+  .ch-line { font-family: var(--serif); font-style: italic; font-size: 1rem; line-height: 1.55; color: var(--text); }
+  .ch-notes { margin-top: 4px; }
+  .ch-notes > summary { cursor: pointer; font-size: .8rem; color: var(--accent); font-family: var(--serif); font-style: italic; padding: 6px 0; list-style: none; }
+  .ch-notes > summary::-webkit-details-marker { display: none; }
+  .ch-notes > summary::before { content: '›'; display: inline-block; width: 12px; margin-right: 4px; transition: transform .2s; }
+  .ch-notes[open] > summary::before { transform: rotate(90deg); }
 </style>
 </head>
 <body>
@@ -2340,6 +2383,13 @@
   <div class="modal" style="max-width:520px">
     <div class="modal-handle"></div>
     <div id="petition-content"></div>
+  </div>
+</div>
+
+<div class="modal-bg" id="modal-carry">
+  <div class="modal" style="max-width:520px">
+    <div class="modal-handle"></div>
+    <div id="carry-sheet"></div>
   </div>
 </div>
 
@@ -4050,7 +4100,7 @@ function placeNavMark(){
 window.addEventListener('resize', () => requestAnimationFrame(placeNavMark));
 // Typographic apostrophes in interface text, applied as the page renders. Anything
 // you wrote, Scripture, and form fields are left exactly as they are.
-const APOS_SKIP = 'textarea, input, select, script, style, [contenteditable], .bb-verse, .bb-preview, .note-text, .he-snippet, .sv-text, .pl-prev-text, .pl-reflection-text, .card-title, .card-scripture, .p-title, .p-scripture, .p-ask, .step-prompt em, .step-ask-line em, .persp-block em, .detail-section p, .rv-name, .rv-excerpt, .rv-scripture, .ap-card-name, .ap-card-scripture, .link-card-title, .link-card-sub, .timeline-snippet, .timeline-title, .focus-passage-body, .focus-carry-body, .dp-recall-body, .scripture-ref, .psf-text, .pl-done-verse, .dp-inv-text, .dp-inv-option-text, .dp-inv-ref, .wf-word, .emo-chip, .pl-linked-chip, .note-ctx-name, .prayer-lib-text, .tech-example, #scripture-content, .heatmap-day-list, .emo-v-text, .carry-line, .carry-note-text, .carry-passage, .tech-yours-body, .dps-body, .dps-tab, mark';
+const APOS_SKIP = 'textarea, input, select, script, style, [contenteditable], .bb-verse, .bb-preview, .note-text, .he-snippet, .sv-text, .pl-prev-text, .pl-reflection-text, .card-title, .card-scripture, .p-title, .p-scripture, .p-ask, .step-prompt em, .step-ask-line em, .persp-block em, .detail-section p, .rv-name, .rv-excerpt, .rv-scripture, .ap-card-name, .ap-card-scripture, .link-card-title, .link-card-sub, .timeline-snippet, .timeline-title, .focus-passage-body, .focus-carry-body, .dp-recall-body, .scripture-ref, .psf-text, .pl-done-verse, .dp-inv-text, .dp-inv-option-text, .dp-inv-ref, .wf-word, .emo-chip, .pl-linked-chip, .note-ctx-name, .prayer-lib-text, .tech-example, #scripture-content, .heatmap-day-list, .emo-v-text, .carry-line, .carry-note-text, .carry-passage, .tech-yours-body, .cs-line, .ch-line, .ch-day .carry-note-text, .dps-body, .dps-tab, mark';
 function smartApostrophes(root){
   const w = document.createTreeWalker(root || document.body, NodeFilter.SHOW_TEXT, {
     acceptNode: n => (n.nodeValue.includes("'") && n.parentElement && !n.parentElement.closest(APOS_SKIP)) ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT
@@ -6353,6 +6403,7 @@ function carryCardHTML(){
       ${(()=>{ const lp=carryLineParts(c.line); return `<div class="carry-line">${esc(lp.text)}</div>${carryRefHTML(c.passage, lp.ref)}`; })()}
       ${carryNotesHTML(c, true)}
       <div class="carry-add"><input id="carry-note-input" placeholder="Add a thought as the day goes…" aria-label="Add a thought" onkeydown="if(event.key==='Enter'){event.preventDefault();carryAddNote()}"><button onclick="carryAddNote()">Add</button></div>
+      <div class="carry-links carry-more"><button class="carry-link" onclick="carrySitOpen()">Sit with it ›</button>${carryHistory().length ? `<button class="carry-link" onclick="carryHistOpen()">Earlier lines ›</button>` : ''}</div>
     </div>`;
   }
   if(c.dismissed) return '';
@@ -6372,11 +6423,78 @@ function carryCardHTML(){
       <div class="carry-quiet">Nothing chosen to carry yet today.</div>
       ${_carryChoosing ? chooser : `<div class="carry-links">
         ${prev ? `<button class="carry-link" onclick="carryAgain()">Carry ${esc(prev.when)}’s line again</button>` : ''}
-        <button class="carry-link" onclick="carryChoose(true)">Choose a line</button></div>`}
+        <button class="carry-link" onclick="carryChoose(true)">Choose a line</button>${carryHistory().length ? `<button class="carry-link" onclick="carryHistOpen()">Earlier lines ›</button>` : ''}</div>`}
       ${prev && !_carryChoosing ? `<div class="carry-passage" style="-webkit-line-clamp:2;font-size:.85rem">${esc(carryLineParts(prev.line).text)}</div>` : ''}
     </div>`;
 }
-function refreshCarryCards(){ document.querySelectorAll('.carry-slot').forEach(el => { el.innerHTML = carryCardHTML(); }); }
+function refreshCarryCards(){ document.querySelectorAll('.carry-slot').forEach(el => { el.innerHTML = carryCardHTML(); }); if(document.getElementById('modal-carry')?.classList.contains('open') && _carrySheet==='sit') carrySitRender(); }
+
+// ── Sit with it: today's line, a way to read it slowly, and the day's notes ──
+// Emphasize: tap a word to lean on it (the technique, done on your line itself).
+// Paraphrase: look away and say it back. Notes written here are today's carry notes.
+let _carrySheet = null, _carryTech = 'emphasize', _carryStress = -1, _carryAway = false;
+function carrySitOpen(){ _carrySheet='sit'; _carryStress=-1; _carryAway=false; carrySitRender(); openModal('modal-carry'); }
+function carrySitRender(){
+  const c = carryForDay(dateKey(new Date())); if(!c.line){ closeModal('modal-carry'); return; }
+  const lp = carryLineParts(c.line);
+  const words = lp.text.split(/\s+/);
+  const lineHTML = _carryTech==='emphasize'
+    ? words.map((w,i)=>`<button type="button" class="cs-word${i===_carryStress?' on':''}" onclick="carryStress(${i})">${esc(w)}</button>`).join(' ')
+    : (_carryAway ? `<span class="cs-away">Say it back in your own words…</span>` : esc(lp.text));
+  const t = MEDITATION_TECHNIQUES[_carryTech==='emphasize'?'wordstress':'paraphrase'];
+  const guide = _carryTech==='emphasize'
+    ? 'Tap a word to lean on it. Read the line again, stressing that word. Then the next.'
+    : t.lead;
+  document.getElementById('carry-sheet').innerHTML = `
+    <div class="cs-head"><span class="cs-mark">${ICON.sparkle}</span><h2>Sit with it</h2></div>
+    <div class="cs-line">
+      <div class="cs-line-text">${lineHTML}</div>
+      <div class="cs-line-foot">${carryRefHTML(c.passage, lp.ref)}${_carryTech==='paraphrase' ? `<button class="tech-yours-btn" onclick="_carryAway=!_carryAway;carrySitRender()">${_carryAway?'Look back':'Look away'}</button>` : ''}</div>
+    </div>
+    <div class="seg-ctl cs-seg" role="tablist">
+      <button role="tab" class="${_carryTech==='emphasize'?'on':''}" onclick="_carryTech='emphasize';_carryStress=-1;carrySitRender()">Emphasize</button>
+      <button role="tab" class="${_carryTech==='paraphrase'?'on':''}" onclick="_carryTech='paraphrase';_carryAway=false;carrySitRender()">Paraphrase</button>
+    </div>
+    <p class="cs-guide">${esc(guide)}</p>
+    ${_carryTech==='paraphrase' && t.closer ? `<p class="cs-guide quiet">${esc(t.closer)}</p>` : ''}
+    <div class="cs-notes-h">Today’s notes</div>
+    ${c.notes.length ? `<div class="carry-notes">${c.notes.map(n=>`<div class="carry-note"><span class="carry-note-time">${esc(carryTime(n.t))}</span><span class="carry-note-text">${esc(n.text).replace(/<br>/g,'\n')}</span></div>`).join('')}</div>` : ''}
+    <textarea id="carry-sit-input" class="note-text-input cs-input" placeholder="What are you noticing?" aria-label="What are you noticing?"></textarea>
+    <div class="cs-actions"><button class="btn btn-secondary" onclick="closeModal('modal-carry')">Close</button><button class="btn btn-primary" onclick="carrySitAdd()">Add note</button></div>`;
+}
+function carryStress(i){ _carryStress = _carryStress===i ? -1 : i; const keep=document.getElementById('carry-sit-input')?.value||''; carrySitRender(); const ta=document.getElementById('carry-sit-input'); if(ta) ta.value=keep; }
+function carrySitAdd(){
+  const el=document.getElementById('carry-sit-input'); const v=(el?.value||'').trim(); if(!v) return;
+  carryUpdate(dateKey(new Date()), d => { d.notes = d.notes || []; d.notes.push({ id: genId(), t: new Date().toISOString(), text: v }); });
+  refreshCarryCards(); showToast('✓ Added to today’s notes');
+}
+
+// ── Earlier lines: every past day with a line or notes, newest first ──
+function carryHistory(){
+  const today = dateKey(new Date()); const keys = new Set(Object.keys(loadCarryLog()));
+  loadDailySessions().forEach(s => { if((s.steps?.meditation?.carry||'').trim()) keys.add(sessionDateKey(s)); });
+  return [...keys].filter(k => k < today).sort().reverse().map(carryForDay).filter(c => c.line || c.notes.length);
+}
+let _carryHistQ = '';
+function carryHistOpen(){ _carrySheet='hist'; _carryHistQ=''; document.getElementById('carry-sheet').innerHTML = `
+    <div class="cs-head"><span class="cs-mark">${ICON.scroll||ICON.sparkle}</span><h2>Earlier lines</h2></div>
+    <input type="search" class="cs-search" placeholder="Search lines and notes…" aria-label="Search lines and notes" oninput="_carryHistQ=this.value;carryHistList()">
+    <div id="carry-hist-list"></div>
+    <button class="btn btn-secondary" style="margin-top:14px" onclick="closeModal('modal-carry')">Close</button>`;
+  carryHistList(); openModal('modal-carry'); }
+function carryHistList(){
+  const q = _carryHistQ.trim().toLowerCase();
+  const list = carryHistory().filter(c => !q || (c.line+' '+c.notes.map(n=>n.text).join(' ')).toLowerCase().includes(q));
+  const el = document.getElementById('carry-hist-list'); if(!el) return;
+  el.innerHTML = list.length ? list.map(c => {
+    const lp = carryLineParts(c.line); const d = new Date(c.key+'T12:00:00');
+    return `<div class="ch-day">
+      <div class="ch-date">${esc(d.toLocaleDateString(undefined,{weekday:'short', day:'numeric', month:'short', year: d.getFullYear()!==new Date().getFullYear()?'numeric':undefined}))}</div>
+      ${lp.text ? `<div class="ch-line">${esc(lp.text)}</div>` : ''}
+      ${carryRefHTML(c.passage, lp.ref)}
+      ${c.notes.length ? `<details class="ch-notes"${q?' open':''}><summary>${c.notes.length} note${c.notes.length===1?'':'s'}</summary><div class="carry-notes">${c.notes.map(n=>`<div class="carry-note"><span class="carry-note-time">${esc(carryTime(n.t))}</span><span class="carry-note-text">${esc(n.text).replace(/<br>/g,'\n')}</span></div>`).join('')}</div></details>` : ''}
+    </div>`; }).join('') : `<p class="cs-guide quiet">${q ? 'Nothing matches.' : 'Nothing here yet.'}</p>`;
+}
 function carryChoose(on){ _carryChoosing = on; refreshCarryCards(); if(on) setTimeout(() => document.getElementById('carry-line-input')?.focus(), 30); }
 function carrySetLine(){
   const el = document.getElementById('carry-line-input'); const v = (el?.value || '').trim(); if(!v) return;
