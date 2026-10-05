@@ -2638,7 +2638,17 @@
   .cat-tile { font-size: max(12px, .64rem); }
   .cd-band-mark { opacity: .16; }
   /* A7 */
-  #modal-focus-compose .modal { height: var(--vvh, 100%); }
+  #modal-focus-compose { inset: auto 0 auto 0; top: var(--vvt, 0px); height: var(--vvh, 100%); }
+  #modal-focus-compose .modal { height: 100%; }
+  #modal-focus-compose .focus-compose-textarea { min-height: min(34vh, calc(var(--vvh, 100vh) * .28)); }
+  .kb-up #modal-focus-compose .focus-passage-body, .kb-up #modal-focus-compose .focus-carry-body { max-height: calc(var(--vvh, 100vh) * .22); }
+  .kb-up #modal-focus-compose .modal { padding-top: 6px; padding-bottom: 8px; }
+  .kb-up #modal-focus-compose .modal-handle { display: none; }
+  .kb-up #modal-focus-compose .focus-pinned { margin-bottom: 6px; padding-bottom: 4px; }
+  .kb-up #modal-focus-compose .focus-passage-head { margin-bottom: 2px; }
+  .kb-up #modal-focus-compose .focus-compose-heading { margin-bottom: 0; }
+  .kb-up #modal-focus-compose .focus-compose-prompt { margin-bottom: 8px; }
+  .kb-up #modal-focus-compose .focus-compose-actions { margin-top: 8px; }
   /* A8 more contrast when asked for */
   @media (prefers-contrast: more) {
     :root { --text3: var(--text2); --text-quiet: var(--text2); --border: #a08a74; --border-soft: #c4b29e; }
@@ -5049,7 +5059,25 @@ function sessionExit(){
 // row above the iPhone keyboard.
 (function(){
   const vv = window.visualViewport; if(!vv) return;
-  const set = () => document.documentElement.style.setProperty('--vvh', vv.height + 'px');
+  // Height and position both: when the keyboard opens, iOS also scrolls the visible
+  // area down to the field, so a sheet sized to the height alone ends up above it.
+  let kbUp = false, folded = [];
+  const set = () => { const r = document.documentElement.style;
+    r.setProperty('--vvh', vv.height + 'px'); r.setProperty('--vvt', vv.offsetTop + 'px');
+    const up = vv.height < document.documentElement.clientHeight - 120;   // the keyboard is open
+    if(up === kbUp) return;
+    kbUp = up; document.documentElement.classList.toggle('kb-up', up);
+    // While typing in focus mode, the pinned passage and earlier answers fold to
+    // their two-line peek so the writing box has the room; they unfold after.
+    if(!document.getElementById('modal-focus-compose')?.classList.contains('open')){ folded = []; return; }
+    if(up){
+      folded = [];
+      if(_focusPassageOpen && document.getElementById('focus-passage')){ toggleFocusPassage(); folded.push(toggleFocusPassage); }
+      if(_focusCarryOpen && document.getElementById('focus-carry')){ toggleFocusCarry(); folded.push(toggleFocusCarry); }
+      const ta = document.getElementById('focus-compose-textarea');
+      if(ta && document.activeElement === ta) setTimeout(() => ta.scrollIntoView({ block:'nearest' }), 60);
+    } else { folded.forEach(f => f()); folded = []; }
+  };
   set(); vv.addEventListener('resize', set); vv.addEventListener('scroll', set);
 })();
 function flashSaved(hint){
@@ -6711,6 +6739,7 @@ function openFocusCompose(textareaId){
     </div>
   `;
   if(_silenceEnd) refreshSilenceWidgets();  // populate the freshly-rendered widget
+  fieldAttrs(content);
   if(passage) resolveFocusPassage(passage.text);
   openModal('modal-focus-compose');
   refreshFocusFades();   // after open — a hidden modal measures as zero-height
@@ -6742,6 +6771,7 @@ function saveFocusCompose(){
 function fieldAttrs(root){
   (root || document).querySelectorAll('textarea:not([data-fa]), input[type=text]:not([data-fa]), input:not([type]):not([data-fa]), input[type=search]:not([data-fa])').forEach(el => {
     el.dataset.fa = '1';
+    if(!el.hasAttribute('autocomplete')) el.setAttribute('autocomplete', 'off');   // no contact AutoFill over prayer
     if(!el.hasAttribute('autocapitalize')) el.setAttribute('autocapitalize', el.matches('.pl-search-input, .bb-search, .cs-search, #gs-input') ? 'none' : 'sentences');
     if(!el.hasAttribute('spellcheck')) el.setAttribute('spellcheck', el.matches('.pl-search-input, .bb-search, .cs-search, #gs-input') ? 'false' : 'true');
     if(el.tagName === 'INPUT' && !el.hasAttribute('enterkeyhint')) el.setAttribute('enterkeyhint', 'done');
