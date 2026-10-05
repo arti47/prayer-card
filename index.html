@@ -39,6 +39,12 @@
     : savedTheme;
   document.documentElement.setAttribute('data-theme', actualTheme);
   document.documentElement.setAttribute('data-text-size', localStorage.getItem('text_size') || 'medium');
+  // Colour scheme: the CSS built by applyPalette() last time, applied before paint.
+  var pal = localStorage.getItem('palette'), palCss = localStorage.getItem('palette_css');
+  if(pal && pal !== 'parchment' && palCss){
+    document.documentElement.setAttribute('data-palette', pal);
+    var st = document.createElement('style'); st.id = 'palette-style'; st.textContent = palCss; document.head.appendChild(st);
+  }
 })();
 </script>
 <style>
@@ -71,6 +77,12 @@
     --answered: #3f6e4b;   /* was #4a7c59 — 4.29:1 on its own tint; now 5.0:1 */
     --answered-bg: #eaf3ec;
     --red: #c0392b;
+    /* Colour-scheme hooks (Appearance → Colour). Parchment's own values; a scheme
+       overrides them on html[data-palette]. */
+    --hdr: var(--accent);
+    --banner: linear-gradient(135deg, #4a3020 0%, #7a5c3e 60%, #9a7a52 100%);
+    --pray-btn: linear-gradient(135deg, #7a5c3e 0%, #9a7a52 100%);
+    --ink-cream: #7a5c3e;
     /* Two-part shadows: a tight contact edge so a card sits on the page, and a
        wider warm bloom so it still feels lifted rather than pasted on. */
     --shadow: 0 1px 2px rgba(92,64,38,0.06), 0 3px 14px rgba(92,64,38,0.07);
@@ -115,12 +127,12 @@
 
   /* Header — a softer slab: less shadow, gentler subtitle, so it frames rather
      than announces. Height is unchanged; it is the app's identity on every screen. */
-  header { background: var(--accent); color: #fff; padding: 16px 20px 14px; text-align: center; position: sticky; top: 0; z-index: 100; box-shadow: 0 1px 3px rgba(60,40,22,0.16); }
+  header { background-color: var(--hdr); color: #fff; padding: 16px 20px 14px; text-align: center; position: sticky; top: 0; z-index: 100; box-shadow: 0 1px 3px rgba(60,40,22,0.16); }
   header h1 { font-size: var(--fs-8); font-weight: normal; letter-spacing: .04em; }
   header p { font-size: var(--fs-1); opacity: .62; margin-top: 3px; font-family: var(--sans); letter-spacing: .05em; text-transform: uppercase; }
   /* The same paper grain as the page, lightened onto the brown so the header reads
      as the book's cover rather than a flat bar. */
-  header { background-image: var(--grain); background-blend-mode: soft-light; background-size: 180px; transition: padding .22s ease; }
+  header { background-image: var(--grain), var(--hdr-img, linear-gradient(transparent, transparent)); background-blend-mode: soft-light, normal; background-size: 180px, 100% 100%; transition: padding .22s ease; }
   header h1, header p { transition: font-size .22s ease, opacity .18s ease, margin .22s ease; }
   /* Inside a Daily or Weekly session the header steps back to a thin bar — the
      screen belongs to the prayer. The tab homes keep the full title. */
@@ -400,7 +412,7 @@
   .empty p { font-size: var(--fs-4); line-height: 1.6; }
 
   /* ════ PRAY & LISTEN ════ */
-  .pl-banner { background: linear-gradient(135deg, #4a3020 0%, #7a5c3e 60%, #9a7a52 100%); border-radius: var(--radius); padding: 22px 20px 20px; color: #fff; margin-bottom: 18px; box-shadow: var(--shadow-lg); text-align: center; }
+  .pl-banner { background: var(--banner); border-radius: var(--radius); padding: 22px 20px 20px; color: #fff; margin-bottom: 18px; box-shadow: var(--shadow-lg); text-align: center; }
   .pl-banner .pl-date { font-size: var(--fs-1); opacity: .65; font-family: var(--sans); text-transform: uppercase; letter-spacing: .08em; margin-bottom: 6px; }
   .pl-banner h2 { font-size: var(--fs-7); font-weight: normal; letter-spacing: .02em; }
   .pl-banner p { font-size: var(--fs-4); opacity: .8; margin-top: 6px; line-height: 1.5; }
@@ -591,6 +603,18 @@
   .hn-freq-row { cursor: pointer; }
   .hn-freq-sessions { margin: 4px 0 12px; }
   /* Guide tiles */
+  /* Colour scheme picker (Appearance → Colour) */
+  #palette-picker .pal-sub { font-size: var(--fs-3); color: var(--text3); font-style: italic; margin: 10px 0 6px; }
+  .pal-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
+  .pal-tile { display: flex; flex-direction: column; align-items: center; gap: 5px; padding: 6px 4px 7px; margin: 0; width: auto; background: var(--surface); border: 1px solid var(--border-soft); border-radius: var(--radius-sm); cursor: pointer; font-family: var(--serif); color: var(--text2); min-height: 44px; }
+  .pal-tile.active { border-color: var(--accent); box-shadow: 0 0 0 1.5px var(--accent); color: var(--text); }
+  .pal-chip { position: relative; display: block; width: 100%; max-width: 64px; height: 40px; border-radius: 6px; border: 1px solid rgba(0,0,0,.12); overflow: hidden; }
+  .pal-band { position: absolute; left: 0; right: 0; top: 0; height: 12px; }
+  .pal-dots { position: absolute; left: 7px; bottom: 6px; display: flex; gap: 4px; }
+  .pal-dots i { display: block; width: 11px; height: 11px; border-radius: 50%; }
+  .pal-name { font-size: var(--fs-2); line-height: 1.2; text-align: center; }
+  .pal-tile.active .pal-name { font-weight: bold; }
+  @media (max-width: 359px) { .pal-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
   /* Guide: Start here + three rhythms */
   #view-guide { --g-day: #8f6a24; --g-card: #7e5944; --g-week: #4f6390; }
   [data-theme="dark"] #view-guide { --g-day: #d8b46a; --g-card: #c9a07f; --g-week: #a3b3d9; }
@@ -797,7 +821,7 @@
   .pl-forget-chip { background: var(--surface); border: 1px solid var(--accent2); color: var(--accent); padding: 11px 14px; border-radius: var(--r-pill); font-size: var(--fs-3); font-family: var(--serif); font-style: italic; cursor: pointer; line-height: 1.45; transition: background .15s, color .15s, transform .12s; }
   .pl-forget-chip:hover, .pl-forget-chip:active { background: var(--accent); color: var(--on-accent); }
   .pl-forget-chip:active { transform: scale(.97); }
-  [data-theme="dark"] .pl-forget-chip:hover, [data-theme="dark"] .pl-forget-chip:active { color: #1a1410; }
+  [data-theme="dark"] .pl-forget-chip:hover, [data-theme="dark"] .pl-forget-chip:active { color: var(--on-accent); }
   .pl-chart-btn { display: block; width: 100%; padding: 11px; background: var(--accent-light); border: 1.5px solid var(--accent2); border-radius: var(--radius-sm); color: var(--accent); font-family: var(--serif); font-size: var(--fs-5); cursor: pointer; margin: 8px 0 10px; transition: background .15s; }
   .pl-chart-btn:active { background: #e8d8c4; }
   .pl-selected-needs { margin: 0 0 12px; }
@@ -965,7 +989,7 @@
   .toast.show { opacity: 1; }
   /* --text flips to cream in dark mode, so the toast's text must flip with it. */
   [data-theme="dark"] .toast, [data-theme="dark"] .undo-toast, [data-theme="dark"] .update-toast { color: var(--bg); }
-  [data-theme="dark"] .undo-toast button { color: #7a5c3e; }   /* light-mode accent: 5.4:1 on the cream toast */
+  [data-theme="dark"] .undo-toast button { color: var(--ink-cream); }   /* light-mode accent: 5.4:1 on the cream toast */
   .update-toast { position: fixed; bottom: calc(var(--nav-h, 76px) + 80px); left: 50%; transform: translateX(-50%); background: var(--accent); color: var(--on-accent); padding: 11px 18px; border-radius: var(--r-pill); font-size: var(--fs-4); font-family: var(--sans); cursor: pointer; box-shadow: var(--shadow-lg); z-index: 1000; opacity: 0; pointer-events: none; transition: opacity .25s; white-space: nowrap; max-width: calc(100vw - 24px); }
   .update-toast strong { font-weight: 700; text-decoration: underline; }
   .update-toast.show { opacity: 1; pointer-events: auto; }
@@ -1082,7 +1106,7 @@
   .timeline-entry:active { transform: scale(.99); }
   .timeline-entry.type-daily    { border-left: 3px solid #816437; }
   .timeline-entry.type-weekly   { border-left: 3px solid #406b77; }
-  .timeline-entry.type-note     { border-left: 3px solid #7a5c3e; }
+  .timeline-entry.type-note     { border-left: 3px solid var(--accent); }
   .timeline-entry.type-answered { border-left: 3px solid var(--answered); }
   .timeline-icon { font-size: var(--fs-8); line-height: 1.2; flex-shrink: 0; align-self: flex-start; }
   .timeline-icon .ico { width: 20px; height: 20px; color: var(--accent); display: block; margin-top: 2px; }
@@ -1134,7 +1158,7 @@
   .pl-view-toggle { display: flex; gap: 6px; margin-bottom: 14px; background: var(--surface2); border-radius: var(--r-pill); padding: 4px; border: 1px solid var(--border); }
   .pl-view-toggle button { flex: 1; padding: 8px 10px; border: none; background: transparent; color: var(--text3); font-family: var(--serif); font-size: var(--fs-4); cursor: pointer; border-radius: var(--r-pill); transition: all .15s; letter-spacing: .02em; }
   .pl-view-toggle button.active { background: var(--accent); color: var(--on-accent); box-shadow: 0 1px 3px rgba(100,70,40,0.18); }
-  [data-theme="dark"] .pl-view-toggle button.active { color: #1a1410; }
+  [data-theme="dark"] .pl-view-toggle button.active { color: var(--on-accent); }
 
   .pl-calendar { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px 16px 16px; margin-bottom: 14px; box-shadow: var(--shadow); }
   .pl-cal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
@@ -1149,7 +1173,7 @@
   .pl-cal-day.has-sessions:hover, .pl-cal-day.has-sessions:active { background: var(--surface2); }
   .pl-cal-day.today { box-shadow: inset 0 0 0 1.5px var(--accent2), inset 0 0 0 3.5px var(--surface), inset 0 0 0 4.5px color-mix(in srgb, var(--accent2) 45%, transparent); color: var(--accent); font-weight: bold; }
   .pl-cal-day.selected { background: var(--accent); color: var(--on-accent) !important; box-shadow: none; }
-  [data-theme="dark"] .pl-cal-day.selected { color: #1a1410 !important; }
+  [data-theme="dark"] .pl-cal-day.selected { color: var(--on-accent) !important; }
   /* Prayed days carry a tiny ✦ rather than a dot; today sits in a fine double ring. */
   .pl-cal-dot { width: 8px; height: 8px; color: var(--accent2); margin-top: 1px; display: flex; }
   .pl-cal-dot svg { width: 100%; height: 100%; }
@@ -1160,12 +1184,12 @@
   /* Search past sessions (P3 #12) */
   .pl-search-row { position: relative; margin-bottom: 14px; }
   .pl-search-input { width: 100%; padding: 10px 36px 10px 16px; border: 1.5px solid var(--border); border-radius: var(--r-pill); background: var(--surface); color: var(--text); font-family: var(--serif); font-size: var(--fs-5); outline: none; transition: border-color .15s, box-shadow .15s; }
-  .pl-search-input:focus { border-color: var(--accent2); box-shadow: 0 0 0 3px rgba(176, 125, 82, 0.12); }
+  .pl-search-input:focus { border-color: var(--accent2); box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent2) 14%, transparent); }
   .pl-search-input::placeholder { color: var(--text3); font-style: italic; }
   .pl-search-clear { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: var(--surface2); border: 1px solid var(--border); color: var(--text3); cursor: pointer; font-size: var(--fs-4); padding: 0; width: 22px; height: 22px; border-radius: 50%; line-height: 1; display: flex; align-items: center; justify-content: center; }
   .pl-search-clear:hover, .pl-search-clear:active { color: var(--accent); border-color: var(--accent2); }
   .pl-search-count { font-size: var(--fs-2); font-family: var(--sans); color: var(--text3); margin: 0 0 10px; text-align: center; letter-spacing: .04em; }
-  mark { background: rgba(176, 125, 82, 0.35); color: inherit; padding: 1px 2px; border-radius: 2px; }
+  mark { background: color-mix(in srgb, var(--accent2) 35%, transparent); color: inherit; padding: 1px 2px; border-radius: 2px; }
   [data-theme="dark"] mark { background: rgba(212, 168, 114, 0.32); color: #f8e8d0; }
 
   /* Step transitions (P3 #11) — direction-aware, subtle, respects reduced-motion */
@@ -1255,7 +1279,7 @@
   .tut-btn-back, .tut-btn-next { padding: 10px 16px; border: 1.5px solid var(--border); background: var(--surface); border-radius: var(--radius-sm); font-family: var(--serif); font-size: var(--fs-5); cursor: pointer; color: var(--text2); }
   .tut-btn-back:active, .tut-btn-next:active { opacity: .8; }
   .tut-btn-next { background: var(--accent); color: var(--on-accent); border-color: var(--accent); margin-left: auto; }
-  [data-theme="dark"] .tut-btn-next { color: #1a1410; }
+  [data-theme="dark"] .tut-btn-next { color: var(--on-accent); }
   .tut-btn-skip { background: transparent; border: none; flex: 1; color: var(--text3); font-size: var(--fs-4); text-decoration: underline; font-family: var(--sans); cursor: pointer; padding: 6px; }
   .tut-nav-final { margin-top: 22px; display: flex; flex-direction: column; gap: 10px; }
   .tut-nav-final .btn { margin: 0; }
@@ -1282,7 +1306,7 @@
   .dp-q-toggle { display: inline-flex; gap: 4px; background: var(--surface2); border-radius: var(--r-pill); padding: 3px; border: 1px solid var(--border); margin: 14px 0 12px; }
   .dp-q-toggle button { padding: 6px 14px; border: none; background: transparent; color: var(--text2); font-family: var(--serif); font-size: var(--fs-4); cursor: pointer; border-radius: var(--r-pill); }
   .dp-q-toggle button.active { background: var(--accent); color: var(--on-accent); }
-  [data-theme="dark"] .dp-q-toggle button.active { color: #1a1410; }
+  [data-theme="dark"] .dp-q-toggle button.active { color: var(--on-accent); }
   .dp-questions { margin-top: 6px; }
   .dp-q-row { margin-bottom: 14px; }
   .dp-q-label { font-size: var(--fs-1); font-family: var(--sans); text-transform: uppercase; letter-spacing: .055em; font-weight: 600; margin-bottom: 3px; }
@@ -1317,7 +1341,7 @@
   .tech-dim-text { font-size: var(--fs-5); line-height: 1.65; color: var(--text2); margin-top: 6px; }
 
   /* "Pray these now" button on Story Cards tab */
-  .btn-pray-now { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 2px 10px; text-align: center; width: 100%; padding: 14px 16px; background: linear-gradient(135deg, #7a5c3e 0%, #9a7a52 100%); color: #fff; border: none; border-radius: var(--radius); font-family: var(--serif); font-size: var(--fs-6); font-weight: bold; cursor: pointer; box-shadow: var(--shadow); margin-bottom: 18px; transition: transform .12s; }
+  .btn-pray-now { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 2px 10px; text-align: center; width: 100%; padding: 14px 16px; background: var(--pray-btn); color: #fff; border: none; border-radius: var(--radius); font-family: var(--serif); font-size: var(--fs-6); font-weight: bold; cursor: pointer; box-shadow: var(--shadow); margin-bottom: 18px; transition: transform .12s; }
   .btn-pray-now:active { transform: scale(.99); }
   /* Label holds one line at any supported text size; the count yields space first. */
   .btn-pray-now .bpn-label { white-space: nowrap; flex: 0 0 auto; }
@@ -1372,7 +1396,7 @@
   /* 44px hit regions without changing the drawn size. */
   .silence-active .silence-extend::after, .silence-active .silence-cancel::after { content: ''; position: absolute; inset: -11px -4px; }
   .silence-active .silence-extend:hover, .silence-active .silence-extend:active { background: var(--accent); color: var(--on-accent); }
-  [data-theme="dark"] .silence-active .silence-extend:hover, [data-theme="dark"] .silence-active .silence-extend:active { color: #1a1410; }
+  [data-theme="dark"] .silence-active .silence-extend:hover, [data-theme="dark"] .silence-active .silence-extend:active { color: var(--on-accent); }
   .silence-active .silence-cancel { background: none; border: none; color: var(--text2); margin-left: 2px; cursor: pointer; padding: 2px; line-height: 1; position: relative; display: flex; }
   .silence-active .silence-cancel .ico { width: 17px; height: 17px; }
   .silence-active .silence-cancel:hover { color: var(--red); }
@@ -1748,6 +1772,9 @@
     --rule: rgba(212,168,114,.09);
     --margin-rule: rgba(212,140,114,.22);
     --on-accent: #1a1410;
+    --hdr-d: #1f1810;
+    --banner: linear-gradient(135deg, #241a11 0%, #3a2c1d 60%, #4a3a26 100%);
+    --pray-btn: linear-gradient(135deg, #3a2c1d 0%, #4d3c27 100%);
     --heat1: #6b5334; --heat2: #92724a; --heat3: #b68f5e; --heat4: #d4a872;
     --answered: #80c89a;
     --answered-bg: #1f3a28;
@@ -1757,9 +1784,9 @@
   }
   /* Both gradient slabs are lit for a pale page; on a dark one they glowed.
      Dim them to sit with the surrounding surfaces instead of floating above them. */
-  [data-theme="dark"] .pl-banner { background: linear-gradient(135deg, #241a11 0%, #3a2c1d 60%, #4a3a26 100%); color: var(--text); }
-  [data-theme="dark"] .btn-pray-now { background: linear-gradient(135deg, #3a2c1d 0%, #4d3c27 100%); color: var(--text); box-shadow: var(--shadow); }
-  [data-theme="dark"] header { background: #1f1810; border-bottom: 1px solid var(--border); }
+  [data-theme="dark"] .pl-banner { background: var(--banner); color: var(--text); }
+  [data-theme="dark"] .btn-pray-now { background: var(--pray-btn); color: var(--text); box-shadow: var(--shadow); }
+  [data-theme="dark"] header { background: var(--hdr-d); border-bottom: 1px solid var(--border); }
   [data-theme="dark"] header h1 { color: var(--accent); }
   [data-theme="dark"] header p { color: var(--text3); }
 
@@ -1802,7 +1829,7 @@
   [data-theme="dark"] input[type=text],
   [data-theme="dark"] select { color-scheme: dark; }
 
-  [data-theme="dark"] .theme-btn.active, [data-theme="dark"] .size-btn.active { color: #1a1410; }
+  [data-theme="dark"] .theme-btn.active, [data-theme="dark"] .size-btn.active { color: var(--on-accent); }
 
   /* ── Dark mode readability sweep for Weekly Deep Time + Daily Prayer step colors ──
      The step palette (Humble purple, Confess burgundy, etc.) is tuned for LIGHT mode —
@@ -1905,8 +1932,8 @@
   .prayer-lib-use-btn { display: block; width: calc(100% - 32px); margin: 4px 16px 14px 16px; padding: 9px 12px; background: var(--accent); color: var(--on-accent); border: none; border-radius: var(--radius-sm); font-family: var(--serif); font-size: var(--fs-4); cursor: pointer; transition: background .15s, transform .12s; letter-spacing: .01em; }
   .prayer-lib-use-btn:hover { background: var(--text); }
   .prayer-lib-use-btn:active { transform: scale(.98); }
-  [data-theme="dark"] .prayer-lib-use-btn { color: #1a1410; }
-  [data-theme="dark"] .prayer-lib-use-btn:hover { background: var(--accent2); color: #1a1410; }
+  [data-theme="dark"] .prayer-lib-use-btn { color: var(--on-accent); }
+  [data-theme="dark"] .prayer-lib-use-btn:hover { background: var(--accent2); color: var(--on-accent); }
 
   /* Inline Append / Replace / Cancel prompt — shown when the user clicks "Use this
      prayer" and the target textarea already has content. Replaces the use button. */
@@ -1915,7 +1942,7 @@
   .prayer-lib-action-buttons { display: flex; gap: 6px; flex-wrap: wrap; }
   .prayer-lib-action-btn { flex: 1; min-width: 90px; padding: 8px 10px; background: var(--surface); border: 1px solid var(--accent2); border-radius: var(--radius-sm); color: var(--accent); font-family: var(--serif); font-size: var(--fs-4); cursor: pointer; transition: background .15s, color .15s; }
   .prayer-lib-action-btn:hover, .prayer-lib-action-btn:active { background: var(--accent); color: var(--on-accent); }
-  [data-theme="dark"] .prayer-lib-action-btn:hover, [data-theme="dark"] .prayer-lib-action-btn:active { color: #1a1410; }
+  [data-theme="dark"] .prayer-lib-action-btn:hover, [data-theme="dark"] .prayer-lib-action-btn:active { color: var(--on-accent); }
   .prayer-lib-action-btn.cancel { color: var(--text3); border-color: var(--border); }
   .prayer-lib-action-btn.cancel:hover, .prayer-lib-action-btn.cancel:active { background: var(--surface2); color: var(--text2); border-color: var(--text3); }
 
@@ -2809,6 +2836,8 @@
         <button class="theme-btn" data-theme="dark" onclick="setTheme('dark')"><span class="swatch sw-dark" aria-hidden="true"></span><span data-ico="moon"></span>Dark</button>
         <button class="theme-btn" data-theme="auto" onclick="setTheme('auto')"><span class="swatch sw-auto" aria-hidden="true"></span><span data-ico="sparkle"></span>Auto</button>
       </div>
+      <p class="appearance-label">Colour</p>
+      <div id="palette-picker"></div>
       <p class="appearance-label">Text size</p>
       <div class="theme-row">
         <button class="size-btn" data-size="small" onclick="setTextSize('small')"><span class="aa" style="font-size:14px" aria-hidden="true">Aa</span>Small</button>
@@ -6834,7 +6863,7 @@ function showView(name){
   if(name==='cards'){ fab.style.display='flex'; fab.onclick=openNewCard; renderCards(); }
   if(name==='daily') renderDailyPrayer();
   if(name==='pl') renderPL();
-  if(name==='reflect'){ _heatmapSelectedKey = null; renderReflectBand(); renderStats(); renderReflectSections(); applyTheme(); applyTextSize(); populateObsidianFields(); const t=document.getElementById('bible-fab-toggle'); if(t) t.checked=bibleFabEnabled(); }
+  if(name==='reflect'){ _heatmapSelectedKey = null; renderReflectBand(); renderStats(); renderReflectSections(); applyTheme(); applyTextSize(); renderPalettePicker(); populateObsidianFields(); const t=document.getElementById('bible-fab-toggle'); if(t) t.checked=bibleFabEnabled(); }
   if(name==='guide'){ renderInstallBlock(); renderGuideStart(); }
   if(name==='reflect'||name==='guide'){ const h=document.getElementById(name+'-hero'); if(h && !h.innerHTML) h.innerHTML=pageHeroHTML(name==='reflect'?'Reflect':'Guide', name); }
   syncFabPadding();   // after both buttons have settled for this view
@@ -10025,6 +10054,80 @@ function setTheme(theme){
   safeSetItem('theme', theme);
   applyTheme();
 }
+// ── Colour schemes (Appearance → Colour) ──
+// Parchment is the stylesheet's own palette. Every other scheme overrides the
+// colour tokens on html[data-palette] — light values, and a dark set derived
+// from them (contrast-checked: text, links and buttons ≥ 4.5:1 in both modes).
+// Step, category, feeling and rubric colours are identity, not scheme, and stay.
+// The generated CSS is kept in localStorage so the <head> bootstrap can apply
+// it before first paint.
+const PALETTES = {
+  parchment: {"name":"Parchment","group":"one","sw":{"bg":"#f5f0eb","hdr":"#7a5c3e","a":"#7a5c3e","b":"#b07d52"},"light":null,"dark":null},
+  lapis: {"name":"Lapis","group":"one","sw":{"bg":"#f1f0ea","hdr":["#2e4a72"],"a":"#2e4a72","b":"#a8843a"},"light":{"--bg":"#f1f0ea","--surface":"#fdfcf7","--surface2":"#e9e8e0","--border":"#c3c4c4","--border-soft":"#dcdcd6","--accent":"#2e4a72","--accent2":"#a8843a","--accent-light":"#e5e9f0","--text":"#1b2232","--text2":"#465166","--text3":"#56627a","--text-quiet":"#8a91a2","--rule":"color-mix(in srgb,#2e4a72 10%,transparent)","--margin-rule":"color-mix(in srgb,#a8843a 38%,transparent)","--heat1":"#adb6c0","--heat2":"#8695a8","--heat3":"#596f8c","--heat4":"#2e4a72","--shadow":"0 1px 2px rgba(30,42,66,.06),0 3px 14px rgba(30,42,66,.07)","--shadow-lg":"0 2px 6px rgba(30,42,66,.10),0 12px 36px rgba(30,42,66,.14)","--hdr":"#2e4a72","--banner":"linear-gradient(135deg,#203450 0%,#2e4a72 60%,#535b61 100%)","--pray-btn":"linear-gradient(135deg,#2e4a72 0%,#535b61 100%)","--ink-cream":"#2e4a72","--meta":"#2e4a72"},"dark":{"--bg":"#171610","--surface":"#232118","--surface2":"#2c2a1e","--border":"#4f4c3b","--border-soft":"#373529","--accent-light":"#1d2939","--text":"#edebde","--text2":"#c0bca5","--text3":"#aeaa93","--text-quiet":"#8f8a70","--accent":"#89a7d2","--accent2":"#c1a367","--on-accent":"#171610","--rule":"color-mix(in srgb,#89a7d2 9%,transparent)","--margin-rule":"color-mix(in srgb,#c1a367 26%,transparent)","--heat1":"#3f4954","--heat2":"#56667b","--heat3":"#7087a7","--heat4":"#89a7d2","--hdr-d":"#131820","--banner":"linear-gradient(135deg,#131820 0%,#1e2733 60%,#333638 100%)","--pray-btn":"linear-gradient(135deg,#1e2733 0%,#283343 100%)","--ink-cream":"#2e4a72","--meta":"#131820"}},
+  olive: {"name":"Olive","group":"one","sw":{"bg":"#f1f1e7","hdr":["#4d5c31"],"a":"#4d5c31","b":"#8c9656"},"light":{"--bg":"#f1f1e7","--surface":"#fcfcf5","--surface2":"#e8e9dc","--border":"#c4c7b0","--border-soft":"#dcdfcc","--accent":"#4d5c31","--accent2":"#8c9656","--accent-light":"#e8ecd9","--text":"#212616","--text2":"#50573d","--text3":"#5b6248","--text-quiet":"#878d74","--rule":"color-mix(in srgb,#4d5c31 10%,transparent)","--margin-rule":"color-mix(in srgb,#8c9656 38%,transparent)","--heat1":"#b8bda7","--heat2":"#979f83","--heat3":"#717d59","--heat4":"#4d5c31","--shadow":"0 1px 2px rgba(52,60,30,.06),0 3px 14px rgba(52,60,30,.07)","--shadow-lg":"0 2px 6px rgba(52,60,30,.10),0 12px 36px rgba(52,60,30,.14)","--hdr":"#4d5c31","--banner":"linear-gradient(135deg,#364022 0%,#4d5c31 60%,#606d3c 100%)","--pray-btn":"linear-gradient(135deg,#4d5c31 0%,#606d3c 100%)","--ink-cream":"#4d5c31","--meta":"#4d5c31"},"dark":{"--bg":"#18180f","--surface":"#242416","--surface2":"#2e2e1c","--border":"#525238","--border-soft":"#3a3a27","--accent-light":"#2f3720","--text":"#eeeedd","--text2":"#c2c2a3","--text3":"#aeae93","--text-quiet":"#8f8f70","--accent":"#b3cb85","--accent2":"#acb672","--on-accent":"#18180f","--rule":"color-mix(in srgb,#b3cb85 9%,transparent)","--margin-rule":"color-mix(in srgb,#acb672 26%,transparent)","--heat1":"#4e5738","--heat2":"#6d7a50","--heat3":"#91a46b","--heat4":"#b3cb85","--hdr-d":"#1b1e15","--banner":"linear-gradient(135deg,#1b1e15 0%,#2b3021 60%,#3a3f2c 100%)","--pray-btn":"linear-gradient(135deg,#2b3021 0%,#393f2c 100%)","--ink-cream":"#4d5c31","--meta":"#1b1e15"}},
+  vespers: {"name":"Vespers","group":"one","sw":{"bg":"#f5eef0","hdr":["#683a53"],"a":"#683a53","b":"#ad7488"},"light":{"--bg":"#f5eef0","--surface":"#fffbfb","--surface2":"#eee4e6","--border":"#d0bec3","--border-soft":"#e5d8dc","--accent":"#683a53","--accent2":"#ad7488","--accent-light":"#f1e3e9","--text":"#2a1621","--text2":"#614754","--text3":"#715565","--text-quiet":"#9c8290","--rule":"color-mix(in srgb,#683a53 10%,transparent)","--margin-rule":"color-mix(in srgb,#ad7488 38%,transparent)","--heat1":"#c4afb9","--heat2":"#a78b9a","--heat3":"#876276","--heat4":"#683a53","--shadow":"0 1px 2px rgba(70,36,54,.06),0 3px 14px rgba(70,36,54,.07)","--shadow-lg":"0 2px 6px rgba(70,36,54,.10),0 12px 36px rgba(70,36,54,.14)","--hdr":"#683a53","--banner":"linear-gradient(135deg,#49293a 0%,#683a53 60%,#7d4b63 100%)","--pray-btn":"linear-gradient(135deg,#683a53 0%,#7d4b63 100%)","--ink-cream":"#683a53","--meta":"#683a53"},"dark":{"--bg":"#180f11","--surface":"#24161a","--surface2":"#2e1c21","--border":"#52383f","--border-soft":"#39272d","--accent-light":"#36212c","--text":"#eedde2","--text2":"#c2a3ac","--text3":"#ae939b","--text-quiet":"#8f7079","--accent":"#cb8bae","--accent2":"#b5738a","--on-accent":"#180f11","--rule":"color-mix(in srgb,#cb8bae 9%,transparent)","--margin-rule":"color-mix(in srgb,#b5738a 26%,transparent)","--heat1":"#573a48","--heat2":"#7a5367","--heat3":"#a4708b","--heat4":"#cb8bae","--hdr-d":"#1e151a","--banner":"linear-gradient(135deg,#1e151a 0%,#302229 60%,#3e2e35 100%)","--pray-btn":"linear-gradient(135deg,#302229 0%,#3f2c36 100%)","--ink-cream":"#683a53","--meta":"#1e151a"}},
+  clay: {"name":"Clay","group":"one","sw":{"bg":"#f6eee7","hdr":["#93452a"],"a":"#93452a","b":"#c4825a"},"light":{"--bg":"#f6eee7","--surface":"#fffaf4","--surface2":"#f0e4d9","--border":"#d5bead","--border-soft":"#e8d9cc","--accent":"#93452a","--accent2":"#c4825a","--accent-light":"#f5e2d4","--text":"#2d1910","--text2":"#694434","--text3":"#7a5141","--text-quiet":"#a2806f","--rule":"color-mix(in srgb,#93452a 10%,transparent)","--margin-rule":"color-mix(in srgb,#c4825a 38%,transparent)","--heat1":"#d3b3a5","--heat2":"#c0917f","--heat3":"#a96a54","--heat4":"#93452a","--shadow":"0 1px 2px rgba(100,50,28,.06),0 3px 14px rgba(100,50,28,.07)","--shadow-lg":"0 2px 6px rgba(100,50,28,.10),0 12px 36px rgba(100,50,28,.14)","--hdr":"#93452a","--banner":"linear-gradient(135deg,#67301d 0%,#93452a 60%,#a25738 100%)","--pray-btn":"linear-gradient(135deg,#93452a 0%,#a25738 100%)","--ink-cream":"#93452a","--meta":"#93452a"},"dark":{"--bg":"#18130f","--surface":"#241d16","--surface2":"#2e241c","--border":"#524438","--border-soft":"#3a3027","--accent-light":"#39251d","--text":"#eee5dd","--text2":"#c2b1a3","--text3":"#aea093","--text-quiet":"#8f7e70","--accent":"#cf9581","--accent2":"#c18967","--on-accent":"#18130f","--rule":"color-mix(in srgb,#cf9581 9%,transparent)","--margin-rule":"color-mix(in srgb,#c18967 26%,transparent)","--heat1":"#584037","--heat2":"#7d5a4e","--heat3":"#a77868","--heat4":"#cf9581","--hdr-d":"#211612","--banner":"linear-gradient(135deg,#221511 0%,#36221b 60%,#452f26 100%)","--pray-btn":"linear-gradient(135deg,#36221b 0%,#472d24 100%)","--ink-cream":"#93452a","--meta":"#211612"}},
+  slate: {"name":"Slate","group":"one","sw":{"bg":"#eef0f0","hdr":["#3c4d5a"],"a":"#3c4d5a","b":"#8796a1"},"light":{"--bg":"#eef0f0","--surface":"#fbfcfc","--surface2":"#e5e8e9","--border":"#bfc6ca","--border-soft":"#d8dee0","--accent":"#3c4d5a","--accent2":"#8796a1","--accent-light":"#e2e8eb","--text":"#1b2227","--text2":"#4a5661","--text3":"#576570","--text-quiet":"#87939b","--rule":"color-mix(in srgb,#3c4d5a 10%,transparent)","--margin-rule":"color-mix(in srgb,#8796a1 38%,transparent)","--heat1":"#b0b7bc","--heat2":"#8c969e","--heat3":"#63717b","--heat4":"#3c4d5a","--shadow":"0 1px 2px rgba(30,40,50,.06),0 3px 14px rgba(30,40,50,.07)","--shadow-lg":"0 2px 6px rgba(30,40,50,.10),0 12px 36px rgba(30,40,50,.14)","--hdr":"#3c4d5a","--banner":"linear-gradient(135deg,#2a363f 0%,#3c4d5a 60%,#52636f 100%)","--pray-btn":"linear-gradient(135deg,#3c4d5a 0%,#52636f 100%)","--ink-cream":"#3c4d5a","--meta":"#3c4d5a"},"dark":{"--bg":"#121515","--surface":"#1b2020","--surface2":"#222828","--border":"#404949","--border-soft":"#2d3434","--accent-light":"#232c34","--text":"#e1eaea","--text2":"#acb9b9","--text3":"#99a8a8","--text-quiet":"#758a8a","--accent":"#8eacc2","--accent2":"#8297a6","--on-accent":"#121515","--rule":"color-mix(in srgb,#8eacc2 9%,transparent)","--margin-rule":"color-mix(in srgb,#8297a6 26%,transparent)","--heat1":"#3d4a52","--heat2":"#566874","--heat3":"#738b9c","--heat4":"#8eacc2","--hdr-d":"#161a1d","--banner":"linear-gradient(135deg,#161a1d 0%,#24292e 60%,#31363a 100%)","--pray-btn":"linear-gradient(135deg,#24292e 0%,#2f363c 100%)","--ink-cream":"#3c4d5a","--meta":"#161a1d"}},
+  rose: {"name":"Rose","group":"one","sw":{"bg":"#f7eff0","hdr":["#8a3f4f"],"a":"#8a3f4f","b":"#c98a8f"},"light":{"--bg":"#f7eff0","--surface":"#fffafa","--surface2":"#f1e5e6","--border":"#d6c0c3","--border-soft":"#e9dadc","--accent":"#8a3f4f","--accent2":"#c98a8f","--accent-light":"#f5e3e6","--text":"#2d1519","--text2":"#67454b","--text3":"#7a525a","--text-quiet":"#a28489","--rule":"color-mix(in srgb,#8a3f4f 10%,transparent)","--margin-rule":"color-mix(in srgb,#c98a8f 38%,transparent)","--heat1":"#d1b1b8","--heat2":"#bb8e97","--heat3":"#a26672","--heat4":"#8a3f4f","--shadow":"0 1px 2px rgba(90,40,50,.06),0 3px 14px rgba(90,40,50,.07)","--shadow-lg":"0 2px 6px rgba(90,40,50,.10),0 12px 36px rgba(90,40,50,.14)","--hdr":"#8a3f4f","--banner":"linear-gradient(135deg,#612c37 0%,#8a3f4f 60%,#9d5662 100%)","--pray-btn":"linear-gradient(135deg,#8a3f4f 0%,#9d5662 100%)","--ink-cream":"#8a3f4f","--meta":"#8a3f4f"},"dark":{"--bg":"#180f10","--surface":"#241618","--surface2":"#2e1c1e","--border":"#52383b","--border-soft":"#3a2729","--accent-light":"#391e24","--text":"#eedddf","--text2":"#c2a3a7","--text3":"#ae9397","--text-quiet":"#8f7074","--accent":"#d48c9c","--accent2":"#c1676e","--on-accent":"#180f10","--rule":"color-mix(in srgb,#d48c9c 9%,transparent)","--margin-rule":"color-mix(in srgb,#c1676e 26%,transparent)","--heat1":"#5a3b41","--heat2":"#7f545d","--heat3":"#ab717d","--heat4":"#d48c9c","--hdr-d":"#1f1416","--banner":"linear-gradient(135deg,#1f1416 0%,#322024 60%,#3f2c2f 100%)","--pray-btn":"linear-gradient(135deg,#322024 0%,#422a2f 100%)","--ink-cream":"#8a3f4f","--meta":"#1f1416"}},
+  teal: {"name":"Teal","group":"one","sw":{"bg":"#eef3f2","hdr":["#255c5f"],"a":"#255c5f","b":"#6fa3a0"},"light":{"--bg":"#eef3f2","--surface":"#fafdfc","--surface2":"#e3ebe9","--border":"#bccbc8","--border-soft":"#d6e1df","--accent":"#255c5f","--accent2":"#6fa3a0","--accent-light":"#dfecea","--text":"#142424","--text2":"#3f5655","--text3":"#4b6362","--text-quiet":"#7d918f","--rule":"color-mix(in srgb,#255c5f 10%,transparent)","--margin-rule":"color-mix(in srgb,#6fa3a0 38%,transparent)","--heat1":"#a8bebf","--heat2":"#7fa0a1","--heat3":"#517d7f","--heat4":"#255c5f","--shadow":"0 1px 2px rgba(20,60,60,.06),0 3px 14px rgba(20,60,60,.07)","--shadow-lg":"0 2px 6px rgba(20,60,60,.10),0 12px 36px rgba(20,60,60,.14)","--hdr":"#255c5f","--banner":"linear-gradient(135deg,#1a4042 0%,#255c5f 60%,#3b7172 100%)","--pray-btn":"linear-gradient(135deg,#255c5f 0%,#3b7172 100%)","--ink-cream":"#255c5f","--meta":"#255c5f"},"dark":{"--bg":"#101615","--surface":"#192220","--surface2":"#1f2b28","--border":"#3c4d4a","--border-soft":"#2a3634","--accent-light":"#1d3839","--text":"#dfece9","--text2":"#a7beba","--text3":"#93aea9","--text-quiet":"#708f89","--accent":"#81cbcf","--accent2":"#77b1ae","--on-accent":"#101615","--rule":"color-mix(in srgb,#81cbcf 9%,transparent)","--margin-rule":"color-mix(in srgb,#77b1ae 26%,transparent)","--heat1":"#385556","--heat2":"#4e7a7b","--heat3":"#68a3a6","--heat4":"#81cbcf","--hdr-d":"#132020","--banner":"linear-gradient(135deg,#131f20 0%,#1e3234 60%,#2b3f40 100%)","--pray-btn":"linear-gradient(135deg,#1e3234 0%,#274244 100%)","--ink-cream":"#255c5f","--meta":"#132020"}},
+  indigo: {"name":"Indigo","group":"one","sw":{"bg":"#f0f0f5","hdr":["#3a3a78"],"a":"#3a3a78","b":"#8b86c0"},"light":{"--bg":"#f0f0f5","--surface":"#fcfcff","--surface2":"#e7e7ef","--border":"#c4c4d4","--border-soft":"#dcdce8","--accent":"#3a3a78","--accent2":"#8b86c0","--accent-light":"#e6e6f3","--text":"#1a1a2e","--text2":"#4a4a66","--text3":"#5a5a78","--text-quiet":"#8a8aa2","--rule":"color-mix(in srgb,#3a3a78 10%,transparent)","--margin-rule":"color-mix(in srgb,#8b86c0 38%,transparent)","--heat1":"#b0b0c9","--heat2":"#8c8cb0","--heat3":"#626293","--heat4":"#3a3a78","--shadow":"0 1px 2px rgba(40,40,90,.06),0 3px 14px rgba(40,40,90,.07)","--shadow-lg":"0 2px 6px rgba(40,40,90,.10),0 12px 36px rgba(40,40,90,.14)","--hdr":"#3a3a78","--banner":"linear-gradient(135deg,#292954 0%,#3a3a78 60%,#52518e 100%)","--pray-btn":"linear-gradient(135deg,#3a3a78 0%,#52518e 100%)","--ink-cream":"#3a3a78","--meta":"#3a3a78"},"dark":{"--bg":"#101017","--surface":"#181823","--surface2":"#1e1e2c","--border":"#3b3b4f","--border-soft":"#292937","--accent-light":"#1f1f38","--text":"#dedeed","--text2":"#a5a5c0","--text3":"#9393ae","--text-quiet":"#70708f","--accent":"#9898d8","--accent2":"#746dbb","--on-accent":"#101017","--rule":"color-mix(in srgb,#9898d8 9%,transparent)","--margin-rule":"color-mix(in srgb,#746dbb 26%,transparent)","--heat1":"#40405b","--heat2":"#5b5b81","--heat3":"#7a7aae","--heat4":"#9898d8","--hdr-d":"#14141f","--banner":"linear-gradient(135deg,#14141f 0%,#202031 60%,#2d2d3e 100%)","--pray-btn":"linear-gradient(135deg,#202031 0%,#2a2a41 100%)","--ink-cream":"#3a3a78","--meta":"#14141f"}},
+  saffron: {"name":"Saffron","group":"one","sw":{"bg":"#f8f2e4","hdr":["#7f5310"],"a":"#7f5310","b":"#c9973a"},"light":{"--bg":"#f8f2e4","--surface":"#fffcf3","--surface2":"#f2e9d4","--border":"#d9c8a2","--border-soft":"#eadfc4","--accent":"#7f5310","--accent2":"#c9973a","--accent-light":"#f6e9c8","--text":"#2c1f05","--text2":"#634e26","--text3":"#6f5528","--text-quiet":"#9e8a62","--rule":"color-mix(in srgb,#7f5310 10%,transparent)","--margin-rule":"color-mix(in srgb,#c9973a 38%,transparent)","--heat1":"#ceba9a","--heat2":"#b59b6f","--heat3":"#9a763f","--heat4":"#7f5310","--shadow":"0 1px 2px rgba(100,70,20,.06),0 3px 14px rgba(100,70,20,.07)","--shadow-lg":"0 2px 6px rgba(100,70,20,.10),0 12px 36px rgba(100,70,20,.14)","--hdr":"#7f5310","--banner":"linear-gradient(135deg,#593a0b 0%,#7f5310 60%,#95671d 100%)","--pray-btn":"linear-gradient(135deg,#7f5310 0%,#95671d 100%)","--ink-cream":"#7f5310","--meta":"#7f5310"},"dark":{"--bg":"#18150f","--surface":"#242016","--surface2":"#2e291c","--border":"#524a38","--border-soft":"#3a3427","--accent-light":"#392e1d","--text":"#eee9dd","--text2":"#c2b9a3","--text3":"#aea693","--text-quiet":"#8f8670","--accent":"#cfb081","--accent2":"#c1a167","--on-accent":"#18150f","--rule":"color-mix(in srgb,#cfb081 9%,transparent)","--margin-rule":"color-mix(in srgb,#c1a167 26%,transparent)","--heat1":"#584b37","--heat2":"#7d6a4e","--heat3":"#a78e68","--heat4":"#cfb081","--hdr-d":"#211b12","--banner":"linear-gradient(135deg,#221b11 0%,#372c1b 60%,#483a23 100%)","--pray-btn":"linear-gradient(135deg,#372c1b 0%,#483923 100%)","--ink-cream":"#7f5310","--meta":"#211b12"}},
+  forest: {"name":"Forest","group":"one","sw":{"bg":"#eff2ec","hdr":["#2f5236"],"a":"#2f5236","b":"#7c9a6c"},"light":{"--bg":"#eff2ec","--surface":"#fbfdf9","--surface2":"#e4eadf","--border":"#bfcab8","--border-soft":"#d8e0d2","--accent":"#2f5236","--accent2":"#7c9a6c","--accent-light":"#e1ebdc","--text":"#172117","--text2":"#435443","--text3":"#4f614f","--text-quiet":"#80907f","--rule":"color-mix(in srgb,#2f5236 10%,transparent)","--margin-rule":"color-mix(in srgb,#7c9a6c 38%,transparent)","--heat1":"#acbaac","--heat2":"#859a88","--heat3":"#59755e","--heat4":"#2f5236","--shadow":"0 1px 2px rgba(30,60,35,.06),0 3px 14px rgba(30,60,35,.07)","--shadow-lg":"0 2px 6px rgba(30,60,35,.10),0 12px 36px rgba(30,60,35,.14)","--hdr":"#2f5236","--banner":"linear-gradient(135deg,#213926 0%,#2f5236 60%,#466846 100%)","--pray-btn":"linear-gradient(135deg,#2f5236 0%,#466846 100%)","--ink-cream":"#2f5236","--meta":"#2f5236"},"dark":{"--bg":"#131610","--surface":"#1d2218","--surface2":"#252b1f","--border":"#454e3c","--border-soft":"#30372a","--accent-light":"#213625","--text":"#e6ecdf","--text2":"#b2bfa6","--text3":"#a1ae93","--text-quiet":"#808f70","--accent":"#88c895","--accent2":"#8cad7b","--on-accent":"#131610","--rule":"color-mix(in srgb,#88c895 9%,transparent)","--margin-rule":"color-mix(in srgb,#8cad7b 26%,transparent)","--heat1":"#3c543f","--heat2":"#537859","--heat3":"#6ea178","--heat4":"#88c895","--hdr-d":"#151e17","--banner":"linear-gradient(135deg,#151e17 0%,#222f25 60%,#2f3c2f 100%)","--pray-btn":"linear-gradient(135deg,#222f25 0%,#2d3e30 100%)","--ink-cream":"#2f5236","--meta":"#151e17"}},
+  ink: {"name":"Ink","group":"one","sw":{"bg":"#f2f1ef","hdr":["#333333"],"a":"#333333","b":"#8a8a8a"},"light":{"--bg":"#f2f1ef","--surface":"#fdfdfc","--surface2":"#e9e8e5","--border":"#c6c5c1","--border-soft":"#dddcd8","--accent":"#333333","--accent2":"#8a8a8a","--accent-light":"#e8e7e3","--text":"#1a1a1a","--text2":"#4d4d4d","--text3":"#5c5c5c","--text-quiet":"#8c8c8c","--rule":"color-mix(in srgb,#333333 10%,transparent)","--margin-rule":"color-mix(in srgb,#8a8a8a 38%,transparent)","--heat1":"#afaead","--heat2":"#898888","--heat3":"#5d5d5c","--heat4":"#333333","--shadow":"0 1px 2px rgba(30,30,30,.06),0 3px 14px rgba(30,30,30,.07)","--shadow-lg":"0 2px 6px rgba(30,30,30,.10),0 12px 36px rgba(30,30,30,.14)","--hdr":"#333333","--banner":"linear-gradient(135deg,#242424 0%,#333333 60%,#4d4d4d 100%)","--pray-btn":"linear-gradient(135deg,#333333 0%,#4d4d4d 100%)","--ink-cream":"#333333","--meta":"#333333"},"dark":{"--bg":"#151411","--surface":"#201e1b","--surface2":"#282622","--border":"#4a4740","--border-soft":"#34322d","--accent-light":"#2e2929","--text":"#eae7e1","--text2":"#bab5ab","--text3":"#a9a498","--text-quiet":"#8b8374","--accent":"#a8a8a8","--accent2":"#949494","--on-accent":"#151411","--rule":"color-mix(in srgb,#a8a8a8 9%,transparent)","--margin-rule":"color-mix(in srgb,#949494 26%,transparent)","--heat1":"#484846","--heat2":"#666564","--heat3":"#888787","--heat4":"#a8a8a8","--hdr-d":"#1a1a1a","--banner":"linear-gradient(135deg,#1a1a1a 0%,#292929 60%,#363636 100%)","--pray-btn":"linear-gradient(135deg,#292929 0%,#363636 100%)","--ink-cream":"#333333","--meta":"#1a1a1a"}},
+  glass: {"name":"Stained Glass","group":"multi","sw":{"bg":"#f3f0ea","hdr":["#24406a"],"a":"#8e2c3a","b":"#b8902e"},"light":{"--bg":"#f3f0ea","--surface":"#fefcf8","--surface2":"#ece7de","--border":"#cdc3b4","--border-soft":"#e2dbd0","--accent":"#8e2c3a","--accent2":"#b8902e","--accent-light":"#f4e6e4","--text":"#221a1c","--text2":"#5a474b","--text3":"#6c545a","--text-quiet":"#9a878a","--rule":"color-mix(in srgb,#8e2c3a 10%,transparent)","--margin-rule":"color-mix(in srgb,#b8902e 38%,transparent)","--heat1":"#d0abac","--heat2":"#bb8489","--heat3":"#a45761","--heat4":"#8e2c3a","--shadow":"0 1px 2px rgba(60,40,50,.06),0 3px 14px rgba(60,40,50,.07)","--shadow-lg":"0 2px 6px rgba(60,40,50,.10),0 12px 36px rgba(60,40,50,.14)","--hdr":"#24406a","--banner":"linear-gradient(135deg,#1d3557 0%,#6b2737 55%,#86641c 100%)","--pray-btn":"linear-gradient(135deg,#8e2c3a 0%,#6b2737 100%)","--ink-cream":"#8e2c3a","--meta":"#24406a"},"dark":{"--bg":"#18150f","--surface":"#242016","--surface2":"#2e281c","--border":"#524938","--border-soft":"#3a3427","--accent-light":"#391d21","--text":"#eee8dd","--text2":"#c2b8a3","--text3":"#aea593","--text-quiet":"#8f8570","--accent":"#d6949d","--accent2":"#c1a767","--on-accent":"#18150f","--rule":"color-mix(in srgb,#d6949d 9%,transparent)","--margin-rule":"color-mix(in srgb,#c1a767 26%,transparent)","--heat1":"#5a4141","--heat2":"#805b5d","--heat3":"#ac787e","--heat4":"#d6949d","--hdr-d":"#121821","--banner":"linear-gradient(135deg,#121821 0%,#341d23 60%,#483c23 100%)","--pray-btn":"linear-gradient(135deg,#361c20 0%,#483d23 100%)","--ink-cream":"#8e2c3a","--meta":"#121821"}},
+  byzantine: {"name":"Byzantine","group":"multi","sw":{"bg":"#f4f0ea","hdr":["#3e2457"],"a":"#5a3a7a","b":"#b8902e"},"light":{"--bg":"#f4f0ea","--surface":"#fffcf6","--surface2":"#ede6da","--border":"#d0c3ae","--border-soft":"#e4dac8","--accent":"#5a3a7a","--accent2":"#b8902e","--accent-light":"#efe7d3","--text":"#231a2a","--text2":"#574a60","--text3":"#665570","--text-quiet":"#958aa0","--rule":"color-mix(in srgb,#5a3a7a 10%,transparent)","--margin-rule":"color-mix(in srgb,#b8902e 38%,transparent)","--heat1":"#beb0c3","--heat2":"#9f8cac","--heat3":"#7c6293","--heat4":"#5a3a7a","--shadow":"0 1px 2px rgba(60,40,80,.06),0 3px 14px rgba(60,40,80,.07)","--shadow-lg":"0 2px 6px rgba(60,40,80,.10),0 12px 36px rgba(60,40,80,.14)","--hdr":"#3e2457","--banner":"linear-gradient(135deg,#2e1a44 0%,#5a3a7a 55%,#86641c 100%)","--pray-btn":"linear-gradient(135deg,#5a3a7a 0%,#5a3a7a 100%)","--ink-cream":"#5a3a7a","--meta":"#3e2457"},"dark":{"--bg":"#18140f","--surface":"#241f16","--surface2":"#2e271c","--border":"#524738","--border-soft":"#3a3227","--accent-light":"#2b1e38","--text":"#eee7dd","--text2":"#c2b6a3","--text3":"#aea393","--text-quiet":"#8f8370","--accent":"#b897d8","--accent2":"#c1a767","--on-accent":"#18140f","--rule":"color-mix(in srgb,#b897d8 9%,transparent)","--margin-rule":"color-mix(in srgb,#c1a767 26%,transparent)","--heat1":"#504255","--heat2":"#705c7e","--heat3":"#957aac","--heat4":"#b897d8","--hdr-d":"#1a1320","--banner":"linear-gradient(135deg,#191320 0%,#292032 60%,#483c23 100%)","--pray-btn":"linear-gradient(135deg,#292032 0%,#483d23 100%)","--ink-cream":"#5a3a7a","--meta":"#1a1320"}},
+  garden: {"name":"Garden","group":"multi","sw":{"bg":"#f3f2ec","hdr":["#2f5236"],"a":"#8a3f4f","b":"#7c9a6c"},"light":{"--bg":"#f3f2ec","--surface":"#fdfcf8","--surface2":"#ebe9e0","--border":"#c9c8b8","--border-soft":"#e0dfd2","--accent":"#8a3f4f","--accent2":"#7c9a6c","--accent-light":"#f5e3e6","--text":"#1f2119","--text2":"#53514a","--text3":"#665c5e","--text-quiet":"#928c88","--rule":"color-mix(in srgb,#8a3f4f 10%,transparent)","--margin-rule":"color-mix(in srgb,#7c9a6c 38%,transparent)","--heat1":"#ceb3b5","--heat2":"#b99096","--heat3":"#a16672","--heat4":"#8a3f4f","--shadow":"0 1px 2px rgba(50,60,40,.06),0 3px 14px rgba(50,60,40,.07)","--shadow-lg":"0 2px 6px rgba(50,60,40,.10),0 12px 36px rgba(50,60,40,.14)","--hdr":"#2f5236","--banner":"linear-gradient(135deg,#24402a 0%,#3f6a46 55%,#9a5060 100%)","--pray-btn":"linear-gradient(135deg,#8a3f4f 0%,#3f6a46 100%)","--ink-cream":"#8a3f4f","--meta":"#2f5236"},"dark":{"--bg":"#17160f","--surface":"#232217","--surface2":"#2c2a1d","--border":"#504d3a","--border-soft":"#383629","--accent-light":"#391e24","--text":"#edebde","--text2":"#c2bda3","--text3":"#aeaa93","--text-quiet":"#8f8a70","--accent":"#d694a2","--accent2":"#8cad7b","--on-accent":"#17160f","--rule":"color-mix(in srgb,#d694a2 9%,transparent)","--margin-rule":"color-mix(in srgb,#8cad7b 26%,transparent)","--heat1":"#5a4242","--heat2":"#805b60","--heat3":"#ac7882","--heat4":"#d694a2","--hdr-d":"#151e17","--banner":"linear-gradient(135deg,#151e17 0%,#232f25 60%,#402b30 100%)","--pray-btn":"linear-gradient(135deg,#322024 0%,#343c30 100%)","--ink-cream":"#8a3f4f","--meta":"#151e17"}},
+  dawn: {"name":"Dawn","group":"multi","sw":{"bg":"#faf3ef","hdr":["#a25a40","#6e4a7e"],"a":"#6e4a7e","b":"#d39a74"},"light":{"--bg":"#faf3ef","--surface":"#fffbf8","--surface2":"#f2e8e3","--border":"#d8c6c2","--border-soft":"#ebddd8","--accent":"#6e4a7e","--accent2":"#d39a74","--accent-light":"#efe6f1","--text":"#2a1c2c","--text2":"#5f4c62","--text3":"#6e5872","--text-quiet":"#9a8a9c","--rule":"color-mix(in srgb,#6e4a7e 10%,transparent)","--margin-rule":"color-mix(in srgb,#d39a74 38%,transparent)","--heat1":"#c9b8c7","--heat2":"#ad96b1","--heat3":"#8d6f97","--heat4":"#6e4a7e","--shadow":"0 1px 2px rgba(80,50,70,.06),0 3px 14px rgba(80,50,70,.07)","--shadow-lg":"0 2px 6px rgba(80,50,70,.10),0 12px 36px rgba(80,50,70,.14)","--hdr":"#a25a40","--banner":"linear-gradient(135deg,#9e5a42 0%,#9a5a6a 55%,#5e4a82 100%)","--pray-btn":"linear-gradient(135deg,#6e4a7e 0%,#9a5a6a 100%)","--ink-cream":"#6e4a7e","--meta":"#a25a40","--hdr-img":"linear-gradient(90deg,#a25a40,#6e4a7e)"},"dark":{"--bg":"#18120f","--surface":"#241b16","--surface2":"#2e231c","--border":"#524138","--border-soft":"#3a2e27","--accent-light":"#2f2135","--text":"#eee3dd","--text2":"#c2aea3","--text3":"#ae9d93","--text-quiet":"#8f7b70","--accent":"#bb93cc","--accent2":"#c18b67","--on-accent":"#18120f","--rule":"color-mix(in srgb,#bb93cc 9%,transparent)","--margin-rule":"color-mix(in srgb,#c18b67 26%,transparent)","--heat1":"#513f51","--heat2":"#725977","--heat3":"#9777a2","--heat4":"#bb93cc","--hdr-d":"linear-gradient(90deg,#231915,#1e1820)","--banner":"linear-gradient(135deg,#201613 0%,#2f2226 60%,#332d3e 100%)","--pray-btn":"linear-gradient(135deg,#2b222f 0%,#463225 100%)","--ink-cream":"#6e4a7e","--meta":"#201613"}},
+  iona: {"name":"Iona","group":"multi","sw":{"bg":"#f1f3ef","hdr":["#255c5f"],"a":"#255c5f","b":"#c9973a"},"light":{"--bg":"#f1f3ef","--surface":"#fcfdfa","--surface2":"#e7ebe4","--border":"#c4ccc2","--border-soft":"#dbe1d8","--accent":"#255c5f","--accent2":"#c9973a","--accent-light":"#f6ecd2","--text":"#16221f","--text2":"#45544f","--text3":"#4e5f5a","--text-quiet":"#82918c","--rule":"color-mix(in srgb,#255c5f 10%,transparent)","--margin-rule":"color-mix(in srgb,#c9973a 38%,transparent)","--heat1":"#aabebd","--heat2":"#81a0a0","--heat3":"#527d7f","--heat4":"#255c5f","--shadow":"0 1px 2px rgba(20,60,60,.06),0 3px 14px rgba(20,60,60,.07)","--shadow-lg":"0 2px 6px rgba(20,60,60,.10),0 12px 36px rgba(20,60,60,.14)","--hdr":"#255c5f","--banner":"linear-gradient(135deg,#1b4446 0%,#2f6b6d 55%,#86641c 100%)","--pray-btn":"linear-gradient(135deg,#255c5f 0%,#2f6b6d 100%)","--ink-cream":"#255c5f","--meta":"#255c5f"},"dark":{"--bg":"#131611","--surface":"#1d211a","--surface2":"#252a20","--border":"#454c3e","--border-soft":"#30352b","--accent-light":"#1d3839","--text":"#e6ebe0","--text2":"#b2bca9","--text3":"#a1ad95","--text-quiet":"#808f70","--accent":"#81cbcf","--accent2":"#c1a167","--on-accent":"#131611","--rule":"color-mix(in srgb,#81cbcf 9%,transparent)","--margin-rule":"color-mix(in srgb,#c1a167 26%,transparent)","--heat1":"#395554","--heat2":"#507a7a","--heat3":"#69a3a5","--heat4":"#81cbcf","--hdr-d":"#132020","--banner":"linear-gradient(135deg,#132020 0%,#1f3233 60%,#483c23 100%)","--pray-btn":"linear-gradient(135deg,#1e3234 0%,#483b23 100%)","--ink-cream":"#255c5f","--meta":"#132020"}},
+  harvest: {"name":"Harvest","group":"multi","sw":{"bg":"#f6efe6","hdr":["#93452a"],"a":"#4d5c31","b":"#c9973a"},"light":{"--bg":"#f6efe6","--surface":"#fffaf3","--surface2":"#efe5d8","--border":"#d3c1a9","--border-soft":"#e7dac7","--accent":"#4d5c31","--accent2":"#c9973a","--accent-light":"#ece9d4","--text":"#26200f","--text2":"#5b5038","--text3":"#615a3c","--text-quiet":"#948a6e","--rule":"color-mix(in srgb,#4d5c31 10%,transparent)","--margin-rule":"color-mix(in srgb,#c9973a 38%,transparent)","--heat1":"#bbbca7","--heat2":"#999e82","--heat3":"#727c59","--heat4":"#4d5c31","--shadow":"0 1px 2px rgba(90,60,30,.06),0 3px 14px rgba(90,60,30,.07)","--shadow-lg":"0 2px 6px rgba(90,60,30,.10),0 12px 36px rgba(90,60,30,.14)","--hdr":"#93452a","--banner":"linear-gradient(135deg,#7a3a22 0%,#a8582e 55%,#5c6b38 100%)","--pray-btn":"linear-gradient(135deg,#4d5c31 0%,#a8582e 100%)","--ink-cream":"#4d5c31","--meta":"#93452a"},"dark":{"--bg":"#18140f","--surface":"#241e16","--surface2":"#2e261c","--border":"#524738","--border-soft":"#3a3227","--accent-light":"#2f3720","--text":"#eee7dd","--text2":"#c2b4a3","--text3":"#aea293","--text-quiet":"#8f8170","--accent":"#b3cb85","--accent2":"#c1a167","--on-accent":"#18140f","--rule":"color-mix(in srgb,#b3cb85 9%,transparent)","--margin-rule":"color-mix(in srgb,#c1a167 26%,transparent)","--heat1":"#4e5438","--heat2":"#6d7950","--heat3":"#91a36b","--heat4":"#b3cb85","--hdr-d":"#211612","--banner":"linear-gradient(135deg,#221611 0%,#37241b 60%,#3a402b 100%)","--pray-btn":"linear-gradient(135deg,#2b3021 0%,#483b23 100%)","--ink-cream":"#4d5c31","--meta":"#211612"}},
+  cathedral: {"name":"Cathedral","group":"multi","sw":{"bg":"#f1f0ee","hdr":["#474d55"],"a":"#8e2c3a","b":"#b8902e"},"light":{"--bg":"#f1f0ee","--surface":"#fdfcfa","--surface2":"#e8e6e2","--border":"#c8c4bd","--border-soft":"#dfdcd6","--accent":"#8e2c3a","--accent2":"#b8902e","--accent-light":"#f3e5e5","--text":"#1f1c1c","--text2":"#524a4a","--text3":"#665657","--text-quiet":"#938888","--rule":"color-mix(in srgb,#8e2c3a 10%,transparent)","--margin-rule":"color-mix(in srgb,#b8902e 38%,transparent)","--heat1":"#ceabaf","--heat2":"#bb848b","--heat3":"#a45762","--heat4":"#8e2c3a","--shadow":"0 1px 2px rgba(50,45,45,.06),0 3px 14px rgba(50,45,45,.07)","--shadow-lg":"0 2px 6px rgba(50,45,45,.10),0 12px 36px rgba(50,45,45,.14)","--hdr":"#474d55","--banner":"linear-gradient(135deg,#2f343a 0%,#555c66 55%,#7a2a36 100%)","--pray-btn":"linear-gradient(135deg,#8e2c3a 0%,#555c66 100%)","--ink-cream":"#8e2c3a","--meta":"#474d55"},"dark":{"--bg":"#151411","--surface":"#201e1b","--surface2":"#282622","--border":"#4a4640","--border-soft":"#34322d","--accent-light":"#391d21","--text":"#eae7e1","--text2":"#b9b5ac","--text3":"#a9a398","--text-quiet":"#8b8374","--accent":"#d5909a","--accent2":"#c1a767","--on-accent":"#151411","--rule":"color-mix(in srgb,#d5909a 9%,transparent)","--margin-rule":"color-mix(in srgb,#c1a767 26%,transparent)","--heat1":"#583f41","--heat2":"#7f585c","--heat3":"#ab757c","--heat4":"#d5909a","--hdr-d":"#18191b","--banner":"linear-gradient(135deg,#18191b 0%,#27282b 60%,#45262b 100%)","--pray-btn":"linear-gradient(135deg,#361c20 0%,#483d23 100%)","--ink-cream":"#8e2c3a","--meta":"#18191b"}},
+  psalter: {"name":"Psalter","group":"multi","sw":{"bg":"#f5f0e6","hdr":["#2f5236"],"a":"#7a2e2a","b":"#b8902e"},"light":{"--bg":"#f5f0e6","--surface":"#fffcf4","--surface2":"#eee6d6","--border":"#d2c4a8","--border-soft":"#e5dac4","--accent":"#7a2e2a","--accent2":"#b8902e","--accent-light":"#f3e4dc","--text":"#251a12","--text2":"#5d4a3a","--text3":"#6c5244","--text-quiet":"#9a8676","--rule":"color-mix(in srgb,#7a2e2a 10%,transparent)","--margin-rule":"color-mix(in srgb,#b8902e 38%,transparent)","--heat1":"#caaca4","--heat2":"#b1857f","--heat3":"#955953","--heat4":"#7a2e2a","--shadow":"0 1px 2px rgba(80,50,30,.06),0 3px 14px rgba(80,50,30,.07)","--shadow-lg":"0 2px 6px rgba(80,50,30,.10),0 12px 36px rgba(80,50,30,.14)","--hdr":"#2f5236","--banner":"linear-gradient(135deg,#24402a 0%,#2f5236 55%,#7a2e2a 100%)","--pray-btn":"linear-gradient(135deg,#7a2e2a 0%,#2f5236 100%)","--ink-cream":"#7a2e2a","--meta":"#2f5236"},"dark":{"--bg":"#18150f","--surface":"#242016","--surface2":"#2e281c","--border":"#524938","--border-soft":"#3a3427","--accent-light":"#391f1d","--text":"#eee8dd","--text2":"#c2b8a3","--text3":"#aea593","--text-quiet":"#8f8570","--accent":"#d59490","--accent2":"#c1a767","--on-accent":"#18150f","--rule":"color-mix(in srgb,#d59490 9%,transparent)","--margin-rule":"color-mix(in srgb,#c1a767 26%,transparent)","--heat1":"#5a413c","--heat2":"#805b56","--heat3":"#ab7874","--heat4":"#d59490","--hdr-d":"#151e17","--banner":"linear-gradient(135deg,#151e17 0%,#222f25 60%,#452726 100%)","--pray-btn":"linear-gradient(135deg,#351e1d 0%,#483d23 100%)","--ink-cream":"#7a2e2a","--meta":"#151e17"}},
+  galilee: {"name":"Galilee","group":"multi","sw":{"bg":"#f5f1ea","hdr":["#2a5a78"],"a":"#2a5a78","b":"#c47a5a"},"light":{"--bg":"#f5f1ea","--surface":"#fffcf6","--surface2":"#ede6da","--border":"#d0c3ae","--border-soft":"#e4dac8","--accent":"#2a5a78","--accent2":"#c47a5a","--accent-light":"#e3ecf2","--text":"#16222b","--text2":"#465664","--text3":"#4f6170","--text-quiet":"#84919c","--rule":"color-mix(in srgb,#2a5a78 10%,transparent)","--margin-rule":"color-mix(in srgb,#c47a5a 38%,transparent)","--heat1":"#aebcc2","--heat2":"#859eab","--heat3":"#577b91","--heat4":"#2a5a78","--shadow":"0 1px 2px rgba(30,60,80,.06),0 3px 14px rgba(30,60,80,.07)","--shadow-lg":"0 2px 6px rgba(30,60,80,.10),0 12px 36px rgba(30,60,80,.14)","--hdr":"#2a5a78","--banner":"linear-gradient(135deg,#1f4660 0%,#2f6b8a 55%,#9e5a42 100%)","--pray-btn":"linear-gradient(135deg,#2a5a78 0%,#2f6b8a 100%)","--ink-cream":"#2a5a78","--meta":"#2a5a78"},"dark":{"--bg":"#18140f","--surface":"#241f16","--surface2":"#2e271c","--border":"#524838","--border-soft":"#3a3327","--accent-light":"#1d2f39","--text":"#eee8dd","--text2":"#c2b7a3","--text3":"#aea493","--text-quiet":"#8f8470","--accent":"#81b1cf","--accent2":"#c18267","--on-accent":"#18140f","--rule":"color-mix(in srgb,#81b1cf 9%,transparent)","--margin-rule":"color-mix(in srgb,#c18267 26%,transparent)","--heat1":"#3d4b52","--heat2":"#526a79","--heat3":"#6a8ea5","--heat4":"#81b1cf","--hdr-d":"#121b21","--banner":"linear-gradient(135deg,#121b21 0%,#1d2d35 60%,#432f28 100%)","--pray-btn":"linear-gradient(135deg,#1d2c35 0%,#453026 100%)","--ink-cream":"#2a5a78","--meta":"#121b21"}},
+  nightfall: {"name":"Nightfall","group":"multi","sw":{"bg":"#f2f0f3","hdr":["#2e2f5e","#5a3a6e"],"a":"#7f5310","b":"#9a7ab0"},"light":{"--bg":"#f2f0f3","--surface":"#fdfcfd","--surface2":"#e9e6eb","--border":"#c8c2cc","--border-soft":"#dedae2","--accent":"#7f5310","--accent2":"#9a7ab0","--accent-light":"#f2e8d4","--text":"#1e1a24","--text2":"#4f4858","--text3":"#5f5468","--text-quiet":"#8e8698","--rule":"color-mix(in srgb,#7f5310 10%,transparent)","--margin-rule":"color-mix(in srgb,#9a7ab0 38%,transparent)","--heat1":"#cab9a4","--heat2":"#b39a76","--heat3":"#987642","--heat4":"#7f5310","--shadow":"0 1px 2px rgba(50,40,70,.06),0 3px 14px rgba(50,40,70,.07)","--shadow-lg":"0 2px 6px rgba(50,40,70,.10),0 12px 36px rgba(50,40,70,.14)","--hdr":"#2e2f5e","--banner":"linear-gradient(135deg,#25264d 0%,#4a3466 55%,#7a4a5e 100%)","--pray-btn":"linear-gradient(135deg,#7f5310 0%,#4a3466 100%)","--ink-cream":"#7f5310","--meta":"#2e2f5e","--hdr-img":"linear-gradient(90deg,#2e2f5e,#5a3a6e)"},"dark":{"--bg":"#141115","--surface":"#1e1a20","--surface2":"#262129","--border":"#473f4a","--border-soft":"#322d34","--accent-light":"#392e1d","--text":"#e7e0eb","--text2":"#b5abba","--text3":"#a497aa","--text-quiet":"#84738c","--accent":"#cfb081","--accent2":"#9a73b5","--on-accent":"#141115","--rule":"color-mix(in srgb,#cfb081 9%,transparent)","--margin-rule":"color-mix(in srgb,#9a73b5 26%,transparent)","--heat1":"#55493b","--heat2":"#7b6850","--heat3":"#a68d69","--heat4":"#cfb081","--hdr-d":"linear-gradient(90deg,#161722,#1d1721)","--banner":"linear-gradient(135deg,#14141f 0%,#282131 60%,#3d2e34 100%)","--pray-btn":"linear-gradient(135deg,#372c1b 0%,#372d3e 100%)","--ink-cream":"#7f5310","--meta":"#14141f"}},
+  lavender: {"name":"Lavender Field","group":"multi","sw":{"bg":"#f3f1f4","hdr":["#5e4a82"],"a":"#4d5c31","b":"#9a86b8"},"light":{"--bg":"#f3f1f4","--surface":"#fdfcfd","--surface2":"#eae7ec","--border":"#c9c3cc","--border-soft":"#dfdbe2","--accent":"#4d5c31","--accent2":"#9a86b8","--accent-light":"#e8ecd9","--text":"#1f1d22","--text2":"#504a56","--text3":"#5d5a50","--text-quiet":"#8e8a92","--rule":"color-mix(in srgb,#4d5c31 10%,transparent)","--margin-rule":"color-mix(in srgb,#9a86b8 38%,transparent)","--heat1":"#b9bdb0","--heat2":"#989f89","--heat3":"#727d5c","--heat4":"#4d5c31","--shadow":"0 1px 2px rgba(60,50,80,.06),0 3px 14px rgba(60,50,80,.07)","--shadow-lg":"0 2px 6px rgba(60,50,80,.10),0 12px 36px rgba(60,50,80,.14)","--hdr":"#5e4a82","--banner":"linear-gradient(135deg,#4a3a6a 0%,#6a5490 55%,#4d5c31 100%)","--pray-btn":"linear-gradient(135deg,#4d5c31 0%,#6a5490 100%)","--ink-cream":"#4d5c31","--meta":"#5e4a82"},"dark":{"--bg":"#141115","--surface":"#1e1a20","--surface2":"#262129","--border":"#473f4b","--border-soft":"#322c35","--accent-light":"#2f3720","--text":"#e7e0eb","--text2":"#b5aabb","--text3":"#a99caf","--text-quiet":"#84728d","--accent":"#b3cb85","--accent2":"#8d73b5","--on-accent":"#141115","--rule":"color-mix(in srgb,#b3cb85 9%,transparent)","--margin-rule":"color-mix(in srgb,#8d73b5 26%,transparent)","--heat1":"#4c523c","--heat2":"#6b7753","--heat3":"#90a26c","--heat4":"#b3cb85","--hdr-d":"#18151e","--banner":"linear-gradient(135deg,#18151e 0%,#27222f 60%,#393f2c 100%)","--pray-btn":"linear-gradient(135deg,#2b3021 0%,#342d3e 100%)","--ink-cream":"#4d5c31","--meta":"#18151e"}},
+  desert: {"name":"Desert","group":"multi","sw":{"bg":"#f7efe6","hdr":["#93452a"],"a":"#255c5f","b":"#c98a5a"},"light":{"--bg":"#f7efe6","--surface":"#fffaf3","--surface2":"#f0e4d6","--border":"#d8c2ab","--border-soft":"#eadac8","--accent":"#255c5f","--accent2":"#c98a5a","--accent-light":"#dfecea","--text":"#2a1d14","--text2":"#5e4a3c","--text3":"#4b6362","--text-quiet":"#9a8a7c","--rule":"color-mix(in srgb,#255c5f 10%,transparent)","--margin-rule":"color-mix(in srgb,#c98a5a 38%,transparent)","--heat1":"#aebcb7","--heat2":"#849e9c","--heat3":"#537c7d","--heat4":"#255c5f","--shadow":"0 1px 2px rgba(100,60,30,.06),0 3px 14px rgba(100,60,30,.07)","--shadow-lg":"0 2px 6px rgba(100,60,30,.10),0 12px 36px rgba(100,60,30,.14)","--hdr":"#93452a","--banner":"linear-gradient(135deg,#7a3a22 0%,#a8582e 55%,#255c5f 100%)","--pray-btn":"linear-gradient(135deg,#255c5f 0%,#a8582e 100%)","--ink-cream":"#255c5f","--meta":"#93452a"},"dark":{"--bg":"#18130f","--surface":"#241e16","--surface2":"#2e251c","--border":"#524638","--border-soft":"#3a3127","--accent-light":"#1d3839","--text":"#eee6dd","--text2":"#c2b3a3","--text3":"#aea193","--text-quiet":"#8f8070","--accent":"#81cbcf","--accent2":"#c18e67","--on-accent":"#18130f","--rule":"color-mix(in srgb,#81cbcf 9%,transparent)","--margin-rule":"color-mix(in srgb,#c18e67 26%,transparent)","--heat1":"#3d5352","--heat2":"#527879","--heat3":"#6aa3a5","--heat4":"#81cbcf","--hdr-d":"#211612","--banner":"linear-gradient(135deg,#221611 0%,#37241b 60%,#274244 100%)","--pray-btn":"linear-gradient(135deg,#1e3234 0%,#463325 100%)","--ink-cream":"#255c5f","--meta":"#211612"}}
+};
+function paletteCSS(key){
+  const p = PALETTES[key]; if(!p || !p.light) return '';
+  const vars = o => Object.entries(o).filter(([k]) => k !== '--meta').map(([k,v]) => k+':'+v).join(';');
+  return 'html[data-palette]:not([data-theme="dark"]){'+vars(p.light)+'}html[data-palette][data-theme="dark"]{'+vars(p.dark)+'}';
+}
+function currentPalette(){ const k = localStorage.getItem('palette'); return PALETTES[k] ? k : 'parchment'; }
+function applyPalette(){
+  const key = currentPalette(), p = PALETTES[key], css = paletteCSS(key);
+  let st = document.getElementById('palette-style');
+  if(!st){ st = document.createElement('style'); st.id = 'palette-style'; document.head.appendChild(st); }
+  st.textContent = css;
+  if(css) document.documentElement.setAttribute('data-palette', key); else document.documentElement.removeAttribute('data-palette');
+  try{ if(css) localStorage.setItem('palette_css', css); else localStorage.removeItem('palette_css'); }catch(e){}
+  const metas = document.querySelectorAll('meta[name="theme-color"]');
+  if(metas[0]) metas[0].content = p.light ? p.light['--meta'] : '#7a5c3e';
+  if(metas[1]) metas[1].content = p.dark ? p.dark['--meta'] : '#1f1810';
+  document.querySelectorAll('.pal-tile').forEach(b => { const on = b.dataset.pal === key; b.classList.toggle('active', on); b.setAttribute('aria-pressed', on); });
+}
+function setPalette(key){
+  if(!PALETTES[key]) return;
+  safeSetItem('palette', key);
+  applyPalette();
+  if(currentView === 'reflect'){ renderReflectBand(); }
+}
+function palTileHTML(key){
+  const p = PALETTES[key], sw = p.sw;
+  const hdr = Array.isArray(sw.hdr) ? (sw.hdr.length > 1 ? 'linear-gradient(90deg,'+sw.hdr.join(',')+')' : sw.hdr[0]) : sw.hdr;
+  return '<button type="button" class="pal-tile" data-pal="'+key+'" aria-pressed="false" onclick="setPalette(\''+key+'\')">'
+    + '<span class="pal-chip" style="background:'+sw.bg+'"><span class="pal-band" style="background:'+hdr+'"></span>'
+    + '<span class="pal-dots"><i style="background:'+sw.a+'"></i><i style="background:'+sw.b+'"></i></span></span>'
+    + '<span class="pal-name">'+p.name+'</span></button>';
+}
+function renderPalettePicker(){
+  const el = document.getElementById('palette-picker'); if(!el) return;
+  const keys = Object.keys(PALETTES);
+  const row = g => '<div class="pal-grid">'+keys.filter(k => PALETTES[k].group === g).map(palTileHTML).join('')+'</div>';
+  el.innerHTML = '<p class="pal-sub">One colour</p>'+row('one')+'<p class="pal-sub">Several colours</p>'+row('multi');
+  applyPalette();
+}
+applyPalette();
+
 function applyTheme(){
   const setting = localStorage.getItem('theme') || 'auto';
   const actual = setting === 'auto'

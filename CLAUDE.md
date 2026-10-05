@@ -272,6 +272,13 @@ Tester feedback: the Guide was wordy, dull, and didn't say what to do first.
 - ✅ **First-timer paths into it** — the tutorial's *Begin from scratch* and *Skip* land on the Guide (`tutorialBegin`); closing it with ✕ / swipe / Back stays on Daily; the Daily home shows *New here? See where to begin* while there is no card of your own, no session and no draft.
 - ✅ §5 fix: *From Paul Miller’s* A Praying Life removed from the Story Cards explainer (author names live in Credits only).
 
+### 🎨 Colour schemes (2026-10-05)
+- ✅ **24 schemes** in Reflect → Settings → Appearance → **Colour**, under the theme buttons, as two rows of paper swatches: **One colour** — Parchment (default), Lapis, Olive, Vespers, Clay, Slate, Rose, Teal, Indigo, Saffron, Forest, Ink; **Several colours** — Stained Glass, Byzantine, Garden, Dawn, Iona, Harvest, Cathedral, Psalter, Galilee, Nightfall, Lavender Field, Desert. Each works with Light / Dark / Auto.
+- **How:** `PALETTES` holds each scheme's light tokens (hand-chosen) and dark tokens (derived from them by a generator, then contrast-checked). `applyPalette()` writes them as `html[data-palette]` rules into `#palette-style`, sets the attribute, updates both `theme-color` metas, and keeps the CSS in `localStorage.palette_css` so the `<head>` bootstrap applies it before first paint. Parchment is the stylesheet's own values (no attribute, no CSS).
+- **New tokens** so the scheme reaches everything: `--hdr` / `--hdr-img` (header colour and, for Dawn/Nightfall, a gradient layered under the paper grain), `--hdr-d` (dark header), `--banner`, `--pray-btn`, `--ink-cream`; the dark-mode `#1a1410` text-on-accent rules now use `--on-accent`.
+- **Unchanged by design:** the seven step colours, category, heart-need and feeling colours, the rubric (instruction) ink, and the time-of-day banner skies at dawn, dusk and night.
+- **Checked:** every scheme's text, links and buttons ≥ 4.5:1 in both modes at token level, and a rendered-text scan of seven screens × 24 schemes × light/dark finds nothing beyond Parchment's own known false positives.
+
 ### 🛠️ Infrastructure
 - ✅ localStorage persistence (`prayer_cards`, `pl_sessions`, `pl_draft`, `streak_days`, `daily_<date>`)
 - ✅ Storage failure handling — all writes go through `safeSetItem()` / `safeRemoveItem()` wrappers. Distinguishes `QuotaExceededError` (storage full) from `SecurityError` (private mode, Brave shields, etc.) and shows a specific toast for each. Toasts are rate-limited to once per 5 seconds so auto-save during a typing burst doesn't flood the user. On app start, `storageAvailable()` does a probe write/remove — if it fails, surfaces a "⚠ Your browser is blocking local storage" warning toast after 800ms.
@@ -366,7 +373,7 @@ Array of `Date.toDateString()` strings — days the user finished daily prayer o
 In Backup & Restore (per day: backup's line wins, notes merged by id); cleared by Reset All Data.
 
 ### UI keys (P18)
-`seen_instr` (text keys of instructions already met — for the peek), `bb_last` (`{file, chapter}` last read in the Bible). Preferences only; not in backups.
+`seen_instr` (text keys of instructions already met — for the peek), `bb_last` (`{file, chapter}` last read in the Bible), `palette` (colour-scheme key) and `palette_css` (its generated CSS, for the pre-paint bootstrap). Preferences only; not in backups.
 
 ### `bible_bookmarks` (array, newest first)
 ```js
@@ -780,6 +787,7 @@ If you're starting a new chat and the user asks for "what's next," check §6 —
 
 Newest first. Format: `YYYY-MM-DD — what changed`.
 
+- **2026-10-05** — **24 colour schemes** (Appearance → Colour): 12 single-colour and 12 multi-colour, each with a light and a contrast-checked dark version; Parchment stays the default. Header, banners, *Pray these now* and dark text-on-accent moved onto tokens so a scheme reaches them. Step, category, heart-need, feeling and rubric colours unchanged. Regression suite 160 → 161, all passing; rendered-text contrast scan clean across all 48 scheme/theme pairs.
 - **2026-10-05** — The tour's *Skip* now opens the Guide's *Start here*, like *Begin from scratch*, so every new user sees the first steps. Regression suite 159 → 160, all passing.
 - **2026-10-05** — **Guide for first-timers** (tester feedback: wordy, boring, no first step). *Start here* — three steps with their actions, ticked from your data, stepping aside when all three exist; a drawn week and three short rhythm rows with *How it works* folded (plan flows, card parts and Weekly steps drawn rather than written out); *Begin from scratch* in the tour and a *New here?* line on the empty Daily home both lead to it. Author name removed from the Story Cards explainer (§5). Regression suite 156 → 159, all passing; 320 Large, 390, light and dark checked.
 - **2026-10-05** — The *Today* label beside *Carry this with you* removed — the card is always about today (and the ribbon sat over it).
