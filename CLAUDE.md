@@ -279,6 +279,20 @@ Tester feedback: the Guide was wordy, dull, and didn't say what to do first.
 - **Unchanged by design:** the seven step colours, category, heart-need and feeling colours, the rubric (instruction) ink, and the time-of-day banner skies at dawn, dusk and night.
 - **Checked:** every scheme's text, links and buttons ≥ 4.5:1 in both modes at token level, and a rendered-text scan of seven screens × 24 schemes × light/dark finds nothing beyond Parchment's own known false positives.
 
+### 🧭 Sixth audit pass (P19, 2026-10-05)
+Measured across 70+ states in light/dark at 390px, 320px Large and 768px, plus a rendered-text contrast scan of all 24 schemes × light/dark. **Content unchanged** — new interface labels only reuse existing titles (*Answered Prayers ›*, *Weekly Review — Story Cards ›*, *Heart Needs Over Time ›*, *Feelings Over Time ›*, *Earlier lines*, *Take the tour ›*) plus the search group heading *Written prayers*.
+- ✅ **Header** — on the homes a slim band in the scheme's colour: search, a ✦ mark, the Bible; the app name stays for screen readers (`.hdr-mark`, `.sr-only`); the page's hero is its title. Multi-colour schemes lay a faint motif across it (`--hdr-motif`: leading, mosaic, vine, rays, interlace, wheat, arches, crosses, waves, stars, lavender, dunes).
+- ✅ **Daily home** opens on a full-width sky for the hour (`.dp-sky`), date and *Daily Prayer* on the hills; whatever follows overlaps its lower edge.
+- ✅ **Weekly banner** — one solid *Begin Full Session*, *Quick Prayer* as a link beneath (`.pl-banner-link`).
+- ✅ **Session bar** — plan name, and the mode (*Quick Prayer*) as a small second line (`.sb-name` / `.sb-mode`).
+- ✅ **Progress as a path** — a waving thread with a station per movement in that movement's colour; passed ones filled, the current one carrying its mark.
+- ✅ **Illuminated initials** — the instruction's (and an open written prayer's) first letter in a double-ruled square, so it no longer reads as a split word.
+- ✅ **Tablet (≥768px)** — 680px column; Daily home in two columns (`.home-cols` → `.home-a` / `.home-b`); Story Cards in a 2-column grid (`.cat-group-cards`).
+- ✅ **Done screens** tighter; verse and gaze side by side from 560px; the doves settle in once.
+- ✅ **Graphics** — per-tab section marks (sun, knotted thread, arch, laurel, star); Story Cards rows lead with a small card in the category colour; theme swatches in the chosen scheme (`--sw-*`); today ringed in the Guide's week (`.g-wk-today`); calendar month between two fading rules; Reflect's empty band quiet under a drawn mark; practice-specific empty art.
+- ✅ **Links** — Story Cards → Answered Prayers and Weekly Review (`goReflect`); Needs of the Heart and the feelings picker → their *Over Time* sections (outside sessions, `sheetFootLink`); Reflect → *Earlier lines*; search also finds Bible bookmarks and written prayers (`openLibraryPrayer`); a Daily calendar day also lists that day's story notes and carried line (`dayExtrasHTML`); a filled cell in Reflect's 12-week strip opens Year at a Glance on that day (`reflectMiniTap`); each *How it works* offers its tour screen (`showTutorial(start)`).
+- ✅ **Defects** — *Before you begin* date wrap; Reflect figures as 3 + 2; Settings switch with icons, fitting at 320px Large; tab labels no longer touch; toasts move to the top while a sheet is open; search dates in the app's style; card toolbar labels balanced; word-cloud and Bible hint contrast; tap targets ≥ 36px; *Sit with it* never opens empty.
+
 ### 🛠️ Infrastructure
 - ✅ localStorage persistence (`prayer_cards`, `pl_sessions`, `pl_draft`, `streak_days`, `daily_<date>`)
 - ✅ Storage failure handling — all writes go through `safeSetItem()` / `safeRemoveItem()` wrappers. Distinguishes `QuotaExceededError` (storage full) from `SecurityError` (private mode, Brave shields, etc.) and shows a specific toast for each. Toasts are rate-limited to once per 5 seconds so auto-save during a typing burst doesn't flood the user. On app start, `storageAvailable()` does a probe write/remove — if it fails, surfaces a "⚠ Your browser is blocking local storage" warning toast after 800ms.
@@ -673,6 +687,15 @@ A full audit of every screen in both themes at 390px, with contrast, tap-target 
 
 **Two contrast pairs still fail as measured, and both are non-text:** `--border` on `--surface` at 1.73:1 is a decorative card edge (raising it to 3:1 makes the app look wireframed), and `--accent2` on `--accent-light` at 2.94:1 is only ever a border colour now — its one text use, the selected verse number, was moved to `--accent` at 5.07:1.
 
+### P19 — Sixth audit pass (added 2026-10-05)
+
+| # | Feature | Status | Notes |
+|---|---|---|---|
+| 98 | Defects D1–D16 | **done** | See §3 P19. |
+| 99 | Layout L1–L12 | **done** | L1 option A (slim band), L2 option A (full-width sky) at the owner's choice. |
+| 100 | Graphics G1–G3, G5–G9 | **done** | G4 (candle flicker on the night banner) **declined** — motion during prayer. |
+| 101 | Links K1–K9 | **done** | |
+
 ### P18 — Fifth audit pass (added 2026-10-05)
 
 | # | Feature | Status | Notes |
@@ -787,6 +810,7 @@ If you're starting a new chat and the user asks for "what's next," check §6 —
 
 Newest first. Format: `YYYY-MM-DD — what changed`.
 
+- **2026-10-05** — **P19: sixth audit pass** (§6 #98–101, §3 P19). Slim scheme-coloured header band with per-scheme motifs; Daily home on a full-width sky; one Begin on the Weekly banner; session bar with a mode line; progress drawn as a path of coloured stations; illuminated initials; tablet two-column homes; tighter Done screens; per-tab section marks, card thumbnails, scheme-tinted theme swatches, today ringed in the Guide; nine new links (Story Cards ↔ Reflect, sheets → *Over Time*, Earlier lines, search over bookmarks and written prayers, calendar day extras, 12-week strip → day, How it works → tour). Sixteen defects fixed. G4 declined. No wording changed. Regression suite 162 → 172, all passing; contrast scan clean across 24 schemes × light/dark.
 - **2026-10-05** — Fix: Reflect's seven day marks wrapped at 320px Large text (Monday dropped to a second line). They now divide the band's width on one row (`.rf-row .streak-bar` nowrap, `.streak-day` flex 1, 37–44px wide). Regression suite 161 → 162, all passing.
 - **2026-10-05** — **Settings moved from Reflect to the Guide** (under *More*, after the tour row): Appearance with Colour, Markdown Export, Backup & Restore — same panel, same wording. Reflect is now analysis only. Privacy's “Backup & Restore in the Reflect tab” now reads “in Settings, above”; README updated. Regression suite 161, all passing.
 - **2026-10-05** — **24 colour schemes** (Appearance → Colour): 12 single-colour and 12 multi-colour, each with a light and a contrast-checked dark version; Parchment stays the default. Header, banners, *Pray these now* and dark text-on-accent moved onto tokens so a scheme reaches them. Step, category, heart-need, feeling and rubric colours unchanged. Regression suite 160 → 161, all passing; rendered-text contrast scan clean across all 48 scheme/theme pairs.

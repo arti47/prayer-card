@@ -2660,13 +2660,174 @@
   .sv-print .ico { width: 15px; height: 15px; }
   @media print { .sv-print { display: none !important; } }
   .section-title, .he-group, .ch-month, .carry-head { font-size: max(12.5px, 1.1em); }
+
+  /* ═══ P19 — sixth audit ═══ */
+  .sr-only { position: absolute !important; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  /* L1: on the homes the header is a slim band in the scheme's colour — search,
+     the ✦ mark, the Bible. The page's own hero is its title. */
+  header { padding: 7px 60px 10px; }
+  @supports (padding: env(safe-area-inset-top)) { header { padding-top: calc(7px + env(safe-area-inset-top)) !important; } }
+  header h1 { font-size: 1.25rem !important; line-height: 1.5; letter-spacing: 0; }
+  .hdr-mark { display: inline-block; opacity: .92; }
+  header p { display: none; }
+  .hdr-bible { width: 36px; height: 36px; }
+  /* L2: the Daily home opens on a full-width sky for the hour, the date and title
+     resting on its hills; whatever follows overlaps its lower edge. */
+  .pl-banner.dp-sky { margin: -16px -16px 0; border-radius: 0; box-shadow: none; min-height: 178px; padding: 0 22px 52px; display: flex; flex-direction: column; justify-content: flex-end; text-align: left; }
+  .pl-banner.dp-sky .sky { animation: none; }
+  .dp-sky-txt { position: relative; text-shadow: 0 1px 6px rgba(0,0,0,.28); }
+  .dp-sky .pl-date { opacity: .8; margin-bottom: 2px; }
+  .dp-sky h2 { font-size: var(--fs-9); line-height: 1.15; }
+  .pl-banner.dp-sky + * { position: relative; z-index: 1; margin-top: -34px; }
+  .pl-banner.dp-sky + .resume-ribbon, .pl-banner.dp-sky + .g-nudge { margin-left: 2px; margin-right: 2px; }
+  @media (min-width: 552px) { .pl-banner.dp-sky { border-radius: 0 0 var(--radius) var(--radius); margin-left: 0; margin-right: 0; } }
+  /* L3: Weekly — one solid Begin, Quick Prayer as a quiet link beneath. */
+  .pl-banner-btns { flex-direction: column; align-items: center; gap: 4px; }
+  .pl-banner-btns .pl-banner-btn.primary { flex: none; width: 100%; background: rgba(255,253,248,.94); border-color: transparent; color: var(--accent); font-weight: 600; box-shadow: 0 1px 3px rgba(0,0,0,.18); }
+  [data-theme="dark"] .pl-banner-btns .pl-banner-btn.primary { background: var(--accent); color: var(--on-accent); }
+  .pl-banner-link { display: inline-flex; align-items: center; gap: .4em; min-height: 40px; padding: 6px 14px; background: none; border: 0; color: rgba(255,255,255,.9); font-family: var(--serif); font-size: var(--fs-5); cursor: pointer; text-decoration: underline dotted rgba(255,255,255,.55); text-underline-offset: 4px; }
+  [data-theme="dark"] .pl-banner-link { color: var(--text2); text-decoration-color: var(--border); }
+  .pl-banner-link .ico { width: 1em; height: 1em; }
+  /* L11: session bar — name, and a mode beneath when there is one. */
+  #sb-title { display: inline-flex; flex-direction: column; align-items: center; line-height: 1.15; max-width: 100%; vertical-align: middle; }
+  .sb-name { max-width: 100%; overflow: hidden; text-overflow: ellipsis; font-size: min(var(--fs-6), 5vw); }
+  .sb-mode { font-family: var(--sans); font-size: var(--fs-1); letter-spacing: .06em; text-transform: uppercase; color: var(--text3); }
+
+  /* G1 / D1: the instruction's initial is an illuminated letter in a double-ruled
+     square, so the gap after it reads as a capital, not a split word. */
+  .pl-step-card .pl-instruction:not(.peek)::first-letter { font-size: 2.3em; line-height: 1; padding: .1em .2em .04em; margin: .14em .38em 0 0; border: 3px double color-mix(in srgb, var(--rubric) 45%, transparent); border-radius: 4px; background: color-mix(in srgb, var(--rubric) 7%, var(--surface)); }
+  .prayer-lib-item[open] .prayer-lib-text::first-letter { font-size: 2.2em; line-height: 1; padding: .1em .2em .04em; margin: .12em .36em 0 0; border: 3px double color-mix(in srgb, var(--lc) 45%, transparent); border-radius: 4px; background: color-mix(in srgb, var(--lc) 8%, var(--surface)); }
+  .nowrap { white-space: nowrap; }
+  /* D3: Reflect figures 3 + 2, so no label runs past two lines. */
+  @media (max-width: 519px) {
+    .rf-figs { grid-template-columns: repeat(6, minmax(0, 1fr)); row-gap: 8px; }
+    .rf-fig { grid-column: span 2; } .rf-fig:nth-child(n+4) { grid-column: span 3; }
+    .rf-fig:nth-child(4)::before { display: none; }
+  }
+  .rf-fig span { text-wrap: balance; }
+  /* D4 / L7: Settings switch — icon + label, shrinking with the screen. */
+  .set-seg button { display: inline-flex; align-items: center; justify-content: center; gap: 5px; font-size: min(var(--fs-4), 3.9vw); padding: 0 4px; white-space: nowrap; }
+  .set-seg button .ico { width: 15px; height: 15px; flex: none; }
+  @media (max-width: 359px) { .set-seg button .ico { display: none; } }
+  /* D5: tab labels never touch at 320px Large. */
+  nav button { font-size: min(var(--fs-1), 3.9vw); }
+  @media (max-width: 359px) { nav button { letter-spacing: 0; padding-left: 0; padding-right: 0; } }
+  /* D6: while a sheet is open the toast moves to the top, off the sheet's content. */
+  body:has(.modal-bg.open) .toast { bottom: auto; top: calc(env(safe-area-inset-top, 0px) + 14px); }
+  body.has-fab .toast { bottom: calc(var(--nav-h, 76px) + 80px); }
+  /* D9 / L4: card toolbar — four equal tiles, labels balanced on two lines. */
+  .cd-tools { grid-template-columns: repeat(auto-fit, minmax(0, 1fr)); }
+  .cd-tool span { font-size: var(--fs-1); line-height: 1.2; min-height: 2.4em; display: flex; align-items: flex-start; justify-content: center; text-align: center; text-wrap: balance; }
+  /* D12: word-cloud inks follow the scheme and clear 4.5:1. */
+  .wf-word.w2 { color: color-mix(in srgb, var(--accent) 72%, var(--text3)); } .wf-word.w3 { color: var(--text3); }
+  [data-theme="dark"] .wf-word.w2 { color: color-mix(in srgb, var(--accent) 72%, var(--text3)); } [data-theme="dark"] .wf-word.w3 { color: var(--text3); }
+  /* D13 */ .bb-hint { color: var(--text3); }
+  /* D14: tap targets ≥ 36px. */
+  .dp-tech-link { min-height: 38px; display: flex; align-items: center; }
+  .emo-chip { min-height: 34px; }
+  .bb-feel-refine button { min-height: 36px; }
+  .wf-word { display: inline-block; padding: 4px 2px; min-height: 36px; }
+
+  /* L5: the progress is a path — a waving thread with a station for each
+     movement in that movement's colour: filled once passed, the current one
+     carrying its mark. */
+  .pl-dot { --sc: var(--idc, var(--accent)); }
+  [data-theme="dark"] .pl-dot { --sc: var(--idc-dark, var(--accent)); }
+  .pl-progress-dots::before { height: 8px; top: calc(50% - 4px); background: var(--border);
+    -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='8'%3E%3Cpath d='M0 4 Q4.5 0.6 9 4 T18 4' fill='none' stroke='%23000' stroke-width='1.2'/%3E%3C/svg%3E") repeat-x center / 18px 8px;
+            mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='8'%3E%3Cpath d='M0 4 Q4.5 0.6 9 4 T18 4' fill='none' stroke='%23000' stroke-width='1.2'/%3E%3C/svg%3E") repeat-x center / 18px 8px; }
+  .pl-dot { width: 10px; height: 10px; margin: 0 10px; box-shadow: 0 0 0 1.5px color-mix(in srgb, var(--sc) 55%, transparent) inset, 0 0 0 4px var(--bg); }
+  .pl-dot.done { background: var(--sc); box-shadow: 0 0 0 1.5px var(--sc) inset, 0 0 0 4px var(--bg); }
+  .pl-dot.active { width: 26px; height: 26px; margin: 0 6px; background: var(--sc); color: #fff; box-shadow: 0 0 0 4px var(--bg), 0 0 0 5.5px color-mix(in srgb, var(--sc) 35%, transparent); }
+  [data-theme="dark"] .pl-dot.active { color: var(--bg); }
+
+  .pl-progress-dots::before { left: 15px; right: 15px; }
+  /* L6: Done — tighter, and on a wide screen the verse and the gaze sit side by
+     side in the one panel. The doves settle in once. */
+  .done-panel { padding: 16px 14px 12px; }
+  .done-panel .pl-done-verse { margin-bottom: 10px; }
+  @media (min-width: 560px) {
+    .done-panel { display: grid; grid-template-columns: 1.15fr 1fr; gap: 0 18px; align-items: center; }
+    .done-panel .christ-anchor { border-top: 0; border-left: 1px solid var(--border-soft); padding: 4px 0 4px 18px; }
+  }
+  .done-doves svg { animation: doveIn 1.6s var(--ease) both; }
+  .done-doves svg:last-child { animation-delay: .25s; }
+  @keyframes doveIn { from { opacity: 0; translate: 0 10px; } to { opacity: 1; translate: 0 0; } }
+  @media (prefers-reduced-motion: reduce) { .done-doves svg { animation: none; } }
+
+  /* K1/K2 quiet links from Story Cards into Reflect */
+  .cards-link { display: inline-flex; align-items: center; gap: 7px; min-height: 40px; margin: 6px 2px 0; padding: 4px 2px; background: none; border: 0; color: var(--accent); font-family: var(--serif); font-size: var(--fs-4); cursor: pointer; text-decoration: underline dotted color-mix(in srgb, var(--accent) 45%, transparent); text-underline-offset: 4px; }
+  .cards-link .ico { width: 15px; height: 15px; }
+  /* L9: tablets — a wider column, and the homes in two columns. */
+  @media (min-width: 768px) {
+    .view { max-width: 680px; }
+    .fab { right: calc((100vw - 680px) / 2 + 16px); }
+    body.in-session .session-foot .pl-nav { max-width: 680px; }
+    .home-cols { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 0 22px; align-items: start; }
+    .home-b { padding-top: 6px; }
+    .cat-group-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 0 10px; }
+    .cat-group-cards > .card-row { margin-bottom: 8px; }
+    #view-reflect .rf-band { padding: 18px 22px 14px; }
+  }
+
+  .day-extras { margin-top: 8px; }
+  .timeline-entry.type-carry { border-left: 3px solid var(--accent2); }
+  .rf-band.is-empty .rf-fig b { color: var(--text-quiet); }
+  .rf-empty-art { display: flex; justify-content: center; margin: -4px 0 4px; }
+  .rf-empty-art svg { width: 72px; height: 58px; }
+
+  /* G2: each multi-colour scheme lays a faint motif across the header band. */
+  header { background-image: var(--grain), var(--hdr-motif, linear-gradient(transparent, transparent)), var(--hdr-img, linear-gradient(transparent, transparent)); background-blend-mode: soft-light, normal, normal; background-size: 180px, auto, 100% 100%; background-repeat: repeat, repeat, no-repeat; }
+  html[data-palette="glass"] { --hdr-motif: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='24'%3E%3Cpath d='M0 0L14 24L28 0M0 24L14 0L28 24' fill='none' stroke='%23fff' stroke-opacity='.17' stroke-width='1'/%3E%3C/svg%3E"); }
+  html[data-palette="byzantine"] { --hdr-motif: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='16'%3E%3Crect x='2' y='2' width='5' height='5' fill='%23fff' fill-opacity='.17'/%3E%3Crect x='11' y='9' width='5' height='5' fill='%23fff' fill-opacity='.17'/%3E%3C/svg%3E"); }
+  html[data-palette="garden"] { --hdr-motif: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='36' height='24'%3E%3Cpath d='M0 18C8 18 10 8 18 8S26 18 36 18' fill='none' stroke='%23fff' stroke-opacity='.17' stroke-width='1'/%3E%3Cpath d='M18 8c-2-4 0-6 3-7' fill='none' stroke='%23fff' stroke-opacity='.17' stroke-width='1'/%3E%3Ccircle cx='22' cy='3' r='1.6' fill='%23fff' fill-opacity='.17'/%3E%3C/svg%3E"); }
+  html[data-palette="dawn"] { --hdr-motif: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='24'%3E%3Cpath d='M0 24L40 0M10 24L40 6M20 24L40 12' fill='none' stroke='%23fff' stroke-opacity='.17' stroke-width='1'/%3E%3C/svg%3E"); }
+  html[data-palette="iona"] { --hdr-motif: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='24'%3E%3Cpath d='M0 12C6 2 12 2 16 12S26 22 32 12' fill='none' stroke='%23fff' stroke-opacity='.17' stroke-width='1'/%3E%3Cpath d='M0 12C6 22 12 22 16 12S26 2 32 12' fill='none' stroke='%23fff' stroke-opacity='.17' stroke-width='1'/%3E%3C/svg%3E"); }
+  html[data-palette="harvest"] { --hdr-motif: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='24'%3E%3Cpath d='M10 22V4M10 8l-4-3M10 8l4-3M10 13l-4-3M10 13l4-3M10 18l-4-3M10 18l4-3' fill='none' stroke='%23fff' stroke-opacity='.17' stroke-width='1'/%3E%3C/svg%3E"); }
+  html[data-palette="cathedral"] { --hdr-motif: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='22' height='24'%3E%3Cpath d='M2 24V12a8 8 0 0 1 16 0v12' fill='none' stroke='%23fff' stroke-opacity='.17' stroke-width='1'/%3E%3C/svg%3E"); }
+  html[data-palette="psalter"] { --hdr-motif: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='24'%3E%3Cpath d='M10 7v8M6 11h8' fill='none' stroke='%23fff' stroke-opacity='.17' stroke-width='1'/%3E%3Ccircle cx='22' cy='18' r='1.4' fill='%23fff' fill-opacity='.17'/%3E%3C/svg%3E"); }
+  html[data-palette="galilee"] { --hdr-motif: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='24'%3E%3Cpath d='M0 14q7-6 14 0t14 0' fill='none' stroke='%23fff' stroke-opacity='.17' stroke-width='1'/%3E%3Cpath d='M0 21q7-6 14 0t14 0' fill='none' stroke='%23fff' stroke-opacity='.17' stroke-width='1'/%3E%3C/svg%3E"); }
+  html[data-palette="nightfall"] { --hdr-motif: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='34' height='26'%3E%3Ccircle cx='6' cy='6' r='1' fill='%23fff' fill-opacity='.17'/%3E%3Ccircle cx='26' cy='16' r='1.3' fill='%23fff' fill-opacity='.17'/%3E%3Ccircle cx='15' cy='21' r='.8' fill='%23fff' fill-opacity='.17'/%3E%3C/svg%3E"); }
+  html[data-palette="lavender"] { --hdr-motif: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='22' height='26'%3E%3Cpath d='M8 24V8' fill='none' stroke='%23fff' stroke-opacity='.17' stroke-width='1'/%3E%3Cellipse cx='8' cy='6' rx='1.6' ry='2.6' fill='%23fff' fill-opacity='.17'/%3E%3Cellipse cx='5.6' cy='11' rx='1.4' ry='2.2' fill='%23fff' fill-opacity='.17'/%3E%3Cellipse cx='10.4' cy='11' rx='1.4' ry='2.2' fill='%23fff' fill-opacity='.17'/%3E%3C/svg%3E"); }
+  html[data-palette="desert"] { --hdr-motif: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='24'%3E%3Cpath d='M0 20L8 12L16 20L24 12L32 20' fill='none' stroke='%23fff' stroke-opacity='.17' stroke-width='1'/%3E%3C/svg%3E"); }
+  [data-theme="dark"] header { background-image: var(--hdr-motif, none); background-size: auto; background-color: transparent; }
+  [data-theme="dark"] header { background: var(--hdr-motif, linear-gradient(transparent,transparent)), var(--hdr-d); }
+  /* G3: each tab's section mark — sun, knotted thread, arch, laurel, star. */
+  .section-title::before { width: 12px; height: 12px; transform: none; margin: 0 7px 1px 0; }
+  #view-daily .section-title::before { -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16'%3E%3Cg fill='none' stroke='%23000' stroke-width='1.6' stroke-linecap='round'%3E%3Ccircle cx='8' cy='8' r='3'/%3E%3Cpath d='M8 1.5v2M8 12.5v2M1.5 8h2M12.5 8h2M3.4 3.4l1.4 1.4M11.2 11.2l1.4 1.4M12.6 3.4l-1.4 1.4M4.8 11.2l-1.4 1.4'/%3E%3C/g%3E%3C/svg%3E") center / contain no-repeat; mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16'%3E%3Cg fill='none' stroke='%23000' stroke-width='1.6' stroke-linecap='round'%3E%3Ccircle cx='8' cy='8' r='3'/%3E%3Cpath d='M8 1.5v2M8 12.5v2M1.5 8h2M12.5 8h2M3.4 3.4l1.4 1.4M11.2 11.2l1.4 1.4M12.6 3.4l-1.4 1.4M4.8 11.2l-1.4 1.4'/%3E%3C/g%3E%3C/svg%3E") center / contain no-repeat; }
+  #view-cards .section-title::before { -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16'%3E%3Cg fill='none' stroke='%23000' stroke-width='1.6' stroke-linecap='round'%3E%3Cpath d='M1 10C4 4 7 13 10 8s4-3 5-2'/%3E%3Ccircle cx='5' cy='9' r='1.4' fill='%23000'/%3E%3Ccircle cx='10.4' cy='7.4' r='1.4' fill='%23000'/%3E%3C/g%3E%3C/svg%3E") center / contain no-repeat; mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16'%3E%3Cg fill='none' stroke='%23000' stroke-width='1.6' stroke-linecap='round'%3E%3Cpath d='M1 10C4 4 7 13 10 8s4-3 5-2'/%3E%3Ccircle cx='5' cy='9' r='1.4' fill='%23000'/%3E%3Ccircle cx='10.4' cy='7.4' r='1.4' fill='%23000'/%3E%3C/g%3E%3C/svg%3E") center / contain no-repeat; }
+  #view-pl .section-title::before { -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16'%3E%3Cg fill='none' stroke='%23000' stroke-width='1.6' stroke-linecap='round'%3E%3Cpath d='M3 15V8a5 5 0 0 1 10 0v7'/%3E%3C/g%3E%3C/svg%3E") center / contain no-repeat; mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16'%3E%3Cg fill='none' stroke='%23000' stroke-width='1.6' stroke-linecap='round'%3E%3Cpath d='M3 15V8a5 5 0 0 1 10 0v7'/%3E%3C/g%3E%3C/svg%3E") center / contain no-repeat; }
+  #view-reflect .section-title::before { -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16'%3E%3Cg fill='none' stroke='%23000' stroke-width='1.6' stroke-linecap='round'%3E%3Cpath d='M3 14C4 8 8 4 13 2'/%3E%3Cpath d='M5 10c-2 0-3-1-3-3 2 0 3 1 3 3zM8 6.4c-1.6-.8-2-2.2-1.4-3.8 1.6.8 2 2.2 1.4 3.8zM8 9c.4-1.8 1.8-2.6 3.6-2.4-.4 1.8-1.8 2.6-3.6 2.4z'/%3E%3C/g%3E%3C/svg%3E") center / contain no-repeat; mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16'%3E%3Cg fill='none' stroke='%23000' stroke-width='1.6' stroke-linecap='round'%3E%3Cpath d='M3 14C4 8 8 4 13 2'/%3E%3Cpath d='M5 10c-2 0-3-1-3-3 2 0 3 1 3 3zM8 6.4c-1.6-.8-2-2.2-1.4-3.8 1.6.8 2 2.2 1.4 3.8zM8 9c.4-1.8 1.8-2.6 3.6-2.4-.4 1.8-1.8 2.6-3.6 2.4z'/%3E%3C/g%3E%3C/svg%3E") center / contain no-repeat; }
+  #view-guide .section-title::before { -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16'%3E%3Cg fill='none' stroke='%23000' stroke-width='1.6' stroke-linecap='round'%3E%3Cpath d='M8 1.8l1.6 4.6 4.6 1.6-4.6 1.6L8 14.2l-1.6-4.6L1.8 8l4.6-1.6z'/%3E%3C/g%3E%3C/svg%3E") center / contain no-repeat; mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16'%3E%3Cg fill='none' stroke='%23000' stroke-width='1.6' stroke-linecap='round'%3E%3Cpath d='M8 1.8l1.6 4.6 4.6 1.6-4.6 1.6L8 14.2l-1.6-4.6L1.8 8l4.6-1.6z'/%3E%3C/g%3E%3C/svg%3E") center / contain no-repeat; }
+  /* G5: Story Cards rows lead with a small card in the category's colour. */
+  .cr-mark { width: 30px; height: 38px; border-radius: 4px; border: 1px solid color-mix(in srgb, var(--cat, var(--accent)) 45%, transparent); box-shadow: 2px 2px 0 -1px var(--surface), 2px 2px 0 0 color-mix(in srgb, var(--cat, var(--accent)) 30%, transparent); }
+  .cr-mark .ico { width: 17px; height: 17px; }
+  /* G6: theme swatches in the chosen scheme's paper and band */
+  .sw-light { background: linear-gradient(180deg, var(--sw-l-hdr, #7a5c3e) 0 26%, var(--sw-l-bg, #fdfaf5) 26%) !important; }
+  .sw-dark { background: linear-gradient(180deg, var(--sw-d-hdr, #2a2119) 0 26%, var(--sw-d-bg, #1a1410) 26%) !important; }
+  .sw-auto { background: linear-gradient(105deg, var(--sw-l-bg, #fdfaf5) 0 50%, var(--sw-d-bg, #1f1811) 50% 100%) !important; }
+  /* G7: today's column in the Guide's week */
+  .g-wk-today { fill: none; stroke: var(--accent2); stroke-width: 1.4; stroke-dasharray: 3 3; }
+  /* G8: the calendar's month name between two small rules with a diamond */
+  .pl-cal-month { display: inline-flex; align-items: center; gap: 10px; font-weight: normal; letter-spacing: .02em; }
+  .pl-cal-month::before, .pl-cal-month::after { content: ''; width: 22px; height: 7px; background: linear-gradient(var(--border), var(--border)) center / 100% 1px no-repeat; }
+  .pl-cal-month::before { -webkit-mask: linear-gradient(90deg, transparent, #000); mask: linear-gradient(90deg, transparent, #000); }
+  .pl-cal-month::after { -webkit-mask: linear-gradient(90deg, #000, transparent); mask: linear-gradient(90deg, #000, transparent); }
+  /* K5 Earlier lines row in Reflect; K7 tour from How it works */
+  .rf-row-link { display: flex; align-items: center; width: 100%; text-align: left; cursor: pointer; padding: 15px 4px !important; min-height: 52px; font: inherit; color: inherit; }
+  .rf-row-link h3 { flex: 1; margin: 0; }
+  .rf-row-go { color: var(--text3); font-size: 1.1rem; }
+  .g-rh-tour { display: inline-flex; align-items: center; gap: 6px; margin-top: 8px; min-height: 36px; background: none; border: 0; padding: 0; color: var(--accent); font-family: var(--serif); font-size: var(--fs-4); cursor: pointer; }
+  .g-rh-tour .ico { width: 14px; height: 14px; }
+  .sheet-foot-link { margin: 14px auto 4px; display: flex; }
+
+  @media (max-width: 359px) { .carry-head { letter-spacing: .03em; } .sb-name { font-size: min(var(--fs-6), 4.6vw); } }
 </style>
 </head>
 <body>
 
 <header>
-  <h1>✦ Prayer Journal</h1>
-  <p>Story Cards &amp; Guided Prayer</p>
+  <h1><span class="hdr-mark" aria-hidden="true">✦</span><span class="sr-only">Prayer Journal</span></h1>
   <button class="hdr-bible" id="bible-fab-btn" aria-label="Open Bible" title="Bible" onclick="openBibleBrowser()"><span data-ico="book"></span></button>
   <button class="hdr-bible hdr-search" id="hdr-search-btn" aria-label="Search everything" title="Search" onclick="openGlobalSearch()"><span data-ico="search"></span></button>
 </header>
@@ -2716,6 +2877,7 @@
         </div>
         <p><strong>Why three plans?</strong> Daily prayer can take different shapes depending on the day. Morning is fuller and Bible-led. Evening is shorter and Psalm-led. The Starter Plan is a gentler entry point if daily prayer is new.</p>
         <p>On Approach, name what you’re feeling and Scripture chosen for that feeling appears beneath it — read it, add it to your prayer, or take it as the day’s meditation passage. The same verses are in the Bible reader under <em>Scripture by feeling</em>.</p>
+      <button type="button" class="g-rh-tour" onclick="showTutorial(2)"><span data-ico="sparkle"></span>Take the tour ›</button>
       </details>
     </section>
 
@@ -2732,6 +2894,7 @@
           <ul class="g-anat-k"><li>A person or situation</li><li>A Scripture anchor</li><li>A two-level ask</li><li>A Father’s Perspective line</li></ul>
         </div>
         <p>Pray one card a day, add dated story notes weekly.</p>
+      <button type="button" class="g-rh-tour" onclick="showTutorial(1)"><span data-ico="sparkle"></span>Take the tour ›</button>
       </details>
     </section>
 
@@ -2753,6 +2916,7 @@
           <li data-k="forgive"><b>5. Forgive</b> Release others</li>
           <li data-k="follow"><b>6. Follow</b> Dependent obedience</li>
         </ul>
+      <button type="button" class="g-rh-tour" onclick="showTutorial(3)"><span data-ico="sparkle"></span>Take the tour ›</button>
       </details>
     </section>
 
@@ -2761,9 +2925,9 @@
     <details class="about-block reflect-block settings-block" id="rf-settings">
       <summary><h3><span data-ico="palette"></span>Settings</h3></summary>
       <div class="seg-ctl set-seg" role="tablist">
-        <button role="tab" data-pane="appearance" class="on" onclick="setSettingsPane('appearance')">Appearance</button>
-        <button role="tab" data-pane="export" onclick="setSettingsPane('export')">Export</button>
-        <button role="tab" data-pane="backup" onclick="setSettingsPane('backup')">Backup</button>
+        <button role="tab" data-pane="appearance" class="on" onclick="setSettingsPane('appearance')"><span data-ico="palette"></span>Appearance</button>
+        <button role="tab" data-pane="export" onclick="setSettingsPane('export')"><span data-ico="save"></span>Export</button>
+        <button role="tab" data-pane="backup" onclick="setSettingsPane('backup')"><span data-ico="archive"></span>Backup</button>
       </div>
       <div class="set-pane" data-pane="appearance">
       <h4 class="set-h"><span data-ico="palette"></span>Appearance</h4>
@@ -2879,6 +3043,7 @@
       <summary><h3><span data-ico="repeat"></span>Weekly Review — Story Cards</h3></summary>
       <div id="review-content"></div>
     </details>
+    <button type="button" class="about-block reflect-block rf-row-link" onclick="carryHistOpen()"><h3><span data-ico="scroll"></span>Earlier lines</h3><span class="rf-row-go" aria-hidden="true">›</span></button>
 
   </div>
 </div>
@@ -4799,9 +4964,10 @@ function syncHeaderMode(){
   }
   const t = document.getElementById('sb-title');
   if(t && inS){
-    t.textContent = currentView === 'daily'
-      ? (DP_PLANS[dpSession?.plan]?.title || 'Daily Prayer')
-      : (plSession?.includesPrep === false ? 'Weekly Deep Time · Quick Prayer' : 'Weekly Deep Time');
+    // L11: the plan's name on one line; a mode (Quick Prayer) as a small second line.
+    const nm = currentView === 'daily' ? (DP_PLANS[dpSession?.plan]?.title || 'Daily Prayer') : 'Weekly Deep Time';
+    const mode = currentView !== 'daily' && plSession?.includesPrep === false ? 'Quick Prayer' : '';
+    t.innerHTML = `<span class="sb-name">${esc(nm)}</span>${mode ? `<span class="sb-mode">${mode}</span>` : ''}`;
   }
   const sbb = document.getElementById('sb-bible');
   if(sbb) sbb.style.display = (typeof bibleFabEnabled === 'function' && !bibleFabEnabled()) ? 'none' : '';
@@ -5982,6 +6148,11 @@ const PRAYER_LIBRARY = {
 let _prayerLibTargetId = null;
 let _prayerLibCategory = null;
 
+// K6: open the library at one prayer, expanded and in view (from search).
+function openLibraryPrayer(cat, i){
+  openPrayerLibrary(cat);
+  setTimeout(() => { const d = document.querySelectorAll('#prayer-library-content .prayer-lib-item')[i]; if(d){ d.open = true; d.scrollIntoView({block:'center'}); } }, 250);
+}
 function openPrayerLibrary(category, targetId){
   const lib = PRAYER_LIBRARY[category];
   if(!lib) return;
@@ -6887,7 +7058,7 @@ function pageHeroHTML(title, art){ return `<div class="page-hero"><h2 class="pag
 // ══════════ STORY CARDS ══════════
 function renderCards(){
   const cards=loadCards(); const el=document.getElementById('cards-list');
-  if(!cards.length){ el.innerHTML=pageHeroHTML('Story Cards','cards')+`<div class="empty">${emptyArt('dove')}<h3>No prayer cards yet</h3><p>Track a person or situation as an ongoing prayer story.<br>Aim for 8–12 over time.</p><button class="btn btn-primary" style="max-width:260px;margin:16px auto 0" onclick="openNewCard()">＋ Create your first card</button></div>`; return; }
+  if(!cards.length){ el.innerHTML=pageHeroHTML('Story Cards','cards')+`<div class="empty">${emptyArt('cards')}<h3>No prayer cards yet</h3><p>Track a person or situation as an ongoing prayer story.<br>Aim for 8–12 over time.</p><button class="btn btn-primary" style="max-width:260px;margin:16px auto 0" onclick="openNewCard()">＋ Create your first card</button></div>`; return; }
   const active=cards.filter(c=>!c.answered), answered=cards.filter(c=>c.answered);
   let html=pageHeroHTML('Story Cards','cards');
   if(active.length){
@@ -6900,10 +7071,12 @@ function renderCards(){
     Object.keys(CAT_LABELS).forEach(k=>{
       const g=active.filter(c=>(CAT_ICON[c.category]?c.category:'other')===k); if(!g.length) return;
       html+=`<div class="cat-group-h" style="--cat:${CAT_COLOR[k]}">${ICON[CAT_ICON[k]]}${esc(CAT_LABELS[k])}<span class="cgh-n">${g.length}</span></div>`;
-      g.forEach(c=>html+=cardHTML(c));
+      html+=`<div class="cat-group-cards">${g.map(cardHTML).join('')}</div>`;
     });
   }
-  if(answered.length){ html+=`<details class="answered-fold"${_answeredOpen?' open':''} ontoggle="_answeredOpen=this.open"><summary>${ICON.olive}Answered (${answered.length})</summary>${answered.map(cardHTML).join('')}</details>`; }
+  if(answered.length){ html+=`<details class="answered-fold"${_answeredOpen?' open':''} ontoggle="_answeredOpen=this.open"><summary>${ICON.olive}Answered (${answered.length})</summary><div class="cat-group-cards">${answered.map(cardHTML).join('')}</div><button type="button" class="cards-link" onclick="goReflect('answered-prayers')">${ICON.olive}Answered Prayers ›</button></details>`; }
+  // K2: the weekly notes rhythm lives in Reflect's Weekly Review.
+  if(active.length) html+=`<button type="button" class="cards-link" onclick="goReflect('review-content')">${ICON.repeat}Weekly Review — Story Cards ›</button>`;
   el.innerHTML=html;
 }
 let _answeredOpen = false;
@@ -7405,7 +7578,7 @@ async function carryRemoveDay(key){
   csRerender();
   showUndoToast('Line removed', () => { saveCarryLog(beforeLog); saveDailySessions(beforeSess); csRerender(); });
 }
-function carrySitOpen(){ _carrySheet='sit'; _carryStress=-1; _carryAway=false; carrySitRender(); openModal('modal-carry'); }
+function carrySitOpen(){ if(!carryForDay(dateKey(new Date())).line) return; _carrySheet='sit'; _carryStress=-1; _carryAway=false; carrySitRender(); openModal('modal-carry'); }
 function carrySitRender(){
   const c = carryForDay(dateKey(new Date())); if(!c.line){ closeModal('modal-carry'); return; }
   const lp = carryLineParts(c.line);
@@ -7796,23 +7969,26 @@ function renderDPHome(){
 
   el.innerHTML = `
     <div class="pull-sky tod-${timeOfDay()}" aria-hidden="true">${skySVG()}<span>${today()}</span></div>
-    <div class="pl-banner compact tod-${timeOfDay()}">${skySVG()}
-      <div class="pl-date">${today()}</div>
-      <h2>Daily Prayer</h2>
+    <div class="pl-banner dp-sky tod-${timeOfDay()}">${skySVG()}
+      <div class="dp-sky-txt"><div class="pl-date">${today()}</div>
+      <h2>Daily Prayer</h2></div>
     </div>
     ${draft ? resumeRibbonHTML(`${esc(draftPlan?.title||'')} · ${esc(draftStep?.title||'')}`, 'dpContinue()', 'dpDiscardDraft()') : ''}
     ${(!sessions.length && !draft && !loadSessions().length && !loadCards().some(c=>!c.isSample)) ? `<button class="g-nudge" onclick="showView('guide')">${ICON.sparkle}<span>New here? See where to begin</span>›</button>` : ''}
 
+    <div class="home-cols"><div class="home-a">
     <div class="carry-slot">${carryCardHTML()}</div>
 
     <p class="section-title">Choose a plan</p>
 
     ${planTilesHTML()}
 
+    </div><div class="home-b">
     ${toggleHTML}
     ${searchRowHTML}
     ${calendarHTML}
     <div id="dp-search-results"></div>
+    </div></div>
 
   `;
 
@@ -7971,6 +8147,14 @@ function dpSearchResultHTML(s, match){
   </div>`;
 }
 
+// L12/K8: a chosen calendar day also lists that day's story notes and its carried line.
+function dayExtrasHTML(key){
+  const ent = getEntriesForDayKey(key).filter(e => e.type === 'note' || e.type === 'answered');
+  const c = carryForDay(key);
+  if(c.line) ent.unshift({ type:'carry', icon: ICON.sparkle, title: 'Carry this with you', snippet: carryLineParts(c.line).text, action: 'carryHistOpen()' });
+  if(!ent.length) return '';
+  return `<div class="day-extras">${ent.map(e => `<div class="timeline-entry type-${e.type}" role="button" tabindex="0" onclick="${e.action}"><div class="timeline-icon">${e.icon}</div><div class="timeline-body"><div class="timeline-title">${e.title}</div>${e.snippet ? `<div class="timeline-snippet">${esc(e.snippet)}</div>` : ''}</div></div>`).join('')}</div>`;
+}
 function renderDPSearchResults(){
   const target = document.getElementById('dp-search-results');
   if(!target) return;
@@ -7989,12 +8173,13 @@ function renderDPSearchResults(){
       filtered = sessions.filter(s => sessionDateKey(s).startsWith(prefix));
       label = `${month.toLocaleString('default',{month:'long',year:'numeric'})}`;
     }
-    if(!filtered.length){
+    const extras = _dpCalSelectedDay ? dayExtrasHTML(_dpCalSelectedDay) : '';
+    if(!filtered.length && !extras){
       target.innerHTML = `<div class="empty" style="padding:22px 10px">${emptyArt('calendar')}<p style="font-size:.85rem">No sessions ${_dpCalSelectedDay?'on this day':'in this month'}.</p></div>`;
       return;
     }
     target.innerHTML = `<p class="section-title">${esc(label)}</p>` +
-      filtered.map(s => dpSessionEntryHTML(s)).join('');
+      filtered.map(s => dpSessionEntryHTML(s)).join('') + extras;
     return;
   }
 
@@ -8015,7 +8200,7 @@ function renderDPSearchResults(){
     const recent = sessions.filter(s => new Date(s.dateISO || s.date) >= historyPeriodStart('week'));
     const recentHTML = recent.length
       ? `<div class="he-group">This week</div>${recent.map(dpSessionEntryHTML).join('')}`
-      : sessions.length ? '' : `<div class="empty" style="padding:18px 10px">${emptyArt('book')}<p style="font-size:.85rem">No sessions yet.<br>Your completed prayers will appear here.</p></div>`;
+      : sessions.length ? '' : `<div class="empty" style="padding:18px 10px">${emptyArt('sun')}<p style="font-size:.85rem">No sessions yet.<br>Your completed prayers will appear here.</p></div>`;
     target.innerHTML = `
       ${recentHTML}
       ${sessions.length>recent.length?`${recent.length?'':ornDivider('he-orn')}<p class="he-more">Older sessions are in Calendar and search.</p>`:''}
@@ -8209,7 +8394,7 @@ function renderDPStep(){
 
   // Progress dots
   const dots = plan.steps.map((st,i) =>
-    `<div class="pl-dot${i<dpStepIdx?' done':i===dpStepIdx?' active':''}">${i===dpStepIdx?stepGlyph(st.key):''}</div>`
+    `<div class="pl-dot${i<dpStepIdx?' done':i===dpStepIdx?' active':''}" style="${idc(st.color||'#7a5c3e')}">${i===dpStepIdx?stepGlyph(st.key):''}</div>`
   ).join('');
   // …and, inside a split step, a segmented rule showing the move within it.
   const subRule = split ? `<div class="substep-rule" role="group" aria-label="${esc(unit.label||'')} — ${dpSubIdx+1} of ${units.length}">
@@ -9130,7 +9315,7 @@ function renderReflectionCard(s){
   // Folded to one line until opened; tapping the folded card opens it rather
   // than leaving the screen.
   return `<div class="pl-reflection-card${_plReflOpen ? '' : ' folded'}" onclick="if(this.classList.contains('folded')){togglePLReflection(this.querySelector('.pl-refl-toggle'))}else{viewSession('${s.id}')}">
-    <div class="pl-reflection-label"><span>✦ Before you begin — ${esc(heWhen(s))}</span>${toggle}</div>
+    <div class="pl-reflection-label"><span>✦ Before you begin — <span class="nowrap">${esc(heWhen(s))}</span></span>${toggle}</div>
     <div class="pl-reflection-quiet">A moment to remember what last time held. Has anything changed? Did anything you sensed prove true?</div>
     ${mapping?`<div class="pl-reflection-section">
       <div class="pl-reflection-section-label">Your heart last time</div>
@@ -9217,8 +9402,8 @@ function renderPLHome(el){
       <div class="pl-date">${today()}</div>
       <h2>Weekly Deep Time</h2>
       <div class="pl-banner-btns">
-        <button class="pl-banner-btn" onclick="plStartNew()">${ICON.sparkle}Begin Full Session</button>
-        <button class="pl-banner-btn secondary" onclick="plStartQuick()" aria-label="Quick Prayer, skipping Prepare">${ICON.pray}Quick Prayer</button>
+        <button class="pl-banner-btn primary" onclick="plStartNew()">${ICON.sparkle}Begin Full Session</button>
+        <button class="pl-banner-link" onclick="plStartQuick()" aria-label="Quick Prayer, skipping Prepare">${ICON.pray}Quick Prayer</button>
       </div>
     </div>
     ${draft ? resumeRibbonHTML(esc(draftCurrentStep?.title||'Session'), 'plContinue()', 'plDiscardDraft()') : ''}
@@ -9284,7 +9469,7 @@ function renderPLSearchResults(){
     const recent = sessions.filter(s => new Date(s.dateISO || s.date) >= historyPeriodStart('month'));
     const recentHTML = recent.length
       ? `<div class="he-group">This month</div>${recent.map(normalSessionEntryHTML).join('')}`
-      : sessions.length ? '' : `<div class="empty" style="padding:18px 10px">${emptyArt('book')}<p style="font-size:.85rem">No sessions yet.<br>Your completed journals will appear here.</p></div>`;
+      : sessions.length ? '' : `<div class="empty" style="padding:18px 10px">${emptyArt('pen')}<p style="font-size:.85rem">No sessions yet.<br>Your completed journals will appear here.</p></div>`;
     target.innerHTML = `
       ${reflectionHTML}
       ${recentHTML}
@@ -9317,7 +9502,7 @@ function renderPLStep(el){
   maybeSwipeHint();
   const step=currentStep();
   const steps=getActiveSteps();
-  const dots=steps.map((st,i)=>`<div class="pl-dot${i<plStepIdx?' done':i===plStepIdx?' active':''}">${i===plStepIdx?stepGlyph(st.key):''}</div>`).join('');
+  const dots=steps.map((st,i)=>`<div class="pl-dot${i<plStepIdx?' done':i===plStepIdx?' active':''}" style="${idc(st.sc)}">${i===plStepIdx?stepGlyph(st.key):''}</div>`).join('');
   if(step.isPrep) return renderPrepareStep(el,step,dots,steps);
 
   const saved=plSession.steps[step.key]||{prayer:'',listen:''};
@@ -9964,8 +10149,8 @@ function shouldShowTutorial(){
   return true;
 }
 
-function showTutorial(){
-  _tutorialSlide = 0;
+function showTutorial(start){
+  _tutorialSlide = Math.max(0, Math.min(TUTORIAL_SLIDES.length - 1, +start || 0));
   safeSetItem('tutorial_seen', '1');  // mark seen the moment they see it
   renderTutorialSlide();
   openModal('modal-tutorial');
@@ -10106,6 +10291,10 @@ function applyPalette(){
   const metas = document.querySelectorAll('meta[name="theme-color"]');
   if(metas[0]) metas[0].content = p.light ? p.light['--meta'] : '#7a5c3e';
   if(metas[1]) metas[1].content = p.dark ? p.dark['--meta'] : '#1f1810';
+  // G6: the Light / Dark / Auto swatches show this scheme's paper and band.
+  const rs = document.documentElement.style, sw = p.sw, hd = Array.isArray(sw.hdr) ? sw.hdr[0] : sw.hdr;
+  rs.setProperty('--sw-l-bg', sw.bg); rs.setProperty('--sw-l-hdr', hd);
+  rs.setProperty('--sw-d-bg', p.dark ? p.dark['--bg'] : '#1a1410'); rs.setProperty('--sw-d-hdr', p.dark ? p.dark['--meta'] : '#2a2119');
   document.querySelectorAll('.pal-tile').forEach(b => { const on = b.dataset.pal === key; b.classList.toggle('active', on); b.setAttribute('aria-pressed', on); });
 }
 function setPalette(key){
@@ -11122,12 +11311,17 @@ function globalSearchRender(){
     const hit = fields.find(f => f.toLowerCase().includes(ql)); return hit ? { c, hit } : null; }).filter(Boolean);
   if(cards.length) groups.push([`${ICON.cards}Story Cards`, cards.map(({c,hit}) => row(`closeModal('modal-search');setTimeout(()=>openDetail('${c.id}'),200)`, esc(c.person), makeSnippet(hit, q, 50))).join('')]);
   const ds = loadDailySessions().map(s => ({ s, m: dpMatchesQuery(s, q) })).filter(x => x.m);
-  if(ds.length) groups.push([`${ICON.sun}Daily Prayer`, ds.map(({s,m}) => row(`viewDailySession('${s.id}')`, `${esc(DP_PLANS[s.plan]?.title||'Daily Prayer')} · ${esc(s.date)}`, m.snippet)).join('')]);
+  if(ds.length) groups.push([`${ICON.sun}Daily Prayer`, ds.map(({s,m}) => row(`viewDailySession('${s.id}')`, `${esc(DP_PLANS[s.plan]?.title||'Daily Prayer')} · ${esc(heWhen(s))}`, m.snippet)).join('')]);
   const ws = loadSessions().map(s => ({ s, m: plMatchesQuery(s, q) })).filter(x => x.m);
-  if(ws.length) groups.push([`${ICON.pen}Weekly Deep Time`, ws.map(({s,m}) => row(`viewSession('${s.id}')`, esc(s.date), m.snippet)).join('')]);
+  if(ws.length) groups.push([`${ICON.pen}Weekly Deep Time`, ws.map(({s,m}) => row(`viewSession('${s.id}')`, esc(heWhen(s)), m.snippet)).join('')]);
   const ls = carryHistory().filter(c => (c.line+' '+c.notes.map(n=>n.text).join(' ')).toLowerCase().includes(ql));
   if(ls.length) groups.push([`${ICON.sparkle}Carry this with you`, ls.map(c => { const d = new Date(c.key+'T12:00:00'); const hit = [c.line, ...c.notes.map(n=>n.text)].find(t => (t||'').toLowerCase().includes(ql)) || c.line;
     return row(`_carryHistQ=${JSON.stringify(q).replace(/"/g,'&quot;')};carryHistOpen();setTimeout(()=>{const i=document.querySelector('.cs-search');if(i){i.value=_carryHistQ;carryHistList();}},50)`, esc(d.toLocaleDateString(undefined,{weekday:'short',day:'numeric',month:'short'})), makeSnippet(carryLineParts(hit).text || hit, q, 50)); }).join('')]);
+  // K6: Bible bookmarks and the written prayers are searchable too.
+  const bm = loadBookmarks().filter(b => (b.ref+' '+(b.snippet||'')).toLowerCase().includes(ql));
+  if(bm.length) groups.push([`${ICON.book}Bible bookmarks`, bm.map(b => row(`closeModal('modal-search');setTimeout(()=>{openBibleBrowser();bbOpenBookmark('${b.id}')},200)`, esc(b.ref), b.snippet||'')).join('')]);
+  const lib = []; Object.entries(PRAYER_LIBRARY).forEach(([cat, L]) => L.prayers.forEach((p, i) => { const hit = [p.h, p.t].find(t => t.toLowerCase().includes(ql)); if(hit) lib.push(row(`closeModal('modal-search');setTimeout(()=>openLibraryPrayer('${cat}',${i}),200)`, esc(L.title)+' · '+esc(p.h), makeSnippet(hit, q, 50))); }));
+  if(lib.length) groups.push([`${ICON.scroll}Written prayers`, lib.join('')]);
   el.innerHTML = groups.length ? groups.map(([h, rows]) => `<div class="gs-group"><div class="gs-group-h">${h}</div>${rows}</div>`).join('')
     : `<div class="empty" style="padding:18px 8px">${emptyArt('search')}<p style="font-size:.85rem">No matches for “${esc(q)}”</p></div>`;
 }
@@ -11200,11 +11394,13 @@ function renderReflectBand(){
   const streaks=JSON.parse(localStorage.getItem('streak_days')||'[]');
   const days=[]; for(let i=6;i>=0;i--){ const d=new Date(); d.setDate(d.getDate()-i); days.push({label:d.toLocaleDateString('en-US',{weekday:'narrow'}),done:streaks.includes(d.toDateString()),key:dayKeyForDate(d),full:d.toLocaleDateString(undefined,{weekday:'long',day:'numeric',month:'long'})}); }
   const counts=buildDayCountMap(), start=new Date(); start.setHours(0,0,0,0); start.setDate(start.getDate()-start.getDay()-77);
-  let cells=''; for(let i=0;i<84;i++){ const d=new Date(start); d.setDate(start.getDate()+i); const n=d>new Date()?0:(counts[dayKeyForDate(d)]||0); cells+=`<i class="${n?'l'+Math.min(4,n):''}"></i>`; }
+  let cells=''; for(let i=0;i<84;i++){ const d=new Date(start); d.setDate(start.getDate()+i); const n=d>new Date()?0:(counts[dayKeyForDate(d)]||0); cells+=`<i class="${n?'l'+Math.min(4,n):''}"${n?` data-k="${dayKeyForDate(d)}"`:''}></i>`; }
   const fig=(n,label,go)=>`<button class="rf-fig" onclick="${go}"><b>${n}</b><span>${label}</span></button>`;
   // L20: a contents row of the sections below, each opening its fold in place.
   const toc=[...document.querySelectorAll('#view-reflect details.reflect-block > summary h3')].map(h=>{ const d=h.closest('details'); if(!d.id) d.id='rf-'+textKey(h.textContent); return `<button type="button" class="rf-toc-chip" onclick="openReflectBlock('${d.id}')">${h.innerHTML}</button>`; }).join('');
-  el.innerHTML=`<div class="rf-toc" role="navigation" aria-label="Sections">${toc}</div><div class="rf-band">
+  // L10: before anything is recorded the figures stay quiet under a drawn mark.
+  const none = !cards.length && !sessions.length && !daily.length;
+  el.innerHTML=`<div class="rf-toc" role="navigation" aria-label="Sections">${toc}</div><div class="rf-band${none?' is-empty':''}">${none?`<div class="rf-empty-art">${emptyArt('mirror')}</div>`:''}
     <div class="rf-figs">
       ${fig(cards.length,'prayer cards',"showView('cards')")}
       ${fig(cards.filter(c=>c.answered).length,'answered',"openReflectBlock('answered-prayers')")}
@@ -11214,7 +11410,7 @@ function renderReflectBand(){
     </div>
     <div class="rf-row">
       <div class="streak-bar">${days.map(d=>`<button type="button" class="streak-day${d.done?' done':''}" onclick="openReflectDay('${d.key}')" aria-label="${esc(d.full)}"><span class="streak-mark">${d.done?ORN.mark:'<span class="streak-ring"></span>'}</span><span class="streak-letter">${d.label}</span></button>`).join('')}</div>
-      <button class="rf-mini-wrap" onclick="openReflectBlock('calendar-heatmap')" aria-label="Year at a Glance"><span class="rf-mini">${cells}</span><span class="rf-mini-cap">12 weeks</span></button>
+      <button class="rf-mini-wrap" onclick="reflectMiniTap(event)" aria-label="Year at a Glance"><span class="rf-mini">${cells}</span><span class="rf-mini-cap">12 weeks</span></button>
     </div>
   </div>`;
 }
@@ -11253,6 +11449,10 @@ function renderGuideStart(){
     ${tour}
   </div>`;
   if(row) row.innerHTML = all ? tour : '';
+  // G7: today's column carries a ring.
+  const wk = document.querySelector('#view-guide svg.g-week');
+  if(wk){ wk.querySelector('.g-wk-today')?.remove(); const d = new Date().getDay();
+    wk.insertAdjacentHTML('afterbegin', `<rect class="g-wk-today" x="${3 + d*48}" y="3" width="42" height="88" rx="9"/>`); }
   document.querySelectorAll('#view-guide .g-wk-steps li[data-k]').forEach(li => {
     if(li.querySelector('.g-sm')) return;
     const st = PL_STEPS.find(x => x.key === li.dataset.k); if(!st) return;
@@ -11291,6 +11491,18 @@ function openReflectDay(key){
   openReflectBlock('calendar-heatmap');
   setTimeout(() => { if(typeof selectHeatmapDay === 'function' && _heatmapSelectedKey !== key) selectHeatmapDay(key); }, 60);
 }
+// K9: a filled cell in the 12-week strip opens Year at a Glance on that day.
+function reflectMiniTap(e){
+  const k = e.target.closest('i[data-k]')?.dataset.k;
+  if(k){ _heatmapSelectedKey = k; renderCalendarHeatmap(); }
+  openReflectBlock('calendar-heatmap');
+}
+function sheetFootLink(containerId, label, block, modalId){
+  if(document.body.classList.contains('in-session')) return;
+  const c = document.getElementById(containerId); if(!c || c.querySelector('.sheet-foot-link')) return;
+  c.insertAdjacentHTML('beforeend', `<button type="button" class="cards-link sheet-foot-link" onclick="closeModal('${modalId}');goReflect('${block}')">${ICON.chart || ICON.sparkle}${label} ›</button>`);
+}
+function goReflect(id){ showView('reflect'); setTimeout(() => openReflectBlock(id), 90); }
 function openReflectBlock(id){
   const el=document.getElementById(id); const d=el && (el.matches('details')?el:el.closest('details')); if(!d) return;
   d.open=true; setTimeout(()=>d.scrollIntoView({block:'start',behavior:'smooth'}),30);
@@ -11655,6 +11867,12 @@ if(!storageAvailable()){
 if(shouldShowTutorial()){
   setTimeout(showTutorial, 400);
 }
+
+// K3/K4: the heart-needs chart and the feelings picker point to their patterns in Reflect.
+(function(){
+  const ohc = openHeartChart; openHeartChart = function(){ const r = ohc.apply(this, arguments); sheetFootLink('heart-chart-content', 'Heart Needs Over Time', 'heart-need-freq', 'modal-heart-chart'); return r; };
+  const rep = renderEmotionPicker; renderEmotionPicker = function(){ const r = rep.apply(this, arguments); sheetFootLink('emotion-content', 'Feelings Over Time', 'feeling-freq', 'modal-emotion'); return r; };
+})();
 </script>
 </body>
 </html>
