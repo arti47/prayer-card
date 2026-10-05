@@ -485,6 +485,85 @@
   .emo-v-actions { display: flex; flex-wrap: wrap; gap: 4px 14px; margin-top: 4px; }
   .emo-v-btn { display: inline-flex; align-items: center; gap: 5px; background: none; border: none; padding: 8px 0; margin: -4px 0; font-family: var(--serif); font-size: .78rem; color: var(--accent); cursor: pointer; }
   .emo-v-btn .ico { width: 13px; height: 13px; }
+  /* ── Round 1 redesign ── */
+  /* Card detail: category band + toolbar */
+  .cd-band { position: relative; overflow: hidden; margin: -6px -20px 14px; padding: 18px 20px 16px; background: color-mix(in srgb, var(--cat, var(--accent)) 12%, var(--surface)); border-bottom: 1px solid color-mix(in srgb, var(--cat, var(--accent)) 25%, transparent); }
+  [data-theme="dark"] .cd-band { background: color-mix(in srgb, var(--cat, var(--accent)) 18%, var(--surface)); }
+  .cd-band-mark { position: absolute; right: -10px; top: -14px; width: 120px; height: 120px; color: var(--cat, var(--accent)); opacity: .13; pointer-events: none; }
+  .cd-band-mark .ico { width: 100%; height: 100%; stroke-width: 1.1; }
+  .cd-band h2 { position: relative; font-size: 1.35rem; color: var(--text); margin: 8px 0 2px; }
+  .cd-band .cd-meta { position: relative; font-size: .72rem; color: var(--text3); font-family: var(--sans); }
+  .cd-tools { display: grid; grid-template-columns: repeat(auto-fit, minmax(72px, 1fr)); gap: 6px; margin: 4px 0 16px; }
+  .cd-tool { display: flex; flex-direction: column; align-items: center; gap: 5px; padding: 10px 4px 9px; background: var(--surface2); border: 1px solid var(--border-soft); border-radius: var(--radius-sm); color: var(--accent); font-family: var(--sans); font-size: .66rem; line-height: 1.25; text-align: center; cursor: pointer; }
+  .cd-tool .ico { width: 20px; height: 20px; }
+  .cd-tool.answer { color: var(--answered); }
+  .cd-tool:active { transform: scale(.96); }
+  .cd-delete { display: block; margin: 18px auto 4px; background: none; border: none; color: var(--red); font-family: var(--serif); font-size: .85rem; text-decoration: underline dotted; text-underline-offset: 3px; cursor: pointer; padding: 8px; }
+  /* Story Cards grouped by category */
+  .cat-group-h { display: flex; align-items: center; gap: 7px; margin: 14px 2px 7px; font-family: var(--sans); font-size: .66rem; font-weight: 600; letter-spacing: .055em; text-transform: uppercase; color: var(--cat); }
+  [data-theme="dark"] .cat-group-h { color: color-mix(in srgb, var(--cat) 50%, #e8d8c4); }
+  .cat-group-h .ico { width: 14px; height: 14px; }
+  .cat-group-h .cgh-n { color: var(--text3); font-weight: 500; }
+  /* Daily banner sky */
+  .pl-banner .sky { position: absolute; inset: 0; width: 100%; height: 100%; z-index: -1; pointer-events: none; animation: skyIn .9s ease-out; }
+  @keyframes skyIn { from { opacity: 0; } to { opacity: 1; } }
+  @media (prefers-reduced-motion: reduce) { .pl-banner .sky { animation: none; } }
+  /* Step header band (Daily + Weekly) */
+  .pl-step-card > .pl-step-header { position: relative; overflow: hidden; margin: -18px -18px 14px; padding: 16px 18px 13px; border-radius: var(--radius) var(--radius) 0 0; background: color-mix(in srgb, var(--hdr) 11%, var(--surface)); border-bottom: 1px solid color-mix(in srgb, var(--hdr) 22%, transparent); }
+  [data-theme="dark"] .pl-step-card > .pl-step-header { background: color-mix(in srgb, var(--hdr) 20%, var(--surface)); }
+  .step-hdr-mark { position: absolute; right: -14px; top: -16px; width: 108px; height: 108px; color: var(--hdr); opacity: .12; pointer-events: none; }
+  [data-theme="dark"] .step-hdr-mark { opacity: .18; color: color-mix(in srgb, var(--hdr) 50%, #e8d8c4); }
+  .step-hdr-mark .ico { width: 100%; height: 100%; stroke-width: 1.1; }
+  .pl-step-card > .pl-step-header > :not(.step-hdr-mark) { position: relative; }
+  /* Walkthrough: card stack + colour dots */
+  .pc-stack { position: relative; margin-bottom: 18px; }
+  .pc-stack.more-1 { padding-bottom: 6px; } .pc-stack.more-2 { padding-bottom: 12px; }
+  .pc-stack .pc-under { position: absolute; left: 10px; right: 10px; height: 20px; border-radius: 0 0 var(--radius) var(--radius); background: var(--surface); border: 1px solid var(--border); border-top: none; box-shadow: var(--shadow); }
+  .pc-stack .pc-under.u1 { bottom: 6px; left: 6px; right: 6px; z-index: 1; } .pc-stack .pc-under.u2 { bottom: 0; left: 14px; right: 14px; z-index: 0; opacity: .8; }
+  .pc-stack .prayer-card { position: relative; z-index: 2; margin-bottom: 0; }
+  .walk-dots { display: flex; flex-wrap: wrap; gap: 5px; justify-content: center; margin: 2px 0 4px; }
+  .walk-dot { width: 9px; height: 9px; border-radius: 50%; border: 1.5px solid var(--dc); background: transparent; }
+  .walk-dot.done { background: var(--dc); }
+  .walk-dot.now { width: 22px; border-radius: 99px; background: var(--dc); }
+  /* Reflect summary band */
+  .rf-band { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow); padding: 14px 14px 12px; margin-bottom: 14px; }
+  .rf-figs { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 2px; }
+  .rf-fig span { overflow-wrap: anywhere; hyphens: auto; }
+  .rf-fig { display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 8px 2px; background: none; border: none; border-radius: var(--radius-sm); cursor: pointer; color: var(--text); }
+  .rf-fig:active { background: var(--surface2); }
+  .rf-fig b { font-family: var(--serif); font-size: 1.35rem; color: var(--accent); line-height: 1.1; font-weight: normal; }
+  .rf-fig span { font-family: var(--sans); font-size: .64rem; color: var(--text3); text-align: center; line-height: 1.25; }
+  .rf-row { display: flex; flex-direction: column; align-items: center; gap: 12px; margin-top: 12px; padding-top: 10px; border-top: 1px solid var(--border-soft); }
+  .rf-row .streak-bar { flex: none; margin: 0; }
+  .rf-mini { display: grid; grid-auto-flow: column; grid-template-rows: repeat(7, 7px); gap: 2px; }
+  .rf-mini i { width: 7px; height: 7px; border-radius: 2px; background: var(--border-soft); display: block; }
+  .rf-mini i.l1 { background: var(--heat1); } .rf-mini i.l2 { background: var(--heat2); } .rf-mini i.l3 { background: var(--heat3); } .rf-mini i.l4 { background: var(--heat4); }
+  .rf-mini-wrap { display: flex; flex-direction: row; align-items: flex-end; gap: 8px; cursor: pointer; background: none; border: none; padding: 0; }
+  .rf-mini-cap { font-family: var(--sans); font-size: .64rem; color: var(--text3); }
+  /* Heart-need bars open their sessions */
+  .hn-freq-row { cursor: pointer; }
+  .hn-freq-sessions { margin: 4px 0 12px; }
+  /* Guide tiles */
+  .guide-tiles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 12px; }
+  .guide-tile { display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 12px 6px 10px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow); cursor: pointer; font-family: var(--serif); font-size: .82rem; color: var(--text); text-align: center; line-height: 1.25; }
+  .guide-tile.on { border-color: var(--accent2); background: color-mix(in srgb, var(--accent2) 10%, var(--surface)); }
+  .guide-tile svg { width: 56px; height: 40px; color: var(--accent); }
+  .guide-practice:not([open]) { display: none; }
+  .guide-go { margin-top: 12px; }
+  /* Active tab pill */
+  nav button .icon { width: 3.1rem; border-radius: 99px; transition: background .2s; }
+  nav button.active .icon { background: color-mix(in srgb, var(--accent2) 16%, transparent); }
+  /* Done screens: doves either side of the arch */
+  .done-doves { display: flex; justify-content: center; gap: 120px; margin: -96px 0 60px; color: var(--accent2); opacity: .5; pointer-events: none; }
+  .done-doves svg { width: 26px; height: 26px; }
+  .done-doves svg:first-child { transform: scaleX(-1) rotate(-8deg); } .done-doves svg:last-child { transform: rotate(-8deg); }
+  .done-links { display: flex; justify-content: center; gap: 18px; margin-top: 14px; }
+  .done-links button { background: none; border: none; color: var(--accent); font-family: var(--serif); font-size: .88rem; text-decoration: underline dotted; text-underline-offset: 3px; cursor: pointer; padding: 8px 4px; }
+  .pl-done-wrap, .empty { overflow-x: clip; }
+  .pl-done-wrap .carry-slot { text-align: left; margin-top: 16px; }
+  /* Bible reader header ornament */
+  .bb-orn { display: block; height: 10px; margin: 2px 0 8px; color: var(--accent2); opacity: .7; }
+  .bb-orn svg { width: 100%; height: 10px; }
   /* Compact home screens — rows instead of tall cards, so each home fits about a screen. */
   .card.card-row { display: flex; align-items: center; gap: 12px; padding: 11px 12px 11px 12px; margin-bottom: 8px; }
   .cr-mark { flex: none; width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--cat, var(--accent)); background: color-mix(in srgb, var(--cat, var(--accent)) 12%, transparent); }
@@ -1754,20 +1833,25 @@
       <p>A brief 5-screen intro to what this app is and how the three rhythms — Story Cards, Daily Prayer, Weekly Deep Time — fit together.</p>
       <button class="btn btn-secondary" onclick="showTutorial()" style="margin-top:8px">View tutorial</button>
     </div>
-    <details class="about-block reflect-block">
+    <div class="guide-tiles">
+      <button class="guide-tile" data-g="gd-cards" onclick="openGuidePractice('gd-cards')"><svg viewBox="0 0 56 40" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"><path d="M2 24 C12 10 20 34 30 20 S46 8 54 18"/><circle cx="12" cy="17" r="2.4" fill="currentColor"/><circle cx="30" cy="20" r="2.4" fill="currentColor"/><circle cx="46" cy="12" r="2.4" fill="currentColor"/></svg><span>Prayer Story Cards</span></button>
+      <button class="guide-tile" data-g="gd-daily" onclick="openGuidePractice('gd-daily')"><svg viewBox="0 0 56 40" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"><circle cx="28" cy="22" r="7"/><circle cx="28" cy="22" r="13" stroke-dasharray="2 3"/><path d="M28 3v4M28 37v-2M9 22H5M51 22h-4M14 8l3 3M42 8l-3 3"/></svg><span>Daily Prayer</span></button>
+      <button class="guide-tile" data-g="gd-weekly" onclick="openGuidePractice('gd-weekly')"><svg viewBox="0 0 56 40" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"><path d="M8 38 V20 a20 20 0 0 1 40 0 V38"/><circle cx="12" cy="31" r="1.6" fill="currentColor"/><circle cx="13" cy="20" r="1.6" fill="currentColor"/><circle cx="19" cy="11" r="1.6" fill="currentColor"/><circle cx="28" cy="7" r="1.6" fill="currentColor"/><circle cx="37" cy="11" r="1.6" fill="currentColor"/><circle cx="43" cy="20" r="1.6" fill="currentColor"/><circle cx="44" cy="31" r="1.6" fill="currentColor"/></svg><span>Weekly Deep Time</span></button>
+    </div>
+    <details class="about-block reflect-block guide-practice" id="gd-cards">
       <summary><h3><span data-ico="cards"></span>Prayer Story Cards</h3></summary>
       <p>From Paul Miller's <em>A Praying Life</em> — track prayers as ongoing stories. Each card has a Scripture anchor, a two-level ask, and a Father's Perspective line. Pray one card a day, add dated story notes weekly.</p>
+      <button class="btn btn-secondary guide-go" onclick="showView('cards')">Story Cards →</button>
     </details>
-    <div data-orn-divider></div>
-    <details class="about-block reflect-block">
+    <details class="about-block reflect-block guide-practice" id="gd-daily">
       <summary><h3><span data-ico="sun"></span>Daily Prayer</h3></summary>
       <p>A daily rhythm — meeting God in His Word and bringing your heart honestly to Him. Three plan options — Morning (25 min), Evening (15 min), Starter (15 min) — each following the same shape: Approach → Bible meditation → Prayer → Contemplation.</p>
       <p><strong>Why three plans?</strong> Daily prayer can take different shapes depending on the day. Morning is fuller and Bible-led (Approach → Bible reading &amp; meditation → Prayer → Contemplation). Evening is shorter and Psalm-led (Approach → Read a Psalm → Pray through the day). The Starter Plan is a gentler entry point if daily prayer is new (Approach → Meditation → Word Prayer → Free Prayer → Contemplation).</p>
       <p style="font-style:italic">For the deeper, once-a-week practice (Sundays recommended), use <strong>Weekly Deep</strong> instead — that’s where you map your heart and walk the Lord’s Prayer slowly.</p>
       <p>On Approach, name what you’re feeling and Scripture chosen for that feeling appears beneath it — read it, add it to your prayer, or take it as the day’s meditation passage. The same verses are in the Bible reader under <em>Scripture by feeling</em>.</p>
+      <button class="btn btn-secondary guide-go" onclick="showView('daily')">Daily Prayer →</button>
     </details>
-    <div data-orn-divider></div>
-    <details class="about-block reflect-block">
+    <details class="about-block reflect-block guide-practice" id="gd-weekly">
       <summary><h3><span data-ico="pen"></span>Weekly Deep Time</h3></summary>
       <p>A once-a-week deeper practice — Sunday recommended. Map your heart, then walk slowly through the Lord’s Prayer with space to listen. Begins with a <strong>Preparing to Pray</strong> reflection and walks through the Lord's Prayer in 6 steps — each with a <strong>Pray</strong> prompt and a <strong>Listen</strong> prompt.</p>
       <ul style="margin-top:8px">
@@ -1779,6 +1863,7 @@
         <li><strong>5. Forgive</strong> — Release others</li>
         <li><strong>6. Follow</strong> — Dependent obedience</li>
       </ul>
+      <button class="btn btn-secondary guide-go" onclick="showView('pl')">Weekly Deep →</button>
     </details>
     <details class="about-block reflect-block">
       <summary><h3><span data-ico="phone"></span>Install on your phone</h3></summary>
@@ -1818,10 +1903,8 @@
 
 <div id="view-reflect" class="view">
   <div style="padding: 4px 0;">
-    <details class="about-block reflect-block" open>
-      <summary><h3><span data-ico="chart"></span>Your Stats</h3></summary>
-      <div id="stats-block"></div>
-    </details>
+    <div id="reflect-band"></div>
+    <div id="stats-block" hidden></div>
     <details class="about-block reflect-block">
       <summary><h3><span data-ico="calendar"></span>Year at a Glance</h3></summary>
       <div id="calendar-heatmap"></div>
@@ -3666,6 +3749,25 @@ function syncNavHeight(){
   window.addEventListener('orientationchange', () => setTimeout(syncNavHeight, 300));
 })();
 // Content must clear whichever floating buttons are on screen, not just the nav.
+// A drawn sky behind the Daily banner: the sun climbs and sets with the device
+// clock, dusk glows, and at night there is a moon and a scatter of stars.
+function skySVG(){
+  const now=new Date(), h=now.getHours()+now.getMinutes()/60, tod=timeOfDay();
+  const t=Math.min(1,Math.max(0,(h-5.5)/14));            // 5:30 → 19:30 across the arc
+  const sx=(30+t*340).toFixed(1), sy=(118-Math.sin(Math.PI*t)*92).toFixed(1);
+  const hills=`<path d="M0 132 C60 112 110 124 170 116 S290 104 400 120 L400 160 L0 160Z" fill="#000" opacity=".16"/><path d="M0 146 C80 130 150 142 230 134 S340 128 400 138 L400 160 L0 160Z" fill="#000" opacity=".22"/>`;
+  let body='';
+  if(tod==='night'){
+    const st=[[40,30],[92,18],[150,44],[205,22],[262,38],[318,16],[352,52],[118,70],[236,64],[30,78],[372,82],[180,12]];
+    body=st.map(([x,y],i)=>`<circle cx="${x}" cy="${y}" r="${i%3?0.9:1.4}" fill="#fff" opacity="${i%2?.55:.8}"/>`).join('')
+      +`<g opacity=".85"><circle cx="318" cy="46" r="15" fill="#f4e6c8"/><circle cx="325" cy="40" r="13" fill="#2b2328"/></g>`;
+  } else {
+    const glow = tod==='dusk' ? '#ffb070' : tod==='dawn' ? '#ffc890' : '#fff1cf';
+    body=`<circle cx="${sx}" cy="${sy}" r="40" fill="${glow}" opacity=".16"/><circle cx="${sx}" cy="${sy}" r="15" fill="${glow}" opacity=".6"/>`
+      +(tod==='day'?`<path d="M60 52 q10 -9 22 -2 q8 -6 16 1" stroke="#fff" stroke-width="1.2" fill="none" opacity=".35"/><path d="M262 30 q8 -7 17 -1 q6 -5 12 1" stroke="#fff" stroke-width="1.1" fill="none" opacity=".3"/>`:'');
+  }
+  return `<svg class="sky" viewBox="0 0 400 160" preserveAspectRatio="xMidYMid slice" aria-hidden="true">${body}${hills}</svg>`;
+}
 // Dawn / day / dusk / night, from the device clock — tints the Daily banner.
 function timeOfDay(){ const h = new Date().getHours(); return h>=5&&h<8 ? 'dawn' : h>=8&&h<17 ? 'day' : h>=17&&h<20 ? 'dusk' : 'night'; }
 function placeNavMark(){
@@ -3840,7 +3942,7 @@ function bbHead(crumb, backFn){
 
 function bbBookListHTML(){
   return `<div class="bb-sticky">` +
-      bbHead('Choose a book','') +
+      bbHead('Choose a book','') + `<span class="bb-orn" aria-hidden="true">${ORN.rule||''}</span>` +
       `<input class="bb-search" id="bb-search" placeholder="Search books, or type a reference…" oninput="bbSearchInput()" autocomplete="off" value="${esc(_bbSearch)}">` +
       `<div id="bb-jump">${bbJumpHTML(_bbSearch)}</div>` +
       `<div class="bb-filters">${bbFilterToggleHTML()}${bbSortToggleHTML()}</div>` +
@@ -5482,7 +5584,7 @@ function showView(name){
   if(name==='cards'){ fab.style.display='flex'; fab.onclick=openNewCard; renderCards(); }
   if(name==='daily') renderDailyPrayer();
   if(name==='pl') renderPL();
-  if(name==='reflect'){ _heatmapSelectedKey = null; renderStats(); renderCalendarHeatmap(); renderAnsweredPrayers(); renderHeartNeedFrequency(); renderWordFrequency(); renderReview(); applyTheme(); applyTextSize(); populateObsidianFields(); const t=document.getElementById('bible-fab-toggle'); if(t) t.checked=bibleFabEnabled(); }
+  if(name==='reflect'){ _heatmapSelectedKey = null; renderReflectBand(); renderStats(); renderCalendarHeatmap(); renderAnsweredPrayers(); renderHeartNeedFrequency(); renderWordFrequency(); renderReview(); applyTheme(); applyTextSize(); populateObsidianFields(); const t=document.getElementById('bible-fab-toggle'); if(t) t.checked=bibleFabEnabled(); }
   if(name==='guide'){ renderInstallBlock(); }
   syncFabPadding();   // after both buttons have settled for this view
   syncHeaderMode();
@@ -5500,7 +5602,12 @@ function renderCards(){
   if(active.length){
     html+=`<button class="btn-pray-now" onclick="openCardsWalkthrough()"><span class="bpn-label">${ICON.pray} Pray these now</span> <span class="bpn-meta">${active.length} active card${active.length===1?'':'s'} · ~5 min</span></button>`;
     html+=`<p class="section-title">Active (${active.length})</p>`;
-    active.forEach(c=>html+=cardHTML(c));
+    // Grouped under their category, in the categories' own order.
+    Object.keys(CAT_LABELS).forEach(k=>{
+      const g=active.filter(c=>(CAT_ICON[c.category]?c.category:'other')===k); if(!g.length) return;
+      html+=`<div class="cat-group-h" style="--cat:${CAT_COLOR[k]}">${ICON[CAT_ICON[k]]}${esc(CAT_LABELS[k])}<span class="cgh-n">${g.length}</span></div>`;
+      g.forEach(c=>html+=cardHTML(c));
+    });
   }
   if(answered.length){ html+=`<details class="answered-fold"${_answeredOpen?' open':''} ontoggle="_answeredOpen=this.open"><summary>${ICON.olive}Answered (${answered.length})</summary>${answered.map(cardHTML).join('')}</details>`; }
   el.innerHTML=html;
@@ -5645,11 +5752,21 @@ function openDetail(id){
     </div>`;
   }).join(''):`<p style="font-size:.85rem;color:var(--text3);font-style:italic">No notes yet.</p>`;
   const persp=(c.perspAttr||c.perspTrust)?`Father, because you are <em>${esc(c.perspAttr)}</em>, I will trust you with <em>${esc(c.perspTrust)}</em>.`:'—';
+  const ck = CAT_ICON[c.category] ? c.category : 'other';
   document.getElementById('detail-content').innerHTML=`
-    ${catChip(c.category)}
-    ${c.answered?'<span class="answered-badge" style="float:right;margin-top:2px">Answered ✓</span>':''}
-    <h2 style="font-size:1.2rem;color:var(--text);margin:6px 0 2px">${esc(c.person)}</h2>
-    <p style="font-size:.72rem;color:var(--text3);font-family: var(--sans)">Started ${c.dateStarted}${c.lastPrayed?` · Last prayed ${esc(relativeTimeAgo(c.lastPrayed))}`:''}</p>
+    <div class="cd-band" style="--cat:${CAT_COLOR[ck]}">
+      <span class="cd-band-mark" aria-hidden="true">${c.answered ? ICON.olive : ICON[CAT_ICON[ck]]}</span>
+      ${catChip(c.category)}
+      ${c.answered?`<span class="answered-badge" style="float:right;margin-top:2px;position:relative">${ICON.olive}Answered ✓</span>`:''}
+      <h2>${esc(c.person)}</h2>
+      <p class="cd-meta">Started ${c.dateStarted}${c.lastPrayed?` · Last prayed ${esc(relativeTimeAgo(c.lastPrayed))}`:''}</p>
+    </div>
+    <div class="cd-tools">
+      ${c.answered?'':`<button class="cd-tool" onclick="prayCardNow('${c.id}')">${ICON.pray}<span>Pray these now</span></button>`}
+      <button class="cd-tool" onclick="openNote('${c.id}')">${ICON.note}<span>Add Story Note</span></button>
+      <button class="cd-tool${c.answered?'':' answer'}" onclick="toggleAnswered('${c.id}')">${c.answered?ICON.turn:ICON.olive}<span>${c.answered?'Mark as Active':'Mark as Answered'}</span></button>
+      <button class="cd-tool" onclick="openEditCard('${c.id}')">${ICON.pen}<span>Edit Card</span></button>
+    </div>
     ${c.scripture?`<div class="detail-section ds-scripture"><h3>Scripture Anchor</h3><p><em>${linkifyScriptureRefs(c.scripture)}</em></p></div>`:''}
     ${(c.askHeart||c.askCirc)?`<div class="detail-section ds-asks">
       ${c.askHeart?`<div class="ds-row"><h3>The Ask — Heart</h3><p>${esc(c.askHeart)}</p></div>`:''}
@@ -5657,7 +5774,6 @@ function openDetail(id){
     </div>`:''}
     ${(c.perspAttr||c.perspTrust)?`<div class="detail-section persp-block"><h3>Father's Perspective</h3><p>${persp}</p></div>`:''}
     <p class="section-title" style="margin-top:16px">Story Notes</p><div class="note-thread">${notesHTML}</div>
-    <button class="btn btn-secondary" style="margin-top:10px" onclick="openNote('${c.id}')">＋ Add Story Note</button>
     ${(()=>{
       const linkedSessions=getSessionsLinkedToCard(c.id);
       if(!linkedSessions.length) return '';
@@ -5667,9 +5783,17 @@ function openDetail(id){
       </div>`).join('');
       return `<p class="section-title" style="margin-top:16px">Weekly Deep Time Sessions (${linkedSessions.length})</p><div>${items}</div>`;
     })()}
-    <button class="btn ${c.answered?'btn-secondary':'btn-answered'}" onclick="toggleAnswered('${c.id}')">${c.answered?'Mark as Active':'✓ Mark as Answered'}</button>
-    <button class="btn btn-secondary" onclick="openEditCard('${c.id}')">✏️ Edit Card</button>
-    <button class="btn btn-danger" onclick="deleteCard('${c.id}')">Delete Card</button>
+    ${(()=>{
+      // Daily Prayer sessions where this card was prayed through ("Pray story cards").
+      const ds=loadDailySessions().filter(s=>(s.prayedCards||[]).includes(c.id));
+      if(!ds.length) return '';
+      const items=ds.map(s=>`<div class="note-entry" style="cursor:pointer;border-left-color:var(--accent2)" onclick="closeModal('modal-detail');setTimeout(()=>viewDailySession('${s.id}'),250)">
+        <div class="note-date">${ICON[DP_PLANS[s.plan]?.icon]||ICON.sun} ${esc(DP_PLANS[s.plan]?.title||'Daily Prayer')} · ${esc(s.date)}</div>
+        <div class="note-text" style="font-size:.82rem;color:var(--text3);font-style:italic">Tap to view session</div>
+      </div>`).join('');
+      return `<p class="section-title" style="margin-top:16px">Daily Prayer Sessions (${ds.length})</p><div>${items}</div>`;
+    })()}
+    <button class="cd-delete" onclick="deleteCard('${c.id}')">Delete Card</button>
     <button class="btn btn-secondary" onclick="closeModal('modal-detail')">Close</button>`;
   openModal('modal-detail');
 }
@@ -6150,7 +6274,7 @@ function renderDPHome(){
   const calendarHTML = (sessions.length && _dpViewMode==='calendar') ? `<div class="pl-calendar" id="dp-calendar"></div>` : '';
 
   el.innerHTML = `
-    <div class="pl-banner compact tod-${timeOfDay()}"><span class="banner-watermark" aria-hidden="true">${/^(dusk|night)$/.test(timeOfDay()) ? ICON.moon : ICON.sun}</span>
+    <div class="pl-banner compact tod-${timeOfDay()}">${skySVG()}
       <div class="pl-date">${today()}</div>
       <h2>Daily Prayer</h2>
       ${draft ? `<button class="pl-banner-btn tertiary" onclick="dpContinue()">↩ Continue draft — ${esc(draftPlan?.title||'')} · ${esc(draftStep?.title||'')}</button>
@@ -6592,7 +6716,7 @@ function renderDPStep(){
   el.innerHTML = `
     <div class="pl-progress-dots">${dots}</div>
     <div class="pl-step-card${animClass}" style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow)">
-      <div class="pl-step-header">
+      <div class="pl-step-header" style="--hdr:${step.color}"><span class="step-hdr-mark" aria-hidden="true">${stepGlyph(step.key)}</span>
         <div class="pl-step-num-row">
           ${stepBadge(step, step.color)}
           <div class="pl-step-title">${esc(step.title)}</div>
@@ -6625,16 +6749,26 @@ function renderDPDone(){
   el.innerHTML = `
     <div class="pl-done-wrap">
       ${emptyArt('dove', true)}
+      <div class="done-doves" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3 14c3 0 5-1 7-4 1-2 3-4 6-4 2 0 4 1 5 3-2 0-3 1-4 2 0 4-3 7-8 7-3 0-5-1-6-4z"/><path d="M10 10c-1-3-3-5-6-5 0 3 1 5 3 6"/></svg><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3 14c3 0 5-1 7-4 1-2 3-4 6-4 2 0 4 1 5 3-2 0-3 1-4 2 0 4-3 7-8 7-3 0-5-1-6-4z"/><path d="M10 10c-1-3-3-5-6-5 0 3 1 5 3 6"/></svg></div>
       <h2>Prayer Complete</h2>
       <p>You met with the Father today.<br>That is enough.</p>
       <div class="pl-done-verse">“Come to Me, all who labor and are heavy laden, and I will give you rest. Take My yoke upon you, and learn from Me, for I am gentle and lowly in heart, and you will find rest for your souls.” — Matthew 11:28–29</div>
       ${christAnchorBlock()}
+      <div class="carry-slot">${carryCardHTML()}</div>
       <button class="btn btn-primary" style="margin-top:18px" onclick="dpReturnHome()">← Back to Daily Prayer</button>
+      <div class="done-links"><button onclick="showView('reflect')">Reflect →</button></div>
     </div>`;
 }
 
 // ══════════ STORY-CARD WALKTHROUGH (modal — was the old Daily tab) ══════════
 let dailyIndex=0;
+// Pray one card now: open the walkthrough at that card.
+function prayCardNow(id){
+  const cards=loadCards().filter(c=>!c.answered); const i=cards.findIndex(c=>c.id===id); if(i<0) return;
+  safeSetItem('daily_'+new Date().toDateString(), JSON.stringify({idx:i, done:false}));
+  closeModal('modal-detail');
+  setTimeout(openCardsWalkthrough, 220);
+}
 function openCardsWalkthrough(){
   openModal('modal-cards-walkthrough');
   renderDaily();
@@ -6656,12 +6790,18 @@ function renderDailyCard(cards,idx,todayKey){
     stored.lastPrayed = today();
     saveCards(all);
   }
+  // Prayed from inside a Daily Prayer session: remember it on that session, so the
+  // card's detail can list the day (and the session can show who was prayed for).
+  if(currentView==='daily' && dpMode==='session' && dpSession){
+    dpSession.prayedCards = dpSession.prayedCards || [];
+    if(!dpSession.prayedCards.includes(c.id)){ dpSession.prayedCards.push(c.id); saveDailyDraft(dpSession); }
+  }
   // Auto-fill from card data where it makes sense. The user's own fill-ins (perspAttr,
   // perspTrust) splice safely because they wrote them in their own grammar; the card
   // title and asks are presented as named items (apposition / quiet lines) so any
   // free text fits. Trailing "…" lines are deliberate — finished mentally before Him.
   const youArePart=(c.perspAttr||'').trim();
-  const youAreHTML=youArePart?`<em>${esc(youArePart)}</em>`:'…';
+  const youAreHTML=youArePart?`<em>${esc(youArePart)}</em>.`:'…';
   const personHTML=`<em>${esc(c.person)}</em>`;
   const trustPart=(c.perspTrust||'').trim();
   const trustHTML=trustPart?`<em>${esc(trustPart)}</em>`:'this story';
@@ -6676,22 +6816,23 @@ function renderDailyCard(cards,idx,todayKey){
     askPrompt='“Please act in this story by…”';
   }
   const steps=[
-    {label:'Come & Worship', prompt:`“Father, you are ${youAreHTML}.”`},
+    {label:'Come & Worship', prompt:`“Father, you are ${youAreHTML}”`},
     {label:'Trust & Submission', prompt:`“Because of Jesus, I know your heart toward me is good. I trust you with ${trustHTML}.”`},
     {label:'Ask', prompt:askPrompt},
     {label:'Repent', prompt:`“Father, forgive me for trying to carry this myself — my cynicism, control, or fear. I release this story — ${personHTML} — into your hands.”`},
     {label:'Follow', prompt:'“The next faithful step in this story is… — help me take it.”'}];
   const persp=(c.perspAttr&&c.perspTrust)?`<div class="prayer-step persp-block" style="margin-bottom:12px"><div class="step-label">Father's Perspective</div><div class="step-prompt">Father, because you are <em>${esc(c.perspAttr)}</em>, I will trust you with <em>${esc(c.perspTrust)}</em>.</div></div>`:'';
   document.getElementById('daily-content').innerHTML=`
-    <div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div>
-    <p style="font-size:.7rem;font-family: var(--sans);color:var(--text3);text-align:right;margin-top:4px">Card ${idx+1} of ${total}</p>
+    <div class="walk-dots" role="img" aria-label="Card ${idx+1} of ${total}">${cards.map((x,i)=>`<span class="walk-dot${i<idx?' done':''}${i===idx?' now':''}" style="--dc:${CAT_COLOR[CAT_ICON[x.category]?x.category:'other']}"></span>`).join('')}</div>
+    <p style="font-size:.7rem;font-family: var(--sans);color:var(--text3);text-align:center;margin:2px 0 10px">Card ${idx+1} of ${total}</p>
+    <div class="pc-stack more-${Math.min(2,total-1-idx)}">${total-1-idx>=2?'<span class="pc-under u2"></span>':''}${total-1-idx>=1?'<span class="pc-under u1"></span>':''}
     <div class="prayer-card" style="--cat:${CAT_COLOR[CAT_ICON[c.category]?c.category:'other']}">
       <span class="card-watermark" aria-hidden="true">${ICON[CAT_ICON[CAT_ICON[c.category]?c.category:'other']]}</span>
       ${catChip(c.category, (CAT_CLASS[c.category]||'cat-other')+' p-cat')}
       <div class="p-title">${esc(c.person)}</div>
       ${c.scripture?`<div class="p-scripture">${esc(c.scripture)}</div>`:''}
       ${c.askCirc?`<div class="p-ask">${esc(c.askCirc)}</div>`:''}
-    </div>
+    </div></div>
     ${persp}
     <div class="prayer-flow"><h3>Pray Through This Card</h3>
       <p class="flow-hint">Where a line trails off, finish it in your own words before Him.</p>
@@ -7359,7 +7500,7 @@ function renderPLStep(el){
     ${reprayIndicatorHTML}
     <div class="pl-progress-dots">${dots}</div>
     <div class="pl-step-card${animClass}" style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow)">
-      <div class="pl-step-header">
+      <div class="pl-step-header" style="--hdr:${step.sc}"><span class="step-hdr-mark" aria-hidden="true">${stepGlyph(step.key)}</span>
         <div class="pl-step-num-row">
           ${stepBadge(step, step.sc)}
           <div class="pl-step-title">${step.title}</div>
@@ -7444,7 +7585,7 @@ function renderPrepareStep(el,step,dots,steps){
     ${reprayIndicatorHTML}
     <div class="pl-progress-dots">${dots}</div>
     <div class="pl-step-card${animClass}" style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow)">
-      <div class="pl-step-header">
+      <div class="pl-step-header" style="--hdr:${step.sc}"><span class="step-hdr-mark" aria-hidden="true">${stepGlyph(step.key)}</span>
         <div class="pl-step-num-row">
           ${stepBadge(step, step.sc)}
           <div class="pl-step-title">${step.title}</div>
@@ -7468,11 +7609,13 @@ function renderPLDone(el){
   el.innerHTML=`
     <div class="pl-done-wrap">
       ${emptyArt('dove', true)}
+      <div class="done-doves" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3 14c3 0 5-1 7-4 1-2 3-4 6-4 2 0 4 1 5 3-2 0-3 1-4 2 0 4-3 7-8 7-3 0-5-1-6-4z"/><path d="M10 10c-1-3-3-5-6-5 0 3 1 5 3 6"/></svg><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3 14c3 0 5-1 7-4 1-2 3-4 6-4 2 0 4 1 5 3-2 0-3 1-4 2 0 4-3 7-8 7-3 0-5-1-6-4z"/><path d="M10 10c-1-3-3-5-6-5 0 3 1 5 3 6"/></svg></div>
       <h2>Session Complete</h2>
       <p>You have prepared your heart, drawn near, humbled yourself, asked, repented, forgiven, and committed to follow.<br><br>That is a faithful act of prayer.</p>
       <div class="pl-done-verse">“The Lord is my strength and my shield; in him my heart trusts, and I am helped; my heart exults, and with my song I give thanks to him.” — Psalm 28:7</div>
       ${christAnchorBlock()}
       <button class="btn btn-primary" style="margin-top:18px" onclick="plReturnHome()">← Back to Weekly Deep Time</button>
+      <div class="done-links"><button onclick="showView('cards')">Story Cards →</button><button onclick="showView('reflect')">Reflect →</button></div>
     </div>`;
 }
 function plReturnHome(){ plMode='home'; renderPL(); }
@@ -7649,10 +7792,14 @@ function viewDailySession(id){
       <div class="sv-head"><div class="sv-num" style="background:var(--accent2)">✦</div><div><div class="sv-title">Carried through the day</div></div></div>
       ${carryDayData.line ? `<div class="sv-block"><div class="sv-text"><em>“${esc(carryDayData.line)}”</em></div></div>` : ''}
       ${carryNotesHTML(carryDayData, false)}</div>` : '';
+  const prayed = (s.prayedCards||[]).map(id=>loadCards().find(c=>c.id===id)).filter(Boolean);
+  const prayedHTML = prayed.length ? `<div class="sv-section"><div class="sv-head"><div class="sv-num" style="background:var(--accent2)">${ICON.cards}</div><div><div class="sv-title">Story cards</div></div></div>
+      <div class="pl-linked-chips">${prayed.map(c=>`<span class="pl-linked-chip" onclick="openDetail('${c.id}')">${esc(c.person)}</span>`).join('')}</div></div>` : '';
   document.getElementById('session-view-content').innerHTML = `
     <h2 style="color:var(--accent);margin-bottom:4px">${ICON[plan?.icon] || ICON.sparkle} ${esc(plan?.title||'Daily Prayer')} Session</h2>
     <p style="font-size:.72rem;color:var(--text3);font-family: var(--sans);margin-bottom:14px">${s.date}</p>
     ${stepsHTML}
+    ${prayedHTML}
     ${carryHTML}
     <button class="btn btn-danger" style="margin-top:18px" onclick="closeModal('modal-session');deleteDailySession('${s.id}')">Delete Session</button>
     <button class="btn btn-secondary" onclick="closeModal('modal-session')">Close</button>
@@ -8936,6 +9083,8 @@ function renderAnsweredPrayers(){
 }
 
 // ══════════ HEART-NEED FREQUENCY (P4 #14) ══════════
+let _needOpen = null;
+function toggleNeedSessions(key){ _needOpen = _needOpen===key ? null : key; renderHeartNeedFrequency(); }
 function renderHeartNeedFrequency(){
   const target = document.getElementById('heart-need-freq');
   if(!target) return;
@@ -8965,13 +9114,13 @@ function renderHeartNeedFrequency(){
     // sits inside (inverted); on a short bar it steps outside so it stays readable.
     const inside = pct >= 18;
     const pos = inside ? `left:calc(${pct}% - 24px)` : `left:calc(${pct}% + 9px)`;
-    return `<div class="hn-freq-row">
+    return `<div class="hn-freq-row" role="button" tabindex="0" onclick="toggleNeedSessions('${n.key}')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();toggleNeedSessions('${n.key}')}" aria-expanded="${_needOpen===n.key}" aria-label="${esc(n.title)}: show sessions">
       <div class="hn-freq-label idc" style="${idc(n.color)}">${needGlyph(n.key)}<span>${esc(n.title)}</span></div>
       <div class="hn-freq-bar-wrap">
         <div class="hn-freq-bar idc-bg" style="width:${pct}%;${idc(n.color)}"></div>
         <span class="hn-freq-count${inside?' inside':''}" style="${pos}">${n.count}</span>
       </div>
-    </div>`;
+    </div>${_needOpen===n.key?`<div class="hn-freq-sessions">${loadSessions().filter(s=>(s.steps?.prepare?.heartNeeds||[]).includes(n.key)).map(normalSessionEntryHTML).join('')}</div>`:''}`;
   }).join('');
 
   const top = entries[0];
@@ -8995,6 +9144,39 @@ function renderStats(){
     </div>
     <p style="font-size:.7rem;color:var(--text3);font-family: var(--sans);margin-top:10px;margin-bottom:6px;text-transform:uppercase;letter-spacing:.08em">Last 7 Days</p>
     <div class="streak-bar">${days.map(d=>`<div class="streak-day${d.done?' done':''}"><span class="streak-mark">${d.done?ORN.mark:'<span class="streak-ring"></span>'}</span><span class="streak-letter">${d.label}</span></div>`).join('')}</div>`;
+}
+
+// The top of Reflect at a glance: the figures (each opens its tab), the last
+// seven days, and the last twelve weeks as a small shaded strip.
+function renderReflectBand(){
+  const el=document.getElementById('reflect-band'); if(!el) return;
+  const cards=loadCards(), sessions=loadSessions(), daily=loadDailySessions();
+  const streaks=JSON.parse(localStorage.getItem('streak_days')||'[]');
+  const days=[]; for(let i=6;i>=0;i--){ const d=new Date(); d.setDate(d.getDate()-i); days.push({label:d.toLocaleDateString('en-US',{weekday:'narrow'}),done:streaks.includes(d.toDateString())}); }
+  const counts=buildDayCountMap(), start=new Date(); start.setHours(0,0,0,0); start.setDate(start.getDate()-start.getDay()-77);
+  let cells=''; for(let i=0;i<84;i++){ const d=new Date(start); d.setDate(start.getDate()+i); const n=d>new Date()?0:(counts[dayKeyForDate(d)]||0); cells+=`<i class="${n?'l'+Math.min(4,n):''}"></i>`; }
+  const fig=(n,label,go)=>`<button class="rf-fig" onclick="${go}"><b>${n}</b><span>${label}</span></button>`;
+  el.innerHTML=`<div class="rf-band">
+    <div class="rf-figs">
+      ${fig(cards.length,'prayer cards',"showView('cards')")}
+      ${fig(cards.filter(c=>c.answered).length,'answered',"openReflectBlock('answered-prayers')")}
+      ${fig(cards.reduce((a,c)=>a+(c.notes?c.notes.length:0),0),'story notes',"showView('cards')")}
+      ${fig(daily.length,'daily prayer session'+(daily.length===1?'':'s'),"showView('daily')")}
+      ${fig(sessions.length,'weekly deep time session'+(sessions.length===1?'':'s'),"showView('pl')")}
+    </div>
+    <div class="rf-row">
+      <div class="streak-bar">${days.map(d=>`<div class="streak-day${d.done?' done':''}"><span class="streak-mark">${d.done?ORN.mark:'<span class="streak-ring"></span>'}</span><span class="streak-letter">${d.label}</span></div>`).join('')}</div>
+      <button class="rf-mini-wrap" onclick="openReflectBlock('calendar-heatmap')" aria-label="Year at a Glance"><span class="rf-mini">${cells}</span><span class="rf-mini-cap">12 weeks</span></button>
+    </div>
+  </div>`;
+}
+function openGuidePractice(id){
+  document.querySelectorAll('.guide-practice').forEach(d=>{ d.open = (d.id===id) ? !d.open : false; });
+  document.querySelectorAll('.guide-tile').forEach(t=>t.classList.toggle('on', document.getElementById(t.dataset.g)?.open));
+}
+function openReflectBlock(id){
+  const el=document.getElementById(id); const d=el && el.closest('details'); if(!d) return;
+  d.open=true; setTimeout(()=>d.scrollIntoView({block:'start',behavior:'smooth'}),30);
 }
 
 function renderReview(){

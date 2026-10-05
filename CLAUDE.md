@@ -223,6 +223,18 @@ Measured with 10 cards / 40 Daily / 12 Weekly sessions at 390px: Story Cards 2,0
 - ✅ **Shorter banners** (`.pl-banner.compact`) — date and title; the description lines live in the Guide. Weekly's *Begin Full Session* / *Quick Prayer* sit side by side and stack when there isn't room (`.pl-banner-btns`).
 - ✅ **"Before you begin" folded** to one line (`.pl-reflection-card.folded`); tapping it opens it in place, tapping again (opened) goes to the session.
 
+### 🎨 Redesign + linking pass (2026-10-05)
+- ✅ **Card detail** — category-colour band (`.cd-band`) with a large faint mark; one toolbar (`.cd-tools`: Pray these now · Add Story Note · Mark as Answered/Active · Edit Card); Delete Card as quiet text at the foot. "Pray these now" opens the walkthrough at that card (`prayCardNow`).
+- ✅ **Story Cards grouped by category** under small coloured headings (`.cat-group-h`), in `CAT_LABELS` order.
+- ✅ **Daily banner sky** (`skySVG()`): sun on an arc by the device clock, dusk/dawn glow, moon and stars at night, two hill silhouettes.
+- ✅ **Step header band** on every Daily and Weekly step card (`--hdr` = step colour, `.step-hdr-mark` large and faint).
+- ✅ **Walkthrough** — one dot per card in its category colour (`.walk-dot`) and the card drawn on a stack (`.pc-stack`).
+- ✅ **Reflect summary band** (`renderReflectBand`): five figures (each opens its tab / section), the 7-day marks, a 12-week mini heatmap that opens Year at a Glance; the old *Your Stats* fold was folded into it.
+- ✅ **Guide tiles** — three illustrated tiles open their explainers (`openGuidePractice`); each explainer ends with a button to its tab.
+- ✅ **Active tab pill**, **doves on Done screens**, Bible book screen ornament, Done/empty overflow clipped.
+- ✅ **Links** — cards prayed via "Pray story cards" inside a Daily session are recorded on `prayedCards`; the card detail lists those *Daily Prayer Sessions*, and the past Daily session lists the *Story cards* prayed; heart-need bars in Reflect open the Weekly sessions that named that need (`toggleNeedSessions`); Done screens link to today's line, Reflect and Story Cards.
+- ✅ Defects: ✏️ emoji on Edit Card; "Father, you are …." double stop in the walkthrough.
+
 ### 🛠️ Infrastructure
 - ✅ localStorage persistence (`prayer_cards`, `pl_sessions`, `pl_draft`, `streak_days`, `daily_<date>`)
 - ✅ Storage failure handling — all writes go through `safeSetItem()` / `safeRemoveItem()` wrappers. Distinguishes `QuotaExceededError` (storage full) from `SecurityError` (private mode, Brave shields, etc.) and shows a specific toast for each. Toasts are rate-limited to once per 5 seconds so auto-save during a typing burst doesn't flood the user. On app start, `storageAvailable()` does a probe write/remove — if it fails, surfaces a "⚠ Your browser is blocking local storage" warning toast after 800ms.
@@ -718,6 +730,7 @@ If you're starting a new chat and the user asks for "what's next," check §6 —
 
 Newest first. Format: `YYYY-MM-DD — what changed`.
 
+- **2026-10-05** — **Redesign + linking pass (six rounds).** Card detail band + toolbar with *Pray these now*; Story Cards grouped by category; Daily sky banner; step header bands; walkthrough stack and colour dots; Reflect summary band with tappable figures and mini heatmap; illustrated Guide tiles with links to each tab; active-tab pill; doves on Done screens. Links: Daily sessions now record story cards prayed (`prayedCards`, previously never filled) and both sides show each other; heart-need bars open their sessions; Done screens link onward. No content changed. Checked 320–430px, Small–Large, light + dark; regression suite 102 → 111 checks, all passing.
 - **2026-10-05** — **Compact home screens.** Story Cards as one-line rows with the Scripture reference only and Answered folded; Daily plans as three tiles; Daily and Weekly history as one-line rows under *This week* / *Earlier*; banners down to date + title (their descriptions and “Why three plans?” moved to the Guide); “Before you begin” folded. Each home now fits about one screen (≈1,000px, was 1,600–2,060px). Checked at 320–430px, Small–Large, light + dark; regression suite 97 → 102 checks, all passing.
 - **2026-10-05** — Today's line removed from Story Cards (that screen stays about the people you pray for); it now lives only on the Daily Prayer home, and **the app opens on Daily Prayer** instead of Story Cards. Regression suite 96 → 97 checks, all passing.
 - **2026-10-05** — **Carry this with you, through the day.** Today's line now sits at the top of Story Cards and the Daily home with timestamped notes you add as the day goes; it refreshes each day. Skipped the line? With a passage today the card offers to choose one from it; with no Daily Prayer yet it quietly offers yesterday's line or one you choose (typed or from the Bible), and can be hidden for the day. Evening's Prayer step shows the line and the day's notes read-only. New `carry_log` key, in backups, past-session view and Markdown export. Regression suite 90 → 96 checks, all passing; light + dark screenshotted.
