@@ -7698,12 +7698,26 @@ function walkSinceLine(c, prevPrayed){
 function walkScriptureHTML(c){
   const raw = (c.scripture||'').trim();
   if(!raw) return `<button class="fc-add-scr" onclick="walkEditScripture('${c.id}')">${ICON.book}Add a Scripture anchor →</button>`;
-  const m = raw.match(/^(.+?)\s+[—–]\s+([\s\S]+)$/);
-  const ref = m ? m[1].trim() : raw, text = m ? m[2].trim() : '';
-  const p = parseScriptureRef(ref);
+  const { ref, text } = splitAnchor(raw);
+  const p = ref ? parseScriptureRef(ref) : null;
   if(p && !text) setTimeout(()=>{ (async()=>{ let v=getScriptureText(ref); if(!v) v=await lookupBibleRef(ref); const el=document.getElementById('fc-verse'); if(el&&v){ el.textContent='“'+nestQuotes(v)+'”'; el.hidden=false; fitCardFacesSoon(); } })(); },0);
-  const refHTML = p ? `<button class="fc-ref" onclick="lookupInContext('${esc(ref).replace(/'/g,"\\'")}')">${esc(ref)}</button>` : `<span class="fc-ref">${esc(ref)}</span>`;
+  const refHTML = p ? `<button class="fc-ref" onclick="lookupInContext('${esc(ref).replace(/'/g,"\\'")}')">${esc(ref)}</button>` : (ref ? `<span class="fc-ref">${esc(ref)}</span>` : '');
   return `<div class="fc-scripture">${refHTML}${text ? `<div class="fc-verse">“${esc(nestQuotes(text.replace(/^[“"]|[”"]$/g,'')))}”</div>` : (p ? '<div class="fc-verse" id="fc-verse" hidden></div>' : '')}</div>`;
+}
+// A Scripture anchor as typed: "Ref — text", "Ref\ntext", "Ref: text", "Ref text",
+// or just a reference, or prose. Find a leading reference the lookup accepts.
+function splitAnchor(raw){
+  raw = String(raw||'').trim();
+  const m = raw.match(/^(.+?)\s+[—–]\s+([\s\S]+)$/);
+  if(m && parseScriptureRef(m[1].trim())) return { ref: m[1].trim(), text: m[2].trim() };
+  const nl = raw.split(/\n+/);
+  if(nl.length > 1 && parseScriptureRef(nl[0].trim())) return { ref: nl[0].trim(), text: nl.slice(1).join(' ').trim() };
+  if(parseScriptureRef(raw)) return { ref: raw, text: '' };
+  // Leading "Book C:V[–V]" followed by the words.
+  const lead = raw.match(/^((?:[1-3]\s*)?[A-Za-z][A-Za-z .]*?\s+\d+:\d+(?:\s*[–-]\s*\d+)?)[\s:.,—–-]+([\s\S]+)$/);
+  if(lead && parseScriptureRef(lead[1].trim())) return { ref: lead[1].trim(), text: lead[2].trim() };
+  if(m) return { ref: m[1].trim(), text: m[2].trim() };
+  return { ref: '', text: raw };
 }
 function walkWeeklyLine(c){
   const ss = loadSessions().filter(s => (s.linkedCards||[]).includes(c.id));
@@ -7754,8 +7768,14 @@ function fitCardFaces(){
       // (the hint's own top margin is auto — it only takes leftover space — so skip it)
       [...f.children].forEach(ch => { if(ch === last || getComputedStyle(ch).position === 'absolute') return; const m = getComputedStyle(ch); need += (parseFloat(m.marginTop)||0) + (parseFloat(m.marginBottom)||0); });
       return need <= f.clientHeight + 1; };
+    // A sparse card grows its text (front to 1.3×, back to 1.15×) instead of
+    // leaving the card half empty; a full one shrinks (to 0.62×).
+    const max = f.classList.contains('fc-front') ? 1.3 : 1.15;
+    f.style.setProperty('--fit', String(max));
+    if(!f.clientHeight) return;
+    if(fits()) return;
     f.style.setProperty('--fit', '1');
-    if(!f.clientHeight || fits()) return;
+    if(fits()){ let lo = 1, hi = max; for(let i = 0; i < 7; i++){ const mid=(lo+hi)/2; f.style.setProperty('--fit', String(mid)); if(fits()) lo = mid; else hi = mid; } f.style.setProperty('--fit', String(lo)); return; }
     let lo = 0.62, hi = 1;
     f.style.setProperty('--fit', String(lo));
     if(!fits()){ f.classList.add('fit-overflow'); return; }
