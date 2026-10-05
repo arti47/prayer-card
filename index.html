@@ -4936,7 +4936,9 @@ function syncNavHeight(){
 function skySVG(){
   const now=new Date(), h=now.getHours()+now.getMinutes()/60, tod=timeOfDay();
   const t=Math.min(1,Math.max(0,(h-5.5)/14));            // 5:30 → 19:30 across the arc
-  const sx=(30+t*340).toFixed(1), sy=(118-Math.sin(Math.PI*t)*92).toFixed(1);
+  // The sun keeps to the right of the sky, clear of the date and title on the left,
+  // and its lowest point stays above the edge the next card overlaps.
+  const sx=(262+t*70).toFixed(1), sy=(112-Math.sin(Math.PI*t)*72).toFixed(1);
   const hills=`<path d="M0 132 C60 112 110 124 170 116 S290 104 400 120 L400 160 L0 160Z" fill="#000" opacity=".16"/><path d="M0 146 C80 130 150 142 230 134 S340 128 400 138 L400 160 L0 160Z" fill="#000" opacity=".22"/>`;
   let body='';
   if(tod==='night'){

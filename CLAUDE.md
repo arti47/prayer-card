@@ -284,7 +284,7 @@ Tester feedback: the Guide was wordy, dull, and didn't say what to do first.
 ### 🧭 Sixth audit pass (P19, 2026-10-05)
 Measured across 70+ states in light/dark at 390px, 320px Large and 768px, plus a rendered-text contrast scan of all 24 schemes × light/dark. **Content unchanged** — new interface labels only reuse existing titles (*Answered Prayers ›*, *Weekly Review — Story Cards ›*, *Heart Needs Over Time ›*, *Feelings Over Time ›*, *Earlier lines*, *Take the tour ›*) plus the search group heading *Written prayers*.
 - ✅ **Header** — on the homes a slim band in the scheme's colour: search, a ✦ mark, the Bible; the app name stays for screen readers (`.hdr-mark`, `.sr-only`); the page's hero is its title. Multi-colour schemes lay a faint motif across it (`--hdr-motif`: leading, mosaic, vine, rays, interlace, wheat, arches, crosses, waves, stars, lavender, dunes).
-- ✅ **Daily home** opens on a full-width sky for the hour (`.dp-sky`), date and *Daily Prayer* on the hills; whatever follows overlaps its lower edge.
+- ✅ **Daily home** opens on a full-width sky for the hour (`.dp-sky`), date and *Daily Prayer* on the hills; whatever follows overlaps its lower edge The sun's arc keeps to the right of the sky (`skySVG`: x 262–332 of 400, lowest y 112), so it never sits on the date or title or under the overlapping card.
 - ✅ **Weekly banner** — one solid *Begin Full Session*, *Quick Prayer* as a link beneath (`.pl-banner-link`).
 - ✅ **Session bar** — plan name, and the mode (*Quick Prayer*) as a small second line (`.sb-name` / `.sb-mode`).
 - ✅ **Progress as a path** — a waving thread with a station per movement in that movement's colour; passed ones filled, the current one carrying its mark.
@@ -812,6 +812,7 @@ If you're starting a new chat and the user asks for "what's next," check §6 —
 
 Newest first. Format: `YYYY-MM-DD — what changed`.
 
+- **2026-10-06** — Fix: the Daily sky's sun ran a full left-to-right arc, so near dawn and dusk it sat on the date and title and was cut by the *Carry this with you* card. It now keeps to the right of the sky and stays above the card's edge; the card overlapping the sky is unchanged (by design since P19).
 - **2026-10-05** — Fix: **Print this session did nothing on iPhone.** An app added to the Home Screen ignores `window.print()`. There, the session is now drawn from its Markdown export onto A4 pages, made into a PDF on the device (no library, nothing sent anywhere) and handed to the system menu — choose *Print* (or *Save to Files*). Browser tabs and desktop keep the print dialog. The Weekly PDF is headed *Weekly Deep Time*; the closing line never takes a page of its own. Regression suite 177 → 178, all passing.
 - **2026-10-05** — Evening: the carried line and the day's notes moved from *Turn the Psalm into prayer* (screen 1, now left to the Psalm) to *Confess the day* (screen 2), where the day is reviewed; notes open folded each session. Regression check updated, all 176 passing.
 - **2026-10-05** — Passage fields (Morning/Starter *Passage*, Evening *Psalm*): once the field holds text, *Insert from Bible* shrinks to a book icon in the field's top-right corner (still named for screen readers, still opens the Bible); the full button returns when the field is empty (`.pf-row.has-text`, `pfSync`). Regression suite 175 → 176, all passing.
