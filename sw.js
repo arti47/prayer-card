@@ -4,7 +4,7 @@
 //   • Other static assets → cache-first.
 // Bump CACHE_NAME whenever you want all clients to refresh their cached app shell.
 
-const CACHE_NAME = 'prayer-journal-v4';
+const CACHE_NAME = 'prayer-journal-v5';
 const BIBLE_BOOKS = [
   'Bible_01_Genesis','Bible_02_Exodus','Bible_03_Leviticus','Bible_04_Numbers','Bible_05_Deuteronomy',
   'Bible_06_Joshua','Bible_07_Judges','Bible_08_Ruth','Bible_09_I_Samuel','Bible_10_II_Samuel',
@@ -68,7 +68,9 @@ self.addEventListener('fetch', (event) => {
   // HTML / navigation → network-first
   if (req.mode === 'navigate' || req.destination === 'document' || url.pathname.endsWith('.html')) {
     event.respondWith(
-      fetch(req)
+      // no-store: skip the browser's HTTP cache (GitHub Pages sets max-age=600),
+      // so a fresh deploy is seen at once.
+      fetch(req, { cache: 'no-store' })
         .then(res => {
           const clone = res.clone();
           caches.open(CACHE_NAME).then(cache => cache.put(req, clone));

@@ -9641,6 +9641,31 @@ if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.
       });
       setInterval(() => reg.update().catch(() => {}), 60 * 60 * 1000);
     }).catch(err => console.log('Service worker registration failed:', err));
+    watchPageVersion();
+  });
+}
+// Second net for updates: an installed iPhone app resumes the page it already
+// had in memory, and a new deploy doesn't always ship a changed sw.js. So on
+// load and whenever the app comes back to the front, ask the server (HEAD, no
+// cache) for index.html's ETag; if it has changed, offer the same toast, which
+// simply reloads — the service worker fetches HTML network-first, uncached.
+async function pageTag(){
+  try { const r = await fetch('./index.html', { method:'HEAD', cache:'no-store' });
+        return r.ok ? (r.headers.get('etag') || r.headers.get('last-modified')) : null; }
+  catch(e){ return null; }
+}
+async function watchPageVersion(){
+  let base = await pageTag();
+  document.addEventListener('visibilitychange', async () => {
+    if(document.visibilityState !== 'visible') return;
+    const t = await pageTag();
+    if(!t) return;
+    if(!base){ base = t; return; }
+    if(t !== base){
+      const el = document.getElementById('update-toast'); if(!el) return;
+      el.classList.add('show');
+      el.onclick = () => { el.classList.remove('show'); location.reload(); };
+    }
   });
 }
 
