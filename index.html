@@ -7861,6 +7861,7 @@ async function dpStart(planKey){
     prayedCards:[],
     stepIndex:0
   };
+  _carryEveOpen = false;   // the carried line opens folded each session
   if(_pendingPassage && steps.meditation){ steps.meditation.passage = _pendingPassage; _pendingPassage = null; }
   dpStepIdx=0; dpSubIdx=0; dpMode='session'; _dpAnimDir='next';
   saveDailyDraft(dpSession);
@@ -8708,7 +8709,7 @@ function renderDPStep(){
       ${passageHTML}
       ${unit.kind === 'field' && unit.f?.key === 'carry' ? carryPickHTML(step, saved)
         : (unit.kind === 'question' || (split && unit.kind === 'field' && step.passageField) ? dpPassageRecall(step, saved) : '')}
-      ${dpSession.plan === 'evening' && step.key === 'prayer' && dpSubIdx === 0 ? carryEveningHTML(sessionDateKey(dpSession)) : ''}
+      ${dpSession.plan === 'evening' && unit.kind === 'field' && unit.f?.key === 'dayconfession' ? carryEveningHTML(sessionDateKey(dpSession)) : ''}
       ${questionsHTML}
       ${(!step.passageField && !step.questionsField && !step.showInvocations && (step.fields||[]).length) ? dpStripHTML((unit.f || step.fields[0]).key) : ''}
       ${fieldsHTML}
