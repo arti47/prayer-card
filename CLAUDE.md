@@ -253,11 +253,23 @@ Measured with 10 cards / 40 Daily / 12 Weekly sessions at 390px: Story Cards 2,0
 - ✅ **Bible reader: Pray with this** — opened without a target field, the main action sets the selection (“Ref — text”) as today's meditation passage (`bbPrayWith`); with no Morning/Starter session open it is held (`_pendingPassage`) and filled into the next one begun.
 - ✅ Small: sub-step counter reads *1 / 5* in serif (was “STEP 1 OF 5”, which clashed with the step number); invocations grouped under the Bible's sections with colour rules (`invGroupsHTML`); confirm dialog is a centred card; note editor has a date block (`syncNoteDateBlock`) and ruled paper; technique sheets number their movements and word-stress readings (`.tech-flow.numbered`, `.tech-lines`); press-and-hold a Link Story Cards row opens the card; Reflect figures wrap 3 + 2 under 360px instead of breaking words.
 
+### 🧭 Fifth audit pass (P18, 2026-10-05)
+Measured across 22 states × light/dark/320-Large plus keyboard, focus, load time and stylesheet drift. **Content unchanged** — one new section title (*Feelings Over Time*) and a few action labels (*Keep with a card*, *Continue*, *Print this session*, *Search*).
+- ✅ **Immersive sessions** — inside Daily/Weekly the header and tab bar step away; `#session-bar` holds ✕ (save & exit, `sessionExit`), the plan name with a *Saved* flash (`flashSaved`), **Aa** (`cycleTextSize`) and the Bible; the step's `.pl-nav` is moved into the fixed `#session-foot` by `syncHeaderMode` (moved, not copied), and `--nav-h` measures the foot while in a session.
+- ✅ **Homes** — header is one line (subtitle hidden); Story Cards, Reflect and Guide open on a page title with a drawn hero (`pageHeroHTML`, `HERO_ART`: deck, almanac, lamp). Daily: the plan for the hour is a wide tile with its scene (`planTilesHTML`, `suggestedPlan`, `PLAN_SCENE`); drafts sit in a ribbon (`resumeRibbonHTML`); search + a calendar button share one row (`homeToolsHTML`). Weekly banner: arch clear of the buttons, a seven-colour band at its foot.
+- ✅ **Instruction peek** — a step instruction met on an earlier day opens as a 2-line peek with ⌄ (`settleInstructionPeek`, keyed by the text, `seen_instr`); Listen instructions are never folded.
+- ✅ **Sheets** — one ✕ that stays at the top right (`.sheet-x`, injected at start) instead of Close buttons; reading sheets open at ⅔ height and lift to full on scroll or a handle tap (`.snap`); every sheet is a `role="dialog"`/`aria-modal`, Tab stays inside, **Esc** closes, the phone's **Back** closes the top sheet or leaves a session (`histPush`/`histPopIf`, `popstate`).
+- ✅ **Screens** — card detail drawn as the card (spine, band, Scripture inside, bare reference resolved to its verse via `fillVerses`); press-and-hold a card row for quick actions (`openQuickActions`); *Pray these now* from a card prays that card only (`_walkOnly`); emotion picker is all wheel — a ring of finer feelings around a hub you tap to go back (`emotionRingSVG`); heart tiles equal-sized with a peeked intro; prayer library numbered I, II, III…; Earlier lines by month with a date gutter; calendars mark each Daily session with a diamond in its plan's ink (`PLAN_INK`); Done screens join verse and gaze in one panel, the Daily one points to today's line (`carryDoneLinkHTML`) and has art per plan; past sessions get a sticky step index (`buildSessionIndex`) and a continuous spine; Bible books as a light 3-column list, *Continue · Book N* (`bb_last`), actions only once a verse is chosen; note editor's date block opens the picker; Weekly Review rows with a category mark; tablet (≥768px) puts the passage beside the writing; card name morphs into the detail where View Transitions exist.
+- ✅ **Links** — walkthrough card lists Daily sessions too; Carry line → its session (`carrySourceHTML`); *Keep with a card* on Listen and Ask (`openKeepSheet`, note or new card); a Bible selection can become a card's Scripture anchor (`bbAnchorToCard`); **Feelings Over Time** in Reflect (`renderFeelingFrequency`), each feeling → Scripture by feeling (`openFeelingVerses`); feeling and heart-need chips in past sessions open their verses / the chart; past Daily sessions *Pray this again* (`dpRepray`, passage carried); Weekly Done lists the session's cards; Reflect's 7-day marks open that day; **one search** across cards, notes, sessions and lines (`openGlobalSearch`, header left).
+- ✅ **Platform** — Wake Lock while a silence timer runs; `autocapitalize`/`spellcheck`/`enterkeyhint` on fields (`fieldAttrs`); `--vvh` from `visualViewport` keeps focus mode's Save above the keyboard; `prefers-contrast: more`; print stylesheet + *Print this session*; `aria-current` on the tab, `aria-live` on toasts; contrast and sub-12px text fixed; tap targets ≥36–44px.
+- ✅ **Graphics** — time-of-day tint across the page (`html[data-tod]`, candle glow at night in dark); rubric ink and an illuminated initial on instructions; sub-steps turn like a page; categories in arched niches; stack edges in the next cards' colours; small capitals and old-style figures; fleuron before section titles; nav active as an ink underline with a filled glyph; red-brown opening quote on Scripture; seal-edged card marks; ribbon on the Carry card; redrawn dove.
+- ✅ **Tokens + speed** — every rem font size snaps to a nine-step scale (`--fs-1…9`), `--r-pill`, motion tokens; Reflect draws folded sections after first paint (`renderReflectSections`); the card fitting skips unchanged faces.
+
 ### 🛠️ Infrastructure
 - ✅ localStorage persistence (`prayer_cards`, `pl_sessions`, `pl_draft`, `streak_days`, `daily_<date>`)
 - ✅ Storage failure handling — all writes go through `safeSetItem()` / `safeRemoveItem()` wrappers. Distinguishes `QuotaExceededError` (storage full) from `SecurityError` (private mode, Brave shields, etc.) and shows a specific toast for each. Toasts are rate-limited to once per 5 seconds so auto-save during a typing burst doesn't flood the user. On app start, `storageAvailable()` does a probe write/remove — if it fails, surfaces a "⚠ Your browser is blocking local storage" warning toast after 800ms.
 - ✅ Toast notifications
-- ✅ 5-tab bottom nav: ☀️ Daily Prayer · 🃏 Story Cards · ✍️ Weekly Deep · 🪞 Reflect · ✦ Guide. **Reflect** holds stats/analysis + settings (Your Stats, Year at a Glance, Answered Prayers, Heart Needs Over Time, What You've Been Hearing, Weekly Review, then a "Settings" divider: Appearance, Markdown Export, Backup & Restore). **Guide** is pure orientation (tour, the 3 practice explainers, Install, Credits, Privacy). `showView('reflect')` renders the analysis blocks + applies theme/text-size + populates Obsidian fields; `showView('guide')` only renders the install block.
+- ✅ 5-tab bottom nav (hidden inside sessions since P18): ☀️ Daily Prayer · 🃏 Story Cards · ✍️ Weekly Deep · 🪞 Reflect · ✦ Guide. **Reflect** holds stats/analysis + settings (Your Stats, Year at a Glance, Answered Prayers, Heart Needs Over Time, What You've Been Hearing, Weekly Review, then a "Settings" divider: Appearance, Markdown Export, Backup & Restore). **Guide** is pure orientation (tour, the 3 practice explainers, Install, Credits, Privacy). `showView('reflect')` renders the analysis blocks + applies theme/text-size + populates Obsidian fields; `showView('guide')` only renders the install block.
 
 ---
 
@@ -346,6 +358,9 @@ Array of `Date.toDateString()` strings — days the user finished daily prayer o
 ```
 In Backup & Restore (per day: backup's line wins, notes merged by id); cleared by Reset All Data.
 
+### UI keys (P18)
+`seen_instr` (text keys of instructions already met — for the peek), `bb_last` (`{file, chapter}` last read in the Bible). Preferences only; not in backups.
+
 ### `bible_bookmarks` (array, newest first)
 ```js
 {
@@ -421,7 +436,7 @@ The original 13 are complete. These are honest next-step ideas, ranked by spirit
 |---|---|---|---|
 | 14 | Heart-need frequency view in Guide tab | **done** | Horizontal-bar chart in Guide tab between Stats and Backup. Walks all sessions, counts `prepare.heartNeeds` occurrences, renders sorted-descending bars colored by each need's identity color. Empty state copy frames it as self-knowledge, not score-keeping. Only shows needs with count ≥ 1 (the others aren't yet relevant). |
 | 15 | Inline Scripture lookup | **done** | `SCRIPTURE_TEXTS` dictionary bundles ~26 passages (all refs used in pre-built content). `getScriptureText()` checks both that dict and the existing `SCRIPTURAL_INVOCATIONS`. `lookupScripture(ref)` opens a soft accent-blocked modal. `makeScriptureRefsClickable(refsString)` wraps refs in `.scripture-ref` spans with `event.stopPropagation()` (since they may live inside selectable heart-need cards). Tappable refs are currently surfaced only in the "Needs of the Heart" chart — could be extended to user-typed card scriptures later via regex detection. Missing refs get a gentle fallback message rather than an error. |
-| 16 | Quick-add story card from a Pray & Listen session | planned | Button inside a Listen/Ask step: "+ Save as story card", pre-filled with the textarea content. Bridges another gap between the two practices. |
+| 16 | Quick-add story card from a Pray & Listen session | **done** (P18) | Button inside a Listen/Ask step: "+ Save as story card", pre-filled with the textarea content. Bridges another gap between the two practices. |
 | 17 | Per-card "last prayed" timestamp | **done** | `card.lastPrayed` written in `renderDailyCard` each time a card is shown in the walkthrough (idempotent, writes only if date changed). Card detail modal displays "Started X · Last prayed Y ago" via `relativeTimeAgo()` helper. Not shown in list view to avoid clutter. |
 | 18 | Obsidian / Markdown export | **done** | Three routes: `obsidian://` direct, clipboard copy, `.md` download. Available on session detail modal + Done screen. Settings (vault name + subfolder) in Guide tab. *(Shipped 2026-05-10 outside the original roadmap.)* |
 
@@ -439,7 +454,7 @@ The original 13 are complete. These are honest next-step ideas, ranked by spirit
 | 23 | Swipe gestures in Pray & Listen | **done** | `setupSwipeFor(containerId, isActive, onNext, onBack)` attaches Pointer Event listeners with delegation on `#pl-content` and `#dp-content`. Thresholds: ≥60px horizontal, mostly-horizontal motion (`|dy| < |dx|/1.6`), under 600ms. Swipes that originate on textareas, inputs, buttons, or pills are ignored so users can still interact with form elements. Pairs with the direction-aware slide transitions (P3 #11). Works in both Weekly Deep Time and Daily Prayer flows. |
 | 24 | Larger-text / accessibility mode | **done** | Small (16px) / Medium (19px) / Large (22px) toggle in Appearance, paired with the theme buttons. Scales via root `html` font-size; everything in rem cascades proportionally. Applied in the `<head>` bootstrap script before paint. Saved in `localStorage.text_size`. |
 | 25 | Quiet backup reminder (no nag) | planned | Small dot on the Guide tab nav if no backup in 30+ days. Tap → highlighted Backup section. Protects against data loss without nagging the user toward any action. Track `last_backup_at` in localStorage. |
-| 26 | Print / PDF a session | planned | Some users will want paper journals. `@media print` stylesheet + a button. ~30 min of work. |
+| 26 | Print / PDF a session | **done** (P18) | Some users will want paper journals. `@media print` stylesheet + a button. ~30 min of work. |
 
 #### 🚪 Onboarding (do this before sharing widely)
 | # | Feature | Status | Notes |
@@ -644,6 +659,16 @@ A full audit of every screen in both themes at 390px, with contrast, tap-target 
 
 **Two contrast pairs still fail as measured, and both are non-text:** `--border` on `--surface` at 1.73:1 is a decorative card edge (raising it to 3:1 makes the app look wireframed), and `--accent2` on `--accent-light` at 2.94:1 is only ever a border colour now — its one text use, the selected verse number, was moved to `--accent` at 5.07:1.
 
+### P18 — Fifth audit pass (added 2026-10-05)
+
+| # | Feature | Status | Notes |
+|---|---|---|---|
+| 93 | Defects (D1–D19, M1–M6) | **done** | Weekly arch over the buttons; invocation with no text; bare-reference verse missing on card detail; resize grips; broken Bible rule; repeated plan pill; Reflect labels/grid; Done repeating the Carry card; straight quotes in ‘okay’; empty heart-needs label; duplicate note date; shrinking Bible-feel sheet; duplicate emotion buttons; Close buttons; Evening carry block on every screen; Review row clutter; contrast < 4.5; text < 12px; small targets. |
+| 94 | Immersive session, homes, sheets, screens (L1–L27, U1–U7) | **done** | See §3 P18. Pinning Back/Next (rejected in P10) adopted at the owner's choice. Shown age on card rows (L26) left off per #17. |
+| 95 | Links (K1–K16) | **done** | Includes roadmap #16 (start a card from a session) via *Keep with a card → New Prayer Card*. |
+| 96 | Graphics (G1–G22) | **done** | Deckled card edge not drawn (colour edges instead). |
+| 97 | Accessibility, platform, speed, tokens (A1–A9, P1–P3, S1–S2) | **done** | Roadmap #26 (print) done. |
+
 ### P17 — Tester feedback (added 2026-09-28)
 
 | # | Feature | Status | Notes |
@@ -748,6 +773,7 @@ If you're starting a new chat and the user asks for "what's next," check §6 —
 
 Newest first. Format: `YYYY-MM-DD — what changed`.
 
+- **2026-10-05** — **P18: fifth audit pass, everything in it** (§6 #93–97, §3 P18). Immersive sessions (header and tab bar away, ✕ · plan · Aa · Bible above, Back/Next fixed below); one-line header with page heroes; plan-for-the-hour tile, draft ribbon, search + calendar row; instruction peeks; one sheet system with ✕, ⅔-height snap, dialog roles, Esc and Android Back; card detail as the card; quick actions on hold; single-card prayer; emotion rings; Feelings Over Time; one search for everything; Keep with a card; Bible → Scripture anchor; Carry ↔ session links; Daily *Pray this again*; past-session index; Bible list + Continue; tablet two-column; Wake Lock, field attributes, keyboard viewport, high contrast, print; time-of-day tint, rubric ink and initials, page-turn, small caps, nine-step type scale; lazy Reflect. No wording changed. Regression suite 142 → 156, all passing; light, dark, 320–430px, Small–Large checked.
 - **2026-10-05** — Daily Prayer and Story Cards swapped places in the tab bar, so the first tab is the one the app opens on.
 - **2026-10-05** — Fix: the story card's quick-note box is now a `<form>` (iPhone's keyboard key submits a form reliably; a bare keydown Enter isn't always sent), the keyboard closes after adding, and the Story Cards list behind the sheet re-renders so its note count updates (`walkQuickNote` → `renderCards`).
 - **2026-10-05** — Fix: a Scripture anchor typed as *reference, new line, verse* (no “—”) was shown whole in the small underlined reference style. `splitAnchor` now finds the leading reference in “Ref — text”, “Ref⏎text”, “Ref: text”, “Ref text”, a bare reference, or treats it as prose. And the card's text now **grows** to fill a sparse card as well as shrinking for a full one (`fitCardFaces`: front up to 1.3×, back up to 1.15×). Regression suite all passing.
