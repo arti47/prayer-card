@@ -2041,6 +2041,12 @@
   .silence-seg .silence-pill + .silence-pill { border-left: 1px solid var(--border); }
   .silence-seg .silence-pill:active, .silence-seg .silence-pill:hover { background: var(--accent-light); }
   .carry-eve-ref { font-style: normal; color: var(--text3); white-space: nowrap; }
+  /* Close the Bible from any of its screens, top right. */
+  .bb-close { margin-left: auto; flex: none; width: 38px; height: 38px; border-radius: 50%; border: 1px solid var(--border); background: var(--surface); color: var(--text2); display: flex; align-items: center; justify-content: center; cursor: pointer; position: relative; }
+  .bb-close .ico { width: 17px; height: 17px; }
+  .bb-close::after { content: ''; position: absolute; inset: -4px; }
+  .bb-close:active { background: var(--accent-light); color: var(--accent); }
+  .bb-head .bb-crumb { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 </style>
 </head>
 <body>
@@ -4201,6 +4207,7 @@ function bbHead(crumb, backFn){
     ${backFn?`<button class="bb-back" onclick="${backFn}" aria-label="Back">‹</button>`:''}
     <span class="bb-title">${ICON.book}Bible</span>
     <span class="bb-crumb">${esc(crumb||'')}</span>
+    <button class="bb-close" onclick="closeModal('modal-bible')" aria-label="Close the Bible">${ICON.close}</button>
   </div>`;
 }
 
