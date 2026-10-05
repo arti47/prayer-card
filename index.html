@@ -485,6 +485,37 @@
   .emo-v-actions { display: flex; flex-wrap: wrap; gap: 4px 14px; margin-top: 4px; }
   .emo-v-btn { display: inline-flex; align-items: center; gap: 5px; background: none; border: none; padding: 8px 0; margin: -4px 0; font-family: var(--serif); font-size: .78rem; color: var(--accent); cursor: pointer; }
   .emo-v-btn .ico { width: 13px; height: 13px; }
+  /* Carry this with you — today's line on the home screens */
+  .carry-slot:empty { display: none; }
+  .carry-card { position: relative; margin: 0 0 16px; padding: 14px 16px 12px; background: var(--surface); border: 1px solid var(--border); border-left: 3px solid var(--accent2); border-radius: var(--radius); box-shadow: var(--shadow); }
+  .carry-head { display: flex; align-items: center; gap: 7px; font-family: var(--sans); font-size: .66rem; font-weight: 600; letter-spacing: .055em; text-transform: uppercase; color: var(--text3); }
+  .carry-head .ico { width: 14px; height: 14px; color: var(--accent); }
+  .carry-head .carry-when { margin-left: auto; text-transform: none; letter-spacing: 0; font-weight: 500; }
+  .carry-line { font-family: var(--serif); font-style: italic; font-size: 1.12rem; line-height: 1.5; color: var(--text); margin: 8px 0 2px; }
+  .carry-ref { font-family: var(--sans); font-size: .72rem; color: var(--accent); display: inline-block; margin-top: 2px; }
+  .carry-ref.scripture-ref { cursor: pointer; }
+  .carry-passage { font-family: var(--serif); font-style: italic; font-size: .92rem; line-height: 1.55; color: var(--text2); margin: 8px 0 4px; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 3; overflow: hidden; }
+  .carry-card.choosing .carry-passage { -webkit-line-clamp: unset; display: block; }
+  .carry-quiet { font-family: var(--serif); font-style: italic; font-size: .9rem; color: var(--text3); margin: 8px 0 2px; }
+  .carry-links { display: flex; flex-wrap: wrap; gap: 4px 16px; margin-top: 6px; }
+  .carry-link { background: none; border: none; padding: 8px 0; margin: -4px 0; font-family: var(--serif); font-size: .85rem; color: var(--accent); cursor: pointer; text-decoration: underline dotted; text-underline-offset: 3px; text-align: left; }
+  .carry-x { position: absolute; top: 8px; right: 8px; width: 30px; height: 30px; border: none; background: none; color: var(--text-quiet); font-size: .9rem; cursor: pointer; border-radius: 50%; }
+  .carry-x::after { content: ''; position: absolute; inset: -6px; }
+  .carry-notes { margin-top: 10px; border-top: 1px solid var(--border-soft); padding-top: 4px; }
+  .carry-note { display: flex; gap: 10px; align-items: baseline; padding: 6px 0; border-bottom: 1px dotted var(--border-soft); }
+  .carry-note-time { flex: none; font-family: var(--sans); font-size: .7rem; color: var(--text3); min-width: 3.6em; }
+  .carry-note-text { flex: 1; font-family: var(--serif); font-size: .9rem; line-height: 1.5; color: var(--text2); white-space: pre-wrap; }
+  .carry-note-act { flex: none; display: flex; gap: 2px; }
+  .carry-note-act button { width: 30px; height: 30px; border: none; background: none; color: var(--text-quiet); cursor: pointer; position: relative; }
+  .carry-note-act button::after { content: ''; position: absolute; inset: -5px; }
+  .carry-note-act .ico { width: 13px; height: 13px; }
+  .carry-add { display: flex; gap: 8px; margin-top: 10px; align-items: stretch; }
+  .carry-add input { flex: 1; min-width: 0; padding: 9px 11px; border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--surface2); color: var(--text); font-family: var(--serif); font-size: 16px; }
+  .carry-add button { flex: none; padding: 0 14px; border: 1px solid var(--accent); border-radius: var(--radius-sm); background: var(--accent); color: var(--on-accent); font-family: var(--sans); font-size: .82rem; cursor: pointer; }
+  .carry-add button.secondary { background: none; color: var(--accent); }
+  .carry-eve .dp-recall-body { font-style: italic; }
+  .carry-eve-notes { margin-top: 6px; }
+  .carry-eve-toggle { background: none; border: none; color: var(--accent); font-family: var(--serif); font-size: .8rem; padding: 6px 0 0; cursor: pointer; }
   /* Card templates + starters */
   .cf-templates { margin: 2px 0 12px; border: 1px dashed var(--border); border-radius: var(--radius-sm); background: var(--surface2); }
   .cf-templates > summary { list-style: none; cursor: pointer; display: flex; align-items: center; gap: 8px; padding: 11px 12px; font-family: var(--serif); font-size: .92rem; color: var(--accent); }
@@ -3597,7 +3628,7 @@ function placeNavMark(){
 window.addEventListener('resize', () => requestAnimationFrame(placeNavMark));
 // Typographic apostrophes in interface text, applied as the page renders. Anything
 // you wrote, Scripture, and form fields are left exactly as they are.
-const APOS_SKIP = 'textarea, input, select, script, style, [contenteditable], .bb-verse, .bb-preview, .note-text, .he-snippet, .sv-text, .pl-prev-text, .pl-reflection-text, .card-title, .card-scripture, .p-title, .p-scripture, .p-ask, .step-prompt em, .step-ask-line em, .persp-block em, .detail-section p, .rv-name, .rv-excerpt, .rv-scripture, .ap-card-name, .ap-card-scripture, .link-card-title, .link-card-sub, .timeline-snippet, .timeline-title, .focus-passage-body, .focus-carry-body, .dp-recall-body, .scripture-ref, .psf-text, .pl-done-verse, .dp-inv-text, .dp-inv-option-text, .dp-inv-ref, .wf-word, .emo-chip, .pl-linked-chip, .note-ctx-name, .prayer-lib-text, .tech-example, #scripture-content, .heatmap-day-list, .emo-v-text, mark';
+const APOS_SKIP = 'textarea, input, select, script, style, [contenteditable], .bb-verse, .bb-preview, .note-text, .he-snippet, .sv-text, .pl-prev-text, .pl-reflection-text, .card-title, .card-scripture, .p-title, .p-scripture, .p-ask, .step-prompt em, .step-ask-line em, .persp-block em, .detail-section p, .rv-name, .rv-excerpt, .rv-scripture, .ap-card-name, .ap-card-scripture, .link-card-title, .link-card-sub, .timeline-snippet, .timeline-title, .focus-passage-body, .focus-carry-body, .dp-recall-body, .scripture-ref, .psf-text, .pl-done-verse, .dp-inv-text, .dp-inv-option-text, .dp-inv-ref, .wf-word, .emo-chip, .pl-linked-chip, .note-ctx-name, .prayer-lib-text, .tech-example, #scripture-content, .heatmap-day-list, .emo-v-text, .carry-line, .carry-note-text, .carry-passage, mark';
 function smartApostrophes(root){
   const w = document.createTreeWalker(root || document.body, NodeFilter.SHOW_TEXT, {
     acceptNode: n => (n.nodeValue.includes("'") && n.parentElement && !n.parentElement.closest(APOS_SKIP)) ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT
@@ -5413,9 +5444,10 @@ function showView(name){
 // ══════════ STORY CARDS ══════════
 function renderCards(){
   const cards=loadCards(); const el=document.getElementById('cards-list');
-  if(!cards.length){ el.innerHTML=`<div class="empty">${emptyArt('dove')}<h3>No prayer cards yet</h3><p>Track a person or situation as an ongoing prayer story.<br>Aim for 8–12 over time.</p><button class="btn btn-primary" style="max-width:260px;margin:16px auto 0" onclick="openNewCard()">＋ Create your first card</button></div>`; return; }
+  const carry=`<div class="carry-slot">${carryCardHTML()}</div>`;
+  if(!cards.length){ el.innerHTML=carry+`<div class="empty">${emptyArt('dove')}<h3>No prayer cards yet</h3><p>Track a person or situation as an ongoing prayer story.<br>Aim for 8–12 over time.</p><button class="btn btn-primary" style="max-width:260px;margin:16px auto 0" onclick="openNewCard()">＋ Create your first card</button></div>`; return; }
   const active=cards.filter(c=>!c.answered), answered=cards.filter(c=>c.answered);
-  let html='';
+  let html=carry;
   if(active.length){
     html+=`<button class="btn-pray-now" onclick="openCardsWalkthrough()"><span class="bpn-label">${ICON.pray} Pray these now</span> <span class="bpn-meta">${active.length} active card${active.length===1?'':'s'} · ~5 min</span></button>`;
     html+=`<p class="section-title">Active (${active.length})</p>`;
@@ -5701,6 +5733,140 @@ function deleteNote(cardId, noteIndex){
   });
 }
 
+// ══════════ CARRY THIS WITH YOU — today's line, kept through the day ══════════
+// The line chosen in Daily Prayer's "Carry this with you" is shown at the top of
+// Story Cards and the Daily home for the rest of the day, with a place to jot
+// thoughts beside it as they come. A new day starts a new card; past days stay
+// with that day's session (past view + Markdown export) and in backups.
+// `carry_log` = { 'YYYY-MM-DD': { line?, notes:[{id, t, text}], dismissed? } }.
+// The session's own carry field wins; `line` here is one chosen on the card itself.
+// No reminders, no counts (§5) — the card just sits there.
+let _carryChoosing = false, _carryEditId = null, _carryEveOpen = false;
+function loadCarryLog(){ try { return JSON.parse(localStorage.getItem('carry_log')||'{}') || {}; } catch(e){ return {}; } }
+function saveCarryLog(l){ safeSetItem('carry_log', JSON.stringify(l)); }
+function carrySessionsFor(key){
+  const out = [];
+  if(dpSession && dpSession.dateISO && sessionDateKey(dpSession) === key) out.push(dpSession);
+  const d = loadDailyDraft(); if(d && d.dateISO && sessionDateKey(d) === key) out.push(d);
+  loadDailySessions().forEach(s => { if(sessionDateKey(s) === key) out.push(s); });
+  return out;
+}
+function carryForDay(key){
+  let line = '', passage = '';
+  carrySessionsFor(key).forEach(s => {
+    const m = s.steps?.meditation; if(!m) return;
+    if(!line && (m.carry||'').trim()) line = m.carry.trim();
+    if(!passage && (m.passage||'').trim()) passage = m.passage.trim();
+  });
+  const log = loadCarryLog()[key] || {};
+  return { key, line: line || (log.line||'').trim(), passage, notes: log.notes || [], dismissed: !!log.dismissed };
+}
+// The most recent earlier day (within a fortnight) that had a line.
+function carryPrevious(){
+  const d = new Date();
+  for(let i = 1; i <= 14; i++){
+    d.setDate(d.getDate() - 1);
+    const c = carryForDay(dateKey(d));
+    if(c.line) return { line: c.line, when: i === 1 ? 'yesterday' : d.toLocaleDateString(undefined, { weekday:'long' }) };
+  }
+  return null;
+}
+function carryUpdate(key, fn){ const l = loadCarryLog(); l[key] = l[key] || { notes: [] }; fn(l[key]); saveCarryLog(l); }
+// "John 15:5 — I am the vine…" → the reference, tappable; prose → a short excerpt.
+function carryRefHTML(passage){
+  if(!passage) return '';
+  const head = passage.split(/\s+[—–-]\s+/)[0].trim();
+  if(parseScriptureRef(head)) return `<span class="carry-ref scripture-ref" onclick="event.stopPropagation();lookupScripture('${esc(head).replace(/'/g,'&#39;')}')">${esc(head)}</span>`;
+  return `<span class="carry-ref">${esc(passage.length > 60 ? passage.slice(0,60).replace(/\s+\S*$/,'') + '…' : passage)}</span>`;
+}
+function carryTime(iso){ try { return new Date(iso).toLocaleTimeString([], { hour:'numeric', minute:'2-digit' }); } catch(e){ return ''; } }
+function carryNotesHTML(c, editable){
+  if(!c.notes.length) return '';
+  return `<div class="carry-notes">${c.notes.map(n => {
+    if(editable && _carryEditId === n.id) return `<div class="carry-add" style="margin:6px 0"><input id="carry-edit-input" value="${esc(n.text)}" onkeydown="if(event.key==='Enter'){event.preventDefault();carrySaveEdit()} if(event.key==='Escape'){carryCancelEdit()}"><button onclick="carrySaveEdit()">Save</button><button class="secondary" onclick="carryCancelEdit()">Cancel</button></div>`;
+    return `<div class="carry-note"><span class="carry-note-time">${esc(carryTime(n.t))}</span><span class="carry-note-text">${esc(n.text).replace(/<br>/g,'\n')}</span>${editable ? `<span class="carry-note-act"><button aria-label="Edit note" onclick="carryEditNote('${n.id}')">${ICON.pen}</button><button aria-label="Delete note" onclick="carryDeleteNote('${n.id}')">${ICON.close}</button></span>` : ''}</div>`;
+  }).join('')}</div>`;
+}
+function carryCardHTML(){
+  const c = carryForDay(dateKey(new Date()));
+  const head = (when) => `<div class="carry-head">${ICON.sparkle}Carry this with you<span class="carry-when">${when}</span></div>`;
+  // 1 — a line for today: show it, and let the day's thoughts gather beneath it.
+  if(c.line){
+    return `<div class="carry-card">${head('Today')}
+      <div class="carry-line">“${esc(c.line)}”</div>
+      ${carryRefHTML(c.passage)}
+      ${carryNotesHTML(c, true)}
+      <div class="carry-add"><input id="carry-note-input" placeholder="Add a thought as the day goes…" aria-label="Add a thought" onkeydown="if(event.key==='Enter'){event.preventDefault();carryAddNote()}"><button onclick="carryAddNote()">Add</button></div>
+    </div>`;
+  }
+  if(c.dismissed) return '';
+  const chooser = `<div class="carry-add"><input id="carry-line-input" placeholder="The line you’ll carry today…" aria-label="The line you’ll carry today" onkeydown="if(event.key==='Enter'){event.preventDefault();carrySetLine()}"><button onclick="carrySetLine()">Carry</button></div>
+      <div class="carry-links"><button class="carry-link" onclick="openBibleBrowser('carry-line-input')">${ICON.book} Find it in the Bible</button><button class="carry-link" onclick="carryChoose(false)">Not now</button></div>`;
+  // 2 — meditated today but left the line blank: the passage is right here to choose from.
+  if(c.passage){
+    return `<div class="carry-card${_carryChoosing ? ' choosing' : ''}">${head('Today')}
+      <div class="carry-passage">${esc(c.passage)}</div>
+      ${_carryChoosing ? chooser : `<div class="carry-links"><button class="carry-link" onclick="carryChoose(true)">Choose a line to carry →</button></div>`}
+    </div>`;
+  }
+  // 3 — no Daily Prayer yet today: a quiet card, never a nudge.
+  const prev = carryPrevious();
+  return `<div class="carry-card">${head('')}
+      <button class="carry-x" aria-label="Hide for today" title="Hide for today" onclick="carryDismiss()">✕</button>
+      <div class="carry-quiet">Nothing chosen to carry yet today.</div>
+      ${_carryChoosing ? chooser : `<div class="carry-links">
+        ${prev ? `<button class="carry-link" onclick="carryAgain()">Carry ${esc(prev.when)}’s line again</button>` : ''}
+        <button class="carry-link" onclick="carryChoose(true)">Choose a line</button></div>`}
+      ${prev && !_carryChoosing ? `<div class="carry-passage" style="-webkit-line-clamp:2;font-size:.85rem">“${esc(prev.line)}”</div>` : ''}
+    </div>`;
+}
+function refreshCarryCards(){ document.querySelectorAll('.carry-slot').forEach(el => { el.innerHTML = carryCardHTML(); }); }
+function carryChoose(on){ _carryChoosing = on; refreshCarryCards(); if(on) setTimeout(() => document.getElementById('carry-line-input')?.focus(), 30); }
+function carrySetLine(){
+  const el = document.getElementById('carry-line-input'); const v = (el?.value || '').trim(); if(!v) return;
+  carryUpdate(dateKey(new Date()), d => { d.line = v; d.dismissed = false; });
+  _carryChoosing = false; refreshCarryCards(); showToast('✓ Carrying it today');
+}
+function carryAgain(){
+  const prev = carryPrevious(); if(!prev) return;
+  carryUpdate(dateKey(new Date()), d => { d.line = prev.line; d.dismissed = false; });
+  refreshCarryCards();
+}
+function carryDismiss(){ carryUpdate(dateKey(new Date()), d => { d.dismissed = true; }); _carryChoosing = false; refreshCarryCards(); }
+function carryAddNote(){
+  const el = document.getElementById('carry-note-input'); const v = (el?.value || '').trim(); if(!v) return;
+  carryUpdate(dateKey(new Date()), d => { d.notes = d.notes || []; d.notes.push({ id: genId(), t: new Date().toISOString(), text: v }); });
+  refreshCarryCards();
+  setTimeout(() => document.getElementById('carry-note-input')?.focus(), 20);
+}
+function carryEditNote(id){ _carryEditId = id; refreshCarryCards(); setTimeout(() => { const i = document.getElementById('carry-edit-input'); if(i){ i.focus(); i.setSelectionRange(i.value.length, i.value.length); } }, 20); }
+function carryCancelEdit(){ _carryEditId = null; refreshCarryCards(); }
+function carrySaveEdit(){
+  const v = (document.getElementById('carry-edit-input')?.value || '').trim(); const id = _carryEditId; _carryEditId = null;
+  carryUpdate(dateKey(new Date()), d => { const n = (d.notes||[]).find(x => x.id === id); if(n && v) n.text = v; });
+  refreshCarryCards();
+}
+function carryDeleteNote(id){
+  const key = dateKey(new Date()); const before = JSON.parse(JSON.stringify(loadCarryLog()));
+  carryUpdate(key, d => { d.notes = (d.notes||[]).filter(x => x.id !== id); });
+  refreshCarryCards();
+  showUndoToast('Note removed', () => { saveCarryLog(before); refreshCarryCards(); });
+}
+// Evening: the morning's line and the day's notes, read-only, to pray the day back.
+function carryEveningHTML(key){
+  const c = carryForDay(key || dateKey(new Date()));
+  if(!c.line && !c.notes.length) return '';
+  const n = c.notes.length;
+  return `<div class="dp-recall carry-eve">
+      <div class="dp-recall-label">${ICON.sparkle}Carried today</div>
+      ${c.line ? `<div class="dp-recall-body">“${esc(c.line)}”</div>` : ''}
+      ${n ? (_carryEveOpen ? `<div class="carry-eve-notes">${carryNotesHTML(c, false)}</div><button class="carry-eve-toggle" onclick="_carryEveOpen=false;renderDailyPrayer()">⌃ Hide notes</button>`
+                           : `<button class="carry-eve-toggle" onclick="_carryEveOpen=true;renderDailyPrayer()">⌄ ${n} note${n===1?'':'s'} from the day</button>`) : ''}
+    </div>`;
+}
+// A day turning over while the app sits open.
+document.addEventListener('visibilitychange', () => { if(!document.hidden) refreshCarryCards(); });
+
 // ══════════ DAILY PRAYER ══════════
 let dpMode='home', dpStepIdx=0, dpSubIdx=0, dpSession=null;
 let _dpAnimDir=null;
@@ -5937,6 +6103,8 @@ function renderDPHome(){
       ${draft ? `<button class="pl-banner-btn tertiary" onclick="dpContinue()">↩ Continue draft — ${esc(draftPlan?.title||'')} · ${esc(draftStep?.title||'')}</button>
       <button class="pl-banner-btn tertiary" onclick="dpDiscardDraft()">Discard draft</button>` : ''}
     </div>
+
+    <div class="carry-slot">${carryCardHTML()}</div>
 
     <p class="section-title">Choose a plan</p>
 
@@ -6402,6 +6570,7 @@ function renderDPStep(){
       ${dpEmotionsHTML}
       ${passageHTML}
       ${unit.kind === 'question' || (split && unit.kind === 'field' && step.passageField) ? dpPassageRecall(step, saved) : ''}
+      ${dpSession.plan === 'evening' && step.key === 'prayer' ? carryEveningHTML(sessionDateKey(dpSession)) : ''}
       ${questionsHTML}
       ${fieldsHTML}
       ${silenceHTML}
@@ -7438,10 +7607,17 @@ function viewDailySession(id){
       </div>${body}</div>`;
   }).join('');
 
+  const carryDayData = carryForDay(sessionDateKey(s));
+  const ownCarry = (s.steps?.meditation?.carry || '').trim();
+  const carryHTML = (carryDayData.notes.length || (carryDayData.line && !ownCarry)) ? `<div class="sv-section">
+      <div class="sv-head"><div class="sv-num" style="background:var(--accent2)">✦</div><div><div class="sv-title">Carried through the day</div></div></div>
+      ${carryDayData.line ? `<div class="sv-block"><div class="sv-text"><em>“${esc(carryDayData.line)}”</em></div></div>` : ''}
+      ${carryNotesHTML(carryDayData, false)}</div>` : '';
   document.getElementById('session-view-content').innerHTML = `
     <h2 style="color:var(--accent);margin-bottom:4px">${ICON[plan?.icon] || ICON.sparkle} ${esc(plan?.title||'Daily Prayer')} Session</h2>
     <p style="font-size:.72rem;color:var(--text3);font-family: var(--sans);margin-bottom:14px">${s.date}</p>
     ${stepsHTML}
+    ${carryHTML}
     <button class="btn btn-danger" style="margin-top:18px" onclick="closeModal('modal-session');deleteDailySession('${s.id}')">Delete Session</button>
     <button class="btn btn-secondary" onclick="closeModal('modal-session')">Close</button>
   `;
@@ -8096,6 +8272,16 @@ function dailySessionToMarkdown(s){
     }
   });
 
+  const cd = carryForDay(sessionDateKey(s));
+  if(cd.notes.length || (cd.line && !(s.steps?.meditation?.carry||'').trim())){
+    lines.push('## ✦ Carried through the day');
+    lines.push('');
+    if(cd.line){ lines.push(`> ${cd.line}`); lines.push(''); }
+    cd.notes.forEach(n => lines.push(`- **${carryTime(n.t)}** — ${n.text}`));
+    lines.push('');
+    lines.push('---');
+    lines.push('');
+  }
   lines.push(`*Exported from Prayer Journal*`);
   return lines.join('\n');
 }
@@ -8141,6 +8327,7 @@ function exportBackup(){
       pl_draft:loadDraft(),
       streak_days:JSON.parse(localStorage.getItem('streak_days')||'[]'),
       bible_bookmarks:loadBookmarks(),
+      carry_log:loadCarryLog(),
       daily
     }
   };
@@ -8223,6 +8410,17 @@ function mergeBackup(data){
       .filter(b=>{ if(!b.key) return true; if(seen.has(b.key)) return false; seen.add(b.key); return true; });
     saveBookmarks(merged);
   }
+  // Carry log — per day: backup's line wins if it has one; notes merged by id.
+  if(data.carry_log && typeof data.carry_log==='object'){
+    const log=loadCarryLog();
+    Object.entries(data.carry_log).forEach(([d,v])=>{
+      const cur=log[d]||{notes:[]};
+      const map=new Map((cur.notes||[]).map(n=>[n.id,n]));
+      (v.notes||[]).forEach(n=>map.set(n.id,n));
+      log[d]={ ...cur, ...(v.line?{line:v.line}:{}), notes:[...map.values()].sort((a,b)=>(a.t||'').localeCompare(b.t||'')) };
+    });
+    saveCarryLog(log);
+  }
   // Daily progress — backup wins per day
   if(data.daily && typeof data.daily==='object'){
     Object.entries(data.daily).forEach(([d,val])=>{
@@ -8236,7 +8434,7 @@ async function resetAllData(){
   if(!(await uiConfirm('This will permanently delete ALL your prayer cards, sessions, story notes, heart-need history, Bible bookmarks, and streaks. This cannot be undone.\n\nDownload a backup first if you want to keep anything.', {danger:true, okText:'Reset everything'})))return;
   if(!(await uiConfirm('Are you absolutely sure? This erases everything on this device.', {danger:true, okText:'Yes, erase all'})))return;
   // Wipe only our keys, leave anything else alone
-  const ours=['prayer_cards','pl_sessions','pl_draft','streak_days','bible_bookmarks'];
+  const ours=['prayer_cards','pl_sessions','pl_draft','streak_days','bible_bookmarks','carry_log'];
   ours.forEach(k=>safeRemoveItem(k));
   for(let i=localStorage.length-1;i>=0;i--){
     const k=localStorage.key(i);
