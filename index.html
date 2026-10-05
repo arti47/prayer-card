@@ -7191,10 +7191,11 @@ function carryNotesHTML(c, editable){
 }
 function carryCardHTML(){
   const c = carryForDay(dateKey(new Date()));
-  const head = (when) => `<div class="carry-head">${ICON.sparkle}Carry this with you<span class="carry-when">${when}</span></div>`;
+  // The card always speaks of today, so no "Today" label beside the heading.
+  const head = () => `<div class="carry-head">${ICON.sparkle}Carry this with you</div>`;
   // 1 — a line for today: show it, and let the day's thoughts gather beneath it.
   if(c.line){
-    return `<div class="carry-card">${head('Today')}
+    return `<div class="carry-card">${head('')}
       ${(()=>{ const lp=carryLineParts(c.line); return `<div class="carry-line">${esc(lp.text)}</div><div class="carry-refrow">${carryRefHTML(c.passage, lp.ref)}${carrySourceHTML(c.key)}</div>`; })()}
       ${carryNotesHTML(c, true)}
       <div class="carry-add"><input id="carry-note-input" placeholder="Add a thought as the day goes…" aria-label="Add a thought" onkeydown="if(event.key==='Enter'){event.preventDefault();carryAddNote()}"><button onclick="carryAddNote()">Add</button></div>
@@ -7206,7 +7207,7 @@ function carryCardHTML(){
       <div class="carry-links"><button class="carry-link" onclick="openBibleBrowser('carry-line-input')">${ICON.book} Find it in the Bible</button><button class="carry-link" onclick="carryChoose(false)">Not now</button></div>`;
   // 2 — meditated today but left the line blank: the passage is right here to choose from.
   if(c.passage){
-    return `<div class="carry-card${_carryChoosing ? ' choosing' : ''}">${head('Today')}
+    return `<div class="carry-card${_carryChoosing ? ' choosing' : ''}">${head('')}
       <div class="carry-passage">${esc(c.passage)}</div>
       ${_carryChoosing ? chooser : `<div class="carry-links"><button class="carry-link" onclick="carryChoose(true)">Choose a line to carry →</button></div>`}
     </div>`;
