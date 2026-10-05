@@ -485,6 +485,54 @@
   .emo-v-actions { display: flex; flex-wrap: wrap; gap: 4px 14px; margin-top: 4px; }
   .emo-v-btn { display: inline-flex; align-items: center; gap: 5px; background: none; border: none; padding: 8px 0; margin: -4px 0; font-family: var(--serif); font-size: .78rem; color: var(--accent); cursor: pointer; }
   .emo-v-btn .ico { width: 13px; height: 13px; }
+  /* Compact home screens — rows instead of tall cards, so each home fits about a screen. */
+  .card.card-row { display: flex; align-items: center; gap: 12px; padding: 11px 12px 11px 12px; margin-bottom: 8px; }
+  .cr-mark { flex: none; width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--cat, var(--accent)); background: color-mix(in srgb, var(--cat, var(--accent)) 12%, transparent); }
+  .card.answered .cr-mark { color: var(--answered); background: var(--answered-bg); }
+  [data-theme="dark"] .cr-mark { color: color-mix(in srgb, var(--cat, var(--accent)) 45%, #e8d8c4); background: color-mix(in srgb, var(--cat, var(--accent)) 22%, transparent); }
+  .cr-mark .ico { width: 18px; height: 18px; }
+  .cr-body { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+  .card-row .card-title { font-size: 1.02rem; line-height: 1.3; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .cr-sub { display: flex; align-items: center; gap: 10px; font-family: var(--sans); font-size: .72rem; color: var(--text3); min-width: 0; }
+  .cr-ref { font-family: var(--serif); font-style: italic; font-size: .82rem; color: var(--text2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+  .cr-sub .cm-notes { flex: none; display: inline-flex; align-items: center; gap: 3px; }
+  .cr-sub .cm-notes .ico { width: 12px; height: 12px; }
+  .cr-chev { flex: none; color: var(--text-quiet); font-size: 1.2rem; line-height: 1; }
+  .answered-fold { margin-top: 6px; }
+  .answered-fold > summary { list-style: none; cursor: pointer; display: flex; align-items: center; gap: 8px; padding: 10px 2px; font-family: var(--sans); font-size: .72rem; font-weight: 600; letter-spacing: .055em; text-transform: uppercase; color: var(--text3); }
+  .answered-fold > summary::-webkit-details-marker { display: none; }
+  .answered-fold > summary .ico { width: 15px; height: 15px; color: var(--answered); }
+  .answered-fold > summary::after { content: '›'; margin-left: auto; font-size: 1rem; transition: transform .2s; }
+  .answered-fold[open] > summary::after { transform: rotate(90deg); }
+  /* Plans as three tiles in one row */
+  .dp-plan-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 18px; }
+  .dp-plan-tile { position: relative; overflow: hidden; display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 14px 6px 12px; background: var(--surface); border: 1px solid var(--border); border-top: 3px solid var(--accent2); border-radius: var(--radius); box-shadow: var(--shadow); cursor: pointer; font-family: var(--serif); color: var(--text); text-align: center; transition: transform .12s, border-color .15s; }
+  .dp-plan-tile:active { transform: scale(.97); }
+  .dp-plan-tile .ico { width: 1.6rem; height: 1.6rem; color: var(--accent); }
+  .dp-plan-tile-title { font-size: .95rem; font-weight: bold; line-height: 1.2; }
+  .dp-plan-tile-min { font-family: var(--sans); font-size: .68rem; color: var(--text3); }
+  /* History as quiet one-line rows */
+  .he-group { font-family: var(--sans); font-size: .66rem; font-weight: 600; letter-spacing: .055em; text-transform: uppercase; color: var(--text3); margin: 14px 2px 6px; }
+  .history-entry.he-row { display: flex; align-items: center; gap: 10px; padding: 10px 12px; margin-bottom: 6px; box-shadow: none; }
+  .he-row .he-icon { flex: none; color: var(--accent); display: flex; }
+  .he-row .he-icon .ico { width: 17px; height: 17px; }
+  .he-row .he-main { flex: 1; min-width: 0; }
+  .he-row .he-line { display: flex; align-items: baseline; gap: 8px; }
+  .he-row .he-when { flex: none; font-family: var(--sans); font-size: .72rem; color: var(--text3); }
+  .he-row .he-snippet { flex: 1; min-width: 0; margin: 0; padding: 0; font-size: .86rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .he-row .he-strip { margin-top: 6px; }
+  .he-row .he-chev { flex: none; color: var(--text-quiet); font-size: 1.1rem; }
+  .he-more { font-size: .78rem; color: var(--text3); text-align: center; margin-top: 8px; font-style: italic; }
+  /* Shorter banners; Weekly's two starts side by side */
+  .pl-banner.compact { padding: 16px 18px; }
+  .pl-banner.compact h2 { font-size: 1.15rem; }
+  .pl-banner-btns { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+  .pl-banner-btns .pl-banner-btn { margin-top: 0; flex: 1 1 9.5em; padding: 11px 8px; font-size: .9rem; white-space: nowrap; }
+  .pl-banner-btns .pl-banner-btn.secondary { font-size: .88rem; }
+  /* Before you begin: folded to one line until opened */
+  .pl-reflection-card.folded { padding: 12px 16px; }
+  .pl-reflection-card.folded > :not(.pl-reflection-label) { display: none; }
+  .pl-reflection-card.folded .pl-reflection-label { margin-bottom: 0; }
   /* Carry this with you — today's line on the home screens */
   .carry-slot:empty { display: none; }
   .carry-card { position: relative; margin: 0 0 16px; padding: 14px 16px 12px; background: var(--surface); border: 1px solid var(--border); border-left: 3px solid var(--accent2); border-radius: var(--radius); box-shadow: var(--shadow); }
@@ -1713,13 +1761,15 @@
     <div data-orn-divider></div>
     <details class="about-block reflect-block">
       <summary><h3><span data-ico="sun"></span>Daily Prayer</h3></summary>
-      <p>A daily devotional rhythm. Three plan options — Morning (25 min), Evening (15 min), Starter (15 min) — each following the same shape: Approach → Bible meditation → Prayer → Contemplation.</p>
+      <p>A daily rhythm — meeting God in His Word and bringing your heart honestly to Him. Three plan options — Morning (25 min), Evening (15 min), Starter (15 min) — each following the same shape: Approach → Bible meditation → Prayer → Contemplation.</p>
+      <p><strong>Why three plans?</strong> Daily prayer can take different shapes depending on the day. Morning is fuller and Bible-led (Approach → Bible reading &amp; meditation → Prayer → Contemplation). Evening is shorter and Psalm-led (Approach → Read a Psalm → Pray through the day). The Starter Plan is a gentler entry point if daily prayer is new (Approach → Meditation → Word Prayer → Free Prayer → Contemplation).</p>
+      <p style="font-style:italic">For the deeper, once-a-week practice (Sundays recommended), use <strong>Weekly Deep</strong> instead — that’s where you map your heart and walk the Lord’s Prayer slowly.</p>
       <p>On Approach, name what you’re feeling and Scripture chosen for that feeling appears beneath it — read it, add it to your prayer, or take it as the day’s meditation passage. The same verses are in the Bible reader under <em>Scripture by feeling</em>.</p>
     </details>
     <div data-orn-divider></div>
     <details class="about-block reflect-block">
       <summary><h3><span data-ico="pen"></span>Weekly Deep Time</h3></summary>
-      <p>A once-a-week deeper practice — Sunday recommended. Begins with a <strong>Preparing to Pray</strong> reflection and walks through the Lord's Prayer in 6 steps — each with a <strong>Pray</strong> prompt and a <strong>Listen</strong> prompt.</p>
+      <p>A once-a-week deeper practice — Sunday recommended. Map your heart, then walk slowly through the Lord’s Prayer with space to listen. Begins with a <strong>Preparing to Pray</strong> reflection and walks through the Lord's Prayer in 6 steps — each with a <strong>Pray</strong> prompt and a <strong>Listen</strong> prompt.</p>
       <ul style="margin-top:8px">
         <li>✦ <strong>Prepare</strong> — Circumstances, feelings (name one, and Scripture for it appears), mapping your heart</li>
         <li><strong>1. Come</strong> — Worship, draw near</li>
@@ -5452,21 +5502,26 @@ function renderCards(){
     html+=`<p class="section-title">Active (${active.length})</p>`;
     active.forEach(c=>html+=cardHTML(c));
   }
-  if(answered.length){ html+=`<p class="section-title">Answered ✓ (${answered.length})</p>`; answered.forEach(c=>html+=cardHTML(c)); }
+  if(answered.length){ html+=`<details class="answered-fold"${_answeredOpen?' open':''} ontoggle="_answeredOpen=this.open"><summary>${ICON.olive}Answered (${answered.length})</summary>${answered.map(cardHTML).join('')}</details>`; }
   el.innerHTML=html;
+}
+let _answeredOpen = false;
+// The list shows each story as one row: its category mark, the name, and the
+// Scripture *reference* — the verse itself is on the card when you open it.
+function cardRefShort(scr){
+  if(!scr) return '';
+  const head = String(scr).split(/\s+[—–-]\s+/)[0].trim();
+  return head.length > 48 ? head.slice(0, 48).replace(/\s+\S*$/, '') + '…' : head;
 }
 function cardHTML(c){
   const notes=c.notes?c.notes.length:0;
   const ck = CAT_ICON[c.category] ? c.category : 'other';
-  // A spine in the category's colour down the left edge, and the category's mark
-  // (the olive sprig once answered) drawn faintly in the corner.
-  return `<div class="card${c.answered?' answered':''}" style="--cat:${CAT_COLOR[ck]}" onclick="openDetail('${c.id}')">
-    <span class="card-watermark" aria-hidden="true">${c.answered ? ICON.olive : ICON[CAT_ICON[ck]]}</span>
-    ${catChip(c.category)}
-    ${c.answered?`<span class="answered-badge" style="float:right">${ICON.olive}Answered ✓</span>`:''}
-    <div class="card-title">${esc(c.person)}</div>
-    ${c.scripture?`<div class="card-scripture">${esc(c.scripture)}</div>`:''}
-    <div class="card-meta"><span>Started ${c.dateStarted}</span>${notes?`<span class="cm-notes">${ICON.note}${notes} note${notes>1?'s':''}</span>`:''}</div>
+  const ref = cardRefShort(c.scripture);
+  return `<div class="card card-row${c.answered?' answered':''}" style="--cat:${CAT_COLOR[ck]}" onclick="openDetail('${c.id}')">
+    <span class="cr-mark" role="img" aria-label="${esc(CAT_LABELS[ck]||'')}" title="${esc(CAT_LABELS[ck]||'')}">${c.answered ? ICON.olive : ICON[CAT_ICON[ck]]}</span>
+    <span class="cr-body"><span class="card-title">${esc(c.person)}</span>
+      <span class="cr-sub">${ref?`<span class="cr-ref">${esc(ref)}</span>`:''}${notes?`<span class="cm-notes">${ICON.note}${notes}</span>`:''}</span></span>
+    <span class="cr-chev" aria-hidden="true">›</span>
   </div>`;
 }
 
@@ -6095,10 +6150,9 @@ function renderDPHome(){
   const calendarHTML = (sessions.length && _dpViewMode==='calendar') ? `<div class="pl-calendar" id="dp-calendar"></div>` : '';
 
   el.innerHTML = `
-    <div class="pl-banner tod-${timeOfDay()}"><span class="banner-watermark" aria-hidden="true">${/^(dusk|night)$/.test(timeOfDay()) ? ICON.moon : ICON.sun}</span>
+    <div class="pl-banner compact tod-${timeOfDay()}"><span class="banner-watermark" aria-hidden="true">${/^(dusk|night)$/.test(timeOfDay()) ? ICON.moon : ICON.sun}</span>
       <div class="pl-date">${today()}</div>
       <h2>Daily Prayer</h2>
-      <p>A daily rhythm — meeting God in His Word and bringing your heart honestly to Him. Choose the shape that fits today.</p>
       ${draft ? `<button class="pl-banner-btn tertiary" onclick="dpContinue()">↩ Continue draft — ${esc(draftPlan?.title||'')} · ${esc(draftStep?.title||'')}</button>
       <button class="pl-banner-btn tertiary" onclick="dpDiscardDraft()">Discard draft</button>` : ''}
     </div>
@@ -6107,34 +6161,10 @@ function renderDPHome(){
 
     <p class="section-title">Choose a plan</p>
 
-    <div class="dp-plan-card" onclick="dpStart('morning')">
-      <span class="plan-watermark" aria-hidden="true">${ICON.sun}</span>
-      <div class="dp-plan-icon">${ICON.sun}</div>
-      <div>
-        <div class="dp-plan-title">Morning Prayer</div>
-        <div class="dp-plan-duration">~25 minutes</div>
-        <div class="dp-plan-desc">Approach → Bible reading &amp; meditation → Prayer → Contemplation</div>
-      </div>
-    </div>
-
-    <div class="dp-plan-card" onclick="dpStart('evening')">
-      <span class="plan-watermark" aria-hidden="true">${ICON.moon}</span>
-      <div class="dp-plan-icon">${ICON.moon}</div>
-      <div>
-        <div class="dp-plan-title">Evening Prayer</div>
-        <div class="dp-plan-duration">~15 minutes</div>
-        <div class="dp-plan-desc">Approach → Read a Psalm → Pray through the day</div>
-      </div>
-    </div>
-
-    <div class="dp-plan-card" onclick="dpStart('starter')">
-      <span class="plan-watermark" aria-hidden="true">${ICON.sparkle}</span>
-      <div class="dp-plan-icon">${ICON.sparkle}</div>
-      <div>
-        <div class="dp-plan-title">Starter Plan</div>
-        <div class="dp-plan-duration">~15 minutes</div>
-        <div class="dp-plan-desc">Approach → Meditation → Word Prayer → Free Prayer → Contemplation</div>
-      </div>
+    <div class="dp-plan-row">
+      <button type="button" class="dp-plan-tile" onclick="dpStart('morning')" aria-label="Morning Prayer, about 25 minutes">${ICON.sun}<span class="dp-plan-tile-title">Morning</span><span class="dp-plan-tile-min">~25 min</span></button>
+      <button type="button" class="dp-plan-tile" onclick="dpStart('evening')" aria-label="Evening Prayer, about 15 minutes">${ICON.moon}<span class="dp-plan-tile-title">Evening</span><span class="dp-plan-tile-min">~15 min</span></button>
+      <button type="button" class="dp-plan-tile" onclick="dpStart('starter')" aria-label="Starter Plan, about 15 minutes">${ICON.sparkle}<span class="dp-plan-tile-title">Starter</span><span class="dp-plan-tile-min">~15 min</span></button>
     </div>
 
     ${toggleHTML}
@@ -6142,11 +6172,6 @@ function renderDPHome(){
     ${calendarHTML}
     <div id="dp-search-results"></div>
 
-    <div class="about-block" style="margin-top:18px">
-      <h3>Why three plans?</h3>
-      <p style="font-size:.85rem;line-height:1.65">Daily prayer can take different shapes depending on the day. Morning is fuller and Bible-led. Evening is shorter and Psalm-led. The Starter Plan is a gentler entry point if daily prayer is new.</p>
-      <p style="font-size:.82rem;margin-top:8px;font-style:italic;color:var(--text3)">For the deeper, once-a-week practice (Sundays recommended), use ${ICON.pen} <strong>Weekly Deep</strong> instead — that's where you map your heart and walk the Lord's Prayer slowly.</p>
-    </div>
   `;
 
   if(_dpViewMode==='calendar') renderDPCalendar();
@@ -6343,12 +6368,11 @@ function renderDPSearchResults(){
   } else {
     const recent = sessions.slice(0, 5);
     const recentHTML = recent.length
-      ? recent.map(s => dpSessionEntryHTML(s)).join('')
+      ? historyGroupsHTML(recent, dpSessionEntryHTML)
       : `<div class="empty" style="padding:18px 10px">${emptyArt('book')}<p style="font-size:.85rem">No sessions yet.<br>Your completed prayers will appear here.</p></div>`;
     target.innerHTML = `
-      ${sessions.length?`<p class="section-title">Recent Daily Sessions</p>`:''}
       ${recentHTML}
-      ${sessions.length>5?`<p style="font-size:.8rem;color:var(--text3);text-align:center;margin-top:6px">Showing 5 most recent — switch to Calendar or use search to find older sessions</p>`:''}
+      ${sessions.length>5?`<p class="he-more">Older sessions are in Calendar and search.</p>`:''}
     `;
   }
 }
@@ -6365,11 +6389,24 @@ function dpSessionEntryHTML(s){
       if(typeof v === 'string' && v.trim().length > best.length) best = v.trim();
     });
   });
-  const snippet = best ? '“' + esc(best.slice(0, 90)) + (best.length>90?'…':'') + '”' : '<em>Brief session</em>';
-  return `<div class="history-entry" onclick="viewDailySession('${s.id}')">
-    <div class="he-date">${planIcon}${esc(planTitle)} · ${s.date}</div>
-    <div class="he-snippet">${snippet}</div>
+  const snippet = best ? esc(best.slice(0, 120)) : '<em>Brief session</em>';
+  return `<div class="history-entry he-row" onclick="viewDailySession('${s.id}')" aria-label="${esc(planTitle)}, ${esc(s.date)}">
+    <span class="he-icon" title="${esc(planTitle)}">${planIcon}</span>
+    <span class="he-main"><span class="he-line"><span class="he-when">${esc(heWhen(s))}</span><span class="he-snippet">${snippet}</span></span></span>
+    <span class="he-chev" aria-hidden="true">›</span>
   </div>`;
+}
+// Short date for a history row: "Mon 5 Oct".
+function heWhen(s){
+  const d = new Date(s.dateISO || s.date);
+  return isNaN(d) ? (s.date||'') : d.toLocaleDateString(undefined, { weekday:'short', day:'numeric', month:'short' });
+}
+// Recent rows under two quiet headings: This week (last 7 days) / Earlier.
+function historyGroupsHTML(list, rowFn){
+  const cut = new Date(); cut.setHours(0,0,0,0); cut.setDate(cut.getDate() - 6);
+  const recent = list.filter(s => new Date(s.dateISO || s.date) >= cut), older = list.filter(s => !(new Date(s.dateISO || s.date) >= cut));
+  return (recent.length ? `<div class="he-group">This week</div>${recent.map(rowFn).join('')}` : '')
+       + (older.length ? `<div class="he-group">Earlier</div>${older.map(rowFn).join('')}` : '');
 }
 
 // On a question or later field screen the passage is no longer on the page, so
@@ -7074,10 +7111,11 @@ function renderReflectionCard(s){
   // Opens as a short preview — the heart last time — with the rest a tap away;
   // the toggle stops propagation so it doesn't open the session.
   const sectionCount = [mapping, heartChipsHTML, bestListen].filter(Boolean).length;
-  const toggle = sectionCount > 1
-    ? `<button type="button" class="pl-refl-toggle" onclick="event.stopPropagation();togglePLReflection(this)" aria-expanded="${_plReflOpen}" aria-label="${_plReflOpen?'Show less':'Show more'}">${_plReflOpen?'⌃':'⌄'}</button>` : '';
-  return `<div class="pl-reflection-card${_plReflOpen || sectionCount < 2 ? '' : ' peek'}" onclick="viewSession('${s.id}')">
-    <div class="pl-reflection-label"><span>✦ Before you begin — ${esc(s.date)}</span>${toggle}</div>
+  const toggle = `<button type="button" class="pl-refl-toggle" onclick="event.stopPropagation();togglePLReflection(this)" aria-expanded="${_plReflOpen}" aria-label="${_plReflOpen?'Show less':'Show more'}">${_plReflOpen?'⌃':'⌄'}</button>`;
+  // Folded to one line until opened; tapping the folded card opens it rather
+  // than leaving the screen.
+  return `<div class="pl-reflection-card${_plReflOpen ? '' : ' folded'}" onclick="if(this.classList.contains('folded')){togglePLReflection(this.querySelector('.pl-refl-toggle'))}else{viewSession('${s.id}')}">
+    <div class="pl-reflection-label"><span>✦ Before you begin — ${esc(heWhen(s))}</span>${toggle}</div>
     <div class="pl-reflection-quiet">A moment to remember what last time held. Has anything changed? Did anything you sensed prove true?</div>
     ${mapping?`<div class="pl-reflection-section">
       <div class="pl-reflection-section-label">Your heart last time</div>
@@ -7100,7 +7138,7 @@ let _plReflOpen = false;
 function togglePLReflection(btn){
   _plReflOpen = !_plReflOpen;
   const card = btn.closest('.pl-reflection-card'); if(!card) return;
-  card.classList.toggle('peek', !_plReflOpen);
+  card.classList.toggle('folded', !_plReflOpen);
   btn.textContent = _plReflOpen ? '⌃' : '⌄';
   btn.setAttribute('aria-expanded', _plReflOpen);
   btn.setAttribute('aria-label', _plReflOpen ? 'Show less' : 'Show more');
@@ -7144,7 +7182,7 @@ function summarizeSession(s){
     const txt=best.text.length>max ? best.text.slice(0,max).trim()+'…' : best.text;
     snippet=`“${esc(txt)}” <span class="he-snippet-from">— ${esc(best.stepTitle)} · ${esc(best.fieldLabel)}</span>`;
   }
-  return { stats, snippet, touchedKeys };
+  return { stats, snippet, touchedKeys, snippetText: best ? best.text : '' };
 }
 
 function renderPLHome(el){
@@ -7167,12 +7205,13 @@ function renderPLHome(el){
   const calendarHTML = (allSessions.length && _plViewMode==='calendar') ? `<div class="pl-calendar" id="pl-calendar"></div>` : '';
 
   el.innerHTML=`
-    <div class="pl-banner"><span class="banner-watermark" aria-hidden="true">${ICON.pen}</span>
+    <div class="pl-banner compact"><span class="banner-watermark" aria-hidden="true">${ICON.pen}</span>
       <div class="pl-date">${today()}</div>
       <h2>Weekly Deep Time</h2>
-      <p>For once a week — Sunday recommended. Map your heart, then walk slowly through the Lord's Prayer with space to listen.</p>
-      <button class="pl-banner-btn" onclick="plStartNew()">${ICON.sparkle}Begin Full Session</button>
-      <button class="pl-banner-btn secondary" onclick="plStartQuick()">${ICON.pray}Quick Prayer (skip Prepare)</button>
+      <div class="pl-banner-btns">
+        <button class="pl-banner-btn" onclick="plStartNew()">${ICON.sparkle}Begin Full Session</button>
+        <button class="pl-banner-btn secondary" onclick="plStartQuick()" aria-label="Quick Prayer, skipping Prepare">${ICON.pray}Quick Prayer</button>
+      </div>
       ${draft?`<button class="pl-banner-btn tertiary" onclick="plContinue()">↩ Continue draft — ${draftCurrentStep?.title||'Session'}</button>
       <button class="pl-banner-btn tertiary" onclick="plDiscardDraft()">Discard draft</button>`:''}
     </div>
@@ -7236,26 +7275,24 @@ function renderPLSearchResults(){
     const reflectionHTML = (!draft && sessions[0]) ? renderReflectionCard(sessions[0]) : '';
     const recent = sessions.slice(0, 5);
     const recentHTML = recent.length
-      ? recent.map(s => normalSessionEntryHTML(s)).join('')
+      ? historyGroupsHTML(recent, normalSessionEntryHTML)
       : `<div class="empty" style="padding:18px 10px">${emptyArt('book')}<p style="font-size:.85rem">No sessions yet.<br>Your completed journals will appear here.</p></div>`;
     target.innerHTML = `
       ${reflectionHTML}
-      ${sessions.length?`<p class="section-title">Recent Sessions</p>`:''}
       ${recentHTML}
-      ${sessions.length>5?`<p style="font-size:.8rem;color:var(--text3);text-align:center;margin-top:6px">Showing 5 most recent — switch to Calendar or use search to find older sessions</p>`:''}
+      ${sessions.length>5?`<p class="he-more">Older sessions are in Calendar and search.</p>`:''}
     `;
   }
 }
 
 function normalSessionEntryHTML(s){
   const summary = summarizeSession(s);
-  return `<div class="history-entry" onclick="viewSession('${s.id}')">
-    <div class="he-date">${s.date}</div>
-    <div class="he-stats">${summary.stats}</div>
-    ${summary.snippet?`<div class="he-snippet">${summary.snippet}</div>`:''}
+  return `<div class="history-entry he-row" onclick="viewSession('${s.id}')" aria-label="${esc(s.date)}, ${esc(summary.stats)}">
+    <span class="he-main"><span class="he-line"><span class="he-when">${esc(heWhen(s))}</span><span class="he-snippet">${summary.snippetText ? esc(summary.snippetText) : '<em>Brief session</em>'}</span></span>
     <div class="he-strip" role="img" aria-label="${summary.touchedKeys.length} of ${PL_STEPS.length} steps prayed">
       ${PL_STEPS.map(st=>`<span class="he-seg${summary.touchedKeys.includes(st.key)?' on':''}" style="${idc(st.sc)}" title="${esc(st.label||st.title)}"></span>`).join('')}
-    </div>
+    </div></span>
+    <span class="he-chev" aria-hidden="true">›</span>
   </div>`;
 }
 
