@@ -2102,6 +2102,17 @@
   .cs-edit textarea { width: 100%; min-height: 80px !important; }
   .cs-edit-btns { display: flex; gap: 8px; margin-top: 6px; }
   .cs-edit-btns .btn { margin: 0; flex: 1; padding: 8px !important; }
+
+  /* Walkthrough: swipe the story card like a real card. */
+  #daily-content { touch-action: pan-y; }
+  #daily-content .pc-stack .prayer-card { will-change: transform; user-select: none; -webkit-user-select: none; }
+  @keyframes flickInNext { from { transform: translateY(14px) scale(.94); opacity: .4; } to { transform: none; opacity: 1; } }
+  @keyframes flickInBack { from { transform: translateX(-110%) rotate(-8deg); opacity: 0; } to { transform: none; opacity: 1; } }
+  @keyframes flickFade { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+  .prayer-card.flick-in-next { animation: flickInNext .3s cubic-bezier(.2,.9,.3,1) both; }
+  .prayer-card.flick-in-back { animation: flickInBack .32s cubic-bezier(.2,.9,.3,1) both; }
+  .flick-fade { animation: flickFade .3s ease both; }
+  @media (prefers-reduced-motion: reduce) { .prayer-card.flick-in-next, .prayer-card.flick-in-back, .flick-fade { animation: none; } }
 </style>
 </head>
 <body>
@@ -7507,7 +7518,7 @@ function renderDailyCard(cards,idx,todayKey){
   const persp=(c.perspAttr&&c.perspTrust)?`<div class="prayer-step persp-block" style="margin-bottom:12px"><div class="step-label">Father's Perspective</div><div class="step-prompt">Father, because you are <em>${esc(c.perspAttr)}</em>, I will trust you with <em>${esc(c.perspTrust)}</em>.</div></div>`:'';
   document.getElementById('daily-content').innerHTML=`
     <div class="walk-dots" role="img" aria-label="Card ${idx+1} of ${total}">${cards.map((x,i)=>`<span class="walk-dot${i<idx?' done':''}${i===idx?' now':''}" style="--dc:${CAT_COLOR[CAT_ICON[x.category]?x.category:'other']}"></span>`).join('')}</div>
-    <p style="font-size:.7rem;font-family: var(--sans);color:var(--text3);text-align:center;margin:2px 0 10px">Card ${idx+1} of ${total}</p>
+    <p style="font-size:.7rem;font-family: var(--sans);color:var(--text3);text-align:center;margin:2px 0 10px">Card ${idx+1} of ${total}${total>1?' · swipe to turn':''}</p>
     <div class="pc-stack more-${Math.min(2,total-1-idx)}">${total-1-idx>=2?'<span class="pc-under u2"></span>':''}${total-1-idx>=1?'<span class="pc-under u1"></span>':''}
     <div class="prayer-card" style="--cat:${CAT_COLOR[CAT_ICON[c.category]?c.category:'other']}">
       <span class="card-watermark" aria-hidden="true">${ICON[CAT_ICON[CAT_ICON[c.category]?c.category:'other']]}</span>
@@ -7527,11 +7538,72 @@ function renderDailyCard(cards,idx,todayKey){
     </div>
     <button class="btn btn-secondary" style="margin-top:10px" onclick="openNote('${c.id}')">＋ Add Story Note</button>`;
 }
+// ── Flick the card: drag the story card sideways and it follows your finger,
+// tilting like a real card; let go past the threshold (or flick fast) and it
+// flies off and the next one rises from the stack. Left = next (or Finish on the
+// last card), right = back. A short drag springs back. Vertical drags scroll.
+let _flickEnter = null;   // 'next' | 'back' — how the incoming card arrives
+(function setupCardFlick(){
+  const host = () => document.getElementById('daily-content');
+  const IGN = 'button, a, textarea, input, .scripture-ref, .step-ask-line';
+  let st = null;
+  document.addEventListener('pointerdown', e => {
+    const h = host(); if(!h || !h.contains(e.target) || e.target.closest(IGN)) return;
+    const card = h.querySelector('.pc-stack .prayer-card'); if(!card) return;
+    st = { x:e.clientX, y:e.clientY, t:Date.now(), id:e.pointerId, card, rest:[...h.querySelectorAll('.persp-block, .prayer-flow')], lock:null, dx:0 };
+  }, { passive:true });
+  document.addEventListener('pointermove', e => {
+    if(!st || e.pointerId !== st.id) return;
+    const dx = e.clientX - st.x, dy = e.clientY - st.y;
+    if(!st.lock){ if(Math.abs(dx) < 8 && Math.abs(dy) < 8) return; st.lock = Math.abs(dx) > Math.abs(dy) * 1.2 ? 'x' : 'y'; if(st.lock==='y'){ st=null; return; } }
+    const idx = dailyIndex, total = loadCards().filter(c=>!c.answered).length;
+    // Resist at the first card when pulling back.
+    st.dx = (dx > 0 && idx === 0) ? dx * 0.25 : dx;
+    st.card.classList.remove('flick-in-next','flick-in-back');
+    st.card.style.transition = 'none';
+    st.card.style.transform = `translateX(${st.dx}px) rotate(${st.dx/22}deg)`;
+    const f = Math.min(1, Math.abs(st.dx) / 220);
+    st.rest.forEach(r => { r.style.transition='none'; r.style.opacity = String(1 - f*0.6); });
+  }, { passive:true });
+  const end = e => {
+    if(!st || (e && e.pointerId !== st.id)) return;
+    const s0 = st; st = null; if(s0.lock !== 'x') return;
+    const total = loadCards().filter(c=>!c.answered).length, idx = dailyIndex;
+    const v = Math.abs(s0.dx) / Math.max(1, Date.now() - s0.t);
+    const go = Math.abs(s0.dx) > 90 || (v > 0.55 && Math.abs(s0.dx) > 30);
+    const dir = s0.dx < 0 ? 'next' : 'back';
+    const allowed = dir === 'next' || idx > 0;
+    if(!go || !allowed){
+      s0.card.style.transition = 'transform .32s cubic-bezier(.2,.9,.3,1.2)'; s0.card.style.transform = '';
+      s0.rest.forEach(r => { r.style.transition='opacity .25s'; r.style.opacity=''; });
+      return;
+    }
+    haptic && haptic(10);
+    const out = (dir === 'next' ? -1 : 1) * (window.innerWidth * 1.1);
+    s0.card.style.transition = 'transform .28s cubic-bezier(.4,0,.6,1), opacity .28s';
+    s0.card.style.transform = `translateX(${out}px) rotate(${out/18}deg)`;
+    s0.card.style.opacity = '0';
+    setTimeout(() => {
+      _flickEnter = dir;
+      if(dir === 'next'){ if(idx < total - 1) dailyNav(idx + 1); else dailyFinish(); }
+      else dailyNav(idx - 1);
+    }, 230);
+  };
+  document.addEventListener('pointerup', end, { passive:true });
+  document.addEventListener('pointercancel', e => { if(st && e.pointerId===st.id){ const s0=st; st=null; s0.card.style.transform=''; s0.rest.forEach(r=>r.style.opacity=''); } }, { passive:true });
+})();
 function dailyNav(newIdx){
   const cards=loadCards().filter(c=>!c.answered);
   const todayKey='daily_'+new Date().toDateString();
   safeSetItem(todayKey,JSON.stringify({idx:newIdx,done:false}));
+  const enter = _flickEnter || (newIdx > dailyIndex ? 'next' : newIdx < dailyIndex ? 'back' : null);
+  _flickEnter = null;
   dailyIndex=newIdx; renderDailyCard(cards,newIdx,todayKey);
+  // The new card arrives: from the stack beneath when moving on, from the side when going back.
+  const card = document.querySelector('#daily-content .pc-stack .prayer-card');
+  if(card && enter){ card.classList.add(enter==='next' ? 'flick-in-next' : 'flick-in-back');
+    card.addEventListener('animationend', () => card.classList.remove('flick-in-next','flick-in-back'), { once:true }); }
+  document.querySelectorAll('#daily-content .persp-block, #daily-content .prayer-flow').forEach(el => el.classList.add('flick-fade'));
 }
 function dailyFinish(){
   const todayKey='daily_'+new Date().toDateString();
