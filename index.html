@@ -2401,6 +2401,90 @@
   .gs-snip mark { background: color-mix(in srgb, var(--accent2) 30%, transparent); color: inherit; border-radius: 2px; }
   .rf-band .streak-day { background: none; border: none; padding: 4px 2px; cursor: pointer; font: inherit; color: inherit; min-width: 32px; }
   .sv-carry-more { margin-top: 6px; }
+  /* D19/M5 Weekly Review rows */
+  .rv-mark { flex: none; width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--cat); background: color-mix(in srgb, var(--cat) 12%, var(--surface)); }
+  .rv-mark .ico { width: 18px; height: 18px; }
+  .rv-name { margin-top: 0; }
+  .rv-note { display: inline-flex; align-items: center; justify-content: center; gap: 2px; width: 44px; height: 40px; padding: 0; border-radius: 99px; }
+  .rv-note .ico { width: 16px; height: 16px; }
+  .bb-orn-d { margin: 2px 0 10px; }
+  /* M1 contrast */
+  .pl-step-card > .pl-step-header .pl-step-subtitle { color: var(--text2); }
+  .cd-band .cd-meta { color: var(--text2); }
+  .bb-head .bb-crumb { color: var(--text2); }
+  #modal-new .hint, .cf-tpl .hint { color: var(--text2); }
+  [data-theme="dark"] .psf-ref { color: var(--accent) !important; }
+  /* M2 nothing under 12px */
+  .card-cat { font-size: max(12px, .68rem); }
+  .fc-note-date, .fc-since { font-size: max(12px, .8em); }
+  .heatmap-month-label, .streak-letter, .heatmap-day-label { font-size: max(12px, .68rem); }
+  .jp-date span { font-size: max(12px, .66rem); }
+  /* M4 tap targets */
+  .note-action-btn { min-width: 36px; min-height: 36px; }
+  .dp-q-toggle button, .bb-filters button, .bb-toggle button { min-height: 40px; }
+  .bb-field-btn { min-height: 40px; padding: 8px 12px; }
+  .carry-x { width: 44px; height: 44px; top: 2px; right: 2px; }
+  .bb-bm-del { min-width: 40px; min-height: 40px; }
+  .scripture-ref { padding-block: 6px; }
+  /* L8 Bible book list: light 3-column rows with a section dot; L25 continue */
+  .bb-grid.books { grid-template-columns: repeat(3, minmax(0,1fr)); gap: 0 10px; }
+  .bb-grid.books .bb-sec-h { grid-column: 1 / -1; }
+  .bb-grid.books .bb-item { position: relative; display: flex; align-items: center; gap: 7px; min-height: 44px; padding: 8px 2px; text-align: left; background: none; border: none; border-top: none !important; border-bottom: 1px solid var(--border-soft); border-radius: 0; font-size: .86rem; line-height: 1.2; }
+  .bb-grid.books .bb-item::before { content: ''; flex: none; width: 6px; height: 6px; border-radius: 50%; background: var(--sec, var(--accent2)); opacity: .8; }
+  .bb-grid.books .bb-item:active { background: var(--surface2); }
+  .bb-continue { display: flex; align-items: center; gap: 10px; width: 100%; min-height: 48px; margin: 0 0 10px; padding: 10px 14px; border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--surface); color: var(--text); font-family: var(--serif); font-size: .95rem; cursor: pointer; text-align: left; }
+  .bb-continue .ico { width: 17px; height: 17px; color: var(--accent); flex: none; }
+  .bb-continue span:nth-child(2) { flex: 1; }
+  .bb-continue b { font-weight: normal; color: var(--accent); }
+  .bb-continue-go { color: var(--accent2); font-size: 1.2rem; }
+  /* L9 sticky step index; L22 continuous spine with the number on it */
+  .sv-index { position: sticky; top: 0; z-index: 5; display: flex; gap: 6px; justify-content: center; flex-wrap: wrap; padding: 8px 0; margin: 0 0 14px; background: color-mix(in srgb, var(--surface) 94%, transparent); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); border-bottom: 1px solid var(--border-soft); }
+  .svi-b { min-width: 34px; height: 34px; padding: 0 8px; border-radius: 99px; border: none; background: var(--svc); color: #fff; font-family: var(--sans); font-size: .74rem; font-weight: 700; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+  .svi-b .ico { width: 14px; height: 14px; }
+  #session-view-content .sv-section { scroll-margin-top: 60px; position: relative; margin-left: 12px; padding-left: 22px; }
+  #session-view-content .sv-section .sv-head { position: relative; }
+  #session-view-content .sv-section .sv-num { position: absolute; left: -35px; top: 0; box-shadow: 0 0 0 3px var(--surface); }
+  #session-view-content .sv-section + .sv-section { margin-top: -22px; padding-top: 24px; }
+  .pl-cal-dia { display: flex; gap: 2px; justify-content: center; margin-top: 2px; height: 7px; }
+  .pl-cal-dia i { width: 5px; height: 5px; transform: rotate(45deg); background: var(--pi); border-radius: 1px; display: block; }
+  .prayer-lib-item summary .pl-num { display: inline-block; min-width: 2.2em; font-family: var(--serif); font-variant-caps: small-caps; color: var(--lc, var(--accent)); font-size: .82em; letter-spacing: .04em; }
+  .hn-intro.peek { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; margin-bottom: 0; -webkit-mask-image: linear-gradient(#000 55%, transparent); mask-image: linear-gradient(#000 55%, transparent); }
+  /* U1 snap sheets */
+  .modal.snap { transition: max-height .28s ease; }
+  .modal.snap:not(.full) { max-height: 66dvh; }
+  .modal.snap .modal-handle { cursor: pointer; }
+  @media (prefers-reduced-motion: reduce) { .modal.snap { transition: none; } }
+  /* U2 quick actions */
+  .card-row { -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
+  .qa-head { display: flex; align-items: center; gap: 12px; margin-bottom: 8px; }
+  .qa-head .cr-mark { flex: none; width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--cat); background: color-mix(in srgb, var(--cat) 12%, var(--surface)); }
+  .qa-head .cr-mark .ico { width: 19px; height: 19px; }
+  .qa-head h2 { font-size: 1.2rem; margin: 0; }
+  .qa-row { display: flex; align-items: center; gap: 14px; width: 100%; min-height: 54px; padding: 8px 4px; border: none; border-bottom: 1px solid var(--border-soft); background: none; color: var(--text); font-family: var(--serif); font-size: 1.02rem; text-align: left; cursor: pointer; }
+  .qa-row .ico { width: 20px; height: 20px; color: var(--accent); }
+  .qa-row.answer .ico { color: var(--answered); }
+  /* L6 card detail drawn as the story card itself: spine, paper, Scripture inside */
+  .cd-card { margin: 0 0 14px; border-radius: var(--radius); border: 1px solid color-mix(in srgb, var(--cat) 25%, var(--border)); border-left: 4px solid var(--cat); box-shadow: var(--shadow); background: linear-gradient(color-mix(in srgb, var(--cat) 12%, var(--surface)), color-mix(in srgb, var(--cat) 12%, var(--surface)) 118px, var(--surface) 118px); }
+  [data-theme="dark"] .cd-card { background: linear-gradient(color-mix(in srgb, var(--cat) 18%, var(--surface)), color-mix(in srgb, var(--cat) 18%, var(--surface)) 118px, var(--surface) 118px); }
+  .cd-card .ds-scripture { margin: 14px 0 0; position: relative; }
+  .cd-card h2 { font-size: 1.6rem; }
+  ::view-transition-group(card-name) { animation-duration: .32s; animation-timing-function: cubic-bezier(.2,.7,.2,1); }
+  /* L12 tablet: in a Daily session the passage sits beside the writing */
+  @media (min-width: 768px) {
+    body.in-session .view:has(.pl-step-card > .dp-recall, .pl-step-card > .dp-strip) { max-width: 940px; }
+    body.in-session .pl-step-card:has(> .dp-recall, > .dp-strip) { display: grid; grid-template-columns: minmax(0,5fr) minmax(0,6fr); column-gap: 28px; grid-auto-flow: row dense; align-items: start; }
+    body.in-session .pl-step-card:has(> .dp-recall, > .dp-strip) > * { grid-column: 1 / -1; }
+    body.in-session .pl-step-card > .dp-recall, body.in-session .pl-step-card > .dp-strip { grid-column: 1; position: sticky; top: 76px; max-height: calc(100dvh - 180px); overflow: auto; }
+    body.in-session .pl-step-card:has(> .dp-recall, > .dp-strip) > .dp-questions,
+    body.in-session .pl-step-card:has(> .dp-recall, > .dp-strip) > .dp-field-row { grid-column: 2; }
+    body.in-session .session-foot .pl-nav { max-width: 940px; }
+  }
+  /* L27 a pull past the top of Daily shows the sky — decoration only, nothing reloads */
+  #view-daily { position: relative; }
+  .pull-sky { position: absolute; left: 0; right: 0; top: -220px; height: 220px; overflow: hidden; pointer-events: none; display: flex; align-items: flex-end; justify-content: center; padding-bottom: 18px; background: linear-gradient(160deg, #5a3a2e, #9a6a4e 55%, #c4946a); color: #fff; font-family: var(--sans); font-size: .72rem; letter-spacing: .08em; text-transform: uppercase; }
+  .pull-sky.tod-night { background: linear-gradient(160deg, #1f1a24, #3a2e30 55%, #5a4632); }
+  .pull-sky .sky { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .pull-sky span { position: relative; opacity: .8; }
 </style>
 </head>
 <body>
@@ -2690,6 +2774,10 @@
     <input type="text" id="gs-input" class="pl-search-input" enterkeyhint="search" placeholder="Cards, notes, sessions, lines…" aria-label="Search everything" oninput="globalSearchRender()">
     <div id="gs-results"></div>
   </div>
+</div>
+
+<div class="modal-bg" id="modal-quick">
+  <div class="modal"><div class="modal-handle"></div><div id="quick-content"></div></div>
 </div>
 
 <div class="modal-bg" id="modal-keep">
@@ -4686,6 +4774,14 @@ function renderBibleBrowser(){
   if(!_bbBook){ c.innerHTML = bbBookListHTML(); return; }
   if(!_bbChapter){ c.innerHTML = bbChapterListHTML(); return; }
   c.innerHTML = bbVerseViewHTML();
+  safeSetItem('bb_last', JSON.stringify({ file:_bbBook, chapter:_bbChapter }));
+}
+// L25: reopening the Bible offers the chapter last read.
+function bbContinueHTML(){
+  let l; try{ l = JSON.parse(localStorage.getItem('bb_last') || 'null'); }catch(e){ l = null; }
+  if(!l || !l.file) return '';
+  const name = _bbFileToName(l.file); if(!name) return '';
+  return `<button type="button" class="bb-continue" onclick="bbJumpTo('${l.file}', ${+l.chapter||1})">${ICON.book}<span>Continue · <b>${esc(name)} ${+l.chapter||1}</b></span><span class="bb-continue-go">›</span></button>`;
 }
 
 function bbHead(crumb, backFn){
@@ -4699,11 +4795,12 @@ function bbHead(crumb, backFn){
 
 function bbBookListHTML(){
   return `<div class="bb-sticky">` +
-      bbHead('Choose a book','') + `<span class="bb-orn" aria-hidden="true">${ORN.rule||''}</span>` +
+      bbHead('Choose a book','') + ornDivider('bb-orn-d') +
       `<input class="bb-search" id="bb-search" placeholder="Search books, or type a reference…" oninput="bbSearchInput()" autocomplete="off" value="${esc(_bbSearch)}">` +
       `<div id="bb-jump">${bbJumpHTML(_bbSearch)}</div>` +
       `<div class="bb-filters">${bbFilterToggleHTML()}${bbSortToggleHTML()}</div>` +
     `</div>` +
+    (_bbSearch ? '' : bbContinueHTML()) +
     `<div id="bb-feel-entry">${bbFeelEntryHTML()}</div>` +
     `<div id="bb-bookmarks">${bbBookmarksHTML()}</div>` +
     `<div id="bb-book-results">${bbBookResultsHTML()}</div>` ;
@@ -5676,7 +5773,7 @@ function openPrayerLibrary(category, targetId){
   const showInsertBtn = !!_prayerLibTargetId;
   const prayersHTML = lib.prayers.map((p, i) => `
     <details class="prayer-lib-item">
-      <summary>${esc(p.h)}</summary>
+      <summary><span class="pl-num" aria-hidden="true">${['I','II','III','IV','V','VI','VII','VIII','IX','X','XI','XII','XIII','XIV','XV'][i]||i+1}</span>${esc(p.h)}</summary>
       <div class="prayer-lib-text">${esc(p.t)}</div>
       ${showInsertBtn ? `<button class="prayer-lib-use-btn" onclick="usePrayerFromLibrary(${i}, this)">Use this prayer →</button>` : ''}
     </details>
@@ -6432,7 +6529,7 @@ function closeModal(id){
   // than a cut. Bail straight to hidden if the user asked for reduced motion.
   const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const finish = () => {
-    m.classList.remove('open', 'closing');
+    m.classList.remove('open', 'closing'); m.querySelector('.modal.snap')?.classList.remove('full');
     m.style.zIndex = '';
     // Reset any inline transform/transition left on the inner .modal by a drag-to-dismiss
     // gesture that may have been interrupted mid-drag — so re-opening shows it fresh.
@@ -6485,6 +6582,14 @@ document.addEventListener('keydown', e => {
     const x = `<div class="sheet-x-wrap"><button type="button" class="sheet-x" aria-label="Close" onclick="${CLOSE_FN[bg.id] || `closeModal('${bg.id}')`}">${ICON.close}</button></div>`;
     if(h) h.insertAdjacentHTML('afterend', x); else m.insertAdjacentHTML('afterbegin', x);
   });
+  // U1: reading sheets open at about two-thirds height; scrolling in them, or a tap
+  // on the handle, lifts them to full height.
+  ['modal-heart-chart','modal-prayer-library','modal-carry','modal-petition','modal-technique'].forEach(id => {
+    const m = document.querySelector('#'+id+' .modal'); if(!m) return;
+    m.classList.add('snap');
+    m.addEventListener('scroll', () => { if(m.scrollTop > 8) m.classList.add('full'); }, { passive:true });
+    m.querySelector('.modal-handle')?.addEventListener('click', () => m.classList.toggle('full'));
+  });
   document.querySelectorAll('.modal-bg .modal').forEach(m => { m.setAttribute('role','dialog'); m.setAttribute('aria-modal','true');
     const h = m.querySelector('h2, h3'); if(h){ if(!h.id) h.id = m.parentElement.id + '-title'; m.setAttribute('aria-labelledby', h.id); } });
   ['toast','undo-toast'].forEach(id => { const t = document.getElementById(id); if(t){ t.setAttribute('role','status'); t.setAttribute('aria-live','polite'); } });
@@ -6496,7 +6601,7 @@ function fillVerses(root){
     el.dataset.done = '1';
     const ref = el.dataset.ref; let t = getScriptureText(ref);
     if(!t) t = await lookupBibleRef(ref);
-    if(t && typeof t === 'string'){ el.textContent = (el.dataset.lead || '') + nestQuotes(t); el.classList.add('filled'); }
+    if(t && typeof t === 'string'){ el.textContent = (el.dataset.lead || '') + (el.dataset.quote ? '“' + nestQuotes(t) + '”' : nestQuotes(t)); el.classList.add('filled'); }
   });
 }
 document.querySelectorAll('.modal-bg').forEach(bg => {
@@ -6578,11 +6683,48 @@ function cardRefShort(scr){
   const head = String(scr).split(/\s+[—–-]\s+/)[0].trim();
   return head.length > 48 ? head.slice(0, 48).replace(/\s+\S*$/, '') + '…' : head;
 }
+// U2: press and hold a story card row for its quick actions.
+(function(){
+  let t = null, sx = 0, sy = 0;
+  const list = document.getElementById('cards-list'); if(!list) return;
+  list.addEventListener('pointerdown', e => {
+    const row = e.target.closest('.card-row'); if(!row) return;
+    sx = e.clientX; sy = e.clientY; window._lpFired = false;
+    t = setTimeout(() => { window._lpFired = true; haptic(12); openQuickActions(row.dataset.id); setTimeout(() => { window._lpFired = false; }, 600); }, 480);
+  });
+  const cancel = e => { if(t && (!e || e.type !== 'pointermove' || Math.hypot(e.clientX - sx, e.clientY - sy) > 10)){ clearTimeout(t); t = null; } };
+  ['pointerup','pointercancel','pointerleave','pointermove'].forEach(ev => list.addEventListener(ev, cancel));
+  list.addEventListener('contextmenu', e => { if(e.target.closest('.card-row')) e.preventDefault(); });
+})();
+// L11: where the browser can, the card's name travels from its row into the page.
+function openDetailMorph(id, row){
+  const reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const t = row && row.querySelector('.card-title');
+  if(!document.startViewTransition || reduce || !t){ openDetail(id); return; }
+  t.style.viewTransitionName = 'card-name';
+  document.startViewTransition(() => {
+    t.style.viewTransitionName = '';
+    openDetail(id);
+    const h = document.querySelector('#detail-content .cd-band h2'); if(h) h.style.viewTransitionName = 'card-name';
+  }).finished.finally(() => { const h = document.querySelector('#detail-content .cd-band h2'); if(h) h.style.viewTransitionName = ''; });
+}
+function openQuickActions(id){
+  const c = loadCards().find(x => x.id === id); if(!c) return;
+  const ck = CAT_ICON[c.category] ? c.category : 'other';
+  const act = (fn, ico, label, cls) => `<button type="button" class="qa-row${cls?' '+cls:''}" onclick="closeModal('modal-quick');setTimeout(()=>${fn},200)">${ICON[ico]}<span>${label}</span></button>`;
+  document.getElementById('quick-content').innerHTML = `
+    <div class="qa-head" style="--cat:${CAT_COLOR[ck]}"><span class="cr-mark">${c.answered ? ICON.olive : ICON[CAT_ICON[ck]]}</span><h2>${esc(c.person)}</h2></div>
+    ${c.answered ? '' : act(`prayCardNow('${c.id}')`, 'pray', 'Pray these now')}
+    ${act(`openNote('${c.id}')`, 'note', 'Add Story Note')}
+    ${act(`toggleAnswered('${c.id}')`, c.answered ? 'turn' : 'olive', c.answered ? 'Mark as Active' : 'Mark as Answered', c.answered ? '' : 'answer')}
+    ${act(`openEditCard('${c.id}')`, 'pen', 'Edit Card')}`;
+  openModal('modal-quick');
+}
 function cardHTML(c){
   const notes=c.notes?c.notes.length:0;
   const ck = CAT_ICON[c.category] ? c.category : 'other';
   const ref = cardRefShort(c.scripture);
-  return `<div class="card card-row${c.answered?' answered':''}" style="--cat:${CAT_COLOR[ck]}" onclick="openDetail('${c.id}')">
+  return `<div class="card card-row${c.answered?' answered':''}" data-id="${c.id}" style="--cat:${CAT_COLOR[ck]}" onclick="if(!window._lpFired)openDetailMorph('${c.id}', this)">
     <span class="cr-mark" role="img" aria-label="${esc(CAT_LABELS[ck]||'')}" title="${esc(CAT_LABELS[ck]||'')}">${c.answered ? ICON.olive : ICON[CAT_ICON[ck]]}</span>
     <span class="cr-body"><span class="card-title">${esc(c.person)}</span>
       <span class="cr-sub">${ref?`<span class="cr-ref">${esc(ref)}</span>`:''}${notes?`<span class="cm-notes">${ICON.note}${notes}</span>`:''}</span></span>
@@ -6720,12 +6862,13 @@ function openDetail(id){
   const persp=(c.perspAttr||c.perspTrust)?`Father, because you are <em>${esc(c.perspAttr)}</em>, I will trust you with <em>${esc(c.perspTrust)}</em>.`:'—';
   const ck = CAT_ICON[c.category] ? c.category : 'other';
   document.getElementById('detail-content').innerHTML=`
-    <div class="cd-band" style="--cat:${CAT_COLOR[ck]}">
+    <div class="cd-band cd-card" style="--cat:${CAT_COLOR[ck]}">
       <span class="cd-band-mark" aria-hidden="true">${c.answered ? ICON.olive : ICON[CAT_ICON[ck]]}</span>
       ${catChip(c.category)}
       ${c.answered?`<span class="answered-badge" style="float:right;margin-top:2px;position:relative">${ICON.olive}Answered ✓</span>`:''}
       <h2>${esc(c.person)}</h2>
       <p class="cd-meta">Started ${c.dateStarted}${c.lastPrayed?` · Last prayed ${esc(relativeTimeAgo(c.lastPrayed))}`:''}</p>
+      ${c.scripture?`<div class="detail-section ds-scripture"><h3>Scripture Anchor</h3><p><em>${linkifyScriptureRefs(c.scripture)}</em></p>${(()=>{ const a=splitAnchor(c.scripture); return (a.ref && !a.text) ? `<p class="ds-verse verse-fill" data-ref="${esc(a.ref)}" data-lead="" data-quote="1"></p>` : ''; })()}</div>`:''}
     </div>
     <div class="cd-tools">
       ${c.answered?'':`<button class="cd-tool" onclick="prayCardNow('${c.id}')">${ICON.pray}<span>Pray these now</span></button>`}
@@ -6733,7 +6876,6 @@ function openDetail(id){
       <button class="cd-tool${c.answered?'':' answer'}" onclick="toggleAnswered('${c.id}')">${c.answered?ICON.turn:ICON.olive}<span>${c.answered?'Mark as Active':'Mark as Answered'}</span></button>
       <button class="cd-tool" onclick="openEditCard('${c.id}')">${ICON.pen}<span>Edit Card</span></button>
     </div>
-    ${c.scripture?`<div class="detail-section ds-scripture"><h3>Scripture Anchor</h3><p><em>${linkifyScriptureRefs(c.scripture)}</em></p>${(()=>{ const a=splitAnchor(c.scripture); return (a.ref && !a.text) ? `<p class="ds-verse verse-fill" data-ref="${esc(a.ref)}" data-lead=""></p>` : ''; })()}</div>`:''}
     ${(c.askHeart||c.askCirc)?`<div class="detail-section ds-asks">
       ${c.askHeart?`<div class="ds-row"><h3>The Ask — Heart</h3><p>${esc(c.askHeart)}</p></div>`:''}
       ${c.askCirc?`<div class="ds-row"><h3>The Ask — Circumstance</h3><p>${esc(c.askCirc)}</p></div>`:''}
@@ -7315,6 +7457,18 @@ async function dpRepray(id){
   if(currentView !== 'daily') showView('daily');
   await dpStart(s.plan);
 }
+// L9: a past session gets a sticky row of its steps along the top; tap one to go to it.
+function buildSessionIndex(){
+  const root = document.getElementById('session-view-content'); if(!root) return;
+  root.querySelector('.sv-index')?.remove();
+  const secs = [...root.querySelectorAll('.sv-section')].filter(x => x.querySelector('.sv-num'));
+  if(secs.length < 3) return;
+  const btns = secs.map((x, i) => { x.id = 'sv-s' + i; const n = x.querySelector('.sv-num'); const t = x.querySelector('.sv-title')?.textContent || '';
+    return `<button type="button" class="svi-b" style="--svc:${getComputedStyle(n).backgroundColor}" onclick="document.getElementById('sv-s${i}').scrollIntoView({block:'start',behavior:'smooth'})" aria-label="${esc(t)}">${n.innerHTML}</button>`; }).join('');
+  const head = root.querySelector('.jp-head');
+  const bar = `<div class="sv-index" role="navigation" aria-label="Steps">${btns}</div>`;
+  if(head) head.insertAdjacentHTML('afterend', bar); else root.insertAdjacentHTML('afterbegin', bar);
+}
 function dpReturnHome(){ dpMode='home'; renderDailyPrayer(); }
 
 function dpSetMeditationMode(mode){
@@ -7409,6 +7563,7 @@ function renderDPHome(){
   const calendarHTML = (sessions.length && _dpViewMode==='calendar') ? `<div class="pl-calendar" id="dp-calendar"></div>` : '';
 
   el.innerHTML = `
+    <div class="pull-sky tod-${timeOfDay()}" aria-hidden="true">${skySVG()}<span>${today()}</span></div>
     <div class="pl-banner compact tod-${timeOfDay()}">${skySVG()}
       <div class="pl-date">${today()}</div>
       <h2>Daily Prayer</h2>
@@ -7467,6 +7622,7 @@ function dpSelectCalDay(yyyymmdd){
   renderDPSearchResults();
 }
 
+const PLAN_INK = { morning:'#b8892e', evening:'#4f6390', starter:'#6f8a5a' };
 function renderDPCalendar(){
   const target = document.getElementById('dp-calendar');
   if(!target) return;
@@ -7495,7 +7651,8 @@ function renderDPCalendar(){
     if(has) cls.push('has-sessions');
     if(key === _dpCalSelectedDay) cls.push('selected');
     const click = has ? `onclick="dpSelectCalDay('${key}')"` : '';
-    html += `<div class="${cls.join(' ')}" ${click}>${d}${has?`<div class="pl-cal-dot">${ORN.mark}</div>`:''}</div>`;
+    // G11: a small diamond per session in its plan's ink — Morning gold, Evening indigo, Starter sage.
+    html += `<div class="${cls.join(' ')}" ${click}>${d}${has?`<div class="pl-cal-dia">${byDay[key].slice(0,3).map(x=>`<i style="--pi:${PLAN_INK[x.plan]||'var(--accent2)'}"></i>`).join('')}</div>`:''}</div>`;
   }
 
   const monthPrefix = `${year}-${String(mIdx+1).padStart(2,'0')}`;
@@ -7999,7 +8156,7 @@ function renderDPStep(){
       ${passageHTML}
       ${unit.kind === 'field' && unit.f?.key === 'carry' ? carryPickHTML(step, saved)
         : (unit.kind === 'question' || (split && unit.kind === 'field' && step.passageField) ? dpPassageRecall(step, saved) : '')}
-      ${dpSession.plan === 'evening' && step.key === 'prayer' ? carryEveningHTML(sessionDateKey(dpSession)) : ''}
+      ${dpSession.plan === 'evening' && step.key === 'prayer' && dpSubIdx === 0 ? carryEveningHTML(sessionDateKey(dpSession)) : ''}
       ${questionsHTML}
       ${(!step.passageField && !step.questionsField && !step.showInvocations && (step.fields||[]).length) ? dpStripHTML((unit.f || step.fields[0]).key) : ''}
       ${fieldsHTML}
@@ -8940,7 +9097,7 @@ function renderPLStep(el){
   const scriptureBlock=step.scripture?`
     <div class="pl-scripture-feature${_plScriptureOpen?'':' peek'}" id="pl-scripture-feature" style="background:${step.sbg};--bk:${step.sborder}">
       <div class="psf-head">
-        <div style="font-size:.66rem;font-family: var(--sans);text-transform:uppercase;letter-spacing:.09em;color:${step.sc}">${step.scripture.ref}</div>
+        <div class="psf-ref" style="font-size:.66rem;font-family: var(--sans);text-transform:uppercase;letter-spacing:.09em;color:${step.sc}">${step.scripture.ref}</div>
         <button type="button" class="psf-toggle" onclick="togglePLScripture()" aria-expanded="${_plScriptureOpen}"
                 aria-label="${_plScriptureOpen?'Collapse passage':'Expand passage'}">${_plScriptureOpen?'⌃':'⌄'}</button>
       </div>
@@ -9097,7 +9254,7 @@ function renderPLDone(el){
 function plReturnHome(){ plMode='home'; renderPL(); }
 
 // ══════════ HEART NEEDS CHART ══════════
-let _hnOpen=null;
+let _hnOpen=null, _hnIntroOpen=false;
 function hnTileTap(key){
   const inSession = plMode==='session' && plSession && currentStep()?.key==='prepare';
   if(inSession){ _hnOpen=key; toggleHeartNeed(key); return; }
@@ -9140,7 +9297,7 @@ function openHeartChart(keep, focus){
 
   document.getElementById('heart-chart-content').innerHTML=`
     <h2 style="color:var(--accent);margin-bottom:6px">Needs of the Heart</h2>
-    <p class="hn-intro">${intro}</p>
+    <p class="hn-intro${inSession||_hnIntroOpen?'':' peek'}">${intro}</p>${inSession||_hnIntroOpen?'':`<button type="button" class="instr-toggle" aria-label="Show the whole introduction" onclick="_hnIntroOpen=true;openHeartChart(true)">⌄</button>`}
     ${cards}
     ${inSession ? `<button class="btn btn-primary" onclick="closeHeartChart()">Done</button>` : ''}
   `;
@@ -9307,7 +9464,7 @@ function viewDailySession(id){
     <button class="btn btn-repray" style="margin-top:18px" onclick="dpRepray('${s.id}')">${ICON.turn}Pray this again</button>
     <button class="cd-delete" onclick="closeModal('modal-session');deleteDailySession('${s.id}')">Delete Session</button>
   `;
-  openModal('modal-session');
+  openModal('modal-session'); buildSessionIndex();
 }
 
 // ══════════ VIEW PAST SESSION ══════════
@@ -9328,7 +9485,7 @@ function viewSession(id){
           <div class="sv-label">${sec.title}</div>
           ${data[sec.key]?`<div class="sv-text">${esc(data[sec.key])}</div>`:`<div class="sv-empty">Nothing written</div>`}
         </div>`).join('');
-      const heartNeeds=data.heartNeeds||[];
+      const heartNeeds=(data.heartNeeds||[]).filter(k=>findHeartNeed(k));
       const heartNeedsBlock=heartNeeds.length?`
         <div class="sv-block">
           <div class="sv-label">Heart needs that resonated</div>
@@ -9370,7 +9527,7 @@ function viewSession(id){
     ${sectionsHTML}
     <button class="btn btn-repray" style="margin-top:18px" onclick="plRepray('${s.id}')">${ICON.turn}Pray this again</button>
     <button class="cd-delete" onclick="closeModal('modal-session');deleteSession('${s.id}')">Delete Session</button>`;
-  openModal('modal-session');
+  openModal('modal-session'); buildSessionIndex();
 }
 
 // ══════════ SILENCE TIMER (P2 #7) ══════════
@@ -10776,16 +10933,16 @@ function renderReview(){
   // without leaving the review. The last note is a one-line excerpt.
   cards.forEach(c=>{
     const lastNote=(c.notes&&c.notes.length)?c.notes[c.notes.length-1]:null;
-    html+=`<div class="rv-row" onclick="openDetail('${c.id}')">
+    const ck = CAT_ICON[c.category] ? c.category : 'other';
+    html+=`<div class="rv-row" onclick="openDetail('${c.id}')" style="--cat:${CAT_COLOR[ck]}">
+      <span class="cr-mark rv-mark" title="${esc(CAT_LABELS[ck])}" aria-label="${esc(CAT_LABELS[ck])}">${c.answered ? ICON.olive : ICON[CAT_ICON[ck]]}</span>
       <div class="rv-main">
-        <div class="rv-top">${catChip(c.category, null, 'font-size:.58rem;padding:2px 7px;border-radius:99px;display:inline-flex')}
-          ${c.answered?`<span class="answered-badge">${ICON.olive}Answered ✓</span>`:''}</div>
         <div class="rv-name">${esc(c.person)}</div>
-        <div class="rv-meta">${c.scripture?`<span class="rv-scripture">${linkifyScriptureRefs(c.scripture)}</span>`:''}${lastNote?`<span class="rv-when">Last note · ${esc(lastNote.date)}</span>`:''}</div>
+        <div class="rv-meta">${c.scripture?`<span class="rv-scripture">${esc(cardRefShort(c.scripture))}</span>`:''}${lastNote?`<span class="rv-when">Last note · ${esc(lastNote.date)}</span>`:''}</div>
         ${lastNote?`<div class="rv-excerpt">${esc(lastNote.text)}</div>`:''}
       </div>
       <div class="rv-actions">
-        <button class="rv-note" onclick="event.stopPropagation();openNote('${c.id}')" aria-label="Add a note to ${esc(c.person)}">＋ Note</button>
+        <button class="rv-note" onclick="event.stopPropagation();openNote('${c.id}')" aria-label="Add a note to ${esc(c.person)}" title="Add Story Note">${ICON.note}<span>＋</span></button>
         <span class="rv-chev" aria-hidden="true">›</span>
       </div>
     </div>`;
