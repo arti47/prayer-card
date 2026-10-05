@@ -2352,6 +2352,55 @@
   .emo-wheel.ring text { fill: #fff; font-family: var(--serif); pointer-events: none; }
   .emo-wheel.ring .hub-t { font-style: italic; }
   .emo-stage-label { text-align: center; }
+  .carry-done-link { display: flex; flex-direction: column; align-items: center; gap: 4px; width: 100%; margin: 14px 0 0; padding: 12px 14px; background: none; border: 1px dashed color-mix(in srgb, var(--accent2) 55%, transparent); border-radius: var(--radius); cursor: pointer; color: var(--text); font-family: var(--serif); }
+  .cdl-k { display: inline-flex; align-items: center; gap: 6px; font-family: var(--sans); font-size: .7rem; font-weight: 600; letter-spacing: .05em; text-transform: uppercase; color: var(--accent); }
+  .cdl-k svg { width: 11px; height: 11px; }
+  .cdl-v { font-style: italic; font-size: 1rem; line-height: 1.5; }
+  /* K2/K3 carry source; L17 Earlier lines by month with a date gutter */
+  .carry-refrow { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 12px; }
+  .carry-from { display: inline-flex; align-items: center; gap: 5px; min-height: 32px; padding: 2px 0; background: none; border: none; color: var(--text3); font-family: var(--sans); font-size: .74rem; cursor: pointer; }
+  .carry-from .ico { width: 13px; height: 13px; }
+  .ch-month { margin: 16px 0 4px; font-family: var(--sans); font-size: .72rem; font-weight: 600; letter-spacing: .05em; text-transform: uppercase; color: var(--accent); }
+  .ch-day { display: flex; gap: 12px; }
+  .ch-gutter { flex: none; width: 40px; display: flex; flex-direction: column; align-items: center; padding-top: 2px; border-right: 1px solid var(--border-soft); padding-right: 10px; }
+  .ch-gutter b { font-family: var(--serif); font-weight: normal; font-size: 1.5rem; line-height: 1; color: var(--accent); font-variant-numeric: oldstyle-nums; }
+  .ch-gutter span { font-family: var(--sans); font-size: .68rem; color: var(--text3); margin-top: 3px; }
+  .ch-body { flex: 1; min-width: 0; }
+  .ch-body .ch-date { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+  /* L21 Done: verse and gaze in one framed panel */
+  .done-panel { position: relative; margin: 16px 0 4px; padding: 18px 16px 14px; border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface); box-shadow: var(--shadow); }
+  .done-panel::before { content: ''; position: absolute; inset: 5px; border: 1px solid var(--border-soft); border-radius: calc(var(--radius) - 4px); pointer-events: none; }
+  .done-panel .pl-done-verse { margin: 0 0 12px; background: none; box-shadow: none; }
+  .done-panel .christ-anchor { margin: 0; background: none; border: none; border-top: 1px solid var(--border-soft); border-radius: 0; padding-top: 14px; box-shadow: none; }
+  .done-cards { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; margin-top: 14px; }
+  /* K4/K5 keep sheet */
+  .keep-quote { margin: 8px 0 14px; padding: 10px 14px; border-left: 3px solid var(--accent2); background: var(--accent-light); border-radius: 0 var(--radius-sm) var(--radius-sm) 0; font-style: italic; color: var(--text2); display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; }
+  .keep-list { display: flex; flex-direction: column; }
+  .keep-row { display: flex; align-items: center; gap: 12px; min-height: 52px; padding: 6px 4px; border: none; border-bottom: 1px solid var(--border-soft); background: none; color: var(--text); font-family: var(--serif); font-size: 1rem; text-align: left; cursor: pointer; }
+  .keep-row .cr-mark { flex: none; width: 34px; height: 34px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--cat, var(--accent)); background: color-mix(in srgb, var(--cat, var(--accent)) 12%, var(--surface)); }
+  .keep-row .cr-mark .ico { width: 17px; height: 17px; }
+  .keep-name { flex: 1; min-width: 0; }
+  .keep-linked { color: var(--text3); display: flex; } .keep-linked .ico { width: 14px; height: 14px; }
+  .keep-go { color: var(--accent); font-size: 1.1rem; }
+  .keep-new { color: var(--accent); }
+  .bb-anchor { position: absolute; top: 8px; right: 44px; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; background: none; border: none; color: var(--text3); cursor: pointer; }
+  .bb-anchor .ico { width: 17px; height: 17px; }
+  .bb-preview .ref { padding-right: 76px; }
+  /* K9 global search */
+  .hdr-search { right: auto; left: 12px; display: flex; }
+  body.in-session .hdr-search { display: none; }
+  .gs-title { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+  .gs-title .ico { width: 18px; height: 18px; color: var(--accent); }
+  #gs-results { margin-top: 10px; min-height: 40vh; }
+  .gs-group { margin-top: 12px; }
+  .gs-group-h { display: flex; align-items: center; gap: 6px; font-family: var(--sans); font-size: .72rem; font-weight: 600; letter-spacing: .05em; text-transform: uppercase; color: var(--accent); margin-bottom: 4px; }
+  .gs-group-h .ico { width: 13px; height: 13px; }
+  .gs-row { display: flex; flex-direction: column; align-items: flex-start; gap: 2px; width: 100%; padding: 10px 2px; border: none; border-bottom: 1px solid var(--border-soft); background: none; text-align: left; cursor: pointer; color: var(--text); font-family: var(--serif); }
+  .gs-head { font-family: var(--sans); font-size: .76rem; color: var(--text3); }
+  .gs-snip { font-size: .95rem; line-height: 1.5; }
+  .gs-snip mark { background: color-mix(in srgb, var(--accent2) 30%, transparent); color: inherit; border-radius: 2px; }
+  .rf-band .streak-day { background: none; border: none; padding: 4px 2px; cursor: pointer; font: inherit; color: inherit; min-width: 32px; }
+  .sv-carry-more { margin-top: 6px; }
 </style>
 </head>
 <body>
@@ -2360,6 +2409,7 @@
   <h1>✦ Prayer Journal</h1>
   <p>Story Cards &amp; Guided Prayer</p>
   <button class="hdr-bible" id="bible-fab-btn" aria-label="Open Bible" title="Bible" onclick="openBibleBrowser()"><span data-ico="book"></span></button>
+  <button class="hdr-bible hdr-search" id="hdr-search-btn" aria-label="Search everything" title="Search" onclick="openGlobalSearch()"><span data-ico="search"></span></button>
 </header>
 <div id="session-bar" class="session-bar" role="toolbar" aria-label="Session">
   <button class="sb-btn" id="sb-exit" aria-label="Save and exit" title="Save &amp; exit" onclick="sessionExit()"><span data-ico="close"></span></button>
@@ -2470,6 +2520,10 @@
     <details class="about-block reflect-block">
       <summary><h3><span data-ico="sparkle"></span>Heart Needs Over Time</h3></summary>
       <div id="heart-need-freq"></div>
+    </details>
+    <details class="about-block reflect-block">
+      <summary><h3><span data-ico="swirl"></span>Feelings Over Time</h3></summary>
+      <div id="feeling-freq"></div>
     </details>
     <details class="about-block reflect-block">
       <summary><h3><span data-ico="ear"></span>What You've Been Hearing</h3></summary>
@@ -2630,6 +2684,18 @@
   <div class="modal"><div class="modal-handle"></div><div id="link-cards-content"></div></div>
 </div>
 
+<div class="modal-bg" id="modal-search">
+  <div class="modal"><div class="modal-handle"></div>
+    <h2 class="gs-title"><span data-ico="search"></span>Search</h2>
+    <input type="text" id="gs-input" class="pl-search-input" enterkeyhint="search" placeholder="Cards, notes, sessions, lines…" aria-label="Search everything" oninput="globalSearchRender()">
+    <div id="gs-results"></div>
+  </div>
+</div>
+
+<div class="modal-bg" id="modal-keep">
+  <div class="modal"><div class="modal-handle"></div><div id="keep-content"></div></div>
+</div>
+
 <div class="modal-bg" id="modal-scripture">
   <div class="modal" style="max-width:520px">
     <div class="modal-handle"></div>
@@ -2753,7 +2819,7 @@ const ICON = {
   scroll:   _svg('<path d="M6.6 3.6h11a2 2 0 0 1 2 2v13a2 2 0 0 1-2 2h-11"/><path d="M6.6 3.6a2 2 0 0 0-2 2v2.2h3.4"/><path d="M6.6 20.6a2 2 0 0 0 2-2V7.8"/><path d="M11 8.6h5M11 12.2h5M11 15.8h3"/>'),
   repeat:   _svg('<path d="M4 9.4a5 5 0 0 1 5-5h9M20 14.6a5 5 0 0 1-5 5H6"/><path d="M15.4 1.8L18.4 4.4l-3 2.6M8.6 22.2L5.6 19.6l3-2.6"/>'),
   pin:      _svg('<path d="M12 21.2s6.4-6.1 6.4-10.6a6.4 6.4 0 1 0-12.8 0C5.6 15.1 12 21.2 12 21.2z"/><circle cx="12" cy="10.4" r="2.4"/>'),
-  dove:     _svg('<path d="M3.4 13.8c3.2.6 5.6-.4 7.4-2.4 1.8-2 2.6-4.4 5.2-5.3 2-.7 3.8-.1 4.6 1.4.7 1.4.3 3-1 3.8"/><path d="M19.6 11.3c.5 3.2-1 6-3.8 7.6-2.9 1.6-6.4 1.4-9-.6"/><path d="M10.8 11.4c1.9.9 3 2.7 3.1 5.1"/><circle cx="18.2" cy="7.9" r=".75" fill="currentColor" stroke="none"/><path d="M20.8 8.2l1.9-.7"/>'),
+  dove:     _svg('<path d="M12.6 12.2C11.4 8.6 8.6 5.8 4.4 4.6c.6 4 3.2 6.8 7 8"/><path d="M13.4 11.8c.4-3.8 2.2-6.6 5.2-8 .2 3.6-1.4 6.6-4 8.6"/><path d="M6.6 6.8c1.5 1.3 2.6 2.8 3.4 4.6M17.4 5.6c-1.2 1.6-2 3.3-2.4 5.3" opacity=".6"/><path d="M3 15.4c2.4-.2 4.6-1.2 6.6-2.2 2.6-1.2 5.2-1.8 7.6-1.6 1.2.1 2.2-.4 2.8-1.2.4-.6 1.2-.6 1.6-.2l1.2.4-1.2.4c-.2 1.6-1.2 2.8-2.8 3.6-2.4 1.2-5.4 1.8-8.4 1.6-2.4-.2-4.8-.4-7.4-.8z"/><path d="M3 15.4l-1.8-1.6M3 15.4l-2 .4M3 15.4l-1.4 1.8"/><circle cx="20.6" cy="10.7" r=".5" fill="currentColor" stroke="none"/>'),
   // An oil lamp with its flame at the spout.
   lamp:     _svg('<path d="M6 15.2c0-2.2 3.2-3.6 7.4-3.6s7.4 1.4 7.4 3.6-3.2 3-7.4 3S6 17.4 6 15.2z"/><path d="M7.4 13.6L2.8 12.4l3.6 3.6"/><path d="M20.6 14c1.6-.6 2.4 1.9.6 2.6"/><path d="M10.8 18.1l-.6 2h6.4l-.6-2"/><path d="M12.4 11.7c0-.8.5-1.3 1-1.3s1 .5 1 1.3" opacity=".8"/><path d="M2.8 11.2c-1-1.2-.9-2.6.2-3.8.2 1.1 1.3 1.7 1.3 2.8a1.2 1.2 0 0 1-1.5 1z" fill="currentColor" stroke="none"/>'),
   ear:      _svg('<path d="M8.2 18.6c.6 1.2 1.9 1.9 3.2 1.7 1.8-.3 2.4-1.8 2.8-3.2.4-1.2 1.2-2 2-3 1-1.2 1.6-2.6 1.6-4.2A5.8 5.8 0 0 0 12 4.1a5.8 5.8 0 0 0-5.8 5.8"/><path d="M9.2 10.1a2.8 2.8 0 0 1 5.6 0c0 1.2-.6 1.9-1.3 2.6"/><path d="M3.4 8.2c-.6 1.2-.6 2.6 0 3.8M1.8 6.6c-1.2 2.4-1.2 5.2 0 7" opacity=".7"/>'),
@@ -4860,7 +4926,7 @@ function bbVerseViewHTML(){
     `<div class="bb-verses">${rows}</div>` +
     // Preview and actions ride in a dock pinned to the sheet's foot, so the verse
     // list keeps most of the height and the actions never scroll away.
-    `<div class="bb-dock">${body}<div class="bb-actions">${toggle}${copyBtn}${addBtn}</div></div>` +
+    `<div class="bb-dock">${body}${has ? `<div class="bb-actions">${toggle}${copyBtn}${addBtn}</div>` : ''}</div>` +
     `</div>`;
 }
 // Move to the adjacent chapter, crossing into the neighbouring book at the edges
@@ -4951,6 +5017,7 @@ function bbPreviewHTML(){
     : `<span class="bb-preview-count">${runs} verse${runs===1?'':'s'} selected</span>`;
   return `<div class="bb-preview">` +
     `<button class="bb-star${on?' on':''}" onclick="bbToggleBookmark()" aria-label="${label}" title="${label}">${on?'★':'☆'}</button>` +
+    `<button class="bb-anchor" onclick="bbAnchorToCard()" aria-label="Use as a story card’s Scripture anchor" title="Use as a story card’s Scripture anchor">${ICON.cards}</button>` +
     `<span class="ref">${esc(bbRefString())}</span>${body}</div>`;
 }
 function bbInsertString(){
@@ -5175,12 +5242,61 @@ function helperRow(targetId, opts){
   if(o.lib)     items.push(`<button type="button" class="fh-link" onclick="openPrayerLibrary('${o.lib}','${targetId}')">${ICON.book}<span class="fh-txt">Written prayer</span></button>`);
   if(o.cryOut)  items.push(`<button type="button" class="fh-link" onclick="fhToggle(this,'cry')">${ICON.breath}<span class="fh-txt">Dry today?</span></button>`);
   if(o.cards)   items.push(`<button type="button" class="fh-link" onclick="openCardsWalkthrough()">${ICON.cards}<span class="fh-txt">Story cards</span></button>`);
+  if(o.keep)    items.push(`<button type="button" class="fh-link" onclick="openKeepSheet('${targetId}')">${ICON.note}<span class="fh-txt">Keep with a card</span></button>`);
   if(!items.length) return '';
   return `<div class="fh-wrap" data-target="${esc(targetId)}">
     <div class="fh-row">${items.join('')}</div>
     ${o.chips ? `<div class="fh-panel" data-panel="chips" hidden>${o.chips}</div>` : ''}
     ${o.cryOut ? `<div class="fh-panel" data-panel="cry" hidden>${cryOutPanel(targetId)}</div>` : ''}
   </div>`;
+}
+// K4/K5: what was written (a Listen entry, an Ask) can be kept as a dated note on a
+// story card — the session's linked cards first — or begin a new card with it.
+let _keepText = '', _newCardSeedNote = null, _keepMode = 'note', _newCardSeedAnchor = null;
+function bbAnchorToCard(){
+  if(!_bbSel.size) return;
+  _keepMode = 'anchor'; _keepText = `${bbRefString()} — ${bbSelectedText()}`;
+  keepSheetRender(`${ICON.cards} Scripture anchor`);
+}
+function openKeepSheet(targetId){
+  const ta = document.getElementById(targetId); const t = (ta?.value || '').trim();
+  if(!t){ ta?.focus(); showToast('Write something first'); return; }
+  _keepText = t; _keepMode = 'note';
+  keepSheetRender(`${ICON.note} Keep with a card`);
+}
+function keepSheetRender(title){
+  const t = _keepText;
+  const all = loadCards().filter(c => !c.answered);
+  const linked = (plSession?.linkedCards || []);
+  all.sort((a,b) => (linked.includes(b.id) - linked.includes(a.id)));
+  document.getElementById('keep-content').innerHTML = `
+    <h2>${title}</h2>
+    <div class="keep-quote">${esc(t)}</div>
+    <div class="keep-list">${all.map(c => { const ck = CAT_ICON[c.category] ? c.category : 'other';
+      return `<button class="keep-row" style="--cat:${CAT_COLOR[ck]}" onclick="keepToCard('${c.id}')"><span class="cr-mark">${ICON[CAT_ICON[ck]]}</span><span class="keep-name">${esc(c.person)}</span>${linked.includes(c.id) ? `<span class="keep-linked">${ICON.pin}</span>` : ''}<span class="keep-go">＋</span></button>`; }).join('')}
+      <button class="keep-row keep-new" onclick="keepNewCard()"><span class="cr-mark">＋</span><span class="keep-name">New Prayer Card</span></button>
+    </div>`;
+  openModal('modal-keep');
+}
+async function keepToCard(id){
+  const cards = loadCards(); const c = cards.find(x => x.id === id); if(!c) return;
+  if(_keepMode === 'anchor'){
+    if((c.scripture||'').trim() && c.scripture.trim() !== _keepText && !(await uiConfirm(`Replace the Scripture anchor on ${c.person}?`, { okText:'Replace' }))) return;
+    c.scripture = _keepText; saveCards(cards);
+    closeModal('modal-keep'); haptic(15); showToast('✓ ' + c.person);
+    if(currentView === 'cards') renderCards();
+    return;
+  }
+  c.notes = c.notes || []; c.notes.push({ date: today(), text: _keepText }); saveCards(cards);
+  closeModal('modal-keep'); haptic(15); showToast('✓ Added to ' + c.person);
+  if(currentView === 'cards') renderCards();
+}
+function keepNewCard(){
+  const anchor = _keepMode === 'anchor';
+  if(!anchor) _newCardSeedNote = _keepText;
+  const t = _keepText; closeModal('modal-keep');
+  if(anchor) closeModal('modal-bible');
+  setTimeout(() => { openNewCard(); if(anchor){ const f = document.getElementById('f-scripture'); if(f){ f.value = t; autoGrow && autoGrow(f); } } }, 220);
 }
 function fhToggle(btn, which){
   const wrap = btn.closest('.fh-wrap'); if(!wrap) return;
@@ -6414,7 +6530,7 @@ function showView(name){
   if(name==='cards'){ fab.style.display='flex'; fab.onclick=openNewCard; renderCards(); }
   if(name==='daily') renderDailyPrayer();
   if(name==='pl') renderPL();
-  if(name==='reflect'){ _heatmapSelectedKey = null; renderReflectBand(); renderStats(); renderCalendarHeatmap(); renderAnsweredPrayers(); renderHeartNeedFrequency(); renderWordFrequency(); renderReview(); applyTheme(); applyTextSize(); populateObsidianFields(); const t=document.getElementById('bible-fab-toggle'); if(t) t.checked=bibleFabEnabled(); }
+  if(name==='reflect'){ _heatmapSelectedKey = null; renderReflectBand(); renderStats(); renderCalendarHeatmap(); renderAnsweredPrayers(); renderHeartNeedFrequency(); renderFeelingFrequency(); renderWordFrequency(); renderReview(); applyTheme(); applyTextSize(); populateObsidianFields(); const t=document.getElementById('bible-fab-toggle'); if(t) t.checked=bibleFabEnabled(); }
   if(name==='guide'){ renderInstallBlock(); }
   if(name==='reflect'||name==='guide'){ const h=document.getElementById(name+'-hero'); if(h && !h.innerHTML) h.innerHTML=pageHeroHTML(name==='reflect'?'Reflect':'Guide', name); }
   syncFabPadding();   // after both buttons have settled for this view
@@ -6580,7 +6696,8 @@ function saveCard(){
     perspAttr:document.getElementById('f-persp-attr').value.trim(),
     perspTrust:document.getElementById('f-persp-trust').value.trim() };
   if(editingCardId){ const i=cards.findIndex(c=>c.id===editingCardId); if(i>-1) Object.assign(cards[i],data); }
-  else cards.push({ id:genId(),...data,dateStarted:today(),answered:false,notes:[] });
+  else { cards.push({ id:genId(),...data,dateStarted:today(),answered:false,notes: _newCardSeedNote ? [{date:today(), text:_newCardSeedNote}] : [] }); }
+  _newCardSeedNote = null;
   saveCards(cards); closeModal('modal-new'); renderCards(); refreshWalkCard();
   showToast(editingCardId?'Card updated':'Card added ✓');
 }
@@ -6837,7 +6954,7 @@ function carryCardHTML(){
   // 1 — a line for today: show it, and let the day's thoughts gather beneath it.
   if(c.line){
     return `<div class="carry-card">${head('Today')}
-      ${(()=>{ const lp=carryLineParts(c.line); return `<div class="carry-line">${esc(lp.text)}</div>${carryRefHTML(c.passage, lp.ref)}`; })()}
+      ${(()=>{ const lp=carryLineParts(c.line); return `<div class="carry-line">${esc(lp.text)}</div><div class="carry-refrow">${carryRefHTML(c.passage, lp.ref)}${carrySourceHTML(c.key)}</div>`; })()}
       ${carryNotesHTML(c, true)}
       <div class="carry-add"><input id="carry-note-input" placeholder="Add a thought as the day goes…" aria-label="Add a thought" onkeydown="if(event.key==='Enter'){event.preventDefault();carryAddNote()}"><button onclick="carryAddNote()">Add</button></div>
       <div class="carry-links carry-more"><button class="carry-link" onclick="carrySitOpen()">Sit with it ›</button>${carryHistory().length ? `<button class="carry-link" onclick="carryHistOpen()">Earlier lines ›</button>` : ''}</div>
@@ -6863,6 +6980,13 @@ function carryCardHTML(){
         <button class="carry-link" onclick="carryChoose(true)">Choose a line</button>${carryHistory().length ? `<button class="carry-link" onclick="carryHistOpen()">Earlier lines ›</button>` : ''}</div>`}
       ${prev && !_carryChoosing ? `<div class="carry-passage" style="-webkit-line-clamp:2;font-size:.85rem">${esc(carryLineParts(prev.line).text)}</div>` : ''}
     </div>`;
+}
+// K2/K3: a day's line links back to the Daily session it was chosen in.
+function carryDaySession(key){ return loadDailySessions().find(s => sessionDateKey(s) === key && (s.steps?.meditation?.carry || s.steps?.meditation?.passage)) || null; }
+function carrySourceHTML(key){
+  const s = carryDaySession(key); if(!s) return '';
+  const plan = DP_PLANS[s.plan];
+  return `<button type="button" class="carry-from" onclick="event.stopPropagation();viewDailySession('${s.id}')" aria-label="Open the ${esc(plan?.title||'Daily Prayer')} session">${ICON[plan?.icon]||ICON.sun}${esc(plan?.title||'Daily Prayer')} ›</button>`;
 }
 function refreshCarryCards(){ document.querySelectorAll('.carry-slot').forEach(el => { el.innerHTML = carryCardHTML(); }); if(document.getElementById('modal-carry')?.classList.contains('open') && _carrySheet==='sit') carrySitRender(); }
 
@@ -6959,13 +7083,19 @@ function carryHistList(){
   const q = _carryHistQ.trim().toLowerCase();
   const list = carryHistory().filter(c => !q || (c.line+' '+c.notes.map(n=>n.text).join(' ')).toLowerCase().includes(q));
   const el = document.getElementById('carry-hist-list'); if(!el) return;
+  let lastMonth = '';
   el.innerHTML = list.length ? list.map(c => {
     const lp = carryLineParts(c.line); const d = new Date(c.key+'T12:00:00');
-    return `<div class="ch-day">
+    const mo = d.toLocaleDateString(undefined,{month:'long', year:'numeric'});
+    const mh = mo !== lastMonth ? `<div class="ch-month">${esc(mo)}</div>` : ''; lastMonth = mo;
+    return `${mh}<div class="ch-day">
+      <div class="ch-gutter" aria-hidden="true"><b>${d.getDate()}</b><span>${esc(d.toLocaleDateString(undefined,{weekday:'short'}))}</span></div>
+      <div class="ch-body">
       <div class="ch-date">${esc(d.toLocaleDateString(undefined,{weekday:'short', day:'numeric', month:'short', year: d.getFullYear()!==new Date().getFullYear()?'numeric':undefined}))}</div>
       ${lp.text ? `<div class="ch-line">${esc(lp.text)}</div>` : ''}
-      ${carryRefHTML(c.passage, lp.ref)}
+      <div class="carry-refrow">${carryRefHTML(c.passage, lp.ref)}${carrySourceHTML(c.key)}</div>
       ${c.notes.length ? `<details class="ch-notes"${(q||_chOpenKeys.has(c.key))?' open':''} ontoggle="this.open?_chOpenKeys.add('${c.key}'):_chOpenKeys.delete('${c.key}')"><summary>${c.notes.length} note${c.notes.length===1?'':'s'}</summary>${sheetNotesHTML(c)}</details>` : ''}
+      </div>
       <button class="ch-remove" onclick="carryRemoveDay('${c.key}')" aria-label="Remove this day’s line">${ICON.close}</button>
     </div>`; }).join('') : `<p class="cs-guide quiet">${q ? 'Nothing matches.' : 'Nothing here yet.'}</p>`;
 }
@@ -7884,17 +8014,24 @@ function renderDPStep(){
   refreshSilenceWidgets();
 }
 
+// D10: the Done screen points to today's line instead of drawing the whole card again.
+function carryDoneLinkHTML(){
+  const line = carryForDay(dateKey(new Date())).line;
+  if(!line) return '';
+  const p = carryLineParts(line);
+  return `<button type="button" class="carry-done-link" onclick="dpReturnHome()"><span class="cdl-k">${ORN.mark}Carry this with you</span><span class="cdl-v">${esc(p.text || line)}</span></button>`;
+}
 function renderDPDone(){
   const el = document.getElementById('dp-content');
   el.innerHTML = `
     <div class="pl-done-wrap">
-      ${emptyArt('dove', true)}
+      ${emptyArt(({morning:'sun', evening:'lamp', starter:'olive'})[(loadDailySessions()[0]||{}).plan]||'dove', true)}
       <div class="done-doves" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3 14c3 0 5-1 7-4 1-2 3-4 6-4 2 0 4 1 5 3-2 0-3 1-4 2 0 4-3 7-8 7-3 0-5-1-6-4z"/><path d="M10 10c-1-3-3-5-6-5 0 3 1 5 3 6"/></svg><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3 14c3 0 5-1 7-4 1-2 3-4 6-4 2 0 4 1 5 3-2 0-3 1-4 2 0 4-3 7-8 7-3 0-5-1-6-4z"/><path d="M10 10c-1-3-3-5-6-5 0 3 1 5 3 6"/></svg></div>
       <h2>Prayer Complete</h2>
       <p>You met with the Father today.<br>That is enough.</p>
-      <div class="pl-done-verse">“Come to Me, all who labor and are heavy laden, and I will give you rest. Take My yoke upon you, and learn from Me, for I am gentle and lowly in heart, and you will find rest for your souls.” — Matthew 11:28–29</div>
-      ${christAnchorBlock()}
-      <div class="carry-slot">${carryCardHTML()}</div>
+      <div class="done-panel"><div class="pl-done-verse">“Come to Me, all who labor and are heavy laden, and I will give you rest. Take My yoke upon you, and learn from Me, for I am gentle and lowly in heart, and you will find rest for your souls.” — Matthew 11:28–29</div>
+      ${christAnchorBlock()}</div>
+      ${carryDoneLinkHTML()}
       <button class="btn btn-primary" style="margin-top:18px" onclick="dpReturnHome()">← Back to Daily Prayer</button>
       <div class="done-links"><button onclick="showView('reflect')">Reflect →</button></div>
     </div>`;
@@ -7903,19 +8040,22 @@ function renderDPDone(){
 // ══════════ STORY-CARD WALKTHROUGH (modal — was the old Daily tab) ══════════
 let dailyIndex=0;
 // Pray one card now: open the walkthrough at that card.
+// U3: from a card's own page, "Pray these now" prays that one card only — the deck's
+// place for today is left where it was.
+let _walkOnly = null;
 function prayCardNow(id){
   const cards=loadCards().filter(c=>!c.answered); const i=cards.findIndex(c=>c.id===id); if(i<0) return;
-  safeSetItem('daily_'+new Date().toDateString(), JSON.stringify({idx:i, done:false}));
   closeModal('modal-detail');
-  setTimeout(openCardsWalkthrough, 220);
+  setTimeout(() => { openCardsWalkthrough(); _walkOnly = id; renderDaily(); }, 220);
 }
 function openCardsWalkthrough(){
-  _cardSide = 'front';
+  _cardSide = 'front'; _walkOnly = null;
   openModal('modal-cards-walkthrough');
   renderDaily();
 }
 function renderDaily(){
-  const cards=loadCards().filter(c=>!c.answered); const el=document.getElementById('daily-content');
+  let cards=loadCards().filter(c=>!c.answered); const el=document.getElementById('daily-content');
+  if(_walkOnly){ cards=cards.filter(c=>c.id===_walkOnly); if(cards.length){ dailyIndex=0; renderDailyCard(cards,0,null); return; } _walkOnly=null; cards=loadCards().filter(c=>!c.answered); }
   if(!cards.length){ el.innerHTML=`<div class="empty">${emptyArt('pray')}<h3>No active cards</h3><p>Add prayer cards to begin your daily practice.</p></div>`; return; }
   const todayKey='daily_'+new Date().toDateString();
   const prog=JSON.parse(localStorage.getItem(todayKey)||'{"idx":0,"done":false}');
@@ -8035,11 +8175,14 @@ function splitAnchor(raw){
   return { ref: '', text: raw };
 }
 function walkWeeklyLine(c){
+  const fmt = s0 => { const d = new Date(s0.dateISO || s0.date); return isNaN(d) ? (s0.date||'') : d.toLocaleDateString(undefined,{weekday:'short', day:'numeric', month:'short'}); };
   const ss = loadSessions().filter(s => (s.linkedCards||[]).includes(c.id));
-  if(!ss.length) return '';
-  const s0 = ss[0]; const d = new Date(s0.dateISO || s0.date);
-  const when = isNaN(d) ? (s0.date||'') : d.toLocaleDateString(undefined,{weekday:'short', day:'numeric', month:'short'});
-  return `<button class="fc-weekly" onclick="viewSession('${s0.id}')">${ICON.pen}Held in Weekly Deep · ${esc(when)}${ss.length>1?` <span>+${ss.length-1}</span>`:''}</button>`;
+  // K1: the Daily sessions this card was prayed in sit beside the Weekly ones.
+  const ds = loadDailySessions().filter(s => (s.prayedCards||[]).includes(c.id));
+  let out = '';
+  if(ss.length) out += `<button class="fc-weekly" onclick="viewSession('${ss[0].id}')">${ICON.pen}Held in Weekly Deep · ${esc(fmt(ss[0]))}${ss.length>1?` <span>+${ss.length-1}</span>`:''}</button>`;
+  if(ds.length) out += `<button class="fc-weekly" onclick="viewDailySession('${ds[0].id}')">${ICON[DP_PLANS[ds[0].plan]?.icon]||ICON.sun}Held in Daily Prayer · ${esc(fmt(ds[0]))}${ds.length>1?` <span>+${ds.length-1}</span>`:''}</button>`;
+  return out;
 }
 function walkNotesHTML(c){
   const notes = (c.notes||[]).slice(-2);
@@ -8167,6 +8310,7 @@ document.addEventListener('click', e => {
   document.addEventListener('pointercancel', e => { if(st && e.pointerId===st.id){ const s0=st; st=null; s0.card.style.transform=''; s0.rest.forEach(r=>r.style.opacity=''); } }, { passive:true });
 })();
 function dailyNav(newIdx){
+  if(_walkOnly) return;
   const cards=loadCards().filter(c=>!c.answered);
   const todayKey='daily_'+new Date().toDateString();
   safeSetItem(todayKey,JSON.stringify({idx:newIdx,done:false}));
@@ -8180,6 +8324,7 @@ function dailyNav(newIdx){
   document.querySelectorAll('#daily-content .persp-block, #daily-content .prayer-flow').forEach(el => el.classList.add('flick-fade'));
 }
 function dailyFinish(){
+  if(_walkOnly){ haptic(25); closeModal('modal-cards-walkthrough'); _walkOnly=null; return; }
   const todayKey='daily_'+new Date().toDateString();
   safeSetItem(todayKey,JSON.stringify({idx:0,done:true}));
   haptic(25);
@@ -8850,7 +8995,7 @@ function renderPLStep(el){
         // map cleanly to Henry's tables. Humble + Forgive deliberately skipped — no
         // direct match in Henry's categories.
         const PL_LIB_MAP = { come:'praise', confess:'confession', ask:'petition', follow:'concluding' };
-        return helperRow('pl-pray-area', { lib: PL_LIB_MAP[step.key], cryOut: true });
+        return helperRow('pl-pray-area', { lib: PL_LIB_MAP[step.key], cryOut: true, keep: step.key === 'ask' });
       })()}` : `
       <div class="pl-listen-block" style="background:${step.lbg};border-color:${step.lborder}">
         <div class="pl-listen-label" style="color:${step.sc}"><span>${ICON.ear}</span><span>Listen</span></div>
@@ -8858,7 +9003,7 @@ function renderPLStep(el){
         <div class="silence-widget"></div>
         <div class="pl-field-label" style="color:${step.sc}">What do you sense Him saying?</div>
         <textarea id="pl-listen-area" class="pl-textarea" placeholder="Jot down anything you hear, sense, or notice…">${escTa(saved.listen||'')}</textarea>
-        ${helperRow('pl-listen-area', { cryOut: true })}
+        ${helperRow('pl-listen-area', { cryOut: true, keep: true })}
       </div>
       ${(saved.prayer||'').trim() ? `<div class="dp-recall"><div class="dp-recall-label">${ICON.note}${esc(step.prayLabel)}</div><div class="dp-recall-body">${esc(saved.prayer)}</div></div>` : ''}`}
       <button class="pl-link-btn${linkedCards.length?' has-links':''}" onclick="openLinkCards()">${linkBtnLabel}</button>
@@ -8941,8 +9086,10 @@ function renderPLDone(el){
       <div class="done-doves" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3 14c3 0 5-1 7-4 1-2 3-4 6-4 2 0 4 1 5 3-2 0-3 1-4 2 0 4-3 7-8 7-3 0-5-1-6-4z"/><path d="M10 10c-1-3-3-5-6-5 0 3 1 5 3 6"/></svg><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3 14c3 0 5-1 7-4 1-2 3-4 6-4 2 0 4 1 5 3-2 0-3 1-4 2 0 4-3 7-8 7-3 0-5-1-6-4z"/><path d="M10 10c-1-3-3-5-6-5 0 3 1 5 3 6"/></svg></div>
       <h2>Session Complete</h2>
       <p>You have prepared your heart, drawn near, humbled yourself, asked, repented, forgiven, and committed to follow.<br><br>That is a faithful act of prayer.</p>
-      <div class="pl-done-verse">“The Lord is my strength and my shield; in him my heart trusts, and I am helped; my heart exults, and with my song I give thanks to him.” — Psalm 28:7</div>
-      ${christAnchorBlock()}
+      <div class="done-panel"><div class="pl-done-verse">“The Lord is my strength and my shield; in him my heart trusts, and I am helped; my heart exults, and with my song I give thanks to him.” — Psalm 28:7</div>
+      ${christAnchorBlock()}</div>
+      ${(()=>{ const last=loadSessions()[0]; const cs=(last?.linkedCards||[]).map(id=>loadCards().find(c=>c.id===id)).filter(Boolean);
+        return cs.length ? `<div class="done-cards">${cs.map(c=>`<button class="pl-linked-chip" onclick="openDetail('${c.id}')">${esc(c.person)} →</button>`).join('')}</div>` : ''; })()}
       <button class="btn btn-primary" style="margin-top:18px" onclick="plReturnHome()">← Back to Weekly Deep Time</button>
       <div class="done-links"><button onclick="showView('cards')">Story Cards →</button><button onclick="showView('reflect')">Reflect →</button></div>
     </div>`;
@@ -9117,7 +9264,7 @@ function viewDailySession(id){
       body += `<div class="sv-block"><div class="sv-label">Scriptural invocation</div><div class="sv-text"><strong><span class="scripture-ref" onclick="event.stopPropagation();lookupScripture('${iref}')">${esc(data.invocation)}</span></strong>${inv?.text ? ` — <em>${esc(inv.text)}</em>` : `<em class="verse-fill" data-ref="${esc(data.invocation)}" data-lead=" — "></em>`}</div></div>`;
     }
     if(step.key === 'approach' && data.emotions && data.emotions.length){
-      body += `<div class="sv-block"><div class="sv-label">Named feelings</div><div class="emo-chips-row" style="margin-top:4px">${data.emotions.map(e=>`<span class="emo-chip tint-chip" style="${idc(emotionColor(e))}">${esc(emotionLabel(e))}</span>`).join('')}</div></div>`;
+      body += `<div class="sv-block"><div class="sv-label">Named feelings</div><div class="emo-chips-row" style="margin-top:4px">${data.emotions.map(e=>`<button type="button" class="emo-chip tint-chip" style="${idc(emotionColor(e))}" onclick="openFeelingVerses('${esc(e.core||'')}','${esc(e.secondary||'').replace(/'/g,'&#39;')}','${esc(e.tertiary||'').replace(/'/g,'&#39;')}')">${esc(emotionLabel(e))}</button>`).join('')}</div></div>`;
     }
     if(step.passageField && data[step.passageField.key]){
       body += `<div class="sv-block"><div class="sv-label">${esc(step.passageField.label)}</div><div class="sv-text">${esc(data[step.passageField.key])}</div></div>`;
@@ -9147,7 +9294,8 @@ function viewDailySession(id){
   const carryHTML = (carryDayData.notes.length || (carryDayData.line && !ownCarry)) ? `<div class="sv-section">
       <div class="sv-head"><div class="sv-num" style="background:var(--accent2)">✦</div><div><div class="sv-title">Carried through the day</div></div></div>
       ${carryDayData.line ? `<div class="sv-block"><div class="sv-text"><em>${(()=>{ const lp=carryLineParts(carryDayData.line); return esc(lp.text)+(lp.ref?`</em> — ${esc(lp.ref)}<em>`:''); })()}</em></div></div>` : ''}
-      ${carryNotesHTML(carryDayData, false)}</div>` : '';
+      ${carryNotesHTML(carryDayData, false)}
+      <button type="button" class="carry-link sv-carry-more" onclick="carryHistOpen()">Earlier lines ›</button></div>` : '';
   const prayed = (s.prayedCards||[]).map(id=>loadCards().find(c=>c.id===id)).filter(Boolean);
   const prayedHTML = prayed.length ? `<div class="sv-section"><div class="sv-head"><div class="sv-num" style="background:var(--accent2)">${ICON.cards}</div><div><div class="sv-title">Story cards</div></div></div>
       <div class="pl-linked-chips">${prayed.map(c=>`<span class="pl-linked-chip" onclick="openDetail('${c.id}')">${esc(c.person)}</span>`).join('')}</div></div>` : '';
@@ -9184,13 +9332,13 @@ function viewSession(id){
       const heartNeedsBlock=heartNeeds.length?`
         <div class="sv-block">
           <div class="sv-label">Heart needs that resonated</div>
-          <div class="pl-needs-chips" style="margin-top:4px">${heartNeeds.map(k=>{ const n=findHeartNeed(k); return n?`<span class="pl-need-chip tint-chip" style="${idc(n.color)}">${esc(n.title)}</span>`:''; }).join('')}</div>
+          <div class="pl-needs-chips" style="margin-top:4px">${heartNeeds.map(k=>{ const n=findHeartNeed(k); return n?`<button type="button" class="pl-need-chip tint-chip" style="${idc(n.color)}" onclick="openHeartChart(false,'${n.key}')">${esc(n.title)}</button>`:''; }).join('')}</div>
         </div>`:'';
       const emotions=data.emotions||[];
       const emotionsBlock=emotions.length?`
         <div class="sv-block">
           <div class="sv-label">Named feelings</div>
-          <div class="emo-chips-row" style="margin-top:4px">${emotions.map(e=>`<span class="emo-chip tint-chip" style="${idc(emotionColor(e))}">${esc(emotionLabel(e))}</span>`).join('')}</div>
+          <div class="emo-chips-row" style="margin-top:4px">${emotions.map(e=>`<button type="button" class="emo-chip tint-chip" style="${idc(emotionColor(e))}" onclick="openFeelingVerses('${esc(e.core||'')}','${esc(e.secondary||'').replace(/'/g,'&#39;')}','${esc(e.tertiary||'').replace(/'/g,'&#39;')}')">${esc(emotionLabel(e))}</button>`).join('')}</div>
         </div>`:'';
       return `<div class="sv-section" style="--svc:${step.sc}">
         <div class="sv-head"><div class="sv-num" style="background:${step.sc}">${step.n}</div>
@@ -10458,6 +10606,58 @@ function renderAnsweredPrayers(){
 // ══════════ HEART-NEED FREQUENCY (P4 #14) ══════════
 let _needOpen = null;
 function toggleNeedSessions(key){ _needOpen = _needOpen===key ? null : key; renderHeartNeedFrequency(); }
+// K7: the feelings named across Daily (Approach) and Weekly (Prepare), counted per
+// core feeling and drawn like the heart needs. Each bar opens Scripture for it.
+function renderFeelingFrequency(){
+  const target = document.getElementById('feeling-freq'); if(!target) return;
+  const counts = {}; let n = 0;
+  const add = list => { if(!(list||[]).length) return; n++; list.forEach(e => { if(e && e.core) counts[e.core] = (counts[e.core]||0) + 1; }); };
+  loadSessions().forEach(s => add(s.steps?.prepare?.emotions));
+  loadDailySessions().forEach(s => add(s.steps?.approach?.emotions));
+  const entries = Object.keys(EMOTION_WHEEL).map(k => ({ k, c: counts[k]||0, color: EMOTION_WHEEL[k].color })).filter(x => x.c).sort((a,b) => b.c - a.c);
+  if(!entries.length){ target.innerHTML = `<p style="font-size:.85rem;color:var(--text3);font-style:italic;line-height:1.65">Name what you’re feeling on Daily Prayer’s first step or in Weekly Deep’s Prepare, and it will gather here. Notice what's there. Notice what's <em>not</em>.</p>`; return; }
+  const max = entries[0].c;
+  target.innerHTML = `<p class="hn-freq-intro">Notice what's there. Notice what's <em>not</em>.</p>` + entries.map(x => {
+    const pct = Math.max(8, x.c / max * 100), inside = pct >= 18, pos = inside ? `left:calc(${pct}% - 24px)` : `left:calc(${pct}% + 9px)`;
+    return `<div class="hn-freq-row" role="button" tabindex="0" onclick="openFeelingVerses('${x.k}')" onkeydown="if(event.key==='Enter'){openFeelingVerses('${x.k}')}" aria-label="${esc(x.k)}: Scripture for this feeling">
+      <div class="hn-freq-label idc" style="${idc(x.color)}"><span>${esc(x.k)}</span></div>
+      <div class="hn-freq-bar-wrap"><div class="hn-freq-bar idc-bg" style="width:${pct}%;${idc(x.color)}"></div><span class="hn-freq-count${inside?' inside':''}" style="${pos}">${x.c}</span></div>
+    </div>`; }).join('');
+}
+// K16: from a named feeling (a chip or a bar) to the Bible's Scripture by feeling.
+function openFeelingVerses(core, sec, ter){
+  if(!EMOTION_WHEEL[core]) return;
+  openBibleBrowser();
+  const subOK = sec && EMOTION_SUB_VERSES[core]?.[sec];
+  const terOK = subOK && ter && EMOTION_TER_VERSES[core]?.[sec]?.[ter];
+  _bbFeel = { core, sec: subOK ? sec : '', ter: terOK ? ter : null };
+  renderBibleBrowser();
+}
+// K9: one search across everything — story cards and their notes, Daily and Weekly
+// sessions, and the lines carried through the day.
+function openGlobalSearch(){
+  openModal('modal-search');
+  const i = document.getElementById('gs-input'); if(i){ i.value = ''; globalSearchRender(); setTimeout(() => i.focus(), 60); }
+}
+function globalSearchRender(){
+  const q = (document.getElementById('gs-input')?.value || '').trim(); const el = document.getElementById('gs-results'); if(!el) return;
+  if(q.length < 2){ el.innerHTML = ''; return; }
+  const ql = q.toLowerCase(), row = (onclick, head, snip) => `<button type="button" class="gs-row" onclick="${onclick}"><span class="gs-head">${head}</span><span class="gs-snip">${highlightMatch(snip, q)}</span></button>`;
+  const groups = [];
+  const cards = loadCards().map(c => {
+    const fields = [c.person, c.scripture, c.askHeart, c.askCirc, c.perspAttr, c.perspTrust, ...(c.notes||[]).map(n => n.text)].filter(Boolean);
+    const hit = fields.find(f => f.toLowerCase().includes(ql)); return hit ? { c, hit } : null; }).filter(Boolean);
+  if(cards.length) groups.push([`${ICON.cards}Story Cards`, cards.map(({c,hit}) => row(`closeModal('modal-search');setTimeout(()=>openDetail('${c.id}'),200)`, esc(c.person), makeSnippet(hit, q, 50))).join('')]);
+  const ds = loadDailySessions().map(s => ({ s, m: dpMatchesQuery(s, q) })).filter(x => x.m);
+  if(ds.length) groups.push([`${ICON.sun}Daily Prayer`, ds.map(({s,m}) => row(`viewDailySession('${s.id}')`, `${esc(DP_PLANS[s.plan]?.title||'Daily Prayer')} · ${esc(s.date)}`, m.snippet)).join('')]);
+  const ws = loadSessions().map(s => ({ s, m: plMatchesQuery(s, q) })).filter(x => x.m);
+  if(ws.length) groups.push([`${ICON.pen}Weekly Deep Time`, ws.map(({s,m}) => row(`viewSession('${s.id}')`, esc(s.date), m.snippet)).join('')]);
+  const ls = carryHistory().filter(c => (c.line+' '+c.notes.map(n=>n.text).join(' ')).toLowerCase().includes(ql));
+  if(ls.length) groups.push([`${ICON.sparkle}Carry this with you`, ls.map(c => { const d = new Date(c.key+'T12:00:00'); const hit = [c.line, ...c.notes.map(n=>n.text)].find(t => (t||'').toLowerCase().includes(ql)) || c.line;
+    return row(`_carryHistQ=${JSON.stringify(q).replace(/"/g,'&quot;')};carryHistOpen();setTimeout(()=>{const i=document.querySelector('.cs-search');if(i){i.value=_carryHistQ;carryHistList();}},50)`, esc(d.toLocaleDateString(undefined,{weekday:'short',day:'numeric',month:'short'})), makeSnippet(carryLineParts(hit).text || hit, q, 50)); }).join('')]);
+  el.innerHTML = groups.length ? groups.map(([h, rows]) => `<div class="gs-group"><div class="gs-group-h">${h}</div>${rows}</div>`).join('')
+    : `<div class="empty" style="padding:18px 8px">${emptyArt('search')}<p style="font-size:.85rem">No matches for “${esc(q)}”</p></div>`;
+}
 function renderHeartNeedFrequency(){
   const target = document.getElementById('heart-need-freq');
   if(!target) return;
@@ -10525,7 +10725,7 @@ function renderReflectBand(){
   const el=document.getElementById('reflect-band'); if(!el) return;
   const cards=loadCards(), sessions=loadSessions(), daily=loadDailySessions();
   const streaks=JSON.parse(localStorage.getItem('streak_days')||'[]');
-  const days=[]; for(let i=6;i>=0;i--){ const d=new Date(); d.setDate(d.getDate()-i); days.push({label:d.toLocaleDateString('en-US',{weekday:'narrow'}),done:streaks.includes(d.toDateString())}); }
+  const days=[]; for(let i=6;i>=0;i--){ const d=new Date(); d.setDate(d.getDate()-i); days.push({label:d.toLocaleDateString('en-US',{weekday:'narrow'}),done:streaks.includes(d.toDateString()),key:dayKeyForDate(d),full:d.toLocaleDateString(undefined,{weekday:'long',day:'numeric',month:'long'})}); }
   const counts=buildDayCountMap(), start=new Date(); start.setHours(0,0,0,0); start.setDate(start.getDate()-start.getDay()-77);
   let cells=''; for(let i=0;i<84;i++){ const d=new Date(start); d.setDate(start.getDate()+i); const n=d>new Date()?0:(counts[dayKeyForDate(d)]||0); cells+=`<i class="${n?'l'+Math.min(4,n):''}"></i>`; }
   const fig=(n,label,go)=>`<button class="rf-fig" onclick="${go}"><b>${n}</b><span>${label}</span></button>`;
@@ -10540,7 +10740,7 @@ function renderReflectBand(){
       ${fig(sessions.length,'weekly deep time session'+(sessions.length===1?'':'s'),"showView('pl')")}
     </div>
     <div class="rf-row">
-      <div class="streak-bar">${days.map(d=>`<div class="streak-day${d.done?' done':''}"><span class="streak-mark">${d.done?ORN.mark:'<span class="streak-ring"></span>'}</span><span class="streak-letter">${d.label}</span></div>`).join('')}</div>
+      <div class="streak-bar">${days.map(d=>`<button type="button" class="streak-day${d.done?' done':''}" onclick="openReflectDay('${d.key}')" aria-label="${esc(d.full)}"><span class="streak-mark">${d.done?ORN.mark:'<span class="streak-ring"></span>'}</span><span class="streak-letter">${d.label}</span></button>`).join('')}</div>
       <button class="rf-mini-wrap" onclick="openReflectBlock('calendar-heatmap')" aria-label="Year at a Glance"><span class="rf-mini">${cells}</span><span class="rf-mini-cap">12 weeks</span></button>
     </div>
   </div>`;
@@ -10558,6 +10758,10 @@ function searchWeeklyFor(word){
 function setSettingsPane(k){
   document.querySelectorAll('#rf-settings .set-seg button').forEach(b=>{ const on=b.dataset.pane===k; b.classList.toggle('on',on); b.setAttribute('aria-selected',on); });
   document.querySelectorAll('#rf-settings .set-pane').forEach(p=>{ p.hidden = p.dataset.pane!==k; });
+}
+function openReflectDay(key){
+  openReflectBlock('calendar-heatmap');
+  setTimeout(() => { if(typeof selectHeatmapDay === 'function' && _heatmapSelectedKey !== key) selectHeatmapDay(key); }, 60);
 }
 function openReflectBlock(id){
   const el=document.getElementById(id); const d=el && (el.matches('details')?el:el.closest('details')); if(!d) return;
