@@ -2641,12 +2641,17 @@
   #modal-focus-compose { inset: auto 0 auto 0; top: var(--vvt, 0px); height: var(--vvh, 100%); }
   #modal-focus-compose .modal { height: 100%; }
   #modal-focus-compose .focus-compose-textarea { min-height: min(34vh, calc(var(--vvh, 100vh) * .28)); }
-  .kb-up #modal-focus-compose .focus-passage-body, .kb-up #modal-focus-compose .focus-carry-body { max-height: calc(var(--vvh, 100vh) * .22); }
-  .kb-up #modal-focus-compose .modal { padding-top: 6px; padding-bottom: 8px; }
+  .kb-up #modal-focus-compose .focus-passage-body, .kb-up #modal-focus-compose .focus-carry-body { max-height: calc(var(--vvh, 100vh) * .2); }
+  .kb-up #modal-focus-compose .has-carry .focus-passage-body, .kb-up #modal-focus-compose .has-carry .focus-carry-body,
+  .kb-up #modal-focus-compose.has-carry .focus-passage-body { max-height: calc(var(--vvh, 100vh) * .12); }
+  /* A folded passage scrolls too while typing — the peek is a window, not a wall. */
+  .kb-up #modal-focus-compose .collapsed .focus-passage-body, .kb-up #modal-focus-compose .collapsed .focus-carry-body { overflow-y: auto; -webkit-mask-image: none; mask-image: none; }
+  .kb-up #modal-focus-compose .modal { padding-top: calc(6px + env(safe-area-inset-top)); padding-bottom: 8px; }
   .kb-up #modal-focus-compose .modal-handle { display: none; }
   .kb-up #modal-focus-compose .focus-pinned { margin-bottom: 6px; padding-bottom: 4px; }
   .kb-up #modal-focus-compose .focus-passage-head { margin-bottom: 2px; }
-  .kb-up #modal-focus-compose .focus-compose-heading { margin-bottom: 0; }
+  .kb-up #modal-focus-compose .focus-compose-heading { display: none; }   /* the question below names the field */
+  .kb-up #modal-focus-compose .focus-compose-textarea { min-height: calc(var(--vvh, 100vh) * .22); }
   .kb-up #modal-focus-compose .focus-compose-prompt { margin-bottom: 8px; }
   .kb-up #modal-focus-compose .focus-compose-actions { margin-top: 8px; }
   /* A8 more contrast when asked for */
@@ -5061,22 +5066,19 @@ function sessionExit(){
   const vv = window.visualViewport; if(!vv) return;
   // Height and position both: when the keyboard opens, iOS also scrolls the visible
   // area down to the field, so a sheet sized to the height alone ends up above it.
-  let kbUp = false, folded = [];
+  let kbUp = false;
   const set = () => { const r = document.documentElement.style;
     r.setProperty('--vvh', vv.height + 'px'); r.setProperty('--vvt', vv.offsetTop + 'px');
     const up = vv.height < document.documentElement.clientHeight - 120;   // the keyboard is open
     if(up === kbUp) return;
     kbUp = up; document.documentElement.classList.toggle('kb-up', up);
-    // While typing in focus mode, the pinned passage and earlier answers fold to
-    // their two-line peek so the writing box has the room; they unfold after.
-    if(!document.getElementById('modal-focus-compose')?.classList.contains('open')){ folded = []; return; }
-    if(up){
-      folded = [];
-      if(_focusPassageOpen && document.getElementById('focus-passage')){ toggleFocusPassage(); folded.push(toggleFocusPassage); }
-      if(_focusCarryOpen && document.getElementById('focus-carry')){ toggleFocusCarry(); folded.push(toggleFocusCarry); }
+    // While typing in focus mode the pinned passage stays open as a short box you
+    // can scroll with a finger (CSS under .kb-up), so the verse is never out of reach.
+    if(up && document.getElementById('modal-focus-compose')?.classList.contains('open')){
+      setTimeout(refreshFocusFades, 80);
       const ta = document.getElementById('focus-compose-textarea');
       if(ta && document.activeElement === ta) setTimeout(() => ta.scrollIntoView({ block:'nearest' }), 60);
-    } else { folded.forEach(f => f()); folded = []; }
+    }
   };
   set(); vv.addEventListener('resize', set); vv.addEventListener('scroll', set);
 })();
@@ -6677,9 +6679,9 @@ function focusCarryHTML(items, title){
 }
 // Show a bottom fade while a capped block still has content below the fold.
 function markScrollFade(el){
-  if(!el || el.dataset.fadeBound) return;
-  el.dataset.fadeBound = '1';
-  const upd = () => el.classList.toggle('has-more', el.scrollHeight - el.clientHeight - el.scrollTop > 4);
+  if(!el) return;
+  if(el._fadeUpd){ el._fadeUpd(); return; }               // already bound — re-measure (the box may have resized)
+  const upd = el._fadeUpd = () => el.classList.toggle('has-more', el.scrollHeight - el.clientHeight - el.scrollTop > 4);
   el.addEventListener('scroll', upd);
   upd();
 }
