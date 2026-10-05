@@ -2845,6 +2845,12 @@
   .ps-marks i.on { background: color-mix(in srgb, #417746 70%, var(--surface)); }
   [data-theme="dark"] .ps-marks i.on { background: #7fb487; }
   .ps-cell.ps-119.full { color: var(--text3); }
+
+  .pf-wrap { position: relative; }
+  .pf-row.has-text .pf-wrap .bb-field-btn { position: absolute; top: 6px; right: 6px; margin: 0; width: 36px; height: 36px; min-height: 36px; padding: 0; display: flex; align-items: center; justify-content: center; border-radius: 50%; background: color-mix(in srgb, var(--surface) 88%, transparent); z-index: 1; }
+  .pf-row.has-text .pf-wrap .bb-field-btn .ico { width: 17px; height: 17px; margin: 0; }
+  .pf-row.has-text .bfb-label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  .pf-row.has-text #dp-passage { padding-right: 46px; }
 </style>
 </head>
 <body>
@@ -5156,6 +5162,9 @@ function psalmTrackHTML(current){
   const chip = (current || '').trim() ? '' : `<button type="button" class="pt-chip" onclick="psalmUseNext()">${esc(n.label)} ›</button>`;
   return `<div class="psalm-track">${lastLine}<span class="pt-row">${chip}<button type="button" class="pt-map" onclick="openPsalter()">${ICON.lyre}Psalter ›</button></span></div>`;
 }
+// Once the passage field holds text, Insert from Bible shrinks to a book icon in
+// the field's corner; empty again, the full button returns.
+function pfSync(ta){ ta.closest('.pf-row')?.classList.toggle('has-text', !!ta.value.trim()); }
 function psalmTrackRefresh(){ const el = document.getElementById('psalm-track'), ta = document.getElementById('dp-passage'); if(el && ta) el.innerHTML = psalmTrackHTML(ta.value); }
 function psalmUseNext(){
   const ta = document.getElementById('dp-passage'); if(!ta) return;
@@ -8574,11 +8583,14 @@ function renderDPStep(){
   if(step.passageField && (unit.kind === 'all' || unit.kind === 'passage')){
     const pf = step.passageField;
     const isPsalm = step.key === 'psalm';
-    passageHTML = `<div class="dp-field-row">
+    const hasText = !!String(saved[pf.key]||'').trim();
+    passageHTML = `<div class="dp-field-row pf-row${hasText ? ' has-text' : ''}">
         <div class="pl-field-label" style="color:${step.color}">${esc(pf.label)}</div>
         ${isPsalm ? `<div id="psalm-track">${psalmTrackHTML(saved[pf.key])}</div>` : ''}
-        <textarea id="dp-passage" class="pl-textarea" placeholder="${esc(pf.placeholder)}" data-focus-prompt="The verse or passage you're meditating on — write or paste it here."${isPsalm ? ' oninput="psalmTrackRefresh()"' : ''}>${escTa(saved[pf.key]||'')}</textarea>
-        <button type="button" class="bb-field-btn" onclick="${isPsalm ? 'psalmOpenBible()' : "openBibleBrowser('dp-passage')"}">${ICON.book}Insert from Bible</button>
+        <div class="pf-wrap">
+        <textarea id="dp-passage" class="pl-textarea" placeholder="${esc(pf.placeholder)}" data-focus-prompt="The verse or passage you're meditating on — write or paste it here." oninput="pfSync(this)${isPsalm ? ';psalmTrackRefresh()' : ''}">${escTa(saved[pf.key]||'')}</textarea>
+        <button type="button" class="bb-field-btn" aria-label="Insert from Bible" title="Insert from Bible" onclick="${isPsalm ? 'psalmOpenBible()' : "openBibleBrowser('dp-passage')"}">${ICON.book}<span class="bfb-label">Insert from Bible</span></button>
+        </div>
       </div>`;
   }
 
