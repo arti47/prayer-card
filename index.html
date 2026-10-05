@@ -2202,6 +2202,19 @@
   .fc-face { padding: 20px 20px 14px; }
   .fc-back .prayer-steps { padding: .2em 1em; }
   .fc-back .fc-top { margin-bottom: .7em; }
+
+  /* Story card back, all for the text: run-in labels (no line of their own), no
+     inner box, no foot hint; the sheet header is just the nav row and the ✕. */
+  .fc-back .prayer-steps { background: none; border: none; padding: 0; margin: 0; }
+  .fc-back .prayer-step { padding: .55em 0; }
+  .fc-back .step-runin { font-family: var(--sans); font-size: .62em; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--accent); margin-right: .55em; vertical-align: .12em; white-space: nowrap; }
+  .fc-back .fc-top { margin-bottom: .2em; }
+  .fc-back .fc-note { height: 30px; padding: 0 8px; }
+  .fc-face { padding: 16px 18px 12px; }
+  .walk-nav { margin: 0 0 8px; min-height: 40px; padding: 0 44px; }
+  .wk-close { top: 26px; }
+  #modal-cards-walkthrough .modal-handle { margin-bottom: 6px; }
+  .flip-card { height: clamp(320px, calc(92dvh - 112px), 800px) !important; }
 </style>
 </head>
 <body>
@@ -2544,7 +2557,6 @@
   <div class="modal">
     <div class="modal-handle"></div>
     <button class="wk-close" onclick="closeModal('modal-cards-walkthrough')" aria-label="Close"><span data-ico="close"></span></button>
-    <div class="daily-header"><h2>Pray these now</h2></div>
     <div id="daily-content"></div>
   </div>
 </div>
@@ -7636,9 +7648,8 @@ function renderDailyCard(cards,idx,todayKey){
         <div class="fc-face fc-back" aria-hidden="${_cardSide!=='back'}">
           <div class="fc-top"><span class="fc-back-name">${esc(c.person)}</span>${noteBtn}</div>
           <div class="prayer-flow">
-            <div class="prayer-steps">${steps.map(s=>`<div class="prayer-step"><div class="step-label">${s.label}</div><div class="step-prompt">${s.prompt}</div></div>`).join('')}</div>
+            <div class="prayer-steps">${steps.map(s=>`<div class="prayer-step"><div class="step-prompt"><span class="step-runin">${s.label}</span>${s.prompt}</div></div>`).join('')}</div>
           </div>
-          <div class="fc-hint">Tap to turn back</div>
         </div>
       </div>
     </div></div>`;
