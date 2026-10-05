@@ -235,6 +235,15 @@ Measured with 10 cards / 40 Daily / 12 Weekly sessions at 390px: Story Cards 2,0
 - ✅ **Links** — cards prayed via "Pray story cards" inside a Daily session are recorded on `prayedCards`; the card detail lists those *Daily Prayer Sessions*, and the past Daily session lists the *Story cards* prayed; heart-need bars in Reflect open the Weekly sessions that named that need (`toggleNeedSessions`); Done screens link to today's line, Reflect and Story Cards.
 - ✅ Defects: ✏️ emoji on Edit Card; "Father, you are …." double stop in the walkthrough.
 
+### 🎨 Redesign pass 2 (2026-10-05)
+- ✅ **Past sessions as a journal page** — date block (`jpHeadHTML`: month band, day numeral, weekday · year), each step marked by a rule in its colour (`--svc`) instead of a box, reading-width text, Listen in a tinted block with the ear glyph.
+- ✅ **Category tiles** on the card form — eight tiles in category colours with the select's own wording (`#cat-tiles`, `pickCatTile`); the `<select>` stays (visually hidden) for saving.
+- ✅ **Emotion wheel is the first choice** — a 230px wheel, each core feeling named on its segment and tappable (`emotionWheelPickSVG`); the buttons remain below.
+- ✅ **Focus mode full screen** — paper-textured writing page, field filling the height, Cancel/Save pinned.
+- ✅ **Banner art** — *Pray these now* carries a thread with a knot per active card in its category colour; the Weekly banner a drawn arch with the seven step colours.
+- ✅ **Link** — tapping a word in *What You’ve Been Hearing* opens Weekly Deep with that word searched (`searchWeeklyFor`).
+- ✅ Defects: 🔔 on Listen (past view, re-pray context) and 🔄 on *Pray this again* / re-pray indicator → drawn glyphs.
+
 ### 🛠️ Infrastructure
 - ✅ localStorage persistence (`prayer_cards`, `pl_sessions`, `pl_draft`, `streak_days`, `daily_<date>`)
 - ✅ Storage failure handling — all writes go through `safeSetItem()` / `safeRemoveItem()` wrappers. Distinguishes `QuotaExceededError` (storage full) from `SecurityError` (private mode, Brave shields, etc.) and shows a specific toast for each. Toasts are rate-limited to once per 5 seconds so auto-save during a typing burst doesn't flood the user. On app start, `storageAvailable()` does a probe write/remove — if it fails, surfaces a "⚠ Your browser is blocking local storage" warning toast after 800ms.
@@ -730,6 +739,7 @@ If you're starting a new chat and the user asks for "what's next," check §6 —
 
 Newest first. Format: `YYYY-MM-DD — what changed`.
 
+- **2026-10-05** — **Redesign pass 2 (six rounds).** Past sessions as a journal page with a date block and step-colour rules; category tiles on the card form; a large tappable emotion wheel; full-screen focus mode; thread and arch art on the Story Cards and Weekly banners; word-cloud words open a Weekly search; last 🔔/🔄 interface emoji replaced. No content changed. Checked light + dark, 320–430px, Small–Large; regression suite 112 → 118, all passing.
 - **2026-10-05** — History on the home screens narrowed: **Daily Prayer shows this week only** (Sunday onward, heading *This week*); **Weekly Deep shows this month only** (heading *This month*). Everything older stays in Calendar and search, with a one-line note saying so (`historyPeriodStart`). Regression suite 111 → 112, all passing.
 - **2026-10-05** — **Redesign + linking pass (six rounds).** Card detail band + toolbar with *Pray these now*; Story Cards grouped by category; Daily sky banner; step header bands; walkthrough stack and colour dots; Reflect summary band with tappable figures and mini heatmap; illustrated Guide tiles with links to each tab; active-tab pill; doves on Done screens. Links: Daily sessions now record story cards prayed (`prayedCards`, previously never filled) and both sides show each other; heart-need bars open their sessions; Done screens link onward. No content changed. Checked 320–430px, Small–Large, light + dark; regression suite 102 → 111 checks, all passing.
 - **2026-10-05** — **Compact home screens.** Story Cards as one-line rows with the Scripture reference only and Answered folded; Daily plans as three tiles; Daily and Weekly history as one-line rows under *This week* / *Earlier*; banners down to date + title (their descriptions and “Why three plans?” moved to the Guide); “Before you begin” folded. Each home now fits about one screen (≈1,000px, was 1,600–2,060px). Checked at 320–430px, Small–Large, light + dark; regression suite 97 → 102 checks, all passing.

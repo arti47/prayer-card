@@ -485,6 +485,47 @@
   .emo-v-actions { display: flex; flex-wrap: wrap; gap: 4px 14px; margin-top: 4px; }
   .emo-v-btn { display: inline-flex; align-items: center; gap: 5px; background: none; border: none; padding: 8px 0; margin: -4px 0; font-family: var(--serif); font-size: .78rem; color: var(--accent); cursor: pointer; }
   .emo-v-btn .ico { width: 13px; height: 13px; }
+  /* ── Round 2 redesign ── */
+  /* Past sessions as a journal page */
+  .jp-head { display: flex; align-items: center; gap: 14px; margin: 2px 0 18px; padding-bottom: 14px; border-bottom: 1px solid var(--border-soft); }
+  .jp-date { flex: none; width: 58px; text-align: center; border: 1px solid var(--border); border-radius: var(--radius-sm); overflow: hidden; background: var(--surface); box-shadow: var(--shadow); }
+  .jp-date span { display: block; background: var(--accent); color: var(--on-accent); font-family: var(--sans); font-size: .62rem; letter-spacing: .08em; text-transform: uppercase; padding: 3px 0; }
+  .jp-date b { display: block; font-family: var(--serif); font-weight: normal; font-size: 1.7rem; line-height: 1.25; color: var(--text); padding: 2px 0 4px; }
+  .jp-wd { font-family: var(--sans); font-size: .7rem; letter-spacing: .05em; text-transform: uppercase; color: var(--text3); }
+  .jp-title { font-size: 1.15rem; color: var(--accent); line-height: 1.3; margin-top: 2px; }
+  .jp-title .ico { width: 1em; height: 1em; vertical-align: -.12em; margin-right: .3em; }
+  #session-view-content .sv-section { background: none; border: none; box-shadow: none; border-radius: 0; border-left: 2px solid color-mix(in srgb, var(--svc, var(--accent2)) 70%, transparent); padding: 2px 0 2px 16px; margin: 0 0 22px; }
+  #session-view-content .sv-section .sv-num { background: var(--svc, var(--accent2)) !important; }
+  #session-view-content .sv-block .sv-text { font-size: .95rem; line-height: 1.7; max-width: 34em; }
+  .sv-block.listen { background: color-mix(in srgb, var(--svc, var(--accent2)) 9%, var(--surface)); border-radius: var(--radius-sm); padding: 9px 12px; }
+  .sv-block.listen .sv-label .ico, .pl-prev-label .ico { width: 1.1em; height: 1.1em; vertical-align: -.2em; margin-right: .3em; }
+  .btn-repray .ico, .pl-repray-indicator .ico { width: 1.05em; height: 1.05em; vertical-align: -.16em; margin-right: .35em; }
+  /* Category tiles on the card form */
+  .cat-select-wrap.sr { position: absolute !important; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  .cat-tiles { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; margin: 2px 0 14px; }
+  .cat-tile { display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 9px 3px 8px; border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--surface); color: var(--text2); font-family: var(--sans); font-size: .64rem; line-height: 1.2; text-align: center; cursor: pointer; }
+  .cat-tile .ico { width: 20px; height: 20px; color: var(--cat); }
+  [data-theme="dark"] .cat-tile .ico { color: color-mix(in srgb, var(--cat) 50%, #e8d8c4); }
+  .cat-tile.on { border-color: var(--cat); background: color-mix(in srgb, var(--cat) 13%, var(--surface)); color: var(--text); box-shadow: inset 0 0 0 1px var(--cat); }
+  /* Emotion picker: the wheel is the first choice */
+  .emo-wheel.pick { width: 230px; height: 230px; margin: 6px auto 12px; }
+  .emo-wheel.pick svg { width: 100%; height: 100%; }
+  .emo-wheel.pick path { cursor: pointer; transition: opacity .15s, transform .15s; transform-origin: 50px 50px; }
+  .emo-wheel.pick path:hover, .emo-wheel.pick path:focus { opacity: 1 !important; outline: none; }
+  .emo-wheel.pick text { font-family: var(--serif); font-size: 5.4px; fill: #fff; pointer-events: none; }
+  /* Focus mode: a full-screen writing page */
+  #modal-focus-compose { align-items: stretch; }
+  #modal-focus-compose .modal { max-width: none !important; height: 100%; max-height: none; border-radius: 0; display: flex; flex-direction: column; padding: calc(10px + env(safe-area-inset-top)) 20px calc(16px + env(safe-area-inset-bottom)); background-color: var(--surface); background-image: var(--grain); background-size: 180px; animation: fadeIn .2s ease; }
+  #focus-compose-content { flex: 1; display: flex; flex-direction: column; min-height: 0; width: 100%; max-width: 640px; margin: 0 auto; }
+  #modal-focus-compose .focus-compose-textarea { flex: 1; min-height: 34vh; max-height: none; }
+  #modal-focus-compose .focus-compose-actions { flex: none; }
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+  /* Banner art: Pray these now and Weekly Deep */
+  .btn-pray-now { position: relative; overflow: hidden; isolation: isolate; }
+  .bpn-art { position: absolute; inset: 0; width: 100%; height: 100%; z-index: -1; pointer-events: none; opacity: .5; }
+  .pl-banner .pl-arch { position: absolute; right: -6px; bottom: -8px; width: 150px; height: 120px; z-index: -1; pointer-events: none; opacity: .55; }
+  /* Word cloud words open a search */
+  .wf-word { cursor: pointer; }
   /* ── Round 1 redesign ── */
   /* Card detail: category band + toolbar */
   .cd-band { position: relative; overflow: hidden; margin: -6px -20px 14px; padding: 18px 20px 16px; background: color-mix(in srgb, var(--cat, var(--accent)) 12%, var(--surface)); border-bottom: 1px solid color-mix(in srgb, var(--cat, var(--accent)) 25%, transparent); }
@@ -2004,7 +2045,8 @@
     <label>Category</label>
     <!-- The chosen category's drawn glyph sits inside the select's left edge, so the
          options can be plain words (a <select> can't hold an SVG). -->
-    <div class="cat-select-wrap"><span class="cat-select-ico" id="f-category-ico" data-ico="person"></span>
+    <div class="cat-tiles" id="cat-tiles" role="radiogroup" aria-label="Category"></div>
+    <div class="cat-select-wrap sr"><span class="cat-select-ico" id="f-category-ico" data-ico="person"></span>
     <select id="f-category" onchange="syncCatSelectIcon()">
       <option value="personal">Personal Situation</option><option value="family">Family</option>
       <option value="suffering">Someone Suffering</option><option value="friend">Non-Christian Friend</option>
@@ -2510,6 +2552,18 @@ function emotionWheelSVG(){
   }).join('');
   return `<div class="emo-wheel" aria-hidden="true"><svg viewBox="0 0 100 100">${segs}<circle cx="50" cy="50" r="5" fill="var(--accent2)" opacity=".5"/></svg></div>`;
 }
+// The first step's chooser: a large wheel, each core feeling named on its segment.
+function emotionWheelPickSVG(){
+  const cores = Object.keys(EMOTION_WHEEL), n = cores.length, R = 48, r = 15, cx = 50, cy = 50;
+  const pt = (a, rad) => [cx + Math.cos(a) * rad, cy + Math.sin(a) * rad].map(v => v.toFixed(2)).join(' ');
+  const segs = cores.map((name, i) => {
+    const a0 = -Math.PI/2 + i * 2*Math.PI/n + .02, a1 = -Math.PI/2 + (i+1) * 2*Math.PI/n - .02, am = (a0 + a1) / 2;
+    const d = `M${pt(a0,r)}L${pt(a0,R)}A${R} ${R} 0 0 1 ${pt(a1,R)}L${pt(a1,r)}A${r} ${r} 0 0 0 ${pt(a0,r)}z`;
+    const [tx, ty] = pt(am, (R + r) / 2 + 2).split(' ');
+    return `<path d="${d}" fill="${EMOTION_WHEEL[name].color}" opacity=".92" role="button" tabindex="0" aria-label="${esc(name)}" onclick="pickEmotionCore('${name}')" onkeydown="if(event.key==='Enter'){pickEmotionCore('${name}')}"/><text x="${tx}" y="${ty}" text-anchor="middle" dominant-baseline="middle">${esc(name)}</text>`;
+  }).join('');
+  return `<div class="emo-wheel pick"><svg viewBox="0 0 100 100">${segs}<circle cx="50" cy="50" r="6" fill="var(--accent2)" opacity=".5"/></svg></div>`;
+}
 function renderEmotionPicker(){
   const el = document.getElementById('emotion-content');
   let bodyHTML = '';
@@ -2561,7 +2615,7 @@ function renderEmotionPicker(){
   el.innerHTML = `
     <h2 style="color:var(--accent);font-size:1.05rem;margin-bottom:8px">${ICON.swirl} Name what you're feeling</h2>
     <p class="emo-intro">Naming a feeling specifically tends to reduce its intensity and clarify what is needed.</p>
-    ${emotionWheelSVG()}
+    ${_emoStage === 'core' ? emotionWheelPickSVG() : emotionWheelSVG()}
     ${breadcrumbHTML}
     ${bodyHTML}
     ${navHTML}
@@ -5600,7 +5654,10 @@ function renderCards(){
   const active=cards.filter(c=>!c.answered), answered=cards.filter(c=>c.answered);
   let html='';
   if(active.length){
-    html+=`<button class="btn-pray-now" onclick="openCardsWalkthrough()"><span class="bpn-label">${ICON.pray} Pray these now</span> <span class="bpn-meta">${active.length} active card${active.length===1?'':'s'} · ~5 min</span></button>`;
+    // A thread with a knot for each active card, in its category colour.
+    const knots = active.slice(0, 12).map((c, i, a) => { const x = 20 + (i + .5) * (360 / a.length); const y = 75 + Math.sin(x / 38) * 3; return `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="3" fill="${CAT_COLOR[CAT_ICON[c.category]?c.category:'other']}" stroke="#fff" stroke-width=".8"/>`; }).join('');
+    const thread = `<svg class="bpn-art" viewBox="0 0 400 80" preserveAspectRatio="none" aria-hidden="true"><path d="M0 75 ${Array.from({length:41},(_,i)=>{const x=i*10;return `L${x} ${(75+Math.sin(x/38)*3).toFixed(1)}`}).join(' ')}" stroke="#fff" stroke-width="1" fill="none" opacity=".45"/>${knots}</svg>`;
+    html+=`<button class="btn-pray-now" onclick="openCardsWalkthrough()">${thread}<span class="bpn-label">${ICON.pray} Pray these now</span> <span class="bpn-meta">${active.length} active card${active.length===1?'':'s'} · ~5 min</span></button>`;
     html+=`<p class="section-title">Active (${active.length})</p>`;
     // Grouped under their category, in the categories' own order.
     Object.keys(CAT_LABELS).forEach(k=>{
@@ -5639,7 +5696,14 @@ function syncCatSelectIcon(){
   const key = CAT_ICON[sel.value] ? sel.value : 'other';
   ico.innerHTML = ICON[CAT_ICON[key]];
   ico.className = 'cat-select-ico ' + (CAT_CLASS[key] || 'cat-other');
+  // The visible chooser: one tile per category, labelled with the select's own wording.
+  const tiles = document.getElementById('cat-tiles');
+  if(tiles) tiles.innerHTML = [...sel.options].map(o => {
+    const k = CAT_ICON[o.value] ? o.value : 'other', on = o.value === sel.value;
+    return `<button type="button" class="cat-tile${on?' on':''}" role="radio" aria-checked="${on}" style="--cat:${CAT_COLOR[k]}" onclick="pickCatTile('${o.value}')">${ICON[CAT_ICON[k]]}<span>${esc(o.textContent)}</span></button>`;
+  }).join('');
 }
+function pickCatTile(v){ const sel = document.getElementById('f-category'); if(!sel) return; sel.value = v; sel.dispatchEvent(new Event('change', { bubbles:true })); syncCatSelectIcon(); }
 // ══════════ CARD TEMPLATES + FIELD STARTERS ══════════
 // One ready-made card per category, for someone who would rather start from a
 // shape than a blank page. The name is always left for you to write; everything
@@ -6528,6 +6592,12 @@ function historyPeriodStart(kind){
   else d.setDate(d.getDate() - d.getDay());
   return d;
 }
+// The date block at the head of a past session: month, day numeral, weekday.
+function jpHeadHTML(s, titleHTML){
+  const d = new Date(s.dateISO || s.date); const ok = !isNaN(d);
+  return `<div class="jp-head"><div class="jp-date"><span>${ok ? d.toLocaleDateString(undefined,{month:'short'}) : ''}</span><b>${ok ? d.getDate() : ''}</b></div>
+    <div><div class="jp-wd">${ok ? d.toLocaleDateString(undefined,{weekday:'long'}) + ' · ' + d.getFullYear() : esc(s.date||'')}</div><h2 class="jp-title">${titleHTML}</h2></div></div>`;
+}
 // Short date for a history row: "Mon 5 Oct".
 function heWhen(s){
   const d = new Date(s.dateISO || s.date);
@@ -6952,7 +7022,7 @@ async function plRepray(sessionId){
   closeModal('modal-session');
   if(currentView!=='pl') showView('pl'); else renderPL();
   window.scrollTo(0,0);
-  showToast('🔄 Praying again — last week\'s words for context');
+  showToast('↻ Praying again — last week\'s words for context');
 }
 
 function getPreviousStepData(stepKey){
@@ -7354,7 +7424,8 @@ function renderPLHome(el){
   const calendarHTML = (allSessions.length && _plViewMode==='calendar') ? `<div class="pl-calendar" id="pl-calendar"></div>` : '';
 
   el.innerHTML=`
-    <div class="pl-banner compact"><span class="banner-watermark" aria-hidden="true">${ICON.pen}</span>
+    <div class="pl-banner compact">${(()=>{ const st=PL_STEPS; const pts=st.map((x,i)=>{ const a=Math.PI-(i/(st.length-1))*Math.PI; return [75+Math.cos(a)*52, 100-Math.sin(a)*72]; });
+      return `<svg class="pl-arch" viewBox="0 0 150 120" aria-hidden="true"><path d="M23 120 V100 A52 72 0 0 1 127 100 V120" stroke="#fff" stroke-width="1.2" fill="none" opacity=".5"/>${pts.map(([x,y],i)=>`<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="4.2" fill="${st[i].sc}" stroke="#fff" stroke-width="1"/>`).join('')}</svg>`; })()}
       <div class="pl-date">${today()}</div>
       <h2>Weekly Deep Time</h2>
       <div class="pl-banner-btns">
@@ -7495,11 +7566,11 @@ function renderPLStep(el){
 
   // Re-pray context (P1 #4)
   const prevStep=getPreviousStepData(step.key);
-  const reprayIndicatorHTML=plSession.previousSessionId?`<div class="pl-repray-indicator">🔄 Praying again — drawing from your session on ${esc(prevStep?.date||'a previous day')}</div>`:'';
+  const reprayIndicatorHTML=plSession.previousSessionId?`<div class="pl-repray-indicator">${ICON.turn}Praying again — drawing from your session on ${esc(prevStep?.date||'a previous day')}</div>`:'';
   const prevListenText=(prevStep?.data?.listen||'').trim();
   const prevListenHTML=prevListenText?`
     <div class="pl-prev-listen">
-      <div class="pl-prev-label">🔔 Last time you sensed Him saying — ${esc(prevStep.date)}</div>
+      <div class="pl-prev-label">${ICON.ear}Last time you sensed Him saying — ${esc(prevStep.date)}</div>
       <div class="pl-prev-text">“${esc(prevListenText)}”</div>
     </div>`:'';
 
@@ -7584,7 +7655,7 @@ function renderPrepareStep(el,step,dots,steps){
     </div>
   `).join('');
 
-  const reprayIndicatorHTML=plSession.previousSessionId?`<div class="pl-repray-indicator">🔄 Praying again — fresh reflection, last week's words ahead</div>`:'';
+  const reprayIndicatorHTML=plSession.previousSessionId?`<div class="pl-repray-indicator">${ICON.turn}Praying again — fresh reflection, last week's words ahead</div>`:'';
   // Contextual return button — only when you jumped here from Ask / Follow.
   const returnStep = _plReturnTo ? PL_STEPS.find(s=>s.key===_plReturnTo) : null;
   const returnLinkHTML = returnStep ? `<a class="pl-return-link" onclick="plReturnFromPrepare()">← Back to ${esc(returnStep.title)}</a>` : '';
@@ -7789,7 +7860,7 @@ function viewDailySession(id){
     });
     if(!body) return '';
 
-    return `<div class="sv-section">
+    return `<div class="sv-section" style="--svc:${step.color}">
       <div class="sv-head"><div class="sv-num" style="background:${step.color}">${step.n}</div>
         <div><div class="sv-title">${esc(step.title)}</div><div class="sv-sub">${esc(step.subtitle)}</div></div>
       </div>${body}</div>`;
@@ -7805,8 +7876,7 @@ function viewDailySession(id){
   const prayedHTML = prayed.length ? `<div class="sv-section"><div class="sv-head"><div class="sv-num" style="background:var(--accent2)">${ICON.cards}</div><div><div class="sv-title">Story cards</div></div></div>
       <div class="pl-linked-chips">${prayed.map(c=>`<span class="pl-linked-chip" onclick="openDetail('${c.id}')">${esc(c.person)}</span>`).join('')}</div></div>` : '';
   document.getElementById('session-view-content').innerHTML = `
-    <h2 style="color:var(--accent);margin-bottom:4px">${ICON[plan?.icon] || ICON.sparkle} ${esc(plan?.title||'Daily Prayer')} Session</h2>
-    <p style="font-size:.72rem;color:var(--text3);font-family: var(--sans);margin-bottom:14px">${s.date}</p>
+    ${jpHeadHTML(s, `${ICON[plan?.icon] || ICON.sparkle}${esc(plan?.title||'Daily Prayer')} Session`)}
     ${stepsHTML}
     ${prayedHTML}
     ${carryHTML}
@@ -7846,18 +7916,18 @@ function viewSession(id){
           <div class="sv-label">Named feelings</div>
           <div class="emo-chips-row" style="margin-top:4px">${emotions.map(e=>`<span class="emo-chip tint-chip" style="${idc(emotionColor(e))}">${esc(emotionLabel(e))}</span>`).join('')}</div>
         </div>`:'';
-      return `<div class="sv-section">
+      return `<div class="sv-section" style="--svc:${step.sc}">
         <div class="sv-head"><div class="sv-num" style="background:${step.sc}">${step.n}</div>
           <div><div class="sv-title">${step.title}</div><div class="sv-sub">${step.subtitle}</div></div>
         </div>${blocks}${emotionsBlock}${heartNeedsBlock}</div>`;
     }
     const data=s.steps[step.key]||{prayer:'',listen:''};
-    return `<div class="sv-section">
+    return `<div class="sv-section" style="--svc:${step.sc}">
       <div class="sv-head"><div class="sv-num" style="background:${step.sc}">${step.n}</div>
         <div><div class="sv-title">${step.title}</div><div class="sv-sub">${step.subtitle}</div></div>
       </div>
       <div class="sv-block"><div class="sv-label">Prayer</div>${data.prayer?`<div class="sv-text">${esc(data.prayer)}</div>`:`<div class="sv-empty">Nothing written</div>`}</div>
-      <div class="sv-block" style="margin-top:8px"><div class="sv-label">🔔 Listen</div>${data.listen?`<div class="sv-text">${esc(data.listen)}</div>`:`<div class="sv-empty">Nothing written</div>`}</div>
+      <div class="sv-block listen" style="margin-top:8px"><div class="sv-label">${ICON.ear}Listen</div>${data.listen?`<div class="sv-text">${esc(data.listen)}</div>`:`<div class="sv-empty">Nothing written</div>`}</div>
     </div>`;
   }).join('');
   // Linked cards banner (deleted cards are silently filtered out)
@@ -7871,11 +7941,10 @@ function viewSession(id){
     </div>`:'';
 
   document.getElementById('session-view-content').innerHTML=`
-    <h2 style="color:var(--accent);margin-bottom:4px">Weekly Deep Time Session</h2>
-    <p style="font-size:.72rem;color:var(--text3);font-family: var(--sans);margin-bottom:14px">${s.date}</p>
+    ${jpHeadHTML(s, `${ICON.pen}Weekly Deep Time Session`)}
     ${linkedHTML}
     ${sectionsHTML}
-    <button class="btn btn-repray" style="margin-top:18px" onclick="plRepray('${s.id}')">🔄 Pray this again</button>
+    <button class="btn btn-repray" style="margin-top:18px" onclick="plRepray('${s.id}')">${ICON.turn}Pray this again</button>
     <button class="btn btn-danger" onclick="closeModal('modal-session');deleteSession('${s.id}')">Delete Session</button>
     <button class="btn btn-secondary" onclick="closeModal('modal-session')">Close</button>`;
   openModal('modal-session');
@@ -8854,7 +8923,7 @@ function renderWordFrequency(){
     const opacity = (0.6 + scale * 0.4).toFixed(2);
     // Three warm inks by weight, so the cloud has depth without leaving the palette.
     const tone = count >= max*0.66 ? 'w1' : count >= max*0.4 ? 'w2' : 'w3';
-    return `<span class="wf-word ${tone}" style="font-size:${fontSize}rem;opacity:${opacity}">${esc(word)}<small>${count}</small></span>`;
+    return `<span class="wf-word ${tone}" role="button" tabindex="0" style="font-size:${fontSize}rem;opacity:${opacity}" onclick="searchWeeklyFor('${esc(word).replace(/'/g,'&#39;')}')" onkeydown="if(event.key==='Enter')searchWeeklyFor(this.firstChild.textContent)">${esc(word)}<small>${count}</small></span>`;
   }).join('');
 
   target.innerHTML = `<p class="ap-intro">Top ${words.length} words across your Listen entries — a glimpse of what has been on your heart, and what He has been saying.</p>
@@ -9182,6 +9251,12 @@ function renderReflectBand(){
 function openGuidePractice(id){
   document.querySelectorAll('.guide-practice').forEach(d=>{ d.open = (d.id===id) ? !d.open : false; });
   document.querySelectorAll('.guide-tile').forEach(t=>t.classList.toggle('on', document.getElementById(t.dataset.g)?.open));
+}
+// From a word in "What You've Been Hearing" to the Weekly sessions that hold it.
+function searchWeeklyFor(word){
+  if(plMode === 'session') return showView('pl');
+  _plViewMode = 'list'; _plCalSelectedDay = null; _plSearchQuery = word; plMode = 'home';
+  showView('pl'); window.scrollTo(0, 0);
 }
 function openReflectBlock(id){
   const el=document.getElementById(id); const d=el && el.closest('details'); if(!d) return;
