@@ -2113,6 +2113,38 @@
   .prayer-card.flick-in-back { animation: flickInBack .32s cubic-bezier(.2,.9,.3,1) both; }
   .flick-fade { animation: flickFade .3s ease both; }
   @media (prefers-reduced-motion: reduce) { .prayer-card.flick-in-next, .prayer-card.flick-in-back, .flick-fade { animation: none; } }
+
+  /* Pray these now: one card, two sides — tap to turn, swipe to move on. */
+  #modal-cards-walkthrough .daily-header h2 { font-size: 1.15rem; }
+  #modal-cards-walkthrough .daily-header p { margin-bottom: 4px; }
+  .walk-nav { display: flex; align-items: center; justify-content: center; gap: 14px; margin: 2px 0 10px; font-family: var(--sans); font-size: .72rem; color: var(--text3); }
+  .wn-btn { width: 36px; height: 36px; border-radius: 50%; border: 1px solid var(--border); background: var(--surface); color: var(--accent); font-size: 1.2rem; line-height: 1; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+  .wn-btn:disabled { opacity: .3; cursor: default; }
+  .wn-btn.wn-finish { background: var(--accent); color: var(--on-accent); border-color: var(--accent); font-size: .95rem; }
+  .flip-card { background: none !important; border: none !important; box-shadow: none !important; padding: 0 !important; overflow: visible !important; perspective: 1400px; height: clamp(340px, calc(100dvh - 330px), 680px); cursor: pointer; }
+  .flip-card::before, .flip-card::after { display: none !important; }
+  .fc-inner { position: relative; height: 100%; transform-style: preserve-3d; transition: transform .55s cubic-bezier(.3,.7,.2,1); }
+  .flip-card.flipped .fc-inner { transform: rotateY(180deg); }
+  .fc-face { position: absolute; inset: 0; backface-visibility: hidden; -webkit-backface-visibility: hidden; overflow-y: auto; overscroll-behavior: contain; background: var(--surface); border: 1px solid var(--border); border-left: 4px solid var(--cat, var(--accent2)); border-radius: var(--radius); box-shadow: var(--shadow-lg); padding: 18px 18px 14px; display: flex; flex-direction: column; }
+  .fc-back { transform: rotateY(180deg); background: linear-gradient(color-mix(in srgb, var(--cat) 5%, var(--surface)), var(--surface) 40%); }
+  .fc-front .card-watermark { position: absolute; right: 12px; bottom: 44px; width: 96px; height: 96px; opacity: .07; color: var(--cat); pointer-events: none; }
+  .fc-front .card-watermark .ico { width: 100%; height: 100%; }
+  .fc-top { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 8px; }
+  .fc-note { flex: none; display: inline-flex; align-items: center; gap: 2px; height: 34px; padding: 0 10px; border-radius: 99px; border: 1px solid var(--border); background: var(--surface); color: var(--accent); cursor: pointer; font-family: var(--sans); font-size: .8rem; position: relative; z-index: 1; }
+  .fc-note .ico { width: 16px; height: 16px; }
+  .fc-front .p-title { font-size: 1.6rem; line-height: 1.2; margin: 4px 0 12px; }
+  .fc-scripture { --bk: var(--accent2); position: relative; padding: 12px 14px; background: var(--accent-light); border-radius: var(--radius-sm); margin-bottom: 12px; }
+  .fc-scripture .p-scripture { margin: 0; font-size: .95rem; line-height: 1.6; color: var(--text); }
+  .fc-verse { font-style: italic; font-size: .92rem; line-height: 1.6; color: var(--text); margin-top: 6px; }
+  .fc-asks { display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px; }
+  .fc-ask { font-size: .95rem; line-height: 1.5; color: var(--text); }
+  .fc-ask span, .fc-persp span { display: block; font-family: var(--sans); font-size: .64rem; letter-spacing: .06em; text-transform: uppercase; color: var(--text3); margin-bottom: 1px; }
+  .fc-persp { font-size: .92rem; line-height: 1.55; color: var(--text2); padding-top: 10px; border-top: 1px solid var(--border-soft); }
+  .fc-hint { margin-top: auto; padding-top: 12px; text-align: center; font-family: var(--serif); font-style: italic; font-size: .82rem; color: var(--accent); display: flex; align-items: center; justify-content: center; gap: 6px; }
+  .fc-hint .ico { width: 16px; height: 16px; }
+  .fc-back-name { font-family: var(--serif); font-size: 1.05rem; font-weight: 600; color: var(--text); min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .fc-back .prayer-flow h3 { margin-top: 2px; }
+  @media (prefers-reduced-motion: reduce) { .fc-inner { transition: none; } }
 </style>
 </head>
 <body>
@@ -7465,6 +7497,7 @@ function prayCardNow(id){
   setTimeout(openCardsWalkthrough, 220);
 }
 function openCardsWalkthrough(){
+  _cardSide = 'front';
   openModal('modal-cards-walkthrough');
   renderDaily();
 }
@@ -7515,34 +7548,62 @@ function renderDailyCard(cards,idx,todayKey){
     {label:'Ask', prompt:askPrompt},
     {label:'Repent', prompt:`“Father, forgive me for trying to carry this myself — my cynicism, control, or fear. I give this story back into your hands.”`},
     {label:'Follow', prompt:'“Father, show me the next faithful step in this story — and give me grace to take it.”'}];
-  const persp=(c.perspAttr&&c.perspTrust)?`<div class="prayer-step persp-block" style="margin-bottom:12px"><div class="step-label">Father's Perspective</div><div class="step-prompt">Father, because you are <em>${esc(c.perspAttr)}</em>, I will trust you with <em>${esc(c.perspTrust)}</em>.</div></div>`:'';
+  const ck = CAT_ICON[c.category] ? c.category : 'other';
+  const scrRef = (c.scripture||'').trim();
+  const scrIsRef = !!(scrRef && parseScriptureRef(scrRef));
+  if(scrIsRef) setTimeout(()=>{ (async()=>{ let v=getScriptureText(scrRef); if(!v) v=await lookupBibleRef(scrRef); const el=document.getElementById('fc-verse'); if(el&&v){ el.textContent=v; el.hidden=false; } })(); },0);
+  const noteBtn = `<button class="fc-note" onclick="event.stopPropagation();openNote('${c.id}')" aria-label="Add Story Note">${ICON.note}<span>＋</span></button>`;
+  // One card, two sides. Front: who and what you're praying for. Back (tap to
+  // turn): the five moves. Swipe on either side to flick to the next card.
   document.getElementById('daily-content').innerHTML=`
     <div class="walk-dots" role="img" aria-label="Card ${idx+1} of ${total}">${cards.map((x,i)=>`<span class="walk-dot${i<idx?' done':''}${i===idx?' now':''}" style="--dc:${CAT_COLOR[CAT_ICON[x.category]?x.category:'other']}"></span>`).join('')}</div>
-    <p style="font-size:.7rem;font-family: var(--sans);color:var(--text3);text-align:center;margin:2px 0 10px">Card ${idx+1} of ${total}${total>1?' · swipe to turn':''}</p>
+    <div class="walk-nav">
+      <button class="wn-btn" onclick="dailyNav(${idx-1})" aria-label="Previous card"${idx>0?'':' disabled'}>‹</button>
+      <span>Card ${idx+1} of ${total}${total>1?' · swipe to turn':''}</span>
+      ${idx<total-1?`<button class="wn-btn" onclick="dailyNav(${idx+1})" aria-label="Next card">›</button>`:`<button class="wn-btn wn-finish" onclick="dailyFinish()" aria-label="Finish">✓</button>`}
+    </div>
     <div class="pc-stack more-${Math.min(2,total-1-idx)}">${total-1-idx>=2?'<span class="pc-under u2"></span>':''}${total-1-idx>=1?'<span class="pc-under u1"></span>':''}
-    <div class="prayer-card" style="--cat:${CAT_COLOR[CAT_ICON[c.category]?c.category:'other']}">
-      <span class="card-watermark" aria-hidden="true">${ICON[CAT_ICON[CAT_ICON[c.category]?c.category:'other']]}</span>
-      ${catChip(c.category, (CAT_CLASS[c.category]||'cat-other')+' p-cat')}
-      <div class="p-title">${esc(c.person)}</div>
-      ${c.scripture?`<div class="p-scripture">${esc(c.scripture)}</div>`:''}
-      ${c.askCirc?`<div class="p-ask">${esc(c.askCirc)}</div>`:''}
-    </div></div>
-    ${persp}
-    <div class="prayer-flow"><h3>Pray Through This Card</h3>
-      <p class="flow-hint">Where a line trails off, finish it in your own words before Him.</p>
-      <div class="prayer-steps">${steps.map(s=>`<div class="prayer-step"><div class="step-label">${s.label}</div><div class="step-prompt">${s.prompt}</div></div>`).join('')}</div>
-    </div>
-    <div class="prayer-nav">
-      ${idx>0?`<button onclick="dailyNav(${idx-1})">← Back</button>`:'<button style="opacity:.3" disabled>← Back</button>'}
-      ${idx<total-1?`<button class="next-btn" onclick="dailyNav(${idx+1})">Next Card →</button>`:`<button class="next-btn" onclick="dailyFinish()">Finish ✓</button>`}
-    </div>
-    <button class="btn btn-secondary" style="margin-top:10px" onclick="openNote('${c.id}')">＋ Add Story Note</button>`;
+    <div class="prayer-card flip-card${_cardSide==='back'?' flipped':''}" style="--cat:${CAT_COLOR[ck]}" role="button" aria-label="${_cardSide==='back'?'Turn back to the card':'Turn over to pray through this card'}">
+      <div class="fc-inner">
+        <div class="fc-face fc-front" aria-hidden="${_cardSide==='back'}">
+          <span class="card-watermark" aria-hidden="true">${ICON[CAT_ICON[ck]]}</span>
+          <div class="fc-top">${catChip(c.category, (CAT_CLASS[c.category]||'cat-other')+' p-cat')}${noteBtn}</div>
+          <div class="p-title">${esc(c.person)}</div>
+          ${scrRef?`<div class="fc-scripture"><div class="p-scripture">${linkifyScriptureRefs(scrRef)}</div>${scrIsRef?'<div class="fc-verse" id="fc-verse" hidden></div>':''}</div>`:''}
+          ${(askCirc||askHeart)?`<div class="fc-asks">${askCirc?`<div class="fc-ask"><span>Circumstance</span>${esc(askCirc)}</div>`:''}${askHeart?`<div class="fc-ask"><span>Heart</span>${esc(askHeart)}</div>`:''}</div>`:''}
+          ${(c.perspAttr&&c.perspTrust)?`<div class="fc-persp"><span>Father's Perspective</span>Father, because you are <em>${esc(c.perspAttr)}</em>, I will trust you with <em>${esc(c.perspTrust)}</em>.</div>`:''}
+          <div class="fc-hint">${ICON.pray}Tap to pray through it</div>
+        </div>
+        <div class="fc-face fc-back" aria-hidden="${_cardSide!=='back'}">
+          <div class="fc-top"><span class="fc-back-name">${esc(c.person)}</span>${noteBtn}</div>
+          <div class="prayer-flow"><h3>Pray Through This Card</h3>
+            <p class="flow-hint">Where a line trails off, finish it in your own words before Him.</p>
+            <div class="prayer-steps">${steps.map(s=>`<div class="prayer-step"><div class="step-label">${s.label}</div><div class="step-prompt">${s.prompt}</div></div>`).join('')}</div>
+          </div>
+          <div class="fc-hint">Tap to turn back</div>
+        </div>
+      </div>
+    </div></div>`;
 }
 // ── Flick the card: drag the story card sideways and it follows your finger,
 // tilting like a real card; let go past the threshold (or flick fast) and it
 // flies off and the next one rises from the stack. Left = next (or Finish on the
 // last card), right = back. A short drag springs back. Vertical drags scroll.
-let _flickEnter = null;   // 'next' | 'back' — how the incoming card arrives
+let _flickEnter = null, _cardSide = 'front', _flickMoved = false;
+function flipCard(){
+  _cardSide = _cardSide==='back' ? 'front' : 'back';
+  const c=document.querySelector('#daily-content .flip-card'); if(!c) return;
+  c.classList.toggle('flipped', _cardSide==='back');
+  c.setAttribute('aria-label', _cardSide==='back'?'Turn back to the card':'Turn over to pray through this card');
+  c.querySelector('.fc-front')?.setAttribute('aria-hidden', String(_cardSide==='back'));
+  c.querySelector('.fc-back')?.setAttribute('aria-hidden', String(_cardSide!=='back'));
+}
+document.addEventListener('click', e => {
+  const card = e.target.closest && e.target.closest('#daily-content .flip-card'); if(!card) return;
+  if(_flickMoved){ _flickMoved=false; return; }
+  if(e.target.closest('button, a, textarea, input, .scripture-ref')) return;
+  flipCard();
+});   // 'next' | 'back' — how the incoming card arrives
 (function setupCardFlick(){
   const host = () => document.getElementById('daily-content');
   const IGN = 'button, a, textarea, input, .scripture-ref, .step-ask-line';
@@ -7550,12 +7611,13 @@ let _flickEnter = null;   // 'next' | 'back' — how the incoming card arrives
   document.addEventListener('pointerdown', e => {
     const h = host(); if(!h || !h.contains(e.target) || e.target.closest(IGN)) return;
     const card = h.querySelector('.pc-stack .prayer-card'); if(!card) return;
-    st = { x:e.clientX, y:e.clientY, t:Date.now(), id:e.pointerId, card, rest:[...h.querySelectorAll('.persp-block, .prayer-flow')], lock:null, dx:0 };
+    _flickMoved = false;
+    st = { x:e.clientX, y:e.clientY, t:Date.now(), id:e.pointerId, card, rest:[], lock:null, dx:0 };
   }, { passive:true });
   document.addEventListener('pointermove', e => {
     if(!st || e.pointerId !== st.id) return;
     const dx = e.clientX - st.x, dy = e.clientY - st.y;
-    if(!st.lock){ if(Math.abs(dx) < 8 && Math.abs(dy) < 8) return; st.lock = Math.abs(dx) > Math.abs(dy) * 1.2 ? 'x' : 'y'; if(st.lock==='y'){ st=null; return; } }
+    if(!st.lock){ if(Math.abs(dx) < 8 && Math.abs(dy) < 8) return; st.lock = Math.abs(dx) > Math.abs(dy) * 1.2 ? 'x' : 'y'; if(st.lock==='y'){ st=null; return; } _flickMoved = true; }
     const idx = dailyIndex, total = loadCards().filter(c=>!c.answered).length;
     // Resist at the first card when pulling back.
     st.dx = (dx > 0 && idx === 0) ? dx * 0.25 : dx;
