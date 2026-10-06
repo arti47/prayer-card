@@ -51,7 +51,7 @@
   :root {
     /* S2: one type scale — every rem size in the stylesheet snaps to these nine steps */
     --fs-1: 0.66rem; --fs-2: 0.72rem; --fs-3: 0.78rem; --fs-4: 0.84rem; --fs-5: 0.92rem; --fs-6: 1.02rem; --fs-7: 1.15rem; --fs-8: 1.35rem; --fs-9: 1.6rem;
-    --r-pill: 999px; --ease: cubic-bezier(.2,.7,.2,1); --dur-1: .15s; --dur-2: .28s;
+    --r-pill: 22px;   /* full pill for anything up to 44px tall; a chip whose text wraps becomes a rounded box, so its text stays inside */ --ease: cubic-bezier(.2,.7,.2,1); --dur-1: .15s; --dur-2: .28s;
 
     --bg: #f5f0eb;
     --surface: #fffdf9;
@@ -5112,6 +5112,10 @@ function syncHeaderMode(){
   if(sbb) sbb.style.display = (typeof bibleFabEnabled === 'function' && !bibleFabEnabled()) ? 'none' : '';
   syncNavHeight();
 }
+// Inline links drawn as spans (so a long phrase can wrap with the sentence) answer Enter and Space like buttons.
+document.addEventListener('keydown', e => {
+  if((e.key === 'Enter' || e.key === ' ') && e.target.matches?.('span[role=button][tabindex]')){ e.preventDefault(); e.target.click(); }
+});
 // Step instructions always open in full — they are never folded (owner's request).
 function textKey(t){ let h = 5381; t = String(t||'').slice(0, 240); for(let i=0;i<t.length;i++) h = ((h<<5) + h + t.charCodeAt(i)) | 0; return (h>>>0).toString(36); }
 function sessionExit(){
@@ -6676,17 +6680,17 @@ function attrUse(key){
 // Make "attribute of His character" (in a guide or prompt) open the attributes.
 function attrPhraseLink(html, targetId){
   const t = targetId ? `'${targetId}'` : 'null';
-  return html.replace(/attribute of His character/, m => `<button type="button" class="at-phrase" onclick="event.stopPropagation();openAttributes(${t})">${m}</button>`)
-             .replace(/specific sins, attitudes, or neglects/, m => `<button type="button" class="at-phrase" onclick="event.stopPropagation();openExam(${t})">${m}</button>`)
-             .replace(/you need from Him today|most pressing on your heart/, m => `<button type="button" class="at-phrase" onclick="event.stopPropagation();openTeach(${t})">${m}</button>`)
-             .replace(/in thought, word, or deed/, m => `<button type="button" class="at-phrase" onclick="event.stopPropagation();openExam(${t})">${m}</button>`);
+  return html.replace(/attribute of His character/, m => `<span class="at-phrase" role="button" tabindex="0" onclick="event.stopPropagation();openAttributes(${t})">${m}</span>`)
+             .replace(/specific sins, attitudes, or neglects/, m => `<span class="at-phrase" role="button" tabindex="0" onclick="event.stopPropagation();openExam(${t})">${m}</span>`)
+             .replace(/you need from Him today|most pressing on your heart/, m => `<span class="at-phrase" role="button" tabindex="0" onclick="event.stopPropagation();openTeach(${t})">${m}</span>`)
+             .replace(/in thought, word, or deed/, m => `<span class="at-phrase" role="button" tabindex="0" onclick="event.stopPropagation();openExam(${t})">${m}</span>`);
 }
 // A word in your own writing that names an attribute becomes a quiet link to it.
 function attrLinkify(text){
   const t = String(text || ''); let done = false;
   return esc(t).replace(/[A-Za-z][A-Za-z-]*/g, w => {
     const k = !done && ATTR_WORDS[w.toLowerCase()]; if(!k) return w;
-    done = true; return `<button type="button" class="at-word" onclick="event.stopPropagation();openAttributes(null,'${k}')">${w}</button>`;
+    done = true; return `<span class="at-word" role="button" tabindex="0" onclick="event.stopPropagation();openAttributes(null,'${k}')">${w}</span>`;
   });
 }
 function attrLinkHTML(targetId, cls){
@@ -9557,7 +9561,7 @@ function flipCard(){
 document.addEventListener('click', e => {
   const card = e.target.closest && e.target.closest('#daily-content .flip-card'); if(!card) return;
   if(_flickMoved){ _flickMoved=false; return; }
-  if(e.target.closest('button, a, textarea, input, form, .scripture-ref')) return;
+  if(e.target.closest('button, a, textarea, input, form, .scripture-ref, span[role=button]')) return;
   flipCard();
 });   // 'next' | 'back' — how the incoming card arrives
 (function setupCardFlick(){
