@@ -97,7 +97,7 @@ To unlock full PWA: deploy the folder to GitHub Pages / Netlify / Vercel (free) 
 - ✅ Auto-save while typing (debounced 800ms + flush on tab close) with subtle "· Saved" hint
 - ✅ Session history — list of past sessions with smart summary (step count + word count + longest entry preview with source label)
 - ✅ Delete a session (✕ button on card + Delete button in detail modal)
-- ✅ View past session read-only
+- ✅ View past session — and **edit what you wrote** (since 2026-10-06, Daily and Weekly): each entry in the past-session view has a ✎ that turns it into a box with Cancel / Save (`svEditHTML`, `svEditStart`, `svEditDone`); a field left blank shows a faint *＋ Add* under its heading. A changed entry shows *edited 6 Oct* beside its heading (`s.edited['step.field']` = ISO time); the earlier wording is not kept. Covers every text field — Daily passage, meditation answers, carry line, prayer fields, Word/Free Prayer, contemplation, Psalm response; Weekly Prepare sections, Prayer and Listen. Feelings, heart needs and invocations aren't text and stay as they were. Hidden in print.
 
 ### 🪞 Reflect tab + ✦ Guide tab
 > **Tab split (2026-05-23):** stats/analysis + settings now live in the **Reflect** tab (Stats, Year at a Glance, Answered Prayers, Heart Needs Over Time, What You've Been Hearing, Weekly Review, then Appearance / Markdown Export / Backup & Restore under a "Settings" divider). The **Guide** tab is pure orientation (tour, the 3 practice explainers, Install, Credits, Privacy). The bullets below predate the split — the *content* is unchanged, only its tab home moved. **Since 2026-10-05 the Settings fold (Appearance / Export / Backup) lives in the Guide**, under *More*, not in Reflect.
@@ -343,6 +343,7 @@ Measured across 70+ states in light/dark at 390px, 320px Large and 768px, plus a
     contemplation:{ text }
   },
   prayedCards: [<cardId>],
+  edited?: { 'step.field': ISO },   // when an entry was changed afterwards (past-session ✎)
   completed
 }
 ```
@@ -359,6 +360,7 @@ screen within the step; absent on drafts saved before that, and read as 0).
   includesPrep,                     // false = quick-prayer mode (6 steps)
   linkedCards: [<cardId>],          // array of prayer_card ids referenced by this session
   previousSessionId,                // optional — set when this session was started via "Pray this again"
+  edited?,                          // { 'step.field': ISO } — entries changed afterwards (past-session ✎)
   completed,
   steps: {
     prepare: { circumstances, feelings, mapping, heartNeeds: [<key>], emotions: [{core, secondary, tertiary}] },  // heartNeeds: HEART_NEEDS keys · emotions: 3-level wheel selections
@@ -528,7 +530,7 @@ Before any more code: **deploy the app to a real URL** (GitHub Pages / Netlify /
 | # | Feature | Status | Notes |
 |---|---|---|---|
 | 36 | Edit / delete story notes | **done** | Each note in the card detail modal now has small ✏ and ✕ buttons in the top-right (subtle by default, fully visible on hover). Edit reuses the existing note modal with pre-filled values; only the text is mutable (date stays — represents the original observation moment). Delete is confirm-protected. Implementation uses array-index-based identification mapped from the reverse-displayed UI back to the storage order. |
-| 37 | Edit past session content | planned | Once a Pray & Listen or Daily Prayer session is completed, content is locked. Either accept that (it's a journal) or add an "Edit" button on past sessions that reopens the flow in edit mode. Philosophical question: is a prayer journal editable? Lean toward "no" — what was written was written. |
+| 37 | Edit past session content | **done** (2026-10-06) | At the owner's request: ✎ per entry in the past-session view, ＋ Add for blank fields, and a quiet *edited {date}* note so the journal stays honest about when words were written. The earlier wording isn't kept. |
 | 38 | Aria labels on icon-only buttons | planned | Blind/low-vision users using VoiceOver need `aria-label` on: the ✕ delete buttons, the ‹ › calendar arrows, the silence cancel ×, the tutorial Skip button. ~15 attributes to add. |
 | 39 | Warmer empty states | planned | Most empty states are functional ("No prayer cards yet"). Could be more pastoral: a soft icon + a clear next-action button instead of just static text. |
 | 40 | Pray-these-now walkthrough modal polish | planned | The story-card walkthrough was the old Daily tab dropped into a modal during the three-rhythm restructure. Still has the original layout. Could be redesigned for the modal context now that it lives there permanently. |
@@ -816,6 +818,7 @@ If you're starting a new chat and the user asks for "what's next," check §6 —
 
 Newest first. Format: `YYYY-MM-DD — what changed`.
 
+- **2026-10-06** — **Edit past sessions** (roadmap #37). In a past Daily or Weekly session, each entry has a ✎ that opens it as a box with Cancel / Save; blank fields show a faint *＋ Add*; a changed entry shows *edited {date}* (stored as `edited` on the session; the old wording isn't kept). Every text field is covered; feelings, heart needs and invocations aren't. Home lists and today's Carry card refresh after a save. Regression suite +1 (187), all passing.
 - **2026-10-06** — Guide: 16px of space between the *Take the tour* row's divider and the Settings box (it sat flush against the line).
 - **2026-10-06** — **Settings behind a gear.** Settings were three levels down in the Guide (Guide › More › Settings). Now a gear sits beside search in the header of every home screen and opens Settings as a sheet — Appearance / Export / Backup, then Install and Privacy, same contents and wording. The Guide keeps one *Settings* row (*Appearance · Export · Backup · Install · Privacy*) that opens the same sheet; Credits stays in the Guide. README updated. Regression suite all passing (186).
 - **2026-10-06** — **Meditations by passage** — a Markdown export of your meditations grouped by passage in Bible order (verse text, answers, carried line + notes, prayer that followed), choosing parts, plans, dates and passages on a sheet; one Obsidian-ready file. Opened from Settings › Export, Earlier lines, a past Daily session and the Bible reader. Regression suite +1 (186), all passing.

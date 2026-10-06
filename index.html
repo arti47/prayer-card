@@ -924,6 +924,18 @@
   .sv-section .sv-title { font-size: var(--fs-5); font-weight: bold; }
   .sv-section .sv-sub { font-size: var(--fs-2); color: var(--text3); font-family: var(--sans); }
   .sv-block { margin-top: 9px; }
+  .sv-ed .sv-label { display: flex; align-items: center; gap: 8px; }
+  .sv-ed .sv-lt { flex: 0 1 auto; min-width: 0; }
+  .sv-edited { font-family: var(--serif); font-style: italic; text-transform: none; font-variant: normal; font-variant-caps: normal; font-feature-settings: normal; letter-spacing: 0; font-size: var(--fs-2); color: var(--text3); white-space: nowrap; }
+  .sv-pen { flex: none; margin-left: auto; display: inline-flex; align-items: center; justify-content: center; width: 36px; height: 32px; margin-top: -6px; margin-bottom: -6px; padding: 0; border: none; background: none; color: var(--text3); cursor: pointer; border-radius: 8px; }
+  .sv-pen .ico { width: 15px; height: 15px; }
+  .sv-pen:active { background: var(--accent-light); color: var(--accent); }
+  .sv-add { display: inline-flex; align-items: center; min-height: 32px; padding: 2px 0; border: none; background: none; font-family: var(--serif); font-style: italic; font-size: var(--fs-4); color: var(--text-quiet); text-decoration: underline dotted; text-underline-offset: 3px; cursor: pointer; }
+  .sv-blank .sv-label { opacity: .8; }
+  .sv-ed.editing .sv-ta { width: 100%; min-height: 96px; margin: 2px 0 8px; }
+  .sv-ed-actions { display: flex; justify-content: flex-end; gap: 8px; }
+  .sv-ed-actions .btn { width: auto; margin: 0; padding: 8px 16px; min-height: 40px; }
+  @media print { .sv-pen, .sv-blank, .sv-ed-actions { display: none !important; } }
   .sv-block .sv-label { font-size: var(--fs-1); font-family: var(--sans); text-transform: uppercase; letter-spacing: .055em; color: var(--text3); margin-bottom: 4px; }
   .sv-block .sv-text { font-size: var(--fs-5); line-height: 1.6; white-space: pre-wrap; }
   .sv-block .sv-empty { font-size: var(--fs-4); color: var(--text3); font-style: italic; }
@@ -10827,8 +10839,9 @@ function viewDailySession(id){
   const s = loadDailySessions().find(x=>x.id===id);
   if(!s) return;
   const plan = DP_PLANS[s.plan];
+  const ed = (stepKey, key, labelHTML) => svEditHTML('daily', s, stepKey, key, labelHTML);
   const stepsHTML = (plan?.steps||[]).map(step => {
-    const data = s.steps?.[step.key]; if(!data) return '';
+    const data = s.steps?.[step.key] || {};
 
     let body = '';
     if(step.showInvocations && data.invocation){
@@ -10839,21 +10852,13 @@ function viewDailySession(id){
     if(step.key === 'approach' && data.emotions && data.emotions.length){
       body += `<div class="sv-block"><div class="sv-label">Named feelings</div><div class="emo-chips-row" style="margin-top:4px">${data.emotions.map(e=>`<button type="button" class="emo-chip tint-chip" style="${idc(emotionColor(e))}" onclick="openFeelingVerses('${esc(e.core||'')}','${esc(e.secondary||'').replace(/'/g,'&#39;')}','${esc(e.tertiary||'').replace(/'/g,'&#39;')}')">${esc(emotionLabel(e))}</button>`).join('')}</div></div>`;
     }
-    if(step.passageField && data[step.passageField.key]){
-      body += `<div class="sv-block"><div class="sv-label">${esc(step.passageField.label)}</div><div class="sv-text">${esc(data[step.passageField.key])}</div></div>`;
-    }
+    if(step.passageField) body += ed(step.key, step.passageField.key, esc(step.passageField.label));
     if(step.questionsField){
       const forceSimple = step.questionsField === 'simple-only';
-      const mode = forceSimple ? 'simple' : (s.meditationMode || 'simple');
-      MEDITATION_QUESTIONS[mode].forEach(q => {
-        const val = (data[q.key]||'').trim();
-        if(val) body += `<div class="sv-block"><div class="sv-label">${esc(q.label)} — ${esc(q.prompt)}</div><div class="sv-text">${esc(val)}</div></div>`;
-      });
+      const mode = forceSimple ? 'simple' : (MEDITATION_QUESTIONS[s.meditationMode] ? s.meditationMode : 'simple');
+      MEDITATION_QUESTIONS[mode].forEach(q => { body += ed(step.key, q.key, `${esc(q.label)} — ${esc(q.prompt)}`); });
     }
-    (step.fields||[]).forEach(f => {
-      const val = (data[f.key]||'').trim();
-      if(val) body += `<div class="sv-block"><div class="sv-label">${esc(f.label)}</div><div class="sv-text">${esc(val)}</div></div>`;
-    });
+    (step.fields||[]).forEach(f => { body += ed(step.key, f.key, esc(f.label)); });
     if(!body) return '';
 
     return `<div class="sv-section" style="--svc:${step.color}">
@@ -10885,6 +10890,54 @@ function viewDailySession(id){
   openModal('modal-session'); buildSessionIndex();
 }
 
+// ── Editing what you wrote in a past session ──
+// Each entry carries a ✎ that turns it into a box with Cancel / Save; a field left
+// blank shows a faint “＋ Add”. A changed entry is marked “edited {date}” — the date
+// is kept in s.edited['step.field']; the earlier wording is not.
+function svEditedWhen(iso){
+  const d = new Date(iso); if(isNaN(d)) return '';
+  return d.toLocaleDateString(undefined, { day:'numeric', month:'short', year: d.getFullYear() !== new Date().getFullYear() ? 'numeric' : undefined });
+}
+function svEditHTML(kind, s, step, key, labelHTML, cls){
+  const val = String(s.steps?.[step]?.[key] || '');
+  const k = `${kind}|${s.id}|${step}|${key}`, when = s.edited?.[`${step}.${key}`];
+  if(!val.trim()) return `<div class="sv-block sv-ed sv-blank${cls ? ' ' + cls : ''}" data-k="${k}"><div class="sv-label"><span class="sv-lt">${labelHTML}</span></div><button type="button" class="sv-add" onclick="svEditStart(this)">＋ Add</button></div>`;
+  return `<div class="sv-block sv-ed${cls ? ' ' + cls : ''}" data-k="${k}"><div class="sv-label"><span class="sv-lt">${labelHTML}</span>${when ? `<em class="sv-edited">edited ${esc(svEditedWhen(when))}</em>` : ''}<button type="button" class="sv-pen" aria-label="Edit this entry" title="Edit" onclick="svEditStart(this)">${ICON.pen}</button></div><div class="sv-text">${esc(val)}</div></div>`;
+}
+function svFind(k){
+  const [kind, id, step, key] = String(k).split('|');
+  const list = kind === 'daily' ? loadDailySessions() : loadSessions();
+  return { kind, id, step, key, list, s: list.find(x => x.id === id) };
+}
+function svEditStart(btn){
+  const blk = btn.closest('.sv-ed'); const f = svFind(blk.dataset.k); if(!f.s) return;
+  const label = blk.querySelector('.sv-lt')?.innerHTML || '';
+  blk.classList.add('editing');
+  blk.innerHTML = `<div class="sv-label"><span class="sv-lt">${label}</span></div>
+    <textarea class="pl-textarea sv-ta" rows="3" aria-label="Edit entry" autocomplete="off" spellcheck="true" autocapitalize="sentences">${escTa(f.s.steps?.[f.step]?.[f.key] || '')}</textarea>
+    <div class="sv-ed-actions"><button type="button" class="btn btn-secondary" onclick="svEditDone(this,false)">Cancel</button><button type="button" class="btn btn-primary" onclick="svEditDone(this,true)">Save</button></div>`;
+  const ta = blk.querySelector('textarea'); autoGrow(ta); ta.focus(); ta.setSelectionRange(ta.value.length, ta.value.length);
+}
+function svEditDone(btn, save){
+  const blk = btn.closest('.sv-ed'); const f = svFind(blk.dataset.k); if(!f.s) return;
+  if(save){
+    const v = blk.querySelector('textarea').value.replace(/\s+$/, '');
+    if(v !== (f.s.steps?.[f.step]?.[f.key] || '')){
+      f.s.steps = f.s.steps || {}; f.s.steps[f.step] = f.s.steps[f.step] || {};
+      f.s.steps[f.step][f.key] = v;
+      f.s.edited = { ...(f.s.edited || {}), [`${f.step}.${f.key}`]: new Date().toISOString() };
+      f.kind === 'daily' ? saveDailySessions(f.list) : saveSessions(f.list);
+      if(currentView === 'daily' && dpMode === 'home') renderDailyPrayer();
+      if(currentView === 'pl' && plMode === 'home') renderPL();
+      if(typeof refreshCarryCards === 'function') refreshCarryCards();
+      showToast('Saved ✓');
+    }
+  }
+  const m = document.querySelector('#modal-session .modal'), y = m ? m.scrollTop : 0;
+  f.kind === 'daily' ? viewDailySession(f.id) : viewSession(f.id);
+  if(m) m.scrollTop = y;
+}
+
 // ══════════ VIEW PAST SESSION ══════════
 function deleteSession(id){
   const before=loadSessions(); if(!before.some(s=>s.id===id)) return;
@@ -10898,11 +10951,7 @@ function viewSession(id){
     if(!s.steps?.[step.key])return '';
     if(step.isPrep){
       const data=s.steps[step.key];
-      const blocks=step.sections.map(sec=>`
-        <div class="sv-block">
-          <div class="sv-label">${sec.title}</div>
-          ${data[sec.key]?`<div class="sv-text">${esc(data[sec.key])}</div>`:`<div class="sv-empty">Nothing written</div>`}
-        </div>`).join('');
+      const blocks=step.sections.map(sec=>svEditHTML('weekly', s, step.key, sec.key, sec.title)).join('');
       const heartNeeds=(data.heartNeeds||[]).filter(k=>findHeartNeed(k));
       const heartNeedsBlock=heartNeeds.length?`
         <div class="sv-block">
@@ -10925,8 +10974,8 @@ function viewSession(id){
       <div class="sv-head"><div class="sv-num" style="background:${step.sc}">${step.n}</div>
         <div><div class="sv-title">${step.title}</div><div class="sv-sub">${step.subtitle}</div></div>
       </div>
-      <div class="sv-block"><div class="sv-label">Prayer</div>${data.prayer?`<div class="sv-text">${esc(data.prayer)}</div>`:`<div class="sv-empty">Nothing written</div>`}</div>
-      <div class="sv-block listen" style="margin-top:8px"><div class="sv-label">${ICON.ear}Listen</div>${data.listen?`<div class="sv-text">${esc(data.listen)}</div>`:`<div class="sv-empty">Nothing written</div>`}</div>
+      ${svEditHTML('weekly', s, step.key, 'prayer', 'Prayer')}
+      ${svEditHTML('weekly', s, step.key, 'listen', `${ICON.ear}Listen`, 'listen')}
     </div>`;
   }).join('');
   // Linked cards banner (deleted cards are silently filtered out)
