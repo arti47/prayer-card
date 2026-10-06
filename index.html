@@ -1985,6 +1985,9 @@
   .ex-law .at-ref { margin-left: 4px; }
   .ex-h { margin: 12px 0 4px; color: var(--nc); font-family: var(--sans); font-size: var(--fs-1); font-weight: 600; letter-spacing: .055em; text-transform: uppercase; }
   .ex-q { margin: 0 0 4px; }
+  .ex-tap { margin-left: 8px; font-family: var(--serif); font-style: italic; text-transform: none; letter-spacing: 0; font-weight: normal; color: var(--text3); font-size: var(--fs-3); }
+  .ex-qb { display: inline; background: none; border: none; padding: 0; margin: 0; font: inherit; color: inherit; text-align: left; cursor: pointer; text-decoration: underline dotted color-mix(in srgb, var(--nc) 55%, transparent); text-underline-offset: 3px; }
+  .ex-more { background: none; border: none; padding: 4px 0 8px; font-family: var(--serif); font-style: italic; font-size: var(--fs-4); color: var(--nc); cursor: pointer; min-height: 32px; }
   .ex-on { margin: 0 0 6px; color: var(--text); font-size: var(--fs-5); }
   .ex-attr { display: block; background: none; border: none; padding: 6px 0; margin: 0 0 2px; font-family: var(--serif); font-style: italic; font-size: var(--fs-4); color: var(--nc); text-decoration: underline dotted; text-underline-offset: 3px; cursor: pointer; min-height: 32px; }
   .hn-grid { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 8px; margin-bottom: 16px; }
@@ -6686,65 +6689,77 @@ function attrLinkHTML(targetId, cls){
 const COMMANDMENTS = [
   { key:'c1', n:'I', table:'god', name:'First place', attr:'jealous',
     law:['Exodus 20:3','You shall have no other gods before me.'],
-    q:['What have I trusted to make me safe, loved or significant, instead of Him?','What do I fear losing more than I fear God?','Have I neglected to seek Him first?'],
+    q:[['What have I trusted to make me safe, loved or significant, instead of Him?','I have trusted ___ to make me safe, loved or significant, instead of You'],['What do I fear losing more than I fear God?','I have feared losing ___ more than I fear You'],['Have I neglected to seek Him first?','I have not sought You first'],['Have I loved anything — work, approval, comfort — more than Him?','I have loved ___ more than You'],['Have I worried as though He were not there?','I have worried as though You were not there'],['Have I taken credit for what He gave?','I have taken credit for what You gave'],['Have I lived today as if He did not see?','I have lived as if You did not see']],
     on:'Trust Him wholly', onV:['Proverbs 3:5–6','Trust in the Lord with all your heart, and do not lean on your own understanding. In all your ways acknowledge him, and he will make straight your paths.'],
     grace:['Ezekiel 36:25–26','I will sprinkle clean water on you, and you shall be clean from all your uncleannesses, and from all your idols I will cleanse you. And I will give you a new heart, and a new spirit I will put within you. And I will remove the heart of stone from your flesh and give you a heart of flesh.'] },
   { key:'c2', n:'II', table:'god', name:'True worship', attr:'selfexistent',
     law:['Exodus 20:4','You shall not make for yourself a carved image, or any likeness of anything that is in heaven above, or that is in the earth beneath, or that is in the water under the earth.'],
-    q:['Have I shaped God to suit me — softer, harsher or smaller than He is?','Have I worshipped on my own terms?','Have I neglected His Word, where He shows Himself?'],
+    q:[['Have I shaped God to suit me — softer, harsher or smaller than He is?','I have shaped You to suit me, and not known You as You are'],['Have I worshipped on my own terms?','I have worshipped You on my own terms'],['Have I neglected His Word, where He shows Himself?','I have neglected Your Word, where You show Yourself'],['Have I gone through the motions of worship while my heart was far away?','I have gone through the motions while my heart was far from You'],['Have I prayed only when I wanted something?','I have prayed only when I wanted something'],['Have I trusted a feeling, a ritual or a routine more than Him?','I have trusted ___ more than You'],['Have I heard His Word without meaning to obey it?','I have heard Your Word without meaning to obey it']],
     on:'Worship in spirit and truth', onV:['John 4:24','God is spirit, and those who worship him must worship in spirit and truth.'],
     grace:['2 Corinthians 3:18','And we all, with unveiled face, beholding the glory of the Lord, are being transformed into the same image from one degree of glory to another. For this comes from the Lord who is the Spirit.'] },
   { key:'c3', n:'III', table:'god', name:'His name', attr:'holy',
     law:['Exodus 20:7','You shall not take the name of the Lord your God in vain, for the Lord will not hold him guiltless who takes his name in vain.'],
-    q:['Have I spoken of God carelessly, or used His name to win or to look spiritual?','Have I made Him promises I haven’t kept?','Has my life given others reason to think less of Him?'],
+    q:[['Have I spoken of God carelessly, or used His name to win or to look spiritual?','I have spoken of You carelessly, and used Your name for my own ends'],['Have I made Him promises I haven’t kept?','I have made You promises I haven’t kept'],['Has my life given others reason to think less of Him?','my life has given others reason to think less of You'],['Have I been ashamed to be known as His?','I have been ashamed to be known as Yours'],['Have I grumbled against what He has allowed?','I have grumbled against what You have allowed'],['Have I treated holy things lightly?','I have treated holy things lightly'],['Have I tried to look more devout than I am?','I have tried to look more devout than I am']],
     on:'Words that honour Him', onV:['Psalm 19:14','Let the words of my mouth and the meditation of my heart be acceptable in your sight, O Lord, my rock and my redeemer.'],
     grace:['Isaiah 6:7','And he touched my mouth and said: “Behold, this has touched your lips; your guilt is taken away, and your sin atoned for.”'] },
   { key:'c4', n:'IV', table:'god', name:'Rest', attr:'sovereign',
     law:['Exodus 20:8','Remember the Sabbath day, to keep it holy.'],
-    q:['Have I refused to stop, as if everything depended on me?','Have I neglected worship with His people?','Has my rest been for Him, or only for me?'],
+    q:[['Have I refused to stop, as if everything depended on me?','I have refused to stop, as if everything depended on me'],['Have I neglected worship with His people?','I have neglected worship with Your people'],['Has my rest been for Him, or only for me?','my rest has been for me, not for You'],['Have I let work or screens crowd out time with Him?','I have let ___ crowd out time with You'],['Have I come to worship without preparing my heart?','I have come to worship without preparing my heart'],['Have I kept others from rest to suit myself?','I have kept others from rest to suit myself'],['Have I been busy, but not with what He gave me to do?','I have been busy, but not with what You gave me to do']],
     on:'Come to Him and rest', onV:['Matthew 11:28–29','Come to me, all who labor and are heavy laden, and I will give you rest. Take my yoke upon you, and learn from me, for I am gentle and lowly in heart, and you will find rest for your souls.'],
     grace:['Hebrews 4:9–10','So then, there remains a Sabbath rest for the people of God, for whoever has entered God’s rest has also rested from his works as God did from his.'] },
   { key:'c5', n:'V', table:'nb', name:'Honour', attr:'loving',
     law:['Exodus 20:12','Honor your father and your mother, that your days may be long in the land that the Lord your God is giving you.'],
-    q:['Have I spoken of my parents, or those over me, with contempt?','Have I neglected to care for or thank those who raised me?','Where I lead, have I served others or myself?'],
+    q:[['Have I spoken of my parents, or those over me, with contempt?','I have spoken of ___ with contempt'],['Have I neglected to care for or thank those who raised me?','I have neglected to care for and thank those who raised me'],['Where I lead, have I served others or myself?','I have used my place to serve myself, not others'],['Have I prayed for those who lead me?','I have not prayed for those who lead me'],['Have I resisted rightful authority in my heart?','I have resisted ___ in my heart'],['Have I been harsh or careless with those in my care?','I have been harsh or careless with those in my care'],['Have I failed to honour the old or the weak?','I have failed to honour ___']],
     on:'Outdo one another in honour', onV:['Romans 12:10','Love one another with brotherly affection. Outdo one another in showing honor.'],
     grace:['Luke 15:20','And he arose and came to his father. But while he was still a long way off, his father saw him and felt compassion, and ran and embraced him and kissed him.'] },
   { key:'c6', n:'VI', table:'nb', name:'Life', attr:'patient',
     law:['Exodus 20:13','You shall not murder.'],
-    q:['Have I nursed anger, contempt or a grudge?','Have I wounded someone with words?','Have I neglected to make peace, or to help someone in need?'],
+    q:[['Have I nursed anger, contempt or a grudge?','I have nursed anger toward ___'],['Have I wounded someone with words?','I have wounded ___ with my words'],['Have I neglected to make peace, or to help someone in need?','I have not made peace with ___, or helped when I could'],['Have I envied someone, or wished them ill?','I have wished ill on ___'],['Have I spoken to provoke rather than to heal?','I have spoken to provoke rather than to heal'],['Have I looked away from someone who was suffering?','I have looked away from ___ in their suffering'],['Have I neglected the body He gave me?','I have neglected the body You gave me']],
     on:'Kind and forgiving', onV:['Ephesians 4:31–32','Let all bitterness and wrath and anger and clamor and slander be put away from you, along with all malice. Be kind to one another, tenderhearted, forgiving one another, as God in Christ forgave you.'],
     grace:['Romans 5:10','For if while we were enemies we were reconciled to God by the death of his Son, much more, now that we are reconciled, shall we be saved by his life.'] },
   { key:'c7', n:'VII', table:'nb', name:'Faithfulness', attr:'faithful',
     law:['Exodus 20:14','You shall not commit adultery.'],
-    q:['Have I let my eyes or thoughts treat someone as an object?','Have I fed desires that pull my heart from faithfulness?','Have I neglected to guard the commitments I’ve made?'],
+    q:[['Have I let my eyes or thoughts treat someone as an object?','I have let my eyes and thoughts treat someone as an object'],['Have I fed desires that pull my heart from faithfulness?','I have fed desires that pull my heart from faithfulness'],['Have I neglected to guard the commitments I’ve made?','I have not guarded the commitments I have made'],['Have I watched or read what stirs up wrong desire?','I have watched or read what stirs up wrong desire'],['Have my words or jokes made light of purity?','my words have made light of purity'],['Have I let distance grow where love should be?','I have let distance grow where love should be'],['Have I lingered near temptation instead of fleeing it?','I have lingered near temptation instead of fleeing it']],
     on:'A clean heart', onV:['Psalm 51:10','Create in me a clean heart, O God, and renew a right spirit within me.'],
     grace:['1 Corinthians 6:11','And such were some of you. But you were washed, you were sanctified, you were justified in the name of the Lord Jesus Christ and by the Spirit of our God.'] },
   { key:'c8', n:'VIII', table:'nb', name:'Generosity', attr:'gracious',
     law:['Exodus 20:15','You shall not steal.'],
-    q:['Have I taken what isn’t mine — money, time, credit?','Have I been less than honest in my work?','Have I held back from giving when I could have given?'],
+    q:[['Have I taken what isn’t mine — money, time, credit?','I have taken ___, which wasn’t mine'],['Have I been less than honest in my work?','I have been less than honest in my work'],['Have I held back from giving when I could have given?','I have held back from giving when I could have given'],['Have I wasted what He entrusted to me?','I have wasted what You entrusted to me'],['Have I kept what I should have returned or repaid?','I have kept ___, which I should have returned'],['Have I been idle when I should have worked?','I have been idle when I should have worked'],['Have I been unfair to someone in a deal or a promise?','I have been unfair to ___']],
     on:'Work so as to give', onV:['Ephesians 4:28','Let the thief no longer steal, but rather let him labor, doing honest work with his own hands, so that he may have something to share with anyone in need.'],
     grace:['2 Corinthians 8:9','For you know the grace of our Lord Jesus Christ, that though he was rich, yet for your sake he became poor, so that you by his poverty might become rich.'] },
   { key:'c9', n:'IX', table:'nb', name:'Truth', attr:'true',
     law:['Exodus 20:16','You shall not bear false witness against your neighbor.'],
-    q:['Have I shaded the truth to look better or avoid trouble?','Have I spoken of someone as I wouldn’t if they were in the room?','Have I stayed silent when I should have spoken up?'],
+    q:[['Have I shaded the truth to look better or avoid trouble?','I have shaded the truth to ___'],['Have I spoken of someone as I wouldn’t if they were in the room?','I have spoken of ___ as I wouldn’t if they were in the room'],['Have I stayed silent when I should have spoken up?','I have stayed silent when I should have spoken up for ___'],['Have I flattered someone to get my way?','I have flattered ___ to get my way'],['Have I boasted, or made myself look better than I am?','I have made myself look better than I am'],['Have I assumed the worst about someone?','I have assumed the worst about ___'],['Have I listened gladly to gossip?','I have listened gladly to gossip']],
     on:'Speak the truth', onV:['Ephesians 4:25','Therefore, having put away falsehood, let each one of you speak the truth with his neighbor, for we are members one of another.'],
     grace:['1 John 1:9','If we confess our sins, he is faithful and just to forgive us our sins and to cleanse us from all unrighteousness.'] },
   { key:'c10', n:'X', table:'nb', name:'Contentment', attr:'good',
     law:['Exodus 20:17','You shall not covet your neighbor’s house; you shall not covet your neighbor’s wife, or his male servant, or his female servant, or his ox, or his donkey, or anything that is your neighbor’s.'],
-    q:['Whose life, things or gifts have I resented or wanted?','Where have I thought “I’d be happy if only…”?','Have I failed to give thanks for what He’s given?'],
+    q:[['Whose life, things or gifts have I resented or wanted?','I have wanted what You gave to ___'],['Where have I thought “I’d be happy if only…”?','I have thought I would be happy if only ___'],['Have I failed to give thanks for what He’s given?','I have not thanked You for what You have given'],['Have I been sorry at someone else’s good news?','I have been sorry at ___’s good news'],['Have I compared myself with others and grown bitter?','I have compared myself with ___ and grown bitter'],['Have I wanted more when I already had enough?','I have wanted more when I already had enough'],['Have I grumbled about the lot He has given me?','I have grumbled about the lot You gave me']],
     on:'Be content', onV:['Hebrews 13:5','Keep your life free from love of money, and be content with what you have, for he has said, “I will never leave you nor forsake you.”'],
     grace:['Psalm 16:5–6','The Lord is my chosen portion and my cup; you hold my lot. The lines have fallen for me in pleasant places; indeed, I have a beautiful inheritance.'] }
 ];
 const EXAM_TABLES = [ { t:'god', title:'Love God', sub:'The first table' }, { t:'nb', title:'Love your neighbour', sub:'The second table' } ];
 
-let _exTarget = null, _exOpen = null;
+let _exTarget = null, _exOpen = null, _exMore = false;
 function openExam(targetId, focusKey){
   _exTarget = targetId && document.getElementById(targetId) ? targetId : null;
-  _exOpen = focusKey || null;
+  _exOpen = focusKey || null; _exMore = false;
   examRender(); openModal('modal-exam');
   if(focusKey) setTimeout(() => document.querySelector('#exam-content .at-detail')?.scrollIntoView({ block:'nearest' }), 60);
 }
-function examTap(key){ _exOpen = _exOpen === key ? null : key; examRender(); }
+function examTap(key){ _exOpen = _exOpen === key ? null : key; _exMore = false; examRender(); }
+// A searching question turned into its confession line; a ___ is selected so typing fills it.
+function examConfess(key, i){
+  const c = COMMANDMENTS.find(x => x.key === key), ta = _exTarget && document.getElementById(_exTarget);
+  if(!c || !ta || !c.q[i]) return;
+  const cur = ta.value.trim(), line = `Father, I confess ${c.q[i][1]} — `;
+  ta.value = cur ? `${cur}\n${line}` : line;
+  ta.dispatchEvent(new Event('input', { bubbles: true }));
+  closeModal('modal-exam');
+  const at = ta.value.lastIndexOf('___');
+  const blank = at >= ta.value.length - line.length ? at : -1;
+  setTimeout(() => { ta.focus(); blank >= 0 ? ta.setSelectionRange(blank, blank + 3) : ta.setSelectionRange(ta.value.length, ta.value.length); }, 200);
+}
 function examRender(){
   const el = document.getElementById('exam-content'); if(!el) return;
   const target = _exTarget && document.getElementById(_exTarget);
@@ -6753,8 +6768,9 @@ function examRender(){
     return `<div class="at-detail ex-${c.table}">
       <h3 class="at-name">${c.n} · ${esc(c.name)}</h3>
       <p class="ex-law">${esc(c.law[1])} <button type="button" class="at-ref" onclick="examRead('${c.law[0]}')">${esc(c.law[0])}</button></p>
-      <div class="ex-h">Search me</div>
-      <ul class="pl-prompts field-guide ex-q">${c.q.map(q => `<li class="q">${esc(q)}</li>`).join('')}</ul>
+      <div class="ex-h">Search me${target ? '<em class="ex-tap">Tap one to confess it</em>' : ''}</div>
+      <ul class="pl-prompts field-guide ex-q">${c.q.map(([q], i) => (i < 3 || _exMore) ? `<li class="q">${target ? `<button type="button" class="ex-qb" onclick="examConfess('${c.key}',${i})">${esc(q)}</button>` : esc(q)}</li>` : '').join('')}</ul>
+      ${c.q.length > 3 ? `<button type="button" class="ex-more" aria-expanded="${_exMore}" onclick="_exMore=!_exMore;examRender()">${_exMore ? 'Fewer ‹' : `${c.q.length - 3} more ›`}</button>` : ''}
       <div class="ex-h">Put on</div>
       <p class="ex-on">${esc(c.on)}</p>${vHTML(c.onV)}
       ${a ? `<button type="button" class="ex-attr" onclick="openAttributes(null,'${a.key}')">He is ${esc(a.key === 'loving' ? 'love' : a.name.toLowerCase())} ›</button>` : ''}
