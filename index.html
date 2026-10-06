@@ -998,7 +998,7 @@
   /* --text flips to cream in dark mode, so the toast's text must flip with it. */
   [data-theme="dark"] .toast, [data-theme="dark"] .undo-toast, [data-theme="dark"] .update-toast { color: var(--bg); }
   [data-theme="dark"] .undo-toast button { color: var(--ink-cream); }   /* light-mode accent: 5.4:1 on the cream toast */
-  .update-toast { position: fixed; bottom: calc(var(--nav-h, 76px) + 80px); left: 50%; transform: translateX(-50%); background: var(--accent); color: var(--on-accent); padding: 11px 18px; border-radius: var(--r-pill); font-size: var(--fs-4); font-family: var(--sans); cursor: pointer; box-shadow: var(--shadow-lg); z-index: 1000; opacity: 0; pointer-events: none; transition: opacity .25s; white-space: nowrap; max-width: calc(100vw - 24px); }
+  .update-toast { position: fixed; bottom: calc(var(--nav-h, 76px) + 80px); left: 50%; transform: translateX(-50%); background: var(--accent); color: var(--on-accent); padding: 11px 18px; border-radius: var(--r-pill); font-size: var(--fs-4); font-family: var(--sans); cursor: pointer; box-shadow: var(--shadow-lg); z-index: 1000; opacity: 0; pointer-events: none; transition: opacity .25s; width: max-content; max-width: calc(100vw - 32px); text-align: center; line-height: 1.35; }
   .update-toast strong { font-weight: 700; text-decoration: underline; }
   .update-toast.show { opacity: 1; pointer-events: auto; }
   .update-toast:active { opacity: .82; }
@@ -2788,6 +2788,7 @@
   body.has-fab .toast { bottom: calc(var(--nav-h, 76px) + 80px); }
   /* D9 / L4: card toolbar — four equal tiles, labels balanced on two lines. */
   .cd-tools { grid-template-columns: repeat(auto-fit, minmax(0, 1fr)); }
+  @media (max-width: 359px){ .cd-tools { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; } }
   .cd-tool span { font-size: var(--fs-1); line-height: 1.2; min-height: 2.4em; display: flex; align-items: flex-start; justify-content: center; text-align: center; text-wrap: balance; }
   /* D12: word-cloud inks follow the scheme and clear 4.5:1. */
   .wf-word.w2 { color: color-mix(in srgb, var(--accent) 72%, var(--text3)); } .wf-word.w3 { color: var(--text3); }
