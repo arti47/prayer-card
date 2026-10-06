@@ -2422,9 +2422,6 @@
   body.in-session .session-foot .pl-nav { margin: 0 auto; max-width: 520px; }
   body.in-session .pl-save-exit, body.in-session .dp-plan-tag { display: none; }
   body.in-session .pl-progress-dots { margin-top: 10px; }
-  /* L3 instruction peek */
-  .pl-instruction.peek, .pl-recommendation.peek { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; margin-bottom: 2px; -webkit-mask-image: linear-gradient(#000 55%, transparent); mask-image: linear-gradient(#000 55%, transparent); }
-  .instr-toggle { display: block; margin: 0 auto 12px; width: 44px; height: 30px; border: none; background: none; color: var(--accent); font-size: var(--fs-7); cursor: pointer; }
   /* L4 plan tiles with scenes */
   .dp-plan-tile .plan-scene { width: 56px; height: 35px; color: var(--accent); }
   .dp-plan-tile-text { display: flex; flex-direction: column; align-items: center; gap: 2px; }
@@ -2504,7 +2501,7 @@
   .note-date-f .note-date-input { position: absolute; inset: 0; width: 100% !important; min-width: 0; height: 100%; opacity: 0; cursor: pointer; }
   /* D4 no resize grips anywhere */
   textarea { resize: none; }
-  /* L15 heart tiles: equal size; intro peek */
+  /* L15 heart tiles: equal size */
   .hn-grid { grid-auto-rows: 1fr; }
   .hn-tile { min-height: 112px; justify-content: center; }
   /* D14 Bible sheet keeps its height on every screen */
@@ -2615,7 +2612,6 @@
   .pl-cal-dia { display: flex; gap: 2px; justify-content: center; margin-top: 2px; height: 7px; }
   .pl-cal-dia i { width: 5px; height: 5px; transform: rotate(45deg); background: var(--pi); border-radius: 1px; display: block; }
   .prayer-lib-item summary .pl-num { display: inline-block; min-width: 2.2em; font-family: var(--serif); font-variant-caps: small-caps; color: var(--lc, var(--accent)); font-size: .82em; letter-spacing: .04em; }
-  .hn-intro.peek { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; margin-bottom: 0; -webkit-mask-image: linear-gradient(#000 55%, transparent); mask-image: linear-gradient(#000 55%, transparent); }
   /* U1 snap sheets */
   .modal.snap { transition: max-height .28s ease; }
   .modal.snap:not(.full) { max-height: 66dvh; }
@@ -2663,7 +2659,7 @@
   :root { --rubric: #8b4634; }
   [data-theme="dark"] { --rubric: #d9a08a; }
   .pl-step-card .pl-instruction { color: var(--rubric); }
-  .pl-step-card .pl-instruction:not(.peek)::first-letter { float: left; font-family: var(--serif); font-size: 3.1em; line-height: .82; padding: .06em .1em 0 0; color: var(--rubric); }
+  .pl-step-card .pl-instruction::first-letter { float: left; font-family: var(--serif); font-size: 3.1em; line-height: .82; padding: .06em .1em 0 0; color: var(--rubric); }
   /* G4 sub-steps turn like a page */
   @keyframes pageTurnNext { from { opacity: 0; transform: perspective(1100px) rotateY(-9deg) translateX(14px); transform-origin: left center; } to { opacity: 1; transform: none; } }
   @keyframes pageTurnBack { from { opacity: 0; transform: perspective(1100px) rotateY(9deg) translateX(-14px); transform-origin: right center; } to { opacity: 1; transform: none; } }
@@ -2770,7 +2766,7 @@
 
   /* G1 / D1: the instruction's initial is an illuminated letter in a double-ruled
      square, so the gap after it reads as a capital, not a split word. */
-  .pl-step-card .pl-instruction:not(.peek)::first-letter { font-size: 2.3em; line-height: 1; padding: .1em .2em .04em; margin: .14em .38em 0 0; border: 3px double color-mix(in srgb, var(--rubric) 45%, transparent); border-radius: 4px; background: color-mix(in srgb, var(--rubric) 7%, var(--surface)); }
+  .pl-step-card .pl-instruction::first-letter { font-size: 2.3em; line-height: 1; padding: .1em .2em .04em; margin: .14em .38em 0 0; border: 3px double color-mix(in srgb, var(--rubric) 45%, transparent); border-radius: 4px; background: color-mix(in srgb, var(--rubric) 7%, var(--surface)); }
   .prayer-lib-item[open] .prayer-lib-text::first-letter { font-size: 2.2em; line-height: 1; padding: .1em .2em .04em; margin: .12em .36em 0 0; border: 3px double color-mix(in srgb, var(--lc) 45%, transparent); border-radius: 4px; background: color-mix(in srgb, var(--lc) 8%, var(--surface)); }
   .nowrap { white-space: nowrap; }
   /* D3: Reflect figures 3 + 2, so no label runs past two lines. */
@@ -5115,33 +5111,7 @@ function syncHeaderMode(){
   if(sbb) sbb.style.display = (typeof bibleFabEnabled === 'function' && !bibleFabEnabled()) ? 'none' : '';
   syncNavHeight();
 }
-// L3: a step's instruction opens in full the first time it is met; on later days it
-// opens as a two-line peek with ⌄, since it is already known. Keyed by the text
-// itself, so it needs no step bookkeeping. Listen instructions are never folded.
-let _instrSeenAtLoad = null; const _instrOpen = new Set();
-function textKey(t){ let h = 5381; t = String(t||'').slice(0, 240); for(let i=0;i<t.length;i++) h = ((h<<5) + h + t.charCodeAt(i)) | 0; return (h>>>0).toString(36); }
-function settleInstructionPeek(root){
-  if(!root) return;
-  let stored; try{ stored = JSON.parse(localStorage.getItem('seen_instr') || '[]'); }catch(e){ stored = []; }
-  if(!_instrSeenAtLoad) _instrSeenAtLoad = new Set(stored);
-  const all = new Set(stored); let changed = false;
-  root.querySelectorAll('.pl-step-card .pl-instruction, .pl-step-card .pl-recommendation').forEach(el => {
-    const k = textKey(el.textContent);
-    if(_instrSeenAtLoad.has(k) && !_instrOpen.has(k)){
-      el.classList.add('peek');
-      if(el.scrollHeight > el.clientHeight + 4){
-        el.insertAdjacentHTML('afterend', `<button type="button" class="instr-toggle" aria-expanded="false" aria-label="Show the whole instruction" onclick="openInstr(this,'${k}')">⌄</button>`);
-      } else el.classList.remove('peek');
-    }
-    if(!all.has(k)){ all.add(k); changed = true; }
-  });
-  if(changed) safeSetItem('seen_instr', JSON.stringify([...all].slice(-300)));
-}
-function openInstr(btn, k){
-  _instrOpen.add(k);
-  const el = btn.previousElementSibling; if(el) el.classList.remove('peek');
-  btn.remove();
-}
+// Step instructions always open in full — they are never folded (owner's request).
 function sessionExit(){
   if(currentView === 'daily' && dpMode === 'session') dpSaveAndExit();
   else if(currentView === 'pl' && plMode === 'session') plSaveAndExit();
@@ -7093,7 +7063,7 @@ function getTextareaContext(ta){
 let _focusPassageOpen = true;
 // Featured Scripture on a Weekly step opens as a three-line peek so the writing
 // field stays on screen; the choice holds for the rest of the session.
-let _plScriptureOpen = false;
+let _plScriptureOpen = true;
 function togglePLScripture(){
   _plScriptureOpen = !_plScriptureOpen;
   const el = document.getElementById('pl-scripture-feature'); if(!el) return;
@@ -8642,7 +8612,7 @@ function renderDailyPrayer(){
   else if(dpMode==='session') result = renderDPStep();
   else if(dpMode==='done') result = renderDPDone();
   injectExpandButtons();
-  if(dpMode==='session'){ settleInstructionPeek(document.getElementById('dp-content')); fillComposer('dp-content'); }
+  if(dpMode==='session'){ fillComposer('dp-content'); }
   syncHeaderMode();
   requestAnimationFrame(fabSettle);
   return result;
@@ -9865,7 +9835,7 @@ function renderPL(){
   else if(plMode==='done'){ renderPLDone(el); }
   injectExpandButtons();
   syncHeaderMode();
-  if(plMode==='session'){ settleInstructionPeek(document.getElementById('pl-content')); settleScripturePeek(); fillComposer('pl-content'); }
+  if(plMode==='session'){ settleScripturePeek(); fillComposer('pl-content'); }
   requestAnimationFrame(fabSettle);
 }
 
@@ -10429,7 +10399,7 @@ function renderPLDone(el){
 function plReturnHome(){ plMode='home'; renderPL(); }
 
 // ══════════ HEART NEEDS CHART ══════════
-let _hnOpen=null, _hnIntroOpen=false;
+let _hnOpen=null;
 function hnTileTap(key){
   const inSession = plMode==='session' && plSession && currentStep()?.key==='prepare';
   if(inSession){ _hnOpen=key; toggleHeartNeed(key); return; }
@@ -10472,7 +10442,7 @@ function openHeartChart(keep, focus){
 
   document.getElementById('heart-chart-content').innerHTML=`
     <h2 style="color:var(--accent);margin-bottom:6px">Needs of the Heart</h2>
-    <p class="hn-intro${inSession||_hnIntroOpen?'':' peek'}">${intro}</p>${inSession||_hnIntroOpen?'':`<button type="button" class="instr-toggle" aria-label="Show the whole introduction" onclick="_hnIntroOpen=true;openHeartChart(true)">⌄</button>`}
+    <p class="hn-intro">${intro}</p>
     ${cards}
     ${inSession ? `<button class="btn btn-primary" onclick="closeHeartChart()">Done</button>` : ''}
   `;
