@@ -5112,6 +5112,7 @@ function syncHeaderMode(){
   syncNavHeight();
 }
 // Step instructions always open in full — they are never folded (owner's request).
+function textKey(t){ let h = 5381; t = String(t||'').slice(0, 240); for(let i=0;i<t.length;i++) h = ((h<<5) + h + t.charCodeAt(i)) | 0; return (h>>>0).toString(36); }
 function sessionExit(){
   if(currentView === 'daily' && dpMode === 'session') dpSaveAndExit();
   else if(currentView === 'pl' && plMode === 'session') plSaveAndExit();
