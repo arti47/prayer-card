@@ -795,6 +795,14 @@
   .cf-tpl .card-cat { flex: none; }
   .cf-tpl-title { font-size: var(--fs-5); }
   .cf-starters { margin: 4px 0 6px; }
+  /* Each field on the card form is its own section: heading, box, then its helpers. */
+  .cf-field { padding: 18px 0 14px; border-top: 1px solid color-mix(in srgb, var(--border) 75%, transparent); }
+  .cf-field + .cf-field { margin-top: 2px; }
+  .cf-field > label:first-child { margin-top: 0; margin-bottom: 8px; color: var(--accent); }
+  .cf-field > label.cf-sub { margin-top: 16px; margin-bottom: 8px; }
+  .cf-field .cf-starters { margin: 8px 0 0; display: flex; flex-wrap: wrap; align-items: center; column-gap: 16px; row-gap: 4px; }
+  .cf-field .cf-starters .cf-chips { flex-basis: 100%; }
+  .cf-field .hint { margin: 10px 0 0; }
   .cf-starters .cf-chips { display: none; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
   .cf-starters.open .cf-chips { display: flex; }
   .cf-starters.open .fh-link { color: var(--accent); }
@@ -3173,8 +3181,11 @@
       <p class="cf-tpl-hint">A ready-made shape to edit. You’ll add the name yourself.</p>
       <div class="cf-tpl-list" id="cf-tpl-list"></div>
     </details>
+    <div class="cf-field">
     <label>Person or Situation</label>
     <input type="text" id="f-person" placeholder="e.g. Mum's health, My job search…">
+    </div>
+    <div class="cf-field">
     <label>Category</label>
     <!-- The chosen category's drawn glyph sits inside the select's left edge, so the
          options can be plain words (a <select> can't hold an SVG). -->
@@ -3186,23 +3197,31 @@
       <option value="church">Church / Ministry</option><option value="heart">Own Heart Change</option>
       <option value="dream">Big Dream</option><option value="other">Other</option>
     </select></div>
-    <label>Scripture Anchor</label>
+    </div>
+    <div class="cf-field">
+    <label for="f-scripture">Scripture Anchor</label>
     <textarea id="f-scripture" placeholder="e.g. Psalm 27:14 — Wait for the Lord…"></textarea>
-    <button type="button" class="bb-field-btn" onclick="openBibleBrowser('f-scripture')"><span data-ico="book"></span>Insert from Bible</button>
     <div class="cf-starters" data-for="f-scripture"></div>
-    <label>The Ask — Heart Level</label>
+    </div>
+    <div class="cf-field">
+    <label for="f-ask-heart">The Ask — Heart Level</label>
     <textarea id="f-ask-heart" placeholder="What deeper heart change or trust are you asking for?"></textarea>
     <div class="cf-starters" data-for="f-ask-heart"></div>
-    <label>The Ask — Desired Circumstance</label>
+    </div>
+    <div class="cf-field">
+    <label for="f-ask-circ">The Ask — Desired Circumstance</label>
     <textarea id="f-ask-circ" placeholder="What outward change or answer are you hoping for?"></textarea>
     <div class="cf-starters" data-for="f-ask-circ"></div>
-    <label>Father's Perspective — “Because you are…”</label>
+    </div>
+    <div class="cf-field">
+    <label for="f-persp-attr">Father's Perspective — “Because you are…”</label>
     <input type="text" id="f-persp-attr" placeholder="Father, because you are…">
     <div class="cf-starters" data-for="f-persp-attr"></div>
-    <label>“I will trust you with…”</label>
+    <label for="f-persp-trust" class="cf-sub">“I will trust you with…”</label>
     <input type="text" id="f-persp-trust" placeholder="I will trust you with…">
     <div class="cf-starters" data-for="f-persp-trust"></div>
     <p class="hint">“Father, because you are ___, I will trust you with ___.”</p>
+    </div>
     <button class="btn btn-primary" onclick="saveCard()">Save Card</button>
     <button class="btn btn-secondary" onclick="closeModal('modal-new')">Cancel</button>
   </div>
@@ -6687,7 +6706,8 @@ function attrPhraseLink(html, targetId){
   const t = targetId ? `'${targetId}'` : 'null';
   return html.replace(/attribute of His character/, m => `<button type="button" class="at-phrase" onclick="event.stopPropagation();openAttributes(${t})">${m}</button>`)
              .replace(/specific sins, attitudes, or neglects/, m => `<button type="button" class="at-phrase" onclick="event.stopPropagation();openExam(${t})">${m}</button>`)
-             .replace(/you need from Him today/, m => `<button type="button" class="at-phrase" onclick="event.stopPropagation();openTeach(${t})">${m}</button>`);
+             .replace(/you need from Him today|most pressing on your heart/, m => `<button type="button" class="at-phrase" onclick="event.stopPropagation();openTeach(${t})">${m}</button>`)
+             .replace(/in thought, word, or deed/, m => `<button type="button" class="at-phrase" onclick="event.stopPropagation();openExam(${t})">${m}</button>`);
 }
 // A word in your own writing that names an attribute becomes a quiet link to it.
 function attrLinkify(text){
@@ -7879,7 +7899,7 @@ function renderCardFormHelpers(){
     if(box.dataset.built) return;
     const key = CARD_FIELD_KEYS[box.dataset.for];
     const items = [...new Set(CARD_TEMPLATES.map(t => t[key]))];
-    box.innerHTML = `<button type="button" class="fh-link" onclick="this.parentElement.classList.toggle('open')">${ICON.sparkle}<span class="fh-txt">Starters</span></button>${box.dataset.for === 'f-persp-attr' ? ' ' + attrLinkHTML('f-persp-attr') : ''}${/^f-ask-/.test(box.dataset.for) ? ` <button type="button" class="fh-link at-link" onclick="openTeachFromCardForm('${box.dataset.for}')">${ICON.pray}<span class="fh-txt">Teach me to ask</span></button>` : ''}
+    box.innerHTML = `${box.dataset.for === 'f-scripture' ? `<button type="button" class="fh-link" onclick="openBibleBrowser('f-scripture')">${ICON.book}<span class="fh-txt">Insert from Bible</span></button> ` : ''}<button type="button" class="fh-link" onclick="this.parentElement.classList.toggle('open')">${ICON.sparkle}<span class="fh-txt">Starters</span></button>${box.dataset.for === 'f-persp-attr' ? ' ' + attrLinkHTML('f-persp-attr') : ''}${/^f-ask-/.test(box.dataset.for) ? ` <button type="button" class="fh-link at-link" onclick="openTeachFromCardForm('${box.dataset.for}')">${ICON.pray}<span class="fh-txt">Teach me to ask</span></button>` : ''}
       <div class="cf-chips">${items.map((v, i) => `<button type="button" class="pl-forget-chip cf-chip" onclick="cardStarterInsert('${box.dataset.for}', ${i})">${esc(v)}</button>`).join('')}</div>`;
     box.dataset.built = '1';
   });
@@ -9219,7 +9239,7 @@ function renderDPStep(){
     const qRow = q => `<div class="dp-q-row">
           <div class="dp-q-label" style="color:${step.color}">${esc(q.label)}</div>
           <div class="dp-q-prompt">${esc(q.prompt)}</div>
-          ${q.key === 'q_god' ? attrLinkHTML('dp-q-q_god') : ''}${q.key === 'q_sin' ? examLinkHTML('dp-q-q_sin') : ''}
+          ${(q.key === 'q_god' || q.key === 'q_praise') ? attrLinkHTML(`dp-q-${q.key}`) : ''}${(q.key === 'q_sin' || q.key === 'q_confess') ? examLinkHTML(`dp-q-${q.key}`) : ''}${(q.key === 'q_need' || q.key === 'q_ask') ? teachLinkHTML(`dp-q-${q.key}`) : ''}
           <textarea id="dp-q-${q.key}" class="pl-textarea" placeholder="${esc(q.placeholder || 'Jot a few lines…')}">${escTa(saved[q.key]||'')}</textarea>
         </div>`;
     if(unit.kind === 'field'){
@@ -9272,7 +9292,7 @@ function renderDPStep(){
         <div class="pl-field-label" style="color:${step.color}">${esc(f.label)}</div>
         ${(step.fields||[]).length > 1 ? fieldGuideHTML(f.focusPrompt, `dp-field-${f.key}`) : ''}
         <textarea id="dp-field-${f.key}" class="pl-textarea" placeholder="${esc(f.placeholder||'')}"${fpAttr}>${escTa(saved[f.key]||'')}</textarea>
-        ${helperRow(`dp-field-${f.key}`, { chips: starterChips, lib: libCat, cryOut: stepIsPrayerMode, cards: !!f.showCardsButton, attrs: f.key === 'psalmprayer', exam: f.key === 'dayconfession', teach: f.key === 'peopleprayed' || f.key === 'heartneeds' || step.key === 'freeprayer' })}
+        ${helperRow(`dp-field-${f.key}`, { chips: starterChips, lib: libCat, cryOut: stepIsPrayerMode, cards: !!f.showCardsButton, attrs: f.key === 'psalmprayer' || step.key === 'wordprayer' || step.key === 'contemplation', exam: f.key === 'dayconfession' || step.key === 'wordprayer', teach: f.key === 'peopleprayed' || f.key === 'heartneeds' || step.key === 'freeprayer' || step.key === 'wordprayer' })}
         ${cardsBtn ? '' : ''}
       </div>`;
     }).join('');
