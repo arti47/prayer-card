@@ -1953,6 +1953,29 @@
 
   /* ═══ Redesign pass 3 ═══ */
   /* Needs of the Heart: a 3×3 grid of tiles; the open need unfolds under its row. */
+  /* The attributes of God */
+  :root { --at-only: #7a5a1e; --at-shared: #46653a; }
+  [data-theme="dark"] { --at-only: #dcb86e; --at-shared: #aac78c; }
+  .at-only { --nc: var(--at-only); } .at-shared { --nc: var(--at-shared); }
+  .at-h { color: var(--accent); margin-bottom: 4px; }
+  .at-fam-h { display: flex; align-items: baseline; gap: 8px; margin: 14px 0 8px; color: var(--nc); font-family: var(--sans); font-size: var(--fs-1); font-weight: 600; letter-spacing: .055em; text-transform: uppercase; }
+  .at-fam-h em { font-family: var(--serif); text-transform: none; letter-spacing: 0; font-weight: normal; color: var(--text3); font-size: var(--fs-3); }
+  .hn-grid.at-grid { margin-bottom: 4px; grid-auto-rows: auto; align-items: stretch; }
+  .at-tile { position: relative; display: flex; flex-direction: column; align-items: center; gap: 6px; min-height: 80px; padding: 10px 4px 8px; border-radius: var(--radius); border: 1px solid color-mix(in srgb, var(--nc) 30%, var(--border)); background: color-mix(in srgb, var(--nc) 6%, var(--surface)); color: var(--nc); font-family: var(--serif); cursor: pointer; }
+  .at-tile:active { transform: scale(.97); }
+  .at-ini { width: 38px; height: 38px; display: flex; align-items: center; justify-content: center; font-size: 1.35rem; line-height: 1; border: 1px solid currentColor; outline: 1px solid color-mix(in srgb, currentColor 40%, transparent); outline-offset: 2px; border-radius: 3px; background: color-mix(in srgb, currentColor 9%, transparent); }
+  .at-t { font-size: var(--fs-3); line-height: 1.25; color: var(--text); text-align: center; overflow-wrap: anywhere; }
+  .at-tile.open { box-shadow: 0 0 0 2px currentColor inset; background: color-mix(in srgb, currentColor 12%, var(--surface)); }
+  .at-detail { grid-column: 1 / -1; padding: 14px 14px 12px; border-radius: var(--radius); border: 1px solid color-mix(in srgb, var(--nc) 35%, var(--border)); background: color-mix(in srgb, var(--nc) 5%, var(--surface)); }
+  .at-name { color: var(--nc); font-size: var(--fs-6); margin: 0 0 4px; }
+  .at-line { margin: 0 0 10px; color: var(--text); font-size: var(--fs-5); line-height: 1.5; }
+  .at-v { margin: 0 0 10px; padding-left: 10px; border-left: 2px solid color-mix(in srgb, var(--nc) 40%, transparent); }
+  .at-ref { background: none; border: none; padding: 0; font-family: var(--sans); font-size: var(--fs-2); font-weight: 600; color: var(--nc); text-decoration: underline dotted; text-underline-offset: 3px; cursor: pointer; min-height: 28px; }
+  .at-vt { font-family: var(--serif); font-style: italic; font-size: var(--fs-4); line-height: 1.55; color: var(--text2); }
+  .at-use { width: 100%; margin-top: 4px; }
+  .at-phrase, .at-word { display: inline; background: none; border: none; padding: 0; margin: 0; font: inherit; color: inherit; text-decoration: underline dotted color-mix(in srgb, var(--accent) 70%, transparent); text-underline-offset: 3px; cursor: pointer; }
+  .at-word { font-style: inherit; }
+  .pl-forget-block .at-link { margin-top: 8px; }
   .hn-grid { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 8px; margin-bottom: 16px; }
   .hn-tile { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; gap: 7px; min-height: 104px; padding: 14px 6px 10px; border-radius: var(--radius); border: 1px solid color-mix(in srgb, var(--nc) 30%, var(--border)); background: color-mix(in srgb, var(--nc) 7%, var(--surface)); color: var(--idc); font-family: var(--serif); cursor: pointer; transition: transform .12s, box-shadow .15s, background .15s; }
   [data-theme="dark"] .hn-tile { color: var(--idc-dark); background: color-mix(in srgb, var(--idc-dark) 10%, var(--surface)); border-color: color-mix(in srgb, var(--idc-dark) 30%, var(--border)); }
@@ -3038,6 +3061,7 @@
         <li><strong>Tim Keller</strong> — <em>Prayer: Experiencing Awe and Intimacy with God</em>. The Daily Prayer practice (the three plan options, with the Approach → Meditation → Prayer → Contemplation shape) is drawn from Ch. 15. Many of the meditation and praise-deepening features across the app — the cry-out affordance, soliloquy mode, Christ-anchor close on Done screens, alternate meditation techniques, and the praise / thanksgiving starter chips — draw from Chapters 10–12.</li>
         <li><strong>Matthew Henry</strong> — <em>A Way to Pray: A Biblical Method for Enriching Your Prayer Life</em>. The <span data-ico="book"></span>&#8202;Prayer Library — roughly forty Scripture-saturated written prayers across Praise, Confession, Petition, Thanksgiving, and Concluding — is faithfully drawn from his method.</li>
         <li><strong>Brené Brown</strong> — <em>The Gifts of Imperfection</em>. Two evening prompts take their shape from her daily practice: giving thanks for ordinary, particular moments rather than blessings in general, and naming what we reach for to take the edge off a hard day.</li>
+        <li><strong>The Attributes of God</strong> follow the classic Reformed division into attributes that are God’s alone and those He shares with us in part, as set out in Wayne Grudem’s <em>Systematic Theology</em> and Herman Bavinck’s <em>Reformed Dogmatics</em>. The one-line descriptions were written for this app.</li>
         <li><strong>English Standard Version (ESV)</strong> — Scripture quotations, the <span data-ico="book"></span>&#8202;Bible browser, and the Scripture-lookup text are from <em>The Holy Bible, English Standard Version® (ESV®)</em>, copyright © 2001 by Crossway, a publishing ministry of Good News Publishers. Used by permission. All rights reserved.</li>
       </ul>
       <p style="margin-top:10px;font-size:.82rem;color:var(--text3);font-style:italic">If you'd like to share this app or use the content beyond personal practice, please seek permission from Redemption Hill Church and credit the authors above.</p>
@@ -3181,6 +3205,10 @@
 
 <div class="modal-bg" id="modal-heart-chart">
   <div class="modal"><div class="modal-handle"></div><div id="heart-chart-content"></div></div>
+</div>
+
+<div class="modal-bg" id="modal-attrs">
+  <div class="modal"><div class="modal-handle"></div><div id="attrs-content"></div></div>
 </div>
 
 <div class="modal-bg" id="modal-link-cards">
@@ -5207,10 +5235,10 @@ function psalmTrackHTML(current){
 // the field's corner; empty again, the full button returns.
 // On a prayer move that has its own screen, the field's guiding prompt (the same
 // words focus mode shows) is set out as a short list, one sentence per point.
-function fieldGuideHTML(text){
+function fieldGuideHTML(text, targetId){
   if(!text) return '';
   const pts = String(text).split(/(?<=[.?!])\s+(?=[A-Z“"'‘])/).map(t => t.trim()).filter(Boolean);
-  return `<ul class="pl-prompts field-guide" aria-label="Questions to consider">${pts.map(t => `<li class="${/\?$/.test(t) ? 'q' : 's'}">${esc(t)}</li>`).join('')}</ul>`;
+  return `<ul class="pl-prompts field-guide" aria-label="Questions to consider">${pts.map(t => `<li class="${/\?$/.test(t) ? 'q' : 's'}">${attrPhraseLink(esc(t), targetId)}</li>`).join('')}</ul>`;
 }
 function pfSync(ta){ ta.closest('.pf-row')?.classList.toggle('has-text', !!ta.value.trim()); }
 function psalmTrackRefresh(){ const el = document.getElementById('psalm-track'), ta = document.getElementById('dp-passage'); if(el && ta) el.innerHTML = psalmTrackHTML(ta.value); }
@@ -5495,7 +5523,7 @@ function bbBackToChapters(){
 // ── Scripture by feeling: the same hand-chosen verses as the sessions, any time ──
 function bbFeelEntryHTML(){
   if(_bbSearch.trim()) return '';
-  return `<button class="bb-feel-btn" onclick="bbFeelOpen()">${ICON.heart}Scripture by feeling</button>`;
+  return `<button class="bb-feel-btn" onclick="bbFeelOpen()">${ICON.heart}Scripture by feeling</button><button class="bb-feel-btn" onclick="openAttributes(null)">${ICON.crown}Scripture by attribute</button>`;
 }
 function bbFeelOpen(){ _bbFeel={core:null, sec:null, ter:null}; renderBibleBrowser(); }
 function bbFeelBack(){
@@ -5900,6 +5928,7 @@ function helperRow(targetId, opts){
   if(o.chips)   items.push(`<button type="button" class="fh-link" onclick="fhToggle(this,'chips')">${ICON.sparkle}<span class="fh-txt">Starters</span></button>`);
   if(o.lib)     items.push(`<button type="button" class="fh-link" onclick="openPrayerLibrary('${o.lib}','${targetId}')">${ICON.book}<span class="fh-txt">Written prayer</span></button>`);
   if(o.cryOut)  items.push(`<button type="button" class="fh-link" onclick="fhToggle(this,'cry')">${ICON.breath}<span class="fh-txt">Dry today?</span></button>`);
+  if(o.attrs)   items.push(attrLinkHTML(targetId));
   if(o.cards)   items.push(`<button type="button" class="fh-link" onclick="openCardsWalkthrough()">${ICON.cards}<span class="fh-txt">Story cards</span></button>`);
   if(o.keep)    items.push(`<button type="button" class="fh-link" onclick="openKeepSheet('${targetId}')">${ICON.note}<span class="fh-txt">Keep with a card</span></button>`);
   if(!items.length) return '';
@@ -6471,6 +6500,7 @@ function praiseChipsBlock(textareaId, kind){
     <div class="pl-forget-label">${esc(label)}</div>
     <div class="pl-forget-hint">Tap to begin a line.</div>
     <div class="pl-forget-chips">${chips}</div>
+    ${kind === 'praise' ? attrLinkHTML(textareaId) : ''}
   </div>`;
 }
 
@@ -6488,6 +6518,141 @@ function praiseChipInsert(btn){
   ta.dispatchEvent(new Event('input', { bubbles: true }));
   ta.focus();
   ta.setSelectionRange(ta.value.length, ta.value.length);
+}
+
+// ══════════ THE ATTRIBUTES OF GOD ══════════
+// Twenty attributes in the two classic families — those that are His alone and those
+// He shares with us in part. Lines are written plainly for prayer; verse text is the
+// bundled ESV. Opened from Adoration's "attribute of His character", its Starters,
+// the Full meditation question about God, Evening's Psalm prayer, Weekly's Come step,
+// the card form's "Because you are…", the walkthrough's Come line and the Bible reader.
+const GOD_ATTRIBUTES = [
+  { key:'selfexistent', fam:'only', name:'Self-existent', you:'self-existent', line:'He depends on nothing; everything depends on Him.',
+    v:[['Exodus 3:14','God said to Moses, “I am who I am.” And he said, “Say this to the people of Israel: ‘I am has sent me to you.’”'],
+       ['Acts 17:24–25','The God who made the world and everything in it, being Lord of heaven and earth, does not live in temples made by man, nor is he served by human hands, as though he needed anything, since he himself gives to all mankind life and breath and everything.']] },
+  { key:'eternal', fam:'only', name:'Eternal', you:'eternal', line:'He has no beginning and no end.',
+    v:[['Psalm 90:2','Before the mountains were brought forth, or ever you had formed the earth and the world, from everlasting to everlasting you are God.'],
+       ['Revelation 1:8','“I am the Alpha and the Omega,” says the Lord God, “who is and who was and who is to come, the Almighty.”']] },
+  { key:'unchanging', fam:'only', name:'Unchanging', you:'unchanging', line:'His character and purposes never change.',
+    v:[['Malachi 3:6','For I the Lord do not change; therefore you, O children of Jacob, are not consumed.'],
+       ['Hebrews 13:8','Jesus Christ is the same yesterday and today and forever.']] },
+  { key:'present', fam:'only', name:'Everywhere present', you:'everywhere present', line:'There is nowhere He is not; He is near you now.',
+    v:[['Psalm 139:7–10','Where shall I go from your Spirit? Or where shall I flee from your presence? If I ascend to heaven, you are there! If I make my bed in Sheol, you are there! If I take the wings of the morning and dwell in the uttermost parts of the sea, even there your hand shall lead me, and your right hand shall hold me.'],
+       ['Jeremiah 23:23–24','“Am I a God at hand, declares the Lord, and not a God far away? Can a man hide himself in secret places so that I cannot see him? declares the Lord. Do I not fill heaven and earth? declares the Lord.”']] },
+  { key:'knowing', fam:'only', name:'All-knowing', you:'all-knowing', line:'He knows all things, and knows you fully.',
+    v:[['Psalm 139:1–4','O Lord, you have searched me and known me! You know when I sit down and when I rise up; you discern my thoughts from afar. You search out my path and my lying down and are acquainted with all my ways. Even before a word is on my tongue, behold, O Lord, you know it altogether.'],
+       ['Hebrews 4:13','And no creature is hidden from his sight, but all are naked and exposed to the eyes of him to whom we must give account.']] },
+  { key:'powerful', fam:'only', name:'All-powerful', you:'all-powerful', line:'Nothing is too hard for Him.',
+    v:[['Jeremiah 32:17','Ah, Lord God! It is you who have made the heavens and the earth by your great power and by your outstretched arm! Nothing is too hard for you.'],
+       ['Ephesians 3:20','Now to him who is able to do far more abundantly than all that we ask or think, according to the power at work within us …']] },
+  { key:'sovereign', fam:'only', name:'Sovereign', you:'sovereign over all', line:'He rules over all and works it for His purposes.',
+    v:[['Psalm 115:3','Our God is in the heavens; he does all that he pleases.'],
+       ['Romans 8:28','And we know that for those who love God all things work together for good, for those who are called according to his purpose.']] },
+  { key:'triune', fam:'only', name:'Triune', you:'one God — Father, Son and Spirit', opener:'Father, Son and Spirit, you are one God — ', line:'One God: Father, Son and Spirit.',
+    v:[['Deuteronomy 6:4','Hear, O Israel: The Lord our God, the Lord is one.'],
+       ['Matthew 28:19','Go therefore and make disciples of all nations, baptizing them in the name of the Father and of the Son and of the Holy Spirit …']] },
+  { key:'holy', fam:'shared', name:'Holy', you:'holy', line:'Utterly pure and set apart.',
+    v:[['Isaiah 6:3','And one called to another and said: “Holy, holy, holy is the Lord of hosts; the whole earth is full of his glory!”'],
+       ['1 Peter 1:15–16','… but as he who called you is holy, you also be holy in all your conduct, since it is written, “You shall be holy, for I am holy.”']] },
+  { key:'just', fam:'shared', name:'Just', you:'just', line:'He always does right, and will put all wrongs right.',
+    v:[['Deuteronomy 32:4','The Rock, his work is perfect, for all his ways are justice. A God of faithfulness and without iniquity, just and upright is he.'],
+       ['Psalm 89:14','Righteousness and justice are the foundation of your throne; steadfast love and faithfulness go before you.']] },
+  { key:'good', fam:'shared', name:'Good', you:'good', line:'All He is and all He does is good.',
+    v:[['Psalm 34:8','Oh, taste and see that the Lord is good! Blessed is the man who takes refuge in him!'],
+       ['Psalm 100:5','For the Lord is good; his steadfast love endures forever, and his faithfulness to all generations.']] },
+  { key:'loving', fam:'shared', name:'Loving', you:'love', line:'He gives Himself for those He loves.',
+    v:[['1 John 4:9–10','In this the love of God was made manifest among us, that God sent his only Son into the world, so that we might live through him. In this is love, not that we have loved God but that he loved us and sent his Son to be the propitiation for our sins.'],
+       ['Romans 5:8','… but God shows his love for us in that while we were still sinners, Christ died for us.']] },
+  { key:'merciful', fam:'shared', name:'Merciful', you:'merciful', line:'He does not give us what our sins deserve.',
+    v:[['Psalm 103:8–10','The Lord is merciful and gracious, slow to anger and abounding in steadfast love. He will not always chide, nor will he keep his anger forever. He does not deal with us according to our sins, nor repay us according to our iniquities.'],
+       ['Ephesians 2:4–5','But God, being rich in mercy, because of the great love with which he loved us, even when we were dead in our trespasses, made us alive together with Christ — by grace you have been saved …']] },
+  { key:'gracious', fam:'shared', name:'Gracious', you:'gracious', line:'He gives what we could never earn.',
+    v:[['Exodus 34:6','The Lord passed before him and proclaimed, “The Lord, the Lord, a God merciful and gracious, slow to anger, and abounding in steadfast love and faithfulness …”'],
+       ['Ephesians 2:8','For by grace you have been saved through faith. And this is not your own doing; it is the gift of God …']] },
+  { key:'patient', fam:'shared', name:'Patient', you:'patient', line:'Slow to anger, waiting for us to turn.',
+    v:[['Psalm 86:15','But you, O Lord, are a God merciful and gracious, slow to anger and abounding in steadfast love and faithfulness.'],
+       ['2 Peter 3:9','The Lord is not slow to fulfill his promise as some count slowness, but is patient toward you, not wishing that any should perish, but that all should reach repentance.']] },
+  { key:'faithful', fam:'shared', name:'Faithful', you:'faithful', line:'He keeps every promise.',
+    v:[['Lamentations 3:22–23','The steadfast love of the Lord never ceases; his mercies never come to an end; they are new every morning; great is your faithfulness.'],
+       ['2 Timothy 2:13','… if we are faithless, he remains faithful — for he cannot deny himself.']] },
+  { key:'true', fam:'shared', name:'True', you:'true', line:'He cannot lie; His word is truth.',
+    v:[['Numbers 23:19','God is not man, that he should lie, or a son of man, that he should change his mind. Has he said, and will he not do it? Or has he spoken, and will he not fulfill it?'],
+       ['John 17:17','Sanctify them in the truth; your word is truth.']] },
+  { key:'wise', fam:'shared', name:'Wise', you:'wise', line:'He chooses the best end and the best way to it.',
+    v:[['Romans 11:33','Oh, the depth of the riches and wisdom and knowledge of God! How unsearchable are his judgments and how inscrutable his ways!'],
+       ['Proverbs 3:19','The Lord by wisdom founded the earth; by understanding he established the heavens …']] },
+  { key:'jealous', fam:'shared', name:'Jealous', you:'jealous for my whole heart', line:'He will not share His people with idols.',
+    v:[['Exodus 34:14','(… for you shall worship no other god, for the Lord, whose name is Jealous, is a jealous God) …'],
+       ['2 Corinthians 11:2','For I feel a divine jealousy for you, since I betrothed you to one husband, to present you as a pure virgin to Christ.']] },
+  { key:'wrath', fam:'shared', name:'Wrath against sin', you:'set against all evil', line:'He hates evil and will judge it.',
+    v:[['Romans 1:18','For the wrath of God is revealed from heaven against all ungodliness and unrighteousness of men, who by their unrighteousness suppress the truth.'],
+       ['John 3:36','Whoever believes in the Son has eternal life; whoever does not obey the Son shall not see life, but the wrath of God remains on him.']] }
+];
+const ATTR_FAMS = [ { fam:'only', title:'Only God', sub:'His alone' }, { fam:'shared', title:'Reflected in us', sub:'Shared with us in part' } ];
+// Words in your own writing (a card's "Because you are…") that name an attribute.
+const ATTR_WORDS = { holy:'holy', just:'just', righteous:'just', good:'good', loving:'loving', love:'loving', merciful:'merciful', mercy:'merciful', mercies:'merciful', gracious:'gracious', grace:'gracious', patient:'patient', faithful:'faithful', true:'true', wise:'wise', wisdom:'wise', jealous:'jealous', eternal:'eternal', everlasting:'eternal', unchanging:'unchanging', sovereign:'sovereign', almighty:'powerful', 'all-powerful':'powerful', 'all-knowing':'knowing', 'self-existent':'selfexistent', triune:'triune' };
+
+let _atTarget = null, _atOpen = null;
+// targetId: the field "Praise Him for this" writes into (null = reading only).
+function openAttributes(targetId, focusKey){
+  _atTarget = targetId && document.getElementById(targetId) ? targetId : null;
+  _atOpen = focusKey || null;
+  attrRender(); openModal('modal-attrs');
+  if(focusKey) setTimeout(() => document.querySelector('#attrs-content .at-detail')?.scrollIntoView({ block:'nearest' }), 60);
+}
+function attrTap(key){ _atOpen = _atOpen === key ? null : key; attrRender(); }
+function attrInitial(a){ return a.name.replace(/^All-/, '').charAt(0).toUpperCase(); }
+function attrRender(){
+  const el = document.getElementById('attrs-content'); if(!el) return;
+  const target = _atTarget && document.getElementById(_atTarget);
+  const card = target && target.id === 'f-persp-attr';
+  const detail = a => `<div class="at-detail at-${a.fam}">
+      <h3 class="at-name">${esc(a.name)}</h3>
+      <p class="at-line">${esc(a.line)}</p>
+      ${a.v.map(([r, t]) => `<div class="at-v"><button type="button" class="at-ref" onclick="attrRead('${r}')">${esc(r)}</button><div class="at-vt">${esc(t)}</div></div>`).join('')}
+      ${target ? `<button type="button" class="btn btn-primary at-use" onclick="attrUse('${a.key}')">${card ? 'Use this →' : 'Praise Him for this →'}</button>` : ''}
+    </div>`;
+  const fams = ATTR_FAMS.map(F => {
+    const list = GOD_ATTRIBUTES.filter(a => a.fam === F.fam), open = list.find(a => a.key === _atOpen);
+    let tiles = '';
+    list.forEach((a, i) => {
+      const isOpen = a.key === _atOpen;
+      tiles += `<button type="button" class="at-tile at-${a.fam}${isOpen ? ' open' : ''}" aria-expanded="${isOpen}" onclick="attrTap('${a.key}')"><span class="at-ini" aria-hidden="true">${attrInitial(a)}</span><span class="at-t">${esc(a.name)}</span></button>`;
+      if((i % 3 === 2 || i === list.length - 1) && open && Math.floor(list.indexOf(open) / 3) === Math.floor(i / 3)) tiles += detail(open);
+    });
+    return `<div class="at-fam"><div class="at-fam-h at-${F.fam}"><span>${F.title}</span><em>${F.sub}</em></div><div class="hn-grid at-grid">${tiles}</div></div>`;
+  }).join('');
+  el.innerHTML = `<h2 class="at-h">The Attributes of God</h2>${fams}`;
+}
+function attrRead(ref){ closeModal('modal-attrs'); lookupInContext(ref); }
+function attrUse(key){
+  const a = GOD_ATTRIBUTES.find(x => x.key === key), ta = _atTarget && document.getElementById(_atTarget);
+  if(!a || !ta) return;
+  const cur = ta.value.trim();
+  if(ta.id === 'f-persp-attr'){
+    ta.value = cur ? `${cur}, ${a.you}` : a.you;                      // the card's own "Because you are…"
+  } else {
+    const line = a.opener || `Father, you are ${a.you} — `;
+    ta.value = cur ? `${cur}\n${line}` : line;
+  }
+  ta.dispatchEvent(new Event('input', { bubbles: true }));
+  closeModal('modal-attrs');
+  setTimeout(() => { ta.focus(); ta.setSelectionRange(ta.value.length, ta.value.length); }, 200);
+}
+// Make "attribute of His character" (in a guide or prompt) open the attributes.
+function attrPhraseLink(html, targetId){
+  return html.replace(/attribute of His character/, m => `<button type="button" class="at-phrase" onclick="event.stopPropagation();openAttributes(${targetId ? `'${targetId}'` : 'null'})">${m}</button>`);
+}
+// A word in your own writing that names an attribute becomes a quiet link to it.
+function attrLinkify(text){
+  const t = String(text || ''); let done = false;
+  return esc(t).replace(/[A-Za-z][A-Za-z-]*/g, w => {
+    const k = !done && ATTR_WORDS[w.toLowerCase()]; if(!k) return w;
+    done = true; return `<button type="button" class="at-word" onclick="event.stopPropagation();openAttributes(null,'${k}')">${w}</button>`;
+  });
+}
+function attrLinkHTML(targetId, cls){
+  return `<button type="button" class="${cls || 'fh-link'} at-link" onclick="openAttributes('${targetId}')">${ICON.crown}<span class="fh-txt">His attributes</span></button>`;
 }
 
 // ══════════ FOCUS-COMPOSE MODE ══════════
@@ -6742,7 +6907,7 @@ function openFocusCompose(textareaId){
   content.innerHTML = `
     ${pinnedHTML}
     ${ctx.heading ? `<div class="focus-compose-heading">${focusStepGlyph(ta)}${esc(ctx.heading)}</div>` : ''}
-    ${ctx.prompt  ? `<div class="focus-compose-prompt">${esc(ctx.prompt)}</div>`   : ''}
+    ${ctx.prompt  ? `<div class="focus-compose-prompt">${attrPhraseLink(esc(ctx.prompt), 'focus-compose-textarea')}</div>`   : ''}
     ${silenceHTML}
     <textarea id="focus-compose-textarea" class="focus-compose-textarea" placeholder="${esc(ta.placeholder || '')}">${escTa(ta.value)}</textarea>
     <div class="focus-compose-actions">
@@ -7173,7 +7338,7 @@ document.addEventListener('keydown', e => {
   });
   // U1: reading sheets open at about two-thirds height; scrolling in them, or a tap
   // on the handle, lifts them to full height.
-  ['modal-heart-chart','modal-prayer-library','modal-carry','modal-petition','modal-technique'].forEach(id => {
+  ['modal-heart-chart','modal-prayer-library','modal-carry','modal-petition','modal-technique','modal-attrs'].forEach(id => {
     const m = document.querySelector('#'+id+' .modal'); if(!m) return;
     m.classList.add('snap');
     m.addEventListener('scroll', () => { if(m.scrollTop > 8) m.classList.add('full'); }, { passive:true });
@@ -7364,7 +7529,7 @@ function renderCardFormHelpers(){
     if(box.dataset.built) return;
     const key = CARD_FIELD_KEYS[box.dataset.for];
     const items = [...new Set(CARD_TEMPLATES.map(t => t[key]))];
-    box.innerHTML = `<button type="button" class="fh-link" onclick="this.parentElement.classList.toggle('open')">${ICON.sparkle}<span class="fh-txt">Starters</span></button>
+    box.innerHTML = `<button type="button" class="fh-link" onclick="this.parentElement.classList.toggle('open')">${ICON.sparkle}<span class="fh-txt">Starters</span></button>${box.dataset.for === 'f-persp-attr' ? ' ' + attrLinkHTML('f-persp-attr') : ''}
       <div class="cf-chips">${items.map((v, i) => `<button type="button" class="pl-forget-chip cf-chip" onclick="cardStarterInsert('${box.dataset.for}', ${i})">${esc(v)}</button>`).join('')}</div>`;
     box.dataset.built = '1';
   });
@@ -7451,7 +7616,7 @@ function openDetail(id){
       <div class="note-text">${esc(n.text)}</div>
     </div>`;
   }).join(''):`<p style="font-size:.85rem;color:var(--text3);font-style:italic">No notes yet.</p>`;
-  const persp=(c.perspAttr||c.perspTrust)?`Father, because you are <em>${esc(c.perspAttr)}</em>, I will trust you with <em>${esc(c.perspTrust)}</em>.`:'—';
+  const persp=(c.perspAttr||c.perspTrust)?`Father, because you are <em>${attrLinkify(c.perspAttr)}</em>, I will trust you with <em>${esc(c.perspTrust)}</em>.`:'—';
   const ck = CAT_ICON[c.category] ? c.category : 'other';
   document.getElementById('detail-content').innerHTML=`
     <div class="cd-band cd-card" style="--cat:${CAT_COLOR[ck]}">
@@ -8703,6 +8868,7 @@ function renderDPStep(){
     const qRow = q => `<div class="dp-q-row">
           <div class="dp-q-label" style="color:${step.color}">${esc(q.label)}</div>
           <div class="dp-q-prompt">${esc(q.prompt)}</div>
+          ${q.key === 'q_god' ? attrLinkHTML('dp-q-q_god') : ''}
           <textarea id="dp-q-${q.key}" class="pl-textarea" placeholder="${esc(q.placeholder || 'Jot a few lines…')}">${escTa(saved[q.key]||'')}</textarea>
         </div>`;
     if(unit.kind === 'field'){
@@ -8753,9 +8919,9 @@ function renderDPStep(){
       // opens its own content; they no longer repeat down the page.
       return `<div class="dp-field-row">
         <div class="pl-field-label" style="color:${step.color}">${esc(f.label)}</div>
-        ${(step.fields||[]).length > 1 ? fieldGuideHTML(f.focusPrompt) : ''}
+        ${(step.fields||[]).length > 1 ? fieldGuideHTML(f.focusPrompt, `dp-field-${f.key}`) : ''}
         <textarea id="dp-field-${f.key}" class="pl-textarea" placeholder="${esc(f.placeholder||'')}"${fpAttr}>${escTa(saved[f.key]||'')}</textarea>
-        ${helperRow(`dp-field-${f.key}`, { chips: starterChips, lib: libCat, cryOut: stepIsPrayerMode, cards: !!f.showCardsButton })}
+        ${helperRow(`dp-field-${f.key}`, { chips: starterChips, lib: libCat, cryOut: stepIsPrayerMode, cards: !!f.showCardsButton, attrs: f.key === 'psalmprayer' })}
         ${cardsBtn ? '' : ''}
       </div>`;
     }).join('');
@@ -8872,7 +9038,7 @@ function renderDailyCard(cards,idx,todayKey){
   // title and asks are presented as named items (apposition / quiet lines) so any
   // free text fits. Trailing "…" lines are deliberate — finished mentally before Him.
   const youArePart=(c.perspAttr||'').trim();
-  const youAreHTML=youArePart?`<em>${esc(youArePart)}</em>.`:'…';
+  const youAreHTML=youArePart?`<em>${attrLinkify(youArePart)}</em>.`:'…';
   const trustPart=(c.perspTrust||'').trim();
   const trustHTML=trustPart?`<em>${esc(trustPart)}</em>`:'this story';
   const askHeart=(c.askHeart||'').trim(), askCirc=(c.askCirc||'').trim();
@@ -9775,6 +9941,7 @@ function renderPLStep(el){
       </div>
       <span class="pl-quote" style="background:${step.sbg};border-color:${step.sborder};color:${step.sc}">${step.quote}</span>
       ${PETITION_EXPLANATIONS[step.key] ? `<a class="petition-link" onclick="showPetitionExplanation('${step.key}')">${ICON.book} What this petition asks →</a>` : ''}
+      ${step.key==='come' ? `<a class="petition-link" onclick="openAttributes('pl-pray-area')">${ICON.crown} His attributes →</a>` : ''}
       ${(step.key==='ask'||step.key==='follow') && plSession.includesPrep!==false ? `<a class="petition-link" onclick="plJumpToPrepare()">✦ Review what you mapped in Prepare →</a>` : ''}
       ${linkedBannerHTML}
       ${subRule}
