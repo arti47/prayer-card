@@ -1989,6 +1989,22 @@
   .ex-qb { display: inline; background: none; border: none; padding: 0; margin: 0; font: inherit; color: inherit; text-align: left; cursor: pointer; text-decoration: underline dotted color-mix(in srgb, var(--nc) 55%, transparent); text-underline-offset: 3px; }
   .ex-more { background: none; border: none; padding: 4px 0 8px; font-family: var(--serif); font-style: italic; font-size: var(--fs-4); color: var(--nc); cursor: pointer; min-height: 32px; }
   .ex-on { margin: 0 0 6px; color: var(--text); font-size: var(--fs-5); }
+  :root { --tp-jesus: #8a3324; --tp-paul: #3d5f6e; }
+  [data-theme="dark"] { --tp-jesus: #eba393; --tp-paul: #a6c8d6; }
+  .tp-jesus { --nc: var(--tp-jesus); } .tp-paul { --nc: var(--tp-paul); }
+  .at-ini.tp-ref { font-size: .8rem; white-space: nowrap; }
+  .at-t { -webkit-hyphens: auto; hyphens: auto; }
+  .tp-who { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin: 6px 0 4px; }
+  .tp-who-l { font-family: var(--serif); font-style: italic; color: var(--text3); font-size: var(--fs-4); }
+  .tp-seg { display: inline-flex; border: 1px solid var(--border); border-radius: var(--r-pill, 999px); overflow: hidden; background: var(--surface); }
+  .tp-seg button { min-height: 36px; padding: 0 16px; border: none; background: none; font-family: var(--serif); font-size: var(--fs-4); color: var(--text2); cursor: pointer; }
+  .tp-seg button[aria-pressed="true"] { background: var(--accent); color: var(--on-accent); }
+  .tp-people { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin: 6px 0 2px; }
+  .tp-person.on { background: var(--accent); color: var(--on-accent); border-color: var(--accent); font-style: normal; }
+  .tp-name { flex: 1 1 140px; min-width: 0; min-height: 38px; padding: 6px 10px; border: 1px solid var(--border); border-radius: 8px; background: var(--surface); color: var(--text); font-family: var(--serif); font-size: 16px; }
+  .tp-asks li.s { list-style: none; }
+  .tp-cd { margin: -6px 0 12px; }
+  .tp-walk { display: inline-block; margin-top: 4px; background: none; border: none; padding: 4px 0; font: inherit; font-family: var(--serif); font-style: italic; font-size: .92em; color: var(--accent); text-decoration: underline dotted; text-underline-offset: 3px; cursor: pointer; }
   .ex-attr { display: block; background: none; border: none; padding: 6px 0; margin: 0 0 2px; font-family: var(--serif); font-style: italic; font-size: var(--fs-4); color: var(--nc); text-decoration: underline dotted; text-underline-offset: 3px; cursor: pointer; min-height: 32px; }
   .hn-grid { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 8px; margin-bottom: 16px; }
   .hn-tile { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; gap: 7px; min-height: 104px; padding: 14px 6px 10px; border-radius: var(--radius); border: 1px solid color-mix(in srgb, var(--nc) 30%, var(--border)); background: color-mix(in srgb, var(--nc) 7%, var(--surface)); color: var(--idc); font-family: var(--serif); cursor: pointer; transition: transform .12s, box-shadow .15s, background .15s; }
@@ -3076,6 +3092,7 @@
         <li><strong>Matthew Henry</strong> — <em>A Way to Pray: A Biblical Method for Enriching Your Prayer Life</em>. The <span data-ico="book"></span>&#8202;Prayer Library — roughly forty Scripture-saturated written prayers across Praise, Confession, Petition, Thanksgiving, and Concluding — is faithfully drawn from his method.</li>
         <li><strong>Brené Brown</strong> — <em>The Gifts of Imperfection</em>. Two evening prompts take their shape from her daily practice: giving thanks for ordinary, particular moments rather than blessings in general, and naming what we reach for to take the edge off a hard day.</li>
         <li><strong>Search Me, O God</strong> follows the Ten Commandments as the <em>Westminster Larger Catechism</em> (Q. 99–148) uses them for self-examination — the duties each requires as well as the sins it forbids. The questions were written for this app.</li>
+        <li><strong>Teach Us to Pray</strong> follows the Lord’s Prayer as the <em>Westminster Larger Catechism</em> (Q. 186–196) explains each petition, alongside the prayers Paul prayed for the churches. The asks were written for this app.</li>
         <li><strong>The Attributes of God</strong> follow the classic Reformed division into attributes that are God’s alone and those He shares with us in part, as set out in Wayne Grudem’s <em>Systematic Theology</em> and Herman Bavinck’s <em>Reformed Dogmatics</em>. The one-line descriptions were written for this app.</li>
         <li><strong>English Standard Version (ESV)</strong> — Scripture quotations, the <span data-ico="book"></span>&#8202;Bible browser, and the Scripture-lookup text are from <em>The Holy Bible, English Standard Version® (ESV®)</em>, copyright © 2001 by Crossway, a publishing ministry of Good News Publishers. Used by permission. All rights reserved.</li>
       </ul>
@@ -3224,6 +3241,10 @@
 
 <div class="modal-bg" id="modal-exam">
   <div class="modal"><div class="modal-handle"></div><div id="exam-content"></div></div>
+</div>
+
+<div class="modal-bg" id="modal-teach">
+  <div class="modal"><div class="modal-handle"></div><div id="teach-content"></div></div>
 </div>
 
 <div class="modal-bg" id="modal-attrs">
@@ -5542,7 +5563,7 @@ function bbBackToChapters(){
 // ── Scripture by feeling: the same hand-chosen verses as the sessions, any time ──
 function bbFeelEntryHTML(){
   if(_bbSearch.trim()) return '';
-  return `<button class="bb-feel-btn" onclick="bbFeelOpen()">${ICON.heart}Scripture by feeling</button><button class="bb-feel-btn" onclick="openAttributes(null)">${ICON.crown}Scripture by attribute</button><button class="bb-feel-btn" onclick="openExam(null)">${ICON.candle || ICON.sparkle}Scripture for confession</button>`;
+  return `<button class="bb-feel-btn" onclick="bbFeelOpen()">${ICON.heart}Scripture by feeling</button><button class="bb-feel-btn" onclick="openAttributes(null)">${ICON.crown}Scripture by attribute</button><button class="bb-feel-btn" onclick="openExam(null)">${ICON.candle || ICON.sparkle}Scripture for confession</button><button class="bb-feel-btn" onclick="openTeach(null)">${ICON.pray}Scripture for asking</button>`;
 }
 function bbFeelOpen(){ _bbFeel={core:null, sec:null, ter:null}; renderBibleBrowser(); }
 function bbFeelBack(){
@@ -5949,6 +5970,7 @@ function helperRow(targetId, opts){
   if(o.cryOut)  items.push(`<button type="button" class="fh-link" onclick="fhToggle(this,'cry')">${ICON.breath}<span class="fh-txt">Dry today?</span></button>`);
   if(o.attrs)   items.push(attrLinkHTML(targetId));
   if(o.exam)    items.push(examLinkHTML(targetId));
+  if(o.teach)   items.push(teachLinkHTML(targetId));
   if(o.cards)   items.push(`<button type="button" class="fh-link" onclick="openCardsWalkthrough()">${ICON.cards}<span class="fh-txt">Story cards</span></button>`);
   if(o.keep)    items.push(`<button type="button" class="fh-link" onclick="openKeepSheet('${targetId}')">${ICON.note}<span class="fh-txt">Keep with a card</span></button>`);
   if(!items.length) return '';
@@ -6664,7 +6686,8 @@ function attrUse(key){
 function attrPhraseLink(html, targetId){
   const t = targetId ? `'${targetId}'` : 'null';
   return html.replace(/attribute of His character/, m => `<button type="button" class="at-phrase" onclick="event.stopPropagation();openAttributes(${t})">${m}</button>`)
-             .replace(/specific sins, attitudes, or neglects/, m => `<button type="button" class="at-phrase" onclick="event.stopPropagation();openExam(${t})">${m}</button>`);
+             .replace(/specific sins, attitudes, or neglects/, m => `<button type="button" class="at-phrase" onclick="event.stopPropagation();openExam(${t})">${m}</button>`)
+             .replace(/you need from Him today/, m => `<button type="button" class="at-phrase" onclick="event.stopPropagation();openTeach(${t})">${m}</button>`);
 }
 // A word in your own writing that names an attribute becomes a quiet link to it.
 function attrLinkify(text){
@@ -6800,6 +6823,186 @@ function examUse(){
 }
 function examLinkHTML(targetId, cls){
   return `<button type="button" class="${cls || 'fh-link'} at-link" onclick="openExam('${targetId}')">${ICON.candle || ICON.sparkle}<span class="fh-txt">Search me</span></button>`;
+}
+
+// ══════════ TEACH US TO PRAY — what Scripture asks for ══════════
+// Two families: the six petitions of the Lord's Prayer (what each asks, after the
+// Westminster Larger Catechism Q. 186–196, said plainly), and eight prayers Paul
+// prayed for the churches. Each opens to the Scripture, four asks drawn from it and
+// a promise that He hears. The asks are written with {I} / {my} / {me}, which become
+// the person being prayed for ("Praying for: me · someone"). Tapping an ask adds
+// "Father, I ask that … — " (on the card form, just "that …"). Opened from Morning
+// Petition's "you need from Him today", story cards, Weekly Ask, Evening's people and
+// needs, Starter's Free Prayer and the Bible reader. Nothing is stored.
+const TEACH_PRAYERS = [
+  { key:'p1', fam:'jesus', n:'I', name:'Your name', link:'holy',
+    text:['Matthew 6:9','Our Father in heaven, hallowed be your name.'],
+    line:'That God would be known, honoured and loved — in me and in all the world.',
+    asks:['{I} would know you as you truly are','{my} words and work today would honour your name','{I} would love you above everything else','___ would come to know and love you'],
+    promise:['Habakkuk 2:14','For the earth will be filled with the knowledge of the glory of the Lord as the waters cover the sea.'] },
+  { key:'p2', fam:'jesus', n:'II', name:'Your kingdom', link:'sovereign',
+    text:['Matthew 6:10','Your kingdom come …'],
+    line:'That Christ’s rule would spread — in hearts, in His church, and at His return.',
+    asks:['{I} would gladly live under Christ’s rule','the good news would reach ___','your church would be strengthened','Christ would come again soon'],
+    promise:['Revelation 11:15','Then the seventh angel blew his trumpet, and there were loud voices in heaven, saying, “The kingdom of the world has become the kingdom of our Lord and of his Christ, and he shall reign forever and ever.”'] },
+  { key:'p3', fam:'jesus', n:'III', name:'Your will', link:'wise',
+    text:['Matthew 6:10','… your will be done, on earth as it is in heaven.'],
+    line:'That we would know God’s will and do it gladly, as heaven does.',
+    asks:['{I} would know your will in ___','{I} would do it gladly, not grudgingly','{I} would trust you in what you allow, even when it is hard','{I} would say, “not my will, but yours”'],
+    promise:['1 John 5:14–15','And this is the confidence that we have toward him, that if we ask anything according to his will he hears us. And if we know that he hears us in whatever we ask, we know that we have the requests that we have asked of him.'] },
+  { key:'p4', fam:'jesus', n:'IV', name:'Daily bread', link:'good',
+    text:['Matthew 6:11','Give us this day our daily bread …'],
+    line:'For what today needs — body, work, home — enough for today, from His hand.',
+    asks:['{I} would have what today needs: ___','you would bless {my} work: ___','you would give {me} health and rest','{I} would be content with enough, and grateful'],
+    promise:['Philippians 4:19','And my God will supply every need of yours according to his riches in glory in Christ Jesus.'] },
+  { key:'p5', fam:'jesus', n:'V', name:'Forgive us', link:'exam',
+    text:['Matthew 6:12','… and forgive us our debts, as we also have forgiven our debtors.'],
+    line:'For pardon through Christ, and a heart that forgives as it has been forgiven.',
+    asks:['{I} would know the full forgiveness of Christ','{I} would forgive ___ from the heart','{I} would be reconciled with ___','{I} would not keep a record of wrongs'],
+    promise:['1 John 1:9','If we confess our sins, he is faithful and just to forgive us our sins and to cleanse us from all unrighteousness.'] },
+  { key:'p6', fam:'jesus', n:'VI', name:'Deliver us', link:'faithful',
+    text:['Matthew 6:13','And lead us not into temptation, but deliver us from evil.'],
+    line:'To be kept from sin’s pull, and held fast through trial and against the evil one.',
+    asks:['{I} would be kept from ___ today','{I} would see the way of escape and take it','{I} would be guarded from the evil one','{I} would hold on to you through trial'],
+    promise:['1 Corinthians 10:13','No temptation has overtaken you that is not common to man. God is faithful, and he will not let you be tempted beyond your ability, but with the temptation he will also provide the way of escape, that you may be able to endure it.'] },
+  { key:'eph1', fam:'paul', n:'Eph 1', name:'To know Him', link:'powerful',
+    text:['Ephesians 1:16–19','I do not cease to give thanks for you, remembering you in my prayers, that the God of our Lord Jesus Christ, the Father of glory, may give you the Spirit of wisdom and of revelation in the knowledge of him, having the eyes of your hearts enlightened, that you may know what is the hope to which he has called you, what are the riches of his glorious inheritance in the saints, and what is the immeasurable greatness of his power toward us who believe, according to the working of his great might …'],
+    asks:['{I} would know you, not only about you','the eyes of {my} heart would be opened','{I} would see the hope you have called {me} to','{I} would know your great power at work in {me}'],
+    promise:['Jeremiah 33:3','Call to me and I will answer you, and will tell you great and hidden things that you have not known.'] },
+  { key:'eph3', fam:'paul', n:'Eph 3', name:'To grasp His love', link:'loving',
+    text:['Ephesians 3:14–19','For this reason I bow my knees before the Father, from whom every family in heaven and on earth is named, that according to the riches of his glory he may grant you to be strengthened with power through his Spirit in your inner being, so that Christ may dwell in your hearts through faith — that you, being rooted and grounded in love, may have strength to comprehend with all the saints what is the breadth and length and height and depth, and to know the love of Christ that surpasses knowledge, that you may be filled with all the fullness of God.'],
+    asks:['{I} would be strengthened by your Spirit in {my} inner being','Christ would dwell in {my} heart through faith','{I} would know the love of Christ that surpasses knowledge','{I} would be filled with all your fullness'],
+    promise:['Ephesians 3:20','Now to him who is able to do far more abundantly than all that we ask or think, according to the power at work within us …'] },
+  { key:'phil1', fam:'paul', n:'Phil 1', name:'Love with discern\u00ADment', link:'wise',
+    text:['Philippians 1:9–11','And it is my prayer that your love may abound more and more, with knowledge and all discernment, so that you may approve what is excellent, and so be pure and blameless for the day of Christ, filled with the fruit of righteousness that comes through Jesus Christ, to the glory and praise of God.'],
+    asks:['{my} love would abound more and more','{I} would have discernment to choose what is best','{I} would be pure and blameless','{my} life would bear fruit, to your glory'],
+    promise:['2 Corinthians 3:18','And we all, with unveiled face, beholding the glory of the Lord, are being transformed into the same image from one degree of glory to another. For this comes from the Lord who is the Spirit.'] },
+  { key:'col1', fam:'paul', n:'Col 1', name:'To walk worthy', link:'patient',
+    text:['Colossians 1:9–12','And so, from the day we heard, we have not ceased to pray for you, asking that you may be filled with the knowledge of his will in all spiritual wisdom and understanding, so as to walk in a manner worthy of the Lord, fully pleasing to him, bearing fruit in every good work and increasing in the knowledge of God. May you be strengthened with all power, according to his glorious might, for all endurance and patience with joy, giving thanks to the Father, who has qualified you to share in the inheritance of the saints in light.'],
+    asks:['{I} would be filled with the knowledge of your will','{I} would walk in a way that pleases you','{I} would bear fruit in every good work','{I} would endure with patience and joy'],
+    promise:['James 1:5','If any of you lacks wisdom, let him ask God, who gives generously to all without reproach, and it will be given him.'] },
+  { key:'th1', fam:'paul', n:'1 Th 3', name:'To abound in love', link:'holy',
+    text:['1 Thessalonians 3:12–13','… and may the Lord make you increase and abound in love for one another and for all, as we do for you, so that he may establish your hearts blameless in holiness before our God and Father, at the coming of our Lord Jesus with all his saints.'],
+    asks:['{I} would grow in love for ___','{I} would love those who are hard to love','{my} heart would be established in holiness','{I} would be ready for Christ’s coming'],
+    promise:['2 Thessalonians 3:3','But the Lord is faithful. He will establish you and guard you against the evil one.'] },
+  { key:'th2', fam:'paul', n:'2 Th 1', name:'Worthy of His calling', link:'powerful',
+    text:['2 Thessalonians 1:11–12','To this end we always pray for you, that our God may make you worthy of his calling and may fulfill every resolve for good and every work of faith by his power, so that the name of our Lord Jesus may be glorified in you, and you in him, according to the grace of our God and the Lord Jesus Christ.'],
+    asks:['{I} would live worthy of your calling','you would fulfil every good resolve of {my} heart','{my} work of faith would bear fruit by your power: ___','Jesus would be glorified in {me}'],
+    promise:['2 Corinthians 9:8','And God is able to make all grace abound to you, so that having all sufficiency in all things at all times, you may abound in every good work.'] },
+  { key:'rom15', fam:'paul', n:'Rom 15', name:'Joy, peace and hope', link:'faithful',
+    text:['Romans 15:13','May the God of hope fill you with all joy and peace in believing, so that by the power of the Holy Spirit you may abound in hope.'],
+    asks:['{I} would be filled with joy in believing','{I} would have your peace in ___','{I} would overflow with hope by the Spirit','{I} would wait on you and not lose heart'],
+    promise:['Isaiah 40:31','… but they who wait for the Lord shall renew their strength; they shall mount up with wings like eagles; they shall run and not be weary; they shall walk and not faint.'] },
+  { key:'heb13', fam:'paul', n:'Heb 13', name:'Equipped for His will', link:'gracious',
+    text:['Hebrews 13:20–21','Now may the God of peace who brought again from the dead our Lord Jesus, the great shepherd of the sheep, by the blood of the eternal covenant, equip you with everything good that you may do his will, working in us that which is pleasing in his sight, through Jesus Christ, to whom be glory forever and ever. Amen.'],
+    asks:['you would equip {me} with everything good for ___','{I} would do your will','you would work in {me} what pleases you','Jesus would have the glory'],
+    promise:['Philippians 1:6','And I am sure of this, that he who began a good work in you will bring it to completion at the day of Jesus Christ.'] }
+];
+const TEACH_FAMS = [ { fam:'jesus', title:'Taught by Jesus', sub:'Matthew 6:9–13' }, { fam:'paul', title:'Prayed by Paul', sub:'For the churches' } ];
+// Cards whose name is a person (rather than a situation) open with that person chosen.
+const TEACH_PERSON_CATS = ['family','suffering','friend','church'];
+
+let _tpTarget = null, _tpOpen = null, _tpWho = 'me', _tpName = '';
+// targetId: the field an ask is added to (null = reading only). name: someone to pray for.
+function openTeach(targetId, focusKey, name){
+  _tpTarget = targetId && document.getElementById(targetId) ? targetId : null;
+  _tpOpen = focusKey || null;
+  _tpName = (name || '').trim(); _tpWho = _tpName ? 'someone' : 'me';
+  teachRender(); openModal('modal-teach');
+  if(focusKey) setTimeout(() => document.querySelector('#teach-content .at-detail')?.scrollIntoView({ block:'nearest' }), 60);
+}
+// From the card form: the card's own name, when it names a person.
+function openTeachFromCardForm(fieldId){
+  const p = (document.getElementById('f-person')?.value || '').trim(), cat = document.getElementById('f-category')?.value;
+  openTeach(fieldId, null, TEACH_PERSON_CATS.includes(cat) ? p : '');
+}
+function teachCardName(c){ return TEACH_PERSON_CATS.includes(c.category) ? (c.person || '') : ''; }
+function teachTap(key){ _tpOpen = _tpOpen === key ? null : key; teachRender(); }
+// {I} / {my} / {me} → the person being prayed for. With "someone" and no name yet, a blank.
+function teachAsk(s){
+  const me = _tpWho === 'me', n = _tpName || '___';
+  return s.replace(/\{I\}/g, me ? 'I' : n).replace(/\{my\}/g, me ? 'my' : `${n}’s`).replace(/\{me\}/g, me ? 'me' : n);
+}
+function teachPeople(){
+  const seen = new Set();
+  return loadCards().filter(c => !c.answered && !c.isSample && TEACH_PERSON_CATS.includes(c.category))
+    .map(c => (c.person || '').trim()).filter(p => p && !seen.has(p) && seen.add(p));
+}
+function teachWhoHTML(){
+  const people = _tpWho === 'someone' ? teachPeople() : [];
+  return `<div class="tp-who">
+      <span class="tp-who-l">Praying for</span>
+      <div class="tp-seg" role="group" aria-label="Praying for">
+        <button type="button" aria-pressed="${_tpWho === 'me'}" onclick="teachSetWho('me')">me</button>
+        <button type="button" aria-pressed="${_tpWho === 'someone'}" onclick="teachSetWho('someone')">someone</button>
+      </div>
+    </div>
+    ${_tpWho === 'someone' ? `<div class="tp-people">
+      ${people.map(p => `<button type="button" class="pl-forget-chip tp-person${p === _tpName ? ' on' : ''}" aria-pressed="${p === _tpName}" data-name="${esc(p)}" onclick="teachPick(this.dataset.name)">${esc(p)}</button>`).join('')}
+      <input type="text" class="tp-name" id="tp-name" placeholder="${people.length ? 'or type a name' : 'Type a name'}" aria-label="Name of the person you’re praying for" value="${esc(people.includes(_tpName) ? '' : _tpName)}" oninput="teachName(this.value)" autocomplete="off" autocapitalize="words" enterkeyhint="done">
+    </div>` : ''}`;
+}
+function teachSetWho(w){ _tpWho = w; if(w === 'me') _tpName = ''; teachRender(); if(w === 'someone' && !teachPeople().length) setTimeout(() => document.getElementById('tp-name')?.focus(), 30); }
+function teachPick(name){ _tpName = _tpName === name ? '' : name; teachRender(); }
+function teachName(v){
+  _tpName = v.trim();
+  document.querySelectorAll('#teach-content .tp-person').forEach(b => { const on = b.dataset.name === _tpName; b.classList.toggle('on', on); b.setAttribute('aria-pressed', on); });
+  teachRefreshAsks();
+}
+function teachRefreshAsks(){
+  document.querySelectorAll('#teach-content [data-ask]').forEach(el => {
+    const [k, i] = el.dataset.ask.split('|'), p = TEACH_PRAYERS.find(x => x.key === k);
+    if(p) el.textContent = teachAsk(p.asks[+i]);
+  });
+}
+function teachRender(){
+  const el = document.getElementById('teach-content'); if(!el) return;
+  const target = _tpTarget && document.getElementById(_tpTarget);
+  const vHTML = ([r, t]) => `<div class="at-v"><button type="button" class="at-ref" onclick="teachRead('${r}')">${esc(r)}</button><div class="at-vt">${esc(t)}</div></div>`;
+  const linkHTML = p => {
+    if(p.link === 'exam') return `<button type="button" class="ex-attr" onclick="openExam(null)">Search me ›</button>`;
+    const a = GOD_ATTRIBUTES.find(x => x.key === p.link);
+    return a ? `<button type="button" class="ex-attr" onclick="openAttributes(null,'${a.key}')">He is ${esc(a.key === 'loving' ? 'love' : a.name.toLowerCase())} ›</button>` : '';
+  };
+  const detail = p => `<div class="at-detail tp-${p.fam}">
+      <h3 class="at-name">${p.fam === 'jesus' ? `${p.n} · ` : ''}${esc(p.name)}</h3>
+      ${p.fam === 'jesus'
+        ? `<p class="ex-law">${esc(p.text[1])} <button type="button" class="at-ref" onclick="teachRead('${p.text[0]}')">${esc(p.text[0])}</button></p><p class="at-line">${esc(p.line)}</p>`
+        : vHTML(p.text)}
+      <div class="ex-h">Father, I ask that…${target ? '<em class="ex-tap">Tap one to pray it</em>' : ''}</div>
+      <ul class="pl-prompts field-guide ex-q tp-asks">${p.asks.map((s, i) => `<li class="s">${target ? `<button type="button" class="ex-qb" data-ask="${p.key}|${i}" onclick="teachUse('${p.key}',${i})">${esc(teachAsk(s))}</button>` : `<span data-ask="${p.key}|${i}">${esc(teachAsk(s))}</span>`}</li>`).join('')}</ul>
+      <div class="ex-h">He promises</div>${vHTML(p.promise)}
+      ${linkHTML(p)}
+    </div>`;
+  const fams = TEACH_FAMS.map(F => {
+    const list = TEACH_PRAYERS.filter(p => p.fam === F.fam), open = list.find(p => p.key === _tpOpen);
+    let tiles = '';
+    list.forEach((p, i) => {
+      const isOpen = p.key === _tpOpen;
+      tiles += `<button type="button" class="at-tile tp-${p.fam}${isOpen ? ' open' : ''}" aria-expanded="${isOpen}" onclick="teachTap('${p.key}')"><span class="at-ini ex-num${p.fam === 'paul' ? ' tp-ref' : ''}" aria-hidden="true">${esc(p.n)}</span><span class="at-t">${esc(p.name)}</span></button>`;
+      if((i % 3 === 2 || i === list.length - 1) && open && Math.floor(list.indexOf(open) / 3) === Math.floor(i / 3)) tiles += detail(open);
+    });
+    return `<div class="at-fam"><div class="at-fam-h tp-${F.fam}"><span>${F.title}</span><em>${F.sub}</em></div><div class="hn-grid at-grid">${tiles}</div></div>`;
+  }).join('');
+  el.innerHTML = `<h2 class="at-h">Teach Us to Pray</h2><p class="ex-sub">“Lord, teach us to pray …” <button type="button" class="at-ref" onclick="teachRead('Luke 11:1')">Luke 11:1</button></p>${teachWhoHTML()}${fams}`;
+}
+function teachRead(ref){ closeModal('modal-teach'); lookupInContext(ref); }
+// An ask becomes "Father, I ask that … — " (a card's Ask field takes just "that …");
+// a ___ is selected so typing fills it.
+function teachUse(key, i){
+  const p = TEACH_PRAYERS.find(x => x.key === key), ta = _tpTarget && document.getElementById(_tpTarget);
+  if(!p || !ta || !p.asks[i]) return;
+  const ask = teachAsk(p.asks[i]), card = /^f-ask-/.test(ta.id);
+  const line = card ? `that ${ask}` : `Father, I ask that ${ask} — `;
+  const cur = ta.value.trim();
+  ta.value = cur ? `${cur}\n${line}` : line;
+  ta.dispatchEvent(new Event('input', { bubbles: true }));
+  closeModal('modal-teach');
+  const start = ta.value.length - line.length, at = ta.value.indexOf('___', start);
+  setTimeout(() => { ta.focus(); at >= 0 ? ta.setSelectionRange(at, at + 3) : ta.setSelectionRange(ta.value.length, ta.value.length); }, 200);
+}
+function teachLinkHTML(targetId, cls){
+  return `<button type="button" class="${cls || 'fh-link'} at-link" onclick="openTeach('${targetId}')">${ICON.pray}<span class="fh-txt">Teach me to ask</span></button>`;
 }
 
 // ══════════ FOCUS-COMPOSE MODE ══════════
@@ -7485,7 +7688,7 @@ document.addEventListener('keydown', e => {
   });
   // U1: reading sheets open at about two-thirds height; scrolling in them, or a tap
   // on the handle, lifts them to full height.
-  ['modal-heart-chart','modal-prayer-library','modal-carry','modal-petition','modal-technique','modal-attrs','modal-exam'].forEach(id => {
+  ['modal-heart-chart','modal-prayer-library','modal-carry','modal-petition','modal-technique','modal-attrs','modal-exam','modal-teach'].forEach(id => {
     const m = document.querySelector('#'+id+' .modal'); if(!m) return;
     m.classList.add('snap');
     m.addEventListener('scroll', () => { if(m.scrollTop > 8) m.classList.add('full'); }, { passive:true });
@@ -7676,7 +7879,7 @@ function renderCardFormHelpers(){
     if(box.dataset.built) return;
     const key = CARD_FIELD_KEYS[box.dataset.for];
     const items = [...new Set(CARD_TEMPLATES.map(t => t[key]))];
-    box.innerHTML = `<button type="button" class="fh-link" onclick="this.parentElement.classList.toggle('open')">${ICON.sparkle}<span class="fh-txt">Starters</span></button>${box.dataset.for === 'f-persp-attr' ? ' ' + attrLinkHTML('f-persp-attr') : ''}
+    box.innerHTML = `<button type="button" class="fh-link" onclick="this.parentElement.classList.toggle('open')">${ICON.sparkle}<span class="fh-txt">Starters</span></button>${box.dataset.for === 'f-persp-attr' ? ' ' + attrLinkHTML('f-persp-attr') : ''}${/^f-ask-/.test(box.dataset.for) ? ` <button type="button" class="fh-link at-link" onclick="openTeachFromCardForm('${box.dataset.for}')">${ICON.pray}<span class="fh-txt">Teach me to ask</span></button>` : ''}
       <div class="cf-chips">${items.map((v, i) => `<button type="button" class="pl-forget-chip cf-chip" onclick="cardStarterInsert('${box.dataset.for}', ${i})">${esc(v)}</button>`).join('')}</div>`;
     box.dataset.built = '1';
   });
@@ -7784,6 +7987,7 @@ function openDetail(id){
       ${c.askHeart?`<div class="ds-row"><h3>The Ask — Heart</h3><p>${esc(c.askHeart)}</p></div>`:''}
       ${c.askCirc?`<div class="ds-row"><h3>The Ask — Circumstance</h3><p>${esc(c.askCirc)}</p></div>`:''}
     </div>`:''}
+    ${c.answered?'':`<button type="button" class="ex-attr tp-cd" data-name="${esc(teachCardName(c))}" onclick="openTeach(null,null,this.dataset.name)">${teachCardName(c)?`Pray Scripture for ${esc(c.person)}`:'Pray Scripture over this'} ›</button>`}
     ${(c.perspAttr||c.perspTrust)?`<div class="detail-section persp-block"><h3>Father's Perspective</h3><p>${persp}</p></div>`:''}
     <p class="section-title" style="margin-top:16px">Story Notes</p><div class="note-thread">${notesHTML}</div>
     ${(()=>{
@@ -9068,7 +9272,7 @@ function renderDPStep(){
         <div class="pl-field-label" style="color:${step.color}">${esc(f.label)}</div>
         ${(step.fields||[]).length > 1 ? fieldGuideHTML(f.focusPrompt, `dp-field-${f.key}`) : ''}
         <textarea id="dp-field-${f.key}" class="pl-textarea" placeholder="${esc(f.placeholder||'')}"${fpAttr}>${escTa(saved[f.key]||'')}</textarea>
-        ${helperRow(`dp-field-${f.key}`, { chips: starterChips, lib: libCat, cryOut: stepIsPrayerMode, cards: !!f.showCardsButton, attrs: f.key === 'psalmprayer', exam: f.key === 'dayconfession' })}
+        ${helperRow(`dp-field-${f.key}`, { chips: starterChips, lib: libCat, cryOut: stepIsPrayerMode, cards: !!f.showCardsButton, attrs: f.key === 'psalmprayer', exam: f.key === 'dayconfession', teach: f.key === 'peopleprayed' || f.key === 'heartneeds' || step.key === 'freeprayer' })}
         ${cardsBtn ? '' : ''}
       </div>`;
     }).join('');
@@ -9201,7 +9405,7 @@ function renderDailyCard(cards,idx,todayKey){
   const steps=[
     {label:'Come & Worship', prompt:`“Father, you are ${youAreHTML}”`},
     {label:'Trust & Submission', prompt:`“Because of Jesus, I know your heart toward me is good. I trust you with ${trustHTML}.”`},
-    {label:'Ask', prompt:askPrompt},
+    {label:'Ask', prompt:askPrompt+`<br><button type="button" class="tp-walk" data-name="${esc(teachCardName(c))}" onclick="event.stopPropagation();openTeach(null,null,this.dataset.name)">${teachCardName(c)?`Pray Scripture for ${esc(c.person)}`:'Pray Scripture over this'} ›</button>`},
     {label:'Repent', prompt:`“Father, forgive me for trying to carry this myself — my cynicism, control, or fear. I give this story back into your hands.”`},
     {label:'Follow', prompt:'“Father, show me the next faithful step in this story — and give me grace to take it.”'}];
   const ck = CAT_ICON[c.category] ? c.category : 'other';
@@ -10090,6 +10294,7 @@ function renderPLStep(el){
       ${PETITION_EXPLANATIONS[step.key] ? `<a class="petition-link" onclick="showPetitionExplanation('${step.key}')">${ICON.book} What this petition asks →</a>` : ''}
       ${step.key==='come' ? `<a class="petition-link" onclick="openAttributes('pl-pray-area')">${ICON.crown} His attributes →</a>` : ''}
       ${step.key==='confess' ? `<a class="petition-link" onclick="openExam('pl-pray-area')">${ICON.candle || ICON.sparkle} Search me →</a>` : ''}
+      ${step.key==='ask' ? `<a class="petition-link" onclick="openTeach('pl-pray-area','p4')">${ICON.pray} Teach me to ask →</a>` : ''}
       ${(step.key==='ask'||step.key==='follow') && plSession.includesPrep!==false ? `<a class="petition-link" onclick="plJumpToPrepare()">✦ Review what you mapped in Prepare →</a>` : ''}
       ${linkedBannerHTML}
       ${subRule}
