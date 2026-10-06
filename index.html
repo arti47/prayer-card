@@ -2577,7 +2577,19 @@
   .bb-preview .ref { padding-right: 76px; }
   /* K9 global search */
   .hdr-search { right: auto; left: 12px; display: flex; }
-  body.in-session .hdr-search { display: none; }
+  .hdr-gear { right: auto; left: 60px; display: flex; }
+  body.in-session .hdr-search, body.in-session .hdr-gear { display: none; }
+  .g-settings-row { display: flex; align-items: center; gap: 12px; width: 100%; margin: 0 0 12px; padding: 12px 14px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); color: var(--text); text-align: left; cursor: pointer; font-family: var(--serif); }
+  .g-sr-mark { flex: none; display: flex; width: 38px; height: 38px; align-items: center; justify-content: center; border-radius: 50%; background: var(--accent-light); color: var(--accent); }
+  .g-sr-mark .ico { width: 20px; height: 20px; }
+  .g-sr-txt { flex: 1; display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+  .g-sr-txt b { font-size: var(--fs-5); font-weight: 600; }
+  .g-sr-txt em { font-size: var(--fs-3); color: var(--text3); }
+  .g-sr-go { color: var(--text3); font-size: var(--fs-6); }
+  #modal-settings .settings-block { margin: 4px 0 14px; padding: 0; border: none; background: none; box-shadow: none; }
+  #modal-settings .settings-block .set-seg { margin: 0 0 8px; }
+  #modal-settings .settings-block .set-pane { padding: 0 2px; }
+  #modal-settings .cs-mark .ico { width: 22px; height: 22px; }
   .gs-title { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
   .gs-title .ico { width: 18px; height: 18px; color: var(--accent); }
   #gs-results { margin-top: 10px; min-height: 40vh; }
@@ -2963,6 +2975,7 @@
 <header>
   <h1><span class="hdr-mark" aria-hidden="true">✦</span><span class="sr-only">Prayer Journal</span></h1>
   <button class="hdr-bible" id="bible-fab-btn" aria-label="Open Bible" title="Bible" onclick="openBibleBrowser()"><span data-ico="book"></span></button>
+  <button class="hdr-bible hdr-gear" id="hdr-settings-btn" aria-label="Settings" title="Settings" onclick="openSettings()"><span data-ico="gear"></span></button>
   <button class="hdr-bible hdr-search" id="hdr-search-btn" aria-label="Search everything" title="Search" onclick="openGlobalSearch()"><span data-ico="search"></span></button>
 </header>
 <div id="session-bar" class="session-bar" role="toolbar" aria-label="Session">
@@ -3056,67 +3069,7 @@
 
     <p class="section-title">More</p>
     <div id="guide-tour-row"></div>
-    <details class="about-block reflect-block settings-block" id="rf-settings">
-      <summary><h3><span data-ico="palette"></span>Settings</h3></summary>
-      <div class="seg-ctl set-seg" role="tablist">
-        <button role="tab" data-pane="appearance" class="on" onclick="setSettingsPane('appearance')"><span data-ico="palette"></span>Appearance</button>
-        <button role="tab" data-pane="export" onclick="setSettingsPane('export')"><span data-ico="save"></span>Export</button>
-        <button role="tab" data-pane="backup" onclick="setSettingsPane('backup')"><span data-ico="archive"></span>Backup</button>
-      </div>
-      <div class="set-pane" data-pane="appearance">
-      <h4 class="set-h"><span data-ico="palette"></span>Appearance</h4>
-      <p style="font-size:.84rem">Choose a theme. Auto follows your system setting — useful if you pray morning &amp; evening.</p>
-      <div class="theme-row">
-        <button class="theme-btn" data-theme="light" onclick="setTheme('light')"><span class="swatch sw-light" aria-hidden="true"></span><span data-ico="sun"></span>Light</button>
-        <button class="theme-btn" data-theme="dark" onclick="setTheme('dark')"><span class="swatch sw-dark" aria-hidden="true"></span><span data-ico="moon"></span>Dark</button>
-        <button class="theme-btn" data-theme="auto" onclick="setTheme('auto')"><span class="swatch sw-auto" aria-hidden="true"></span><span data-ico="sparkle"></span>Auto</button>
-      </div>
-      <p class="appearance-label">Colour</p>
-      <div id="palette-picker"></div>
-      <p class="appearance-label">Text size</p>
-      <div class="theme-row">
-        <button class="size-btn" data-size="small" onclick="setTextSize('small')"><span class="aa" style="font-size:14px" aria-hidden="true">Aa</span>Small</button>
-        <button class="size-btn" data-size="medium" onclick="setTextSize('medium')"><span class="aa" style="font-size:18px" aria-hidden="true">Aa</span>Medium</button>
-        <button class="size-btn" data-size="large" onclick="setTextSize('large')"><span class="aa" style="font-size:23px" aria-hidden="true">Aa</span>Large</button>
-      </div>
-      <label class="switch-row">
-        <span><span data-ico="book"></span>&#8202;Bible button in the header</span>
-        <span class="switch"><input type="checkbox" id="bible-fab-toggle" onchange="setBibleFab(this.checked)"><span class="switch-knob"></span></span>
-      </label>
-      <p style="font-size:.8rem;color:var(--text3);margin-top:6px">Top-right of every screen, for quick verse lookup and Scripture by feeling. The inline “Insert from Bible” buttons on verse fields stay either way.</p>
-      </div>
-      <div class="set-pane" data-pane="export" hidden>
-      <h4 class="set-h"><span data-ico="note"></span>Markdown Export</h4>
-      <p>Export your prayer cards and sessions as Markdown — drop the files into Obsidian, Logseq, Bear, or any markdown editor. Each export uses YAML frontmatter, structured headings, and <code>[[wikilinks]]</code> so notes connect properly in Obsidian's graph view.</p>
-
-      <p class="section-title" style="margin-top:18px">Bulk export</p>
-      <button class="btn btn-secondary" onclick="exportAllCardsMarkdown()"><span data-ico="save"></span> Download all Story Cards (.md)</button>
-      <button class="btn btn-secondary" onclick="exportAllWeeklyMarkdown()"><span data-ico="save"></span> Download all Weekly Deep Time sessions (.md)</button>
-      <button class="btn btn-secondary" onclick="exportAllDailyMarkdown()"><span data-ico="save"></span> Download all Daily Prayer sessions (.md)</button>
-      <button class="btn btn-secondary" onclick="openMedExport()"><span data-ico="book"></span> Meditations by passage (.md)…</button>
-      <p class="hint" style="margin-top:8px">Each download is a single combined <code>.md</code> file with <code>---</code> dividers between entries. Use Obsidian’s “Note Composer” plugin (or split manually) to break it into one note per item.</p>
-
-      <p class="section-title" style="margin-top:22px">Obsidian vault (optional)</p>
-      <p style="font-size:.82rem;color:var(--text2);line-height:1.6">If you set your vault name here, future per-item Obsidian export buttons would route into your vault directly. Currently used only for the filename hint in exports.</p>
-      <label style="margin-top:14px">Vault name</label>
-      <input type="text" id="obsidian-vault" placeholder="e.g. My Vault">
-      <label>Subfolder (optional)</label>
-      <input type="text" id="obsidian-subfolder" placeholder="e.g. Prayer/Sessions">
-      <button class="btn btn-primary" onclick="saveObsidianSettings()" style="margin-top:10px">Save</button>
-      </div>
-      <div class="set-pane" data-pane="backup" hidden>
-      <h4 class="set-h"><span data-ico="archive"></span>Backup &amp; Restore</h4>
-      <p>Your data lives in this browser only. Back it up regularly so you can restore on another device or after clearing cache. Backups include all prayer cards, Pray &amp; Listen sessions, story notes, heart-need selections, linked cards, and streak history.</p>
-      <button class="btn btn-secondary" onclick="exportBackup()" style="margin-top:10px"><span data-ico="save"></span> Download Backup (.json)</button>
-      <input type="file" id="import-file-input" accept="application/json,.json" style="display:none" onchange="importBackup(event)">
-      <button class="btn btn-secondary" onclick="document.getElementById('import-file-input').click()"><span data-ico="restore"></span> Restore from Backup…</button>
-      <button class="btn btn-danger" onclick="resetAllData()" style="margin-top:14px"><span data-ico="warn"></span> Reset All Data</button>
-      </div>
-    </details>
-    <details class="about-block reflect-block">
-      <summary><h3><span data-ico="phone"></span>Install on your phone</h3></summary>
-      <div id="install-block"></div>
-    </details>
+    <button type="button" class="g-settings-row" onclick="openSettings()"><span class="g-sr-mark" data-ico="gear"></span><span class="g-sr-txt"><b>Settings</b><em>Appearance · Export · Backup · Install · Privacy</em></span><span class="g-sr-go" aria-hidden="true">›</span></button>
     <details class="about-block reflect-block">
       <summary><h3><span data-ico="scroll"></span>Credits &amp; Source Material</h3></summary>
       <p>This app is a personal tool. None of the spiritual content is original — it's drawn directly from a study guide and the books behind it.</p>
@@ -3132,22 +3085,6 @@
         <li><strong>English Standard Version (ESV)</strong> — Scripture quotations, the <span data-ico="book"></span>&#8202;Bible browser, and the Scripture-lookup text are from <em>The Holy Bible, English Standard Version® (ESV®)</em>, copyright © 2001 by Crossway, a publishing ministry of Good News Publishers. Used by permission. All rights reserved.</li>
       </ul>
       <p style="margin-top:10px;font-size:.82rem;color:var(--text3);font-style:italic">If you'd like to share this app or use the content beyond personal practice, please seek permission from Redemption Hill Church and credit the authors above.</p>
-    </details>
-    <details class="about-block reflect-block">
-      <summary><h3><span data-ico="lock"></span>Privacy</h3></summary>
-      <p>Everything you write lives on this device, in this browser. That's it.</p>
-      <ul style="margin-top:8px">
-        <li><strong>No accounts.</strong> No sign-up, no login, no email.</li>
-        <li><strong>No servers.</strong> Your prayers, story cards, and reflections never leave your device.</li>
-        <li><strong>No tracking.</strong> No analytics, no telemetry, no cookies for tracking.</li>
-        <li><strong>No third parties.</strong> No fonts loaded from CDNs, no scripts from elsewhere — the whole app is in one file.</li>
-      </ul>
-      <p style="margin-top:10px;font-size:.85rem;line-height:1.6">Because your data is local-only:</p>
-      <ul>
-        <li>Clearing your browser cache or site data will erase everything — use <strong><span data-ico="save"></span>&#8202;Backup &amp; Restore</strong> in Settings, above, regularly.</li>
-        <li>Moving to a new device means exporting a backup, then importing it on the other end.</li>
-        <li>When this app is deployed to a real URL, its service worker caches only the app files (HTML, icon, manifest). It does not collect or transmit anything you write.</li>
-      </ul>
     </details>
   </div>
 </div>
@@ -3287,6 +3224,88 @@
 
 <div class="modal-bg" id="modal-exam">
   <div class="modal"><div class="modal-handle"></div><div id="exam-content"></div></div>
+</div>
+
+<div class="modal-bg" id="modal-settings">
+  <div class="modal"><div class="modal-handle"></div>
+    <div class="cs-head"><span class="cs-mark" data-ico="gear"></span><h2>Settings</h2></div>
+    <div class="about-block settings-block" id="rf-settings">
+      <div class="seg-ctl set-seg" role="tablist">
+        <button role="tab" data-pane="appearance" class="on" onclick="setSettingsPane('appearance')"><span data-ico="palette"></span>Appearance</button>
+        <button role="tab" data-pane="export" onclick="setSettingsPane('export')"><span data-ico="save"></span>Export</button>
+        <button role="tab" data-pane="backup" onclick="setSettingsPane('backup')"><span data-ico="archive"></span>Backup</button>
+      </div>
+      <div class="set-pane" data-pane="appearance">
+      <h4 class="set-h"><span data-ico="palette"></span>Appearance</h4>
+      <p style="font-size:.84rem">Choose a theme. Auto follows your system setting — useful if you pray morning &amp; evening.</p>
+      <div class="theme-row">
+        <button class="theme-btn" data-theme="light" onclick="setTheme('light')"><span class="swatch sw-light" aria-hidden="true"></span><span data-ico="sun"></span>Light</button>
+        <button class="theme-btn" data-theme="dark" onclick="setTheme('dark')"><span class="swatch sw-dark" aria-hidden="true"></span><span data-ico="moon"></span>Dark</button>
+        <button class="theme-btn" data-theme="auto" onclick="setTheme('auto')"><span class="swatch sw-auto" aria-hidden="true"></span><span data-ico="sparkle"></span>Auto</button>
+      </div>
+      <p class="appearance-label">Colour</p>
+      <div id="palette-picker"></div>
+      <p class="appearance-label">Text size</p>
+      <div class="theme-row">
+        <button class="size-btn" data-size="small" onclick="setTextSize('small')"><span class="aa" style="font-size:14px" aria-hidden="true">Aa</span>Small</button>
+        <button class="size-btn" data-size="medium" onclick="setTextSize('medium')"><span class="aa" style="font-size:18px" aria-hidden="true">Aa</span>Medium</button>
+        <button class="size-btn" data-size="large" onclick="setTextSize('large')"><span class="aa" style="font-size:23px" aria-hidden="true">Aa</span>Large</button>
+      </div>
+      <label class="switch-row">
+        <span><span data-ico="book"></span>&#8202;Bible button in the header</span>
+        <span class="switch"><input type="checkbox" id="bible-fab-toggle" onchange="setBibleFab(this.checked)"><span class="switch-knob"></span></span>
+      </label>
+      <p style="font-size:.8rem;color:var(--text3);margin-top:6px">Top-right of every screen, for quick verse lookup and Scripture by feeling. The inline “Insert from Bible” buttons on verse fields stay either way.</p>
+      </div>
+      <div class="set-pane" data-pane="export" hidden>
+      <h4 class="set-h"><span data-ico="note"></span>Markdown Export</h4>
+      <p>Export your prayer cards and sessions as Markdown — drop the files into Obsidian, Logseq, Bear, or any markdown editor. Each export uses YAML frontmatter, structured headings, and <code>[[wikilinks]]</code> so notes connect properly in Obsidian's graph view.</p>
+
+      <p class="section-title" style="margin-top:18px">Bulk export</p>
+      <button class="btn btn-secondary" onclick="exportAllCardsMarkdown()"><span data-ico="save"></span> Download all Story Cards (.md)</button>
+      <button class="btn btn-secondary" onclick="exportAllWeeklyMarkdown()"><span data-ico="save"></span> Download all Weekly Deep Time sessions (.md)</button>
+      <button class="btn btn-secondary" onclick="exportAllDailyMarkdown()"><span data-ico="save"></span> Download all Daily Prayer sessions (.md)</button>
+      <button class="btn btn-secondary" onclick="openMedExport()"><span data-ico="book"></span> Meditations by passage (.md)…</button>
+      <p class="hint" style="margin-top:8px">Each download is a single combined <code>.md</code> file with <code>---</code> dividers between entries. Use Obsidian’s “Note Composer” plugin (or split manually) to break it into one note per item.</p>
+
+      <p class="section-title" style="margin-top:22px">Obsidian vault (optional)</p>
+      <p style="font-size:.82rem;color:var(--text2);line-height:1.6">If you set your vault name here, future per-item Obsidian export buttons would route into your vault directly. Currently used only for the filename hint in exports.</p>
+      <label style="margin-top:14px">Vault name</label>
+      <input type="text" id="obsidian-vault" placeholder="e.g. My Vault">
+      <label>Subfolder (optional)</label>
+      <input type="text" id="obsidian-subfolder" placeholder="e.g. Prayer/Sessions">
+      <button class="btn btn-primary" onclick="saveObsidianSettings()" style="margin-top:10px">Save</button>
+      </div>
+      <div class="set-pane" data-pane="backup" hidden>
+      <h4 class="set-h"><span data-ico="archive"></span>Backup &amp; Restore</h4>
+      <p>Your data lives in this browser only. Back it up regularly so you can restore on another device or after clearing cache. Backups include all prayer cards, Pray &amp; Listen sessions, story notes, heart-need selections, linked cards, and streak history.</p>
+      <button class="btn btn-secondary" onclick="exportBackup()" style="margin-top:10px"><span data-ico="save"></span> Download Backup (.json)</button>
+      <input type="file" id="import-file-input" accept="application/json,.json" style="display:none" onchange="importBackup(event)">
+      <button class="btn btn-secondary" onclick="document.getElementById('import-file-input').click()"><span data-ico="restore"></span> Restore from Backup…</button>
+      <button class="btn btn-danger" onclick="resetAllData()" style="margin-top:14px"><span data-ico="warn"></span> Reset All Data</button>
+      </div>
+    </div>
+    <details class="about-block reflect-block">
+      <summary><h3><span data-ico="phone"></span>Install on your phone</h3></summary>
+      <div id="install-block"></div>
+    </details>
+    <details class="about-block reflect-block">
+      <summary><h3><span data-ico="lock"></span>Privacy</h3></summary>
+      <p>Everything you write lives on this device, in this browser. That's it.</p>
+      <ul style="margin-top:8px">
+        <li><strong>No accounts.</strong> No sign-up, no login, no email.</li>
+        <li><strong>No servers.</strong> Your prayers, story cards, and reflections never leave your device.</li>
+        <li><strong>No tracking.</strong> No analytics, no telemetry, no cookies for tracking.</li>
+        <li><strong>No third parties.</strong> No fonts loaded from CDNs, no scripts from elsewhere — the whole app is in one file.</li>
+      </ul>
+      <p style="margin-top:10px;font-size:.85rem;line-height:1.6">Because your data is local-only:</p>
+      <ul>
+        <li>Clearing your browser cache or site data will erase everything — use <strong><span data-ico="save"></span>&#8202;Backup &amp; Restore</strong> in Settings, above, regularly.</li>
+        <li>Moving to a new device means exporting a backup, then importing it on the other end.</li>
+        <li>When this app is deployed to a real URL, its service worker caches only the app files (HTML, icon, manifest). It does not collect or transmit anything you write.</li>
+      </ul>
+    </details>
+  </div>
 </div>
 
 <div class="modal-bg" id="modal-mx">
@@ -3444,6 +3463,7 @@ const ICON = {
   star:     _svg('<path d="M12 3.4l2.7 5.6 6.1.9-4.4 4.3 1 6.1-5.4-2.9-5.4 2.9 1-6.1L3.2 9.9l6.1-.9z"/>'),
   chart:    _svg('<path d="M4 20.2V4M4 20.2h16"/><rect x="7.2" y="11" width="3" height="6.2" rx="1"/><rect x="12.4" y="7.6" width="3" height="9.6" rx="1"/><rect x="17.6" y="13.4" width="3" height="3.8" rx="1"/>'),
   archive:  _svg('<rect x="3.6" y="4.6" width="16.8" height="14.8" rx="2"/><path d="M8 4.6v5.2h8V4.6"/><rect x="8" y="13" width="8" height="6.4" rx="1"/>'),
+  gear:     _svg('<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>'),
   palette:  _svg('<path d="M12 3.4a8.6 8.6 0 1 0 0 17.2c1 0 1.7-.8 1.7-1.7 0-.5-.2-.9-.5-1.2-.3-.3-.5-.7-.5-1.1 0-1 .8-1.7 1.7-1.7h2a4.2 4.2 0 0 0 4.2-4.2c0-4-3.9-7.3-8.6-7.3z"/><circle cx="8" cy="10.4" r="1.1" fill="currentColor" stroke="none"/><circle cx="12" cy="7.6" r="1.1" fill="currentColor" stroke="none"/><circle cx="16.2" cy="10" r="1.1" fill="currentColor" stroke="none"/>'),
   phone:    _svg('<rect x="6.4" y="2.6" width="11.2" height="18.8" rx="2.6"/><path d="M10.6 5.6h2.8M12 18.2h.01"/>'),
   lock:     _svg('<rect x="4.8" y="10.4" width="14.4" height="10" rx="2"/><path d="M8.4 10.4V7.8a3.6 3.6 0 0 1 7.2 0v2.6"/>'),
@@ -7928,7 +7948,7 @@ document.addEventListener('keydown', e => {
   });
   // U1: reading sheets open at about two-thirds height; scrolling in them, or a tap
   // on the handle, lifts them to full height.
-  ['modal-heart-chart','modal-prayer-library','modal-carry','modal-petition','modal-technique','modal-attrs','modal-exam','modal-teach','modal-mx'].forEach(id => {
+  ['modal-heart-chart','modal-prayer-library','modal-carry','modal-petition','modal-technique','modal-attrs','modal-exam','modal-teach','modal-mx','modal-settings'].forEach(id => {
     const m = document.querySelector('#'+id+' .modal'); if(!m) return;
     m.classList.add('snap');
     m.addEventListener('scroll', () => { if(m.scrollTop > 8) m.classList.add('full'); }, { passive:true });
@@ -12579,6 +12599,13 @@ function searchWeeklyFor(word){
   if(plMode === 'session') return showView('pl');
   _plViewMode = 'list'; _plCalSelectedDay = null; _plSearchQuery = word; plMode = 'home';
   showView('pl'); window.scrollTo(0, 0);
+}
+// Settings live in a sheet, reached from the gear in the header (and a row in the Guide).
+function openSettings(pane){
+  renderInstallBlock(); applyTheme(); applyTextSize(); renderPalettePicker(); populateObsidianFields();
+  const t = document.getElementById('bible-fab-toggle'); if(t) t.checked = bibleFabEnabled();
+  if(pane) setSettingsPane(pane);
+  openModal('modal-settings');
 }
 function setSettingsPane(k){
   document.querySelectorAll('#rf-settings .set-seg button').forEach(b=>{ const on=b.dataset.pane===k; b.classList.toggle('on',on); b.setAttribute('aria-selected',on); });
