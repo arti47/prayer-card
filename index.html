@@ -1976,6 +1976,17 @@
   .at-phrase, .at-word { display: inline; background: none; border: none; padding: 0; margin: 0; font: inherit; color: inherit; text-decoration: underline dotted color-mix(in srgb, var(--accent) 70%, transparent); text-underline-offset: 3px; cursor: pointer; }
   .at-word { font-style: inherit; }
   .pl-forget-block .at-link { margin-top: 8px; }
+  :root { --ex-god: #6e3b5c; --ex-nb: #345a7a; }
+  [data-theme="dark"] { --ex-god: #d9a8c8; --ex-nb: #a9c6e2; }
+  .ex-god { --nc: var(--ex-god); } .ex-nb { --nc: var(--ex-nb); }
+  .ex-sub { margin: 0 0 4px; font-style: italic; color: var(--text3); font-size: var(--fs-4); }
+  .ex-num { font-size: 1rem; letter-spacing: .02em; width: auto; min-width: 38px; padding: 0 5px; }
+  .ex-law { margin: 0 0 10px; font-family: var(--serif); font-style: italic; color: var(--text); font-size: var(--fs-5); line-height: 1.5; }
+  .ex-law .at-ref { margin-left: 4px; }
+  .ex-h { margin: 12px 0 4px; color: var(--nc); font-family: var(--sans); font-size: var(--fs-1); font-weight: 600; letter-spacing: .055em; text-transform: uppercase; }
+  .ex-q { margin: 0 0 4px; }
+  .ex-on { margin: 0 0 6px; color: var(--text); font-size: var(--fs-5); }
+  .ex-attr { display: block; background: none; border: none; padding: 6px 0; margin: 0 0 2px; font-family: var(--serif); font-style: italic; font-size: var(--fs-4); color: var(--nc); text-decoration: underline dotted; text-underline-offset: 3px; cursor: pointer; min-height: 32px; }
   .hn-grid { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 8px; margin-bottom: 16px; }
   .hn-tile { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; gap: 7px; min-height: 104px; padding: 14px 6px 10px; border-radius: var(--radius); border: 1px solid color-mix(in srgb, var(--nc) 30%, var(--border)); background: color-mix(in srgb, var(--nc) 7%, var(--surface)); color: var(--idc); font-family: var(--serif); cursor: pointer; transition: transform .12s, box-shadow .15s, background .15s; }
   [data-theme="dark"] .hn-tile { color: var(--idc-dark); background: color-mix(in srgb, var(--idc-dark) 10%, var(--surface)); border-color: color-mix(in srgb, var(--idc-dark) 30%, var(--border)); }
@@ -3061,6 +3072,7 @@
         <li><strong>Tim Keller</strong> — <em>Prayer: Experiencing Awe and Intimacy with God</em>. The Daily Prayer practice (the three plan options, with the Approach → Meditation → Prayer → Contemplation shape) is drawn from Ch. 15. Many of the meditation and praise-deepening features across the app — the cry-out affordance, soliloquy mode, Christ-anchor close on Done screens, alternate meditation techniques, and the praise / thanksgiving starter chips — draw from Chapters 10–12.</li>
         <li><strong>Matthew Henry</strong> — <em>A Way to Pray: A Biblical Method for Enriching Your Prayer Life</em>. The <span data-ico="book"></span>&#8202;Prayer Library — roughly forty Scripture-saturated written prayers across Praise, Confession, Petition, Thanksgiving, and Concluding — is faithfully drawn from his method.</li>
         <li><strong>Brené Brown</strong> — <em>The Gifts of Imperfection</em>. Two evening prompts take their shape from her daily practice: giving thanks for ordinary, particular moments rather than blessings in general, and naming what we reach for to take the edge off a hard day.</li>
+        <li><strong>Search Me, O God</strong> follows the Ten Commandments as the <em>Westminster Larger Catechism</em> (Q. 99–148) uses them for self-examination — the duties each requires as well as the sins it forbids. The questions were written for this app.</li>
         <li><strong>The Attributes of God</strong> follow the classic Reformed division into attributes that are God’s alone and those He shares with us in part, as set out in Wayne Grudem’s <em>Systematic Theology</em> and Herman Bavinck’s <em>Reformed Dogmatics</em>. The one-line descriptions were written for this app.</li>
         <li><strong>English Standard Version (ESV)</strong> — Scripture quotations, the <span data-ico="book"></span>&#8202;Bible browser, and the Scripture-lookup text are from <em>The Holy Bible, English Standard Version® (ESV®)</em>, copyright © 2001 by Crossway, a publishing ministry of Good News Publishers. Used by permission. All rights reserved.</li>
       </ul>
@@ -3205,6 +3217,10 @@
 
 <div class="modal-bg" id="modal-heart-chart">
   <div class="modal"><div class="modal-handle"></div><div id="heart-chart-content"></div></div>
+</div>
+
+<div class="modal-bg" id="modal-exam">
+  <div class="modal"><div class="modal-handle"></div><div id="exam-content"></div></div>
 </div>
 
 <div class="modal-bg" id="modal-attrs">
@@ -5523,7 +5539,7 @@ function bbBackToChapters(){
 // ── Scripture by feeling: the same hand-chosen verses as the sessions, any time ──
 function bbFeelEntryHTML(){
   if(_bbSearch.trim()) return '';
-  return `<button class="bb-feel-btn" onclick="bbFeelOpen()">${ICON.heart}Scripture by feeling</button><button class="bb-feel-btn" onclick="openAttributes(null)">${ICON.crown}Scripture by attribute</button>`;
+  return `<button class="bb-feel-btn" onclick="bbFeelOpen()">${ICON.heart}Scripture by feeling</button><button class="bb-feel-btn" onclick="openAttributes(null)">${ICON.crown}Scripture by attribute</button><button class="bb-feel-btn" onclick="openExam(null)">${ICON.candle || ICON.sparkle}Scripture for confession</button>`;
 }
 function bbFeelOpen(){ _bbFeel={core:null, sec:null, ter:null}; renderBibleBrowser(); }
 function bbFeelBack(){
@@ -5929,6 +5945,7 @@ function helperRow(targetId, opts){
   if(o.lib)     items.push(`<button type="button" class="fh-link" onclick="openPrayerLibrary('${o.lib}','${targetId}')">${ICON.book}<span class="fh-txt">Written prayer</span></button>`);
   if(o.cryOut)  items.push(`<button type="button" class="fh-link" onclick="fhToggle(this,'cry')">${ICON.breath}<span class="fh-txt">Dry today?</span></button>`);
   if(o.attrs)   items.push(attrLinkHTML(targetId));
+  if(o.exam)    items.push(examLinkHTML(targetId));
   if(o.cards)   items.push(`<button type="button" class="fh-link" onclick="openCardsWalkthrough()">${ICON.cards}<span class="fh-txt">Story cards</span></button>`);
   if(o.keep)    items.push(`<button type="button" class="fh-link" onclick="openKeepSheet('${targetId}')">${ICON.note}<span class="fh-txt">Keep with a card</span></button>`);
   if(!items.length) return '';
@@ -6610,6 +6627,7 @@ function attrRender(){
       <h3 class="at-name">${esc(a.name)}</h3>
       <p class="at-line">${esc(a.line)}</p>
       ${a.v.map(([r, t]) => `<div class="at-v"><button type="button" class="at-ref" onclick="attrRead('${r}')">${esc(r)}</button><div class="at-vt">${esc(t)}</div></div>`).join('')}
+      ${COMMANDMENTS.filter(c => c.attr === a.key).map(c => `<button type="button" class="ex-attr" onclick="openExam(null,'${c.key}')">Search me · ${c.n} ${esc(c.name)} ›</button>`).join('')}
       ${target ? `<button type="button" class="btn btn-primary at-use" onclick="attrUse('${a.key}')">${card ? 'Use this →' : 'Praise Him for this →'}</button>` : ''}
     </div>`;
   const fams = ATTR_FAMS.map(F => {
@@ -6641,7 +6659,9 @@ function attrUse(key){
 }
 // Make "attribute of His character" (in a guide or prompt) open the attributes.
 function attrPhraseLink(html, targetId){
-  return html.replace(/attribute of His character/, m => `<button type="button" class="at-phrase" onclick="event.stopPropagation();openAttributes(${targetId ? `'${targetId}'` : 'null'})">${m}</button>`);
+  const t = targetId ? `'${targetId}'` : 'null';
+  return html.replace(/attribute of His character/, m => `<button type="button" class="at-phrase" onclick="event.stopPropagation();openAttributes(${t})">${m}</button>`)
+             .replace(/specific sins, attitudes, or neglects/, m => `<button type="button" class="at-phrase" onclick="event.stopPropagation();openExam(${t})">${m}</button>`);
 }
 // A word in your own writing that names an attribute becomes a quiet link to it.
 function attrLinkify(text){
@@ -6653,6 +6673,117 @@ function attrLinkify(text){
 }
 function attrLinkHTML(targetId, cls){
   return `<button type="button" class="${cls || 'fh-link'} at-link" onclick="openAttributes('${targetId}')">${ICON.crown}<span class="fh-txt">His attributes</span></button>`;
+}
+
+// ══════════ SEARCH ME, O GOD — the Ten Commandments for self-examination ══════════
+// Each commandment as the classic Reformed examination reads it (duties required and
+// sins forbidden), in three parts after 2 Timothy 3:16: questions that search (reproof),
+// what to put on (correction), and grace for it (encouragement). Questions are written
+// plainly for this app; verse text is the bundled ESV. `attr` links the attribute of God
+// the commandment reflects. Opened from Morning Confession's "specific sins, attitudes,
+// or neglects", Evening's Confess the day, the Full meditation sin question, Weekly Repent,
+// the Bible reader, and back from the matching Attributes tiles.
+const COMMANDMENTS = [
+  { key:'c1', n:'I', table:'god', name:'First place', attr:'jealous',
+    law:['Exodus 20:3','You shall have no other gods before me.'],
+    q:['What have I trusted to make me safe, loved or significant, instead of Him?','What do I fear losing more than I fear God?','Have I neglected to seek Him first?'],
+    on:'Trust Him wholly', onV:['Proverbs 3:5–6','Trust in the Lord with all your heart, and do not lean on your own understanding. In all your ways acknowledge him, and he will make straight your paths.'],
+    grace:['Ezekiel 36:25–26','I will sprinkle clean water on you, and you shall be clean from all your uncleannesses, and from all your idols I will cleanse you. And I will give you a new heart, and a new spirit I will put within you. And I will remove the heart of stone from your flesh and give you a heart of flesh.'] },
+  { key:'c2', n:'II', table:'god', name:'True worship', attr:'selfexistent',
+    law:['Exodus 20:4','You shall not make for yourself a carved image, or any likeness of anything that is in heaven above, or that is in the earth beneath, or that is in the water under the earth.'],
+    q:['Have I shaped God to suit me — softer, harsher or smaller than He is?','Have I worshipped on my own terms?','Have I neglected His Word, where He shows Himself?'],
+    on:'Worship in spirit and truth', onV:['John 4:24','God is spirit, and those who worship him must worship in spirit and truth.'],
+    grace:['2 Corinthians 3:18','And we all, with unveiled face, beholding the glory of the Lord, are being transformed into the same image from one degree of glory to another. For this comes from the Lord who is the Spirit.'] },
+  { key:'c3', n:'III', table:'god', name:'His name', attr:'holy',
+    law:['Exodus 20:7','You shall not take the name of the Lord your God in vain, for the Lord will not hold him guiltless who takes his name in vain.'],
+    q:['Have I spoken of God carelessly, or used His name to win or to look spiritual?','Have I made Him promises I haven’t kept?','Has my life given others reason to think less of Him?'],
+    on:'Words that honour Him', onV:['Psalm 19:14','Let the words of my mouth and the meditation of my heart be acceptable in your sight, O Lord, my rock and my redeemer.'],
+    grace:['Isaiah 6:7','And he touched my mouth and said: “Behold, this has touched your lips; your guilt is taken away, and your sin atoned for.”'] },
+  { key:'c4', n:'IV', table:'god', name:'Rest', attr:'sovereign',
+    law:['Exodus 20:8','Remember the Sabbath day, to keep it holy.'],
+    q:['Have I refused to stop, as if everything depended on me?','Have I neglected worship with His people?','Has my rest been for Him, or only for me?'],
+    on:'Come to Him and rest', onV:['Matthew 11:28–29','Come to me, all who labor and are heavy laden, and I will give you rest. Take my yoke upon you, and learn from me, for I am gentle and lowly in heart, and you will find rest for your souls.'],
+    grace:['Hebrews 4:9–10','So then, there remains a Sabbath rest for the people of God, for whoever has entered God’s rest has also rested from his works as God did from his.'] },
+  { key:'c5', n:'V', table:'nb', name:'Honour', attr:'loving',
+    law:['Exodus 20:12','Honor your father and your mother, that your days may be long in the land that the Lord your God is giving you.'],
+    q:['Have I spoken of my parents, or those over me, with contempt?','Have I neglected to care for or thank those who raised me?','Where I lead, have I served others or myself?'],
+    on:'Outdo one another in honour', onV:['Romans 12:10','Love one another with brotherly affection. Outdo one another in showing honor.'],
+    grace:['Psalm 27:10','For my father and my mother have forsaken me, but the Lord will take me in.'] },
+  { key:'c6', n:'VI', table:'nb', name:'Life', attr:'patient',
+    law:['Exodus 20:13','You shall not murder.'],
+    q:['Have I nursed anger, contempt or a grudge?','Have I wounded someone with words?','Have I neglected to make peace, or to help someone in need?'],
+    on:'Kind and forgiving', onV:['Ephesians 4:31–32','Let all bitterness and wrath and anger and clamor and slander be put away from you, along with all malice. Be kind to one another, tenderhearted, forgiving one another, as God in Christ forgave you.'],
+    grace:['Romans 5:10','For if while we were enemies we were reconciled to God by the death of his Son, much more, now that we are reconciled, shall we be saved by his life.'] },
+  { key:'c7', n:'VII', table:'nb', name:'Faithfulness', attr:'faithful',
+    law:['Exodus 20:14','You shall not commit adultery.'],
+    q:['Have I let my eyes or thoughts treat someone as an object?','Have I fed desires that pull my heart from faithfulness?','Have I neglected to guard the commitments I’ve made?'],
+    on:'A clean heart', onV:['Psalm 51:10','Create in me a clean heart, O God, and renew a right spirit within me.'],
+    grace:['1 Corinthians 6:11','And such were some of you. But you were washed, you were sanctified, you were justified in the name of the Lord Jesus Christ and by the Spirit of our God.'] },
+  { key:'c8', n:'VIII', table:'nb', name:'Generosity', attr:'gracious',
+    law:['Exodus 20:15','You shall not steal.'],
+    q:['Have I taken what isn’t mine — money, time, credit?','Have I been less than honest in my work?','Have I held back from giving when I could have given?'],
+    on:'Work so as to give', onV:['Ephesians 4:28','Let the thief no longer steal, but rather let him labor, doing honest work with his own hands, so that he may have something to share with anyone in need.'],
+    grace:['2 Corinthians 8:9','For you know the grace of our Lord Jesus Christ, that though he was rich, yet for your sake he became poor, so that you by his poverty might become rich.'] },
+  { key:'c9', n:'IX', table:'nb', name:'Truth', attr:'true',
+    law:['Exodus 20:16','You shall not bear false witness against your neighbor.'],
+    q:['Have I shaded the truth to look better or avoid trouble?','Have I spoken of someone as I wouldn’t if they were in the room?','Have I stayed silent when I should have spoken up?'],
+    on:'Speak the truth', onV:['Ephesians 4:25','Therefore, having put away falsehood, let each one of you speak the truth with his neighbor, for we are members one of another.'],
+    grace:['1 John 1:9','If we confess our sins, he is faithful and just to forgive us our sins and to cleanse us from all unrighteousness.'] },
+  { key:'c10', n:'X', table:'nb', name:'Contentment', attr:'good',
+    law:['Exodus 20:17','You shall not covet your neighbor’s house; you shall not covet your neighbor’s wife, or his male servant, or his female servant, or his ox, or his donkey, or anything that is your neighbor’s.'],
+    q:['Whose life, things or gifts have I resented or wanted?','Where have I thought “I’d be happy if only…”?','Have I failed to give thanks for what He’s given?'],
+    on:'Be content', onV:['Hebrews 13:5','Keep your life free from love of money, and be content with what you have, for he has said, “I will never leave you nor forsake you.”'],
+    grace:['Psalm 16:5–6','The Lord is my chosen portion and my cup; you hold my lot. The lines have fallen for me in pleasant places; indeed, I have a beautiful inheritance.'] }
+];
+const EXAM_TABLES = [ { t:'god', title:'Love God', sub:'The first table' }, { t:'nb', title:'Love your neighbour', sub:'The second table' } ];
+
+let _exTarget = null, _exOpen = null;
+function openExam(targetId, focusKey){
+  _exTarget = targetId && document.getElementById(targetId) ? targetId : null;
+  _exOpen = focusKey || null;
+  examRender(); openModal('modal-exam');
+  if(focusKey) setTimeout(() => document.querySelector('#exam-content .at-detail')?.scrollIntoView({ block:'nearest' }), 60);
+}
+function examTap(key){ _exOpen = _exOpen === key ? null : key; examRender(); }
+function examRender(){
+  const el = document.getElementById('exam-content'); if(!el) return;
+  const target = _exTarget && document.getElementById(_exTarget);
+  const vHTML = ([r, t]) => `<div class="at-v"><button type="button" class="at-ref" onclick="examRead('${r}')">${esc(r)}</button><div class="at-vt">${esc(t)}</div></div>`;
+  const detail = c => { const a = GOD_ATTRIBUTES.find(x => x.key === c.attr);
+    return `<div class="at-detail ex-${c.table}">
+      <h3 class="at-name">${c.n} · ${esc(c.name)}</h3>
+      <p class="ex-law">${esc(c.law[1])} <button type="button" class="at-ref" onclick="examRead('${c.law[0]}')">${esc(c.law[0])}</button></p>
+      <div class="ex-h">Search me</div>
+      <ul class="pl-prompts field-guide ex-q">${c.q.map(q => `<li class="q">${esc(q)}</li>`).join('')}</ul>
+      <div class="ex-h">Put on</div>
+      <p class="ex-on">${esc(c.on)}</p>${vHTML(c.onV)}
+      ${a ? `<button type="button" class="ex-attr" onclick="openAttributes(null,'${a.key}')">He is ${esc(a.key === 'loving' ? 'love' : a.name.toLowerCase())} ›</button>` : ''}
+      <div class="ex-h">Grace for this</div>${vHTML(c.grace)}
+      ${target ? `<button type="button" class="btn btn-primary at-use" onclick="examUse()">Confess this →</button>` : ''}
+    </div>`; };
+  const tables = EXAM_TABLES.map(T => {
+    const list = COMMANDMENTS.filter(c => c.table === T.t), open = list.find(c => c.key === _exOpen);
+    let tiles = '';
+    list.forEach((c, i) => {
+      const isOpen = c.key === _exOpen;
+      tiles += `<button type="button" class="at-tile ex-${c.table}${isOpen ? ' open' : ''}" aria-expanded="${isOpen}" onclick="examTap('${c.key}')"><span class="at-ini ex-num" aria-hidden="true">${c.n}</span><span class="at-t">${esc(c.name)}</span></button>`;
+      if((i % 3 === 2 || i === list.length - 1) && open && Math.floor(list.indexOf(open) / 3) === Math.floor(i / 3)) tiles += detail(open);
+    });
+    return `<div class="at-fam"><div class="at-fam-h ex-${T.t}"><span>${T.title}</span><em>${T.sub}</em></div><div class="hn-grid at-grid">${tiles}</div></div>`;
+  }).join('');
+  el.innerHTML = `<h2 class="at-h">Search Me, O God</h2><p class="ex-sub">The Ten Commandments</p>${tables}`;
+}
+function examRead(ref){ closeModal('modal-exam'); lookupInContext(ref); }
+function examUse(){
+  const ta = _exTarget && document.getElementById(_exTarget); if(!ta) return;
+  const cur = ta.value.trim(), line = 'Father, I confess — ';
+  ta.value = cur ? `${cur}\n${line}` : line;
+  ta.dispatchEvent(new Event('input', { bubbles: true }));
+  closeModal('modal-exam');
+  setTimeout(() => { ta.focus(); ta.setSelectionRange(ta.value.length, ta.value.length); }, 200);
+}
+function examLinkHTML(targetId, cls){
+  return `<button type="button" class="${cls || 'fh-link'} at-link" onclick="openExam('${targetId}')">${ICON.candle || ICON.sparkle}<span class="fh-txt">Search me</span></button>`;
 }
 
 // ══════════ FOCUS-COMPOSE MODE ══════════
@@ -7338,7 +7469,7 @@ document.addEventListener('keydown', e => {
   });
   // U1: reading sheets open at about two-thirds height; scrolling in them, or a tap
   // on the handle, lifts them to full height.
-  ['modal-heart-chart','modal-prayer-library','modal-carry','modal-petition','modal-technique','modal-attrs'].forEach(id => {
+  ['modal-heart-chart','modal-prayer-library','modal-carry','modal-petition','modal-technique','modal-attrs','modal-exam'].forEach(id => {
     const m = document.querySelector('#'+id+' .modal'); if(!m) return;
     m.classList.add('snap');
     m.addEventListener('scroll', () => { if(m.scrollTop > 8) m.classList.add('full'); }, { passive:true });
@@ -8868,7 +8999,7 @@ function renderDPStep(){
     const qRow = q => `<div class="dp-q-row">
           <div class="dp-q-label" style="color:${step.color}">${esc(q.label)}</div>
           <div class="dp-q-prompt">${esc(q.prompt)}</div>
-          ${q.key === 'q_god' ? attrLinkHTML('dp-q-q_god') : ''}
+          ${q.key === 'q_god' ? attrLinkHTML('dp-q-q_god') : ''}${q.key === 'q_sin' ? examLinkHTML('dp-q-q_sin') : ''}
           <textarea id="dp-q-${q.key}" class="pl-textarea" placeholder="${esc(q.placeholder || 'Jot a few lines…')}">${escTa(saved[q.key]||'')}</textarea>
         </div>`;
     if(unit.kind === 'field'){
@@ -8921,7 +9052,7 @@ function renderDPStep(){
         <div class="pl-field-label" style="color:${step.color}">${esc(f.label)}</div>
         ${(step.fields||[]).length > 1 ? fieldGuideHTML(f.focusPrompt, `dp-field-${f.key}`) : ''}
         <textarea id="dp-field-${f.key}" class="pl-textarea" placeholder="${esc(f.placeholder||'')}"${fpAttr}>${escTa(saved[f.key]||'')}</textarea>
-        ${helperRow(`dp-field-${f.key}`, { chips: starterChips, lib: libCat, cryOut: stepIsPrayerMode, cards: !!f.showCardsButton, attrs: f.key === 'psalmprayer' })}
+        ${helperRow(`dp-field-${f.key}`, { chips: starterChips, lib: libCat, cryOut: stepIsPrayerMode, cards: !!f.showCardsButton, attrs: f.key === 'psalmprayer', exam: f.key === 'dayconfession' })}
         ${cardsBtn ? '' : ''}
       </div>`;
     }).join('');
@@ -9942,6 +10073,7 @@ function renderPLStep(el){
       <span class="pl-quote" style="background:${step.sbg};border-color:${step.sborder};color:${step.sc}">${step.quote}</span>
       ${PETITION_EXPLANATIONS[step.key] ? `<a class="petition-link" onclick="showPetitionExplanation('${step.key}')">${ICON.book} What this petition asks →</a>` : ''}
       ${step.key==='come' ? `<a class="petition-link" onclick="openAttributes('pl-pray-area')">${ICON.crown} His attributes →</a>` : ''}
+      ${step.key==='confess' ? `<a class="petition-link" onclick="openExam('pl-pray-area')">${ICON.candle || ICON.sparkle} Search me →</a>` : ''}
       ${(step.key==='ask'||step.key==='follow') && plSession.includesPrep!==false ? `<a class="petition-link" onclick="plJumpToPrepare()">✦ Review what you mapped in Prepare →</a>` : ''}
       ${linkedBannerHTML}
       ${subRule}
